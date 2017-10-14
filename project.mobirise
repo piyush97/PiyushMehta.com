@@ -1,0 +1,212 @@
+{
+  "settings": {
+    "name": "Piyush Mehta",
+    "currentPage": "index.html",
+    "theme": {
+      "name": "purity",
+      "title": "PurityM",
+      "styling": {},
+      "additionalSetColors": []
+    },
+    "versionFirst": "4.3.2",
+    "uniqCompNum": 7,
+    "versionPublish": "4.3.2",
+    "favicon": "@PROJECT_PATH@/assets/images/untitled-1-128x91.png",
+    "noImageResize": ""
+  },
+  "pages": {
+    "index.html": {
+      "settings": {
+        "main": true,
+        "title": "Home",
+        "meta_descr": "",
+        "header_custom": "",
+        "footer_custom": "",
+        "html_before": ""
+      },
+      "components": [
+        {
+          "_params": {
+            "showTitle": true,
+            "showText": true,
+            "showButtons": true,
+            "showArrow": true,
+            "contentAlign": "left",
+            "bgImageRadio": true,
+            "bgImage": "@PROJECT_PATH@/assets/images/mbr-1620x1080.jpg",
+            "parallax": true,
+            "bgColorRadio": false,
+            "bgColor": "#fff8e0",
+            "bgVideoRadio": false,
+            "bgVideo": {
+              "url": "https://www.youtube.com/watch?v=uNCr7NdOJgw"
+            },
+            "overlay": false,
+            "overlayColor": "#ffffff",
+            "overlayOpacity": 0.5
+          },
+          "title": "<b>Piyush Mehta</b>",
+          "text": "I am an Engineering Student and I have a keen interest in software development.<br>I spend most of my time converting ideas into code.<br>I enjoy learning new languages and skills from online courses.<br>Besides work, I love to capture the sweetest moments of my life in 16:9 camera roll.",
+          "buttons": "<a data-app-btn=\"true\" class=\"btn btn-lg btn-secondary-outline\" href=\"#bottom\" data-toolbar=\"-mbrBtnMove\">Lets' Chat!</a> <a data-app-btn=\"true\" class=\"btn btn-lg btn-white\" href=\"index.html#msg-box1-6\" data-toolbar=\"-mbrBtnMove\">See My Projects</a>",
+          "alias": "purity/components",
+          "_tags": [
+            "Theme"
+          ],
+          "_name": "header1",
+          "_anchor": "header1-0",
+          "_styles": {
+            "P": {
+              "font-family": "'Indie Flower', cursive",
+              "googleLink": "https://fonts.googleapis.com/css?family=Indie+Flower",
+              "color": "#ffffff",
+              "text-align": "left"
+            },
+            "B": {
+              "color": "#ffffff",
+              "font-family": "'Indie Flower', cursive",
+              "googleLink": "https://fonts.googleapis.com/css?family=Indie+Flower"
+            },
+            "H1": {
+              "color": "#ffffff"
+            }
+          }
+        },
+        {
+          "_params": {
+            "showTitle": true,
+            "showText": false,
+            "showButtons": true,
+            "inverse": false,
+            "paddingTop": 3,
+            "paddingBottom": 3,
+            "bgImageRadio": false,
+            "bgImage": "@THEME_PATH@/components/_images/photo-3.jpg",
+            "parallax": true,
+            "bgColorRadio": true,
+            "bgColor": "#abdbf2",
+            "bgVideoRadio": false,
+            "bgVideo": {
+              "url": "https://www.youtube.com/watch?v=uNCr7NdOJgw"
+            },
+            "overlay": false,
+            "overlayColor": "#222",
+            "overlayOpacity": 0.5
+          },
+          "title": "UnderGoing Projects :D",
+          "text": "Mobirise comes with huge collection of pre made layouts to help make your development faster.",
+          "button": "<a data-app-btn=\"true\" class=\"btn btn-lg btn-danger\" href=\"index.html#pricing-table1-4\" data-toolbar=\"-mbrBtnMove\">Well, The first step is usually the hardest!</a>",
+          "alias": "purity/components",
+          "_tags": [
+            "Theme"
+          ],
+          "_name": "msg-box1",
+          "_anchor": "msg-box1-6"
+        },
+        {
+          "_params": {
+            "firstType": "bg-success",
+            "secondType": "bg-warning",
+            "thirdType": "bg-danger",
+            "fourthType": "bg-primary",
+            "paddingTop": 3,
+            "paddingBottom": 3,
+            "showButtons": true,
+            "bgImageRadio": false,
+            "bgImage": "@THEME_PATH@/components/_images/photo-3.jpg",
+            "parallax": true,
+            "bgColorRadio": true,
+            "bgColor": "#abdbf2",
+            "bgVideoRadio": false,
+            "bgVideo": {
+              "url": "https://www.youtube.com/watch?v=uNCr7NdOJgw"
+            },
+            "overlay": false,
+            "overlayColor": "#222",
+            "overlayOpacity": 0.5
+          },
+          "title1": "MY COLLEGE FORUMS",
+          "title2": "Project X",
+          "title3": "Pitch Perfect",
+          "title4": "*SECRET*",
+          "currency1": "For the BackBenchers, For the Nerds",
+          "currency2": "Android App for the next Decade",
+          "currency3": "iOS App&nbsp;",
+          "currency4": "",
+          "price1": "",
+          "price2": "",
+          "price3": "",
+          "price4": "Secret",
+          "period1": "",
+          "period2": "",
+          "period3": "",
+          "period4": "",
+          "list1": "<ul class=\"list-group list-group-flush\"><li class=\"list-group-item\">800+ Subscribers</li><li class=\"list-group-item\">MADE IN RUBY ON RAILS</li><li class=\"list-group-item\"><b>USING DISCOURSE FRAMEWORK</b></li></ul>",
+          "list2": "<ul class=\"list-group list-group-flush\"><li class=\"list-group-item\"><b>Multiple Activities</b></li><li class=\"list-group-item\"><b style=\"font-size: 1rem;\">For the Parents</b></li><li class=\"list-group-item\"><b style=\"font-size: 1rem;\">For the Students staying in hostel</b><br></li></ul>",
+          "list3": "<ul class=\"list-group list-group-flush\"><li class=\"list-group-item\">&nbsp;Changes your voice into different animal's voice&nbsp;</li><li class=\"list-group-item\"><b style=\"font-size: 1rem;\">Simple UI</b></li><li class=\"list-group-item\"><b style=\"font-size: 1rem;\">First iOS App</b><br></li></ul>",
+          "list4": "<ul class=\"list-group list-group-flush\"><li class=\"list-group-item\"><b style=\"font-size: 1rem;\">Augmented Reality based game</b><br></li><li class=\"list-group-item\">Specially for iOS 11+ devices</li><li class=\"list-group-item\">Using Apple's Latest Tech</li></ul><p>Multiplayer Support</p>",
+          "button1": "<a data-app-btn=\"true\" href=\"http://www.mycollegeforums.com\" class=\"btn btn-secondary-outline\" data-toolbar=\"-mbrBtnMove\" target=\"_blank\">WHY NOT VISIT IT?</a>",
+          "button2": "<a data-app-btn=\"true\" href=\"https://github.com/piyush97/ProjectX\" class=\"btn btn-secondary-outline\" data-toolbar=\"-mbrBtnMove\" target=\"_blank\">Get Set Go!</a>",
+          "button3": "<a data-app-btn=\"true\" href=\"https://github.com/piyush97/Pitch-Perfect\" class=\"btn btn-secondary-outline\" data-toolbar=\"-mbrBtnMove\" target=\"_blank\">Let's See the code!</a>",
+          "button4": "<a data-app-btn=\"true\" href=\"http://piyushmehta.com\" class=\"btn btn-secondary-outline\" data-toolbar=\"-mbrBtnMove\">Well you can't see this! :P</a>",
+          "alias": "purity/components",
+          "_tags": [
+            "Theme"
+          ],
+          "_name": "pricing-table1",
+          "_anchor": "pricing-table1-4"
+        },
+        {
+          "_params": {
+            "paddingTop": 3,
+            "paddingBottom": 3,
+            "bgImageRadio": false,
+            "bgImage": "@THEME_PATH@/components/_images/photo-3.jpg",
+            "parallax": true,
+            "bgColorRadio": true,
+            "bgColor": "#37383e",
+            "overlay": true,
+            "overlayColor": "#3C3C3C",
+            "overlayOpacity": 0.8
+          },
+          "buttons": "<a data-app-btn=\"true\" type=\"submit\" class=\"btn btn-black\" data-toolbar=\"-mbrLink,-mbrBtnAdd,-mbrBtnMove\">Contact Me :D</a>",
+          "text1": "<strong>Address</strong><br>New Delhi, India<br>Bengaluru, India<br><br>\n<strong>Contacts</strong><br>\nEmail: <a href=\"mailto:me@piyushmehta.com\">me@piyushmehta.com</a><br><br><br><br><br>All Rights Reserved: Piyush Mehta<a href=\"mailto:me@piyushmehta.com\"><br></a><br>",
+          "text2": "<ul><li><b>Profiles&nbsp;</b></li><li><a href=\"https://github.com/piyush97\" target=\"_blank\">github</a></li><li><a href=\"https://www.linkedin.com/in/piyush24/\" target=\"_blank\">linkedin</a></li></ul>",
+          "form": {
+            "title": "MESSAGE",
+            "action": "me@piyushmehta.com",
+            "alerts": {
+              "success": "Thanks for filling out form!"
+            },
+            "fields": {
+              "name": {
+                "visible": false,
+                "title": "Name",
+                "customTitle": "Name*"
+              },
+              "email": {
+                "visible": true,
+                "title": "Email",
+                "customTitle": "Email*"
+              },
+              "phone": {
+                "visible": false,
+                "title": "Phone",
+                "customTitle": "Phone"
+              },
+              "message": {
+                "title": "Message",
+                "customTitle": "Message"
+              }
+            }
+          },
+          "alias": "purity/components",
+          "_tags": [
+            "Theme"
+          ],
+          "_name": "contacts3",
+          "_anchor": "contacts3-3"
+        }
+      ]
+    }
+  }
+}
