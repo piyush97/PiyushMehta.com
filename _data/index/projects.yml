@@ -1,0 +1,22 @@
+# projects section data
+# If you don't have language feature(language.yml is empty), ignore "i18n" items
+# Suggest projects' img be located at '/static/assets/img/landing', and edit following img items.
+- name: MyCollegeForums
+  i18n: jalpc
+  gh_user: mycollegeforums
+  repo: MyCollegeForums
+  img: /static/assets/img/landing/mycollegeforums.jpg
+  desc: A Discourse based Forum working in Docker,Ruby on Rails.
+
+- name: Billing System
+  i18n: cpython
+  gh_user: Piyush97
+  repo: BillingSystem
+  img: /static/assets/img/landing/python.png
+  desc: Made in C, Using File and Data Structures to book a flight!
+
+- name: Api-MyCollegeForums
+  i18n: google
+  url: https://github.com/piyush97/api_mycollegeforums
+  img: /static/assets/img/landing/google.png
+  desc: This is another project. Made an Api to use in Android app.
