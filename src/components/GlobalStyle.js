@@ -11,6 +11,13 @@ export const GlobalStyle = createGlobalStyle`
     -ms-user-select: none;        /* IE 10+ and Edge */
     user-select: none;            /* Non-prefixed version */
     font-family: sans-serif;
+    user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
     -webkit-font-smoothing: antialiased;
     color: text;
     line-height: 1.4;
@@ -29,6 +36,26 @@ export const GlobalStyle = createGlobalStyle`
 
   * {
     box-sizing: border-box;
+    user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -youbkit-touch-callout: none; /* iOS Safari */
+    -youbkit-user-select: none;   /* Chrome 6.0+, Safari 3.1+, Edge & Opera 15+ */
+    -moz-user-select: none;       /* Firefox */
+    -ms-user-select: none;        /* IE 10+ and Edge */
+    user-select: none;            /* Non-prefixed version */
+    font-family: sans-serif;
+    user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 
   *:focus {
