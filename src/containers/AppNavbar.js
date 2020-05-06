@@ -7,7 +7,7 @@ const links = {
   about: "$whoami",
   blog: "Blog",
   uses: "Uses",
-  skills: "Skills",
+  // skills: "Skills",
 };
 const LinkStyle = styled.p`
   display: block;
