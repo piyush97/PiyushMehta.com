@@ -1,0 +1,86 @@
+---
+slug: 'maintain-protobuf-nuclei'
+title: 'How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei'
+date: '2020-03-02'
+author: 'Piyush Mehta'
+published: true
+description: 'Prettier is the new code formatter for JavaScript. Your JavaScript, JSX, CSS or GraphQL is automatically formatted!'
+categories:
+  - 'grpc, protobuf'
+---
+
+We at Nuclei, welcome the latest technologies in our stack. We have our Micro Services in Java and Go Lang. I as a Full Stack Developer got an opportunity to completely build this system for us.
+> # GitHub Actions + GitHub Package Registry + gRPC
+
+## **Problems which our solution solved!**
+
+1. Getting Go and Java artifacts at a swoosh
+2. Cost effective practice
+3. Robust Architecture
+4. Managing protocol buffer definitions at ease
+5. Generating the appropriate language files from the definitions
+6. Following Semantic Versioning along with Pre-Releases.
+
+## Challenges we faced.
+
+Managing proto files is a cumbersome task for both the user and the creator of the proto.
+Distributing it in a cost effective yet efficient method was another big task.
+Using JFrog Artifactory with Jenkins needed separate server to host.
+
+## How We Manage Protocol Buffer Files.
+
+We have a monorepo known as Protorepo where we keep our latest protocol buffer files.
+
+![](https://cdn-images-1.medium.com/max/4496/1*gj7PHDuRNdy84xw7Wy2ZhQ.png)
+
+## How do we build the Java and Go Lang code?
+
+We are using GitHub Actions + GitHub Package Registry.
+When one creates a new release. Let’s say version V1.0.0. It triggers our GitHub Action which generates GitHub Packages (Artifacts for Java) available for the other projects and it even pushes new releases with same versions for Go Lang according to the project name.
+
+## How do we pull dependencies?
+
+For java →
+```json
+    plugins {
+        id("maven-publish")
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/USERNAME/URL")
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                    password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
+                }
+            }
+        }
+        publications {
+            gpr(MavenPublication) {
+                from(components.java)
+            }
+        }
+    }
+```
+For Go →
+```
+    go get <URL of the release>
+```
+
+## How helpful it is?
+
+1. We are able to generate 30+ artifacts for Go as well as Java in less than 3 minutes.
+
+1. Building code and shipping it was never so quick and easy for us.
+
+1. All our Development Operations become even more easier.
+
+1. GitHub gives us storage and CI & CD minutes in our team plan, so why not use it.
+
+1. Data is safe and secured.
+
+## Future Scope
+
+Implementing Chat-Ops with HuBot.
