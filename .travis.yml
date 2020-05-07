@@ -4,8 +4,10 @@ before_script:
 node_js:
   - "10"
 deploy:
-  # provider: script
+  provider: script
   script: yarn install && yarn run deploy
+  script:
+    - echo "skipping tests"
   skip_cleanup: true
   on:
     branch: master
