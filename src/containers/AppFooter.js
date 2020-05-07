@@ -3,6 +3,7 @@ import React from "react";
 import styled from "@xstyled/styled-components";
 import { FaTwitter, FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
 import { Container } from "../components/Container";
+import { motion } from "framer-motion";
 
 const Copyright = styled.div`
   color: light100;
@@ -45,24 +46,48 @@ export function AppFooter() {
     <Container display="flex" alignItems="center" mt={4} pb={4}>
       <Copyright>Piyush Mehta © {currentYear}</Copyright>
       <Socials>
-        <SocialLink
-          title={locales.twitter}
-          href="https://twitter.com/coderWhoKnows"
-        >
-          <FaTwitter />
-        </SocialLink>
-        <SocialLink title={locales.github} href="https://github.com/piyush97">
-          <FaGithub />
-        </SocialLink>
-        <SocialLink
-          title={locales.linkedin}
-          href="https://www.linkedin.com/in/piyush24"
-        >
-          <FaLinkedin />
-        </SocialLink>
-        <SocialLink title={locales.email} href="mailto:me@piyushmehta.com">
-          <FaEnvelope />
-        </SocialLink>
+        <motion.span whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          <SocialLink
+            title={locales.twitter}
+            href="https://twitter.com/coderWhoKnows"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FaTwitter />
+          </SocialLink>
+        </motion.span>
+        <motion.span whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          <SocialLink
+            title={locales.github}
+            href="https://github.com/piyush97"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FaGithub />
+          </SocialLink>
+        </motion.span>
+
+        <motion.span whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          <SocialLink
+            title={locales.linkedin}
+            href="https://www.linkedin.com/in/piyush24"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FaLinkedin />
+          </SocialLink>
+        </motion.span>
+
+        <motion.span whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          <SocialLink
+            title={locales.email}
+            href="mailto:me@piyushmehta.com"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <FaEnvelope />
+          </SocialLink>
+        </motion.span>
       </Socials>
     </Container>
   );
