@@ -119,7 +119,7 @@ export function AppNavbar() {
                 Portfolio
               </a>
             </LinkStyle>
-            <motion.div
+            {/* <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               variants={item}
@@ -127,7 +127,7 @@ export function AppNavbar() {
               <LinkStyle>
                 <Link to="/skills">{links.skills}</Link>
               </LinkStyle>
-            </motion.div>
+            </motion.div> */}
           </motion.div>
         </NavbarSecondary>
       </Navbar>
