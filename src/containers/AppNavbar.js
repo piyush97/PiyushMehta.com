@@ -1,9 +1,13 @@
-import styled, { css, up } from "@xstyled/styled-components";
 import { motion } from "framer-motion";
 import { Link } from "gatsby";
 import React from "react";
 
-import { Navbar, NavbarBrand, NavbarSecondary } from "../components/Navbar";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarSecondary,
+  NavbarLink,
+} from "../components/Navbar";
 
 const links = {
   about: "$whoami",
@@ -11,28 +15,6 @@ const links = {
   uses: "Uses",
   // skills: "Skills",
 };
-const LinkStyle = styled.p`
-  display: block;
-  margin: 3 3;
-  font-size: 20;
-  font-weight: 500;
-  color: lighter;
-  transition: base;
-
-  &:focus,
-  &:hover {
-    color: accent;
-    outline: none;
-  }
-
-  ${up(
-    "md",
-    css`
-      margin: 0 3;
-      font-size: 18;
-    `
-  )}
-`;
 
 const list = {
   visible: {
@@ -70,46 +52,46 @@ export function AppNavbar() {
           </Link>
         </motion.span>
         <NavbarSecondary>
-          <motion.div
+          <motion.span
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             variants={item}
           >
-            <LinkStyle>
+            <NavbarLink>
               <Link to="/about">{links.about}</Link>
-            </LinkStyle>
-          </motion.div>
-          <motion.div
+            </NavbarLink>
+          </motion.span>
+          <motion.span
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             variants={item}
           >
             {" "}
-            <LinkStyle>
+            <NavbarLink>
               <Link to="/blog">{links.blog}</Link>
-            </LinkStyle>{" "}
-          </motion.div>
-          <motion.div
+            </NavbarLink>{" "}
+          </motion.span>
+          <motion.span
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             variants={item}
           >
-            <LinkStyle>
+            <NavbarLink>
               <Link
                 to="/uses
           "
               >
                 {links.uses}
               </Link>
-            </LinkStyle>
-          </motion.div>
-          <motion.div
+            </NavbarLink>
+          </motion.span>
+          <motion.span
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             variants={item}
           >
             {" "}
-            <LinkStyle>
+            <NavbarLink>
               <a
                 href="https://sourcerer.io/piyush97"
                 target="_blank"
@@ -118,17 +100,18 @@ export function AppNavbar() {
                 {" "}
                 Portfolio
               </a>
-            </LinkStyle>
-            {/* <motion.div
+            </NavbarLink>
+          </motion.span>
+
+          {/* <motion.span
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               variants={item}
             >
-              <LinkStyle>
+              <NavbarLink>
                 <Link to="/skills">{links.skills}</Link>
-              </LinkStyle>
-            </motion.div> */}
-          </motion.div>
+              </NavbarLink>
+            </motion.span> */}
         </NavbarSecondary>
       </Navbar>
     </motion.div>
