@@ -1,8 +1,9 @@
-import React from "react";
 import styled, { css, up } from "@xstyled/styled-components";
-import { Navbar, NavbarBrand, NavbarSecondary } from "../components/Navbar";
-import { Link } from "gatsby";
 import { motion } from "framer-motion";
+import { Link } from "gatsby";
+import React from "react";
+
+import { Navbar, NavbarBrand, NavbarSecondary } from "../components/Navbar";
 
 const links = {
   about: "$whoami",
@@ -58,7 +59,12 @@ export function AppNavbar() {
     <motion.div initial="hidden" animate="visible" variants={list}>
       <Navbar>
         {" "}
-        <motion.span whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+        <motion.span
+          whileHover={{ scale: 1.1 }}
+          whileTap={{
+            scale: 0.9,
+          }}
+        >
           <Link to="/">
             <NavbarBrand>Piyush Mehta</NavbarBrand>
           </Link>
@@ -78,6 +84,7 @@ export function AppNavbar() {
             whileTap={{ scale: 0.9 }}
             variants={item}
           >
+            {" "}
             <LinkStyle>
               <Link to="/blog">{links.blog}</Link>
             </LinkStyle>{" "}
@@ -88,7 +95,12 @@ export function AppNavbar() {
             variants={item}
           >
             <LinkStyle>
-              <Link to="/uses">{links.uses}</Link>
+              <Link
+                to="/uses
+          "
+              >
+                {links.uses}
+              </Link>
             </LinkStyle>
           </motion.div>
           <motion.div
@@ -96,12 +108,14 @@ export function AppNavbar() {
             whileTap={{ scale: 0.9 }}
             variants={item}
           >
+            {" "}
             <LinkStyle>
               <a
                 href="https://sourcerer.io/piyush97"
                 target="_blank"
                 rel="noopener noreferrer"
               >
+                {" "}
                 Portfolio
               </a>
             </LinkStyle>

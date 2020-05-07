@@ -1,9 +1,10 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React from "react";
 import styled from "@xstyled/styled-components";
-import { FaTwitter, FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
-import { Container } from "../components/Container";
 import { motion } from "framer-motion";
+import React from "react";
+import { FaEnvelope, FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+
+import { Container } from "../components/Container";
 
 const Copyright = styled.div`
   color: light100;
@@ -53,6 +54,7 @@ export function AppFooter() {
             rel="noopener noreferrer"
             target="_blank"
           >
+            {" "}
             <FaTwitter />
           </SocialLink>
         </motion.span>
@@ -63,6 +65,7 @@ export function AppFooter() {
             rel="noopener noreferrer"
             target="_blank"
           >
+            {" "}
             <FaGithub />
           </SocialLink>
         </motion.span>
@@ -74,6 +77,7 @@ export function AppFooter() {
             rel="noopener noreferrer"
             target="_blank"
           >
+            {" "}
             <FaLinkedin />
           </SocialLink>
         </motion.span>
