@@ -77,12 +77,7 @@ export function AppNavbar() {
             variants={item}
           >
             <NavbarLink>
-              <Link
-                to="/uses
-          "
-              >
-                {links.uses}
-              </Link>
+              <Link to="/uses">{links.uses}</Link>
             </NavbarLink>
           </motion.span>
           <motion.span
@@ -90,14 +85,12 @@ export function AppNavbar() {
             whileTap={{ scale: 0.9 }}
             variants={item}
           >
-            {" "}
             <NavbarLink>
               <a
                 href="https://sourcerer.io/piyush97"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {" "}
                 Portfolio
               </a>
             </NavbarLink>
