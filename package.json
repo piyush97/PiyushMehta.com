@@ -88,7 +88,7 @@
     "dev": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "serve": "gatsby serve",
-    "deploy": "gatsby build --prefix-paths && gh-pages -d public -r https://$GH_TOKEN@github.com/piyush97/Piyushmehta.com.git",
+    "deploy": "gatsby build --prefix-paths && cp CNAME public && gh-pages -d public -r https://$GH_TOKEN@github.com/piyush97/Piyushmehta.com.git",
     "clean": "gatsby clean"
   }
 }
