@@ -1,7 +1,7 @@
-import React from "react";
-import Img from "gatsby-image";
-import styled, { up, css } from "@xstyled/styled-components";
-import { Container } from "../components/Container";
+import React from 'react';
+import Img from 'gatsby-image';
+import styled, { up, css } from '@xstyled/styled-components';
+import { Container } from '../components/Container';
 
 export const AboutContainer = styled.div`
   max-width: 1000;
@@ -9,7 +9,7 @@ export const AboutContainer = styled.div`
   padding: 120 0 5;
 
   ${up(
-    "md",
+    'md',
     css`
       padding-top: 8;
     `

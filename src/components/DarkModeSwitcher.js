@@ -1,5 +1,5 @@
-import React from "react";
-import styled, { keyframes, useColorMode } from "@xstyled/styled-components";
+import React from 'react';
+import styled, { keyframes, useColorMode } from '@xstyled/styled-components';
 
 const blink = keyframes`
   from {
@@ -152,8 +152,8 @@ export function DarkModeSwitcher() {
     <Switcher
       type="button"
       aria-label="Color mode"
-      className={`switcher ${mode} ${ready ? "ready" : ""}`}
-      onClick={() => setMode((mode) => (mode === "light" ? "dark" : "light"))}
+      className={`switcher ${mode} ${ready ? 'ready' : ''}`}
+      onClick={() => setMode((mode) => (mode === 'light' ? 'dark' : 'light'))}
     >
       <div className="star star1" />
       <div className="star star2" />

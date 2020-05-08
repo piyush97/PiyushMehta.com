@@ -1,4 +1,4 @@
-import styled from "@xstyled/styled-components";
+import styled from '@xstyled/styled-components';
 
 export const Layout = styled.div`
   background-color: bg;

@@ -1,15 +1,15 @@
-import React from "react";
-import { Helmet } from "react-helmet";
+import React from 'react';
+import { Helmet } from 'react-helmet';
 import {
   Layout,
   LayoutHeader,
   LayoutMain,
   LayoutFooter,
-} from "../components/Layout";
-import { GlobalStyle } from "../components/GlobalStyle";
-import { ThemeInitializer } from "../components/Theme";
-import { AppNavbar } from "./AppNavbar";
-import { AppFooter } from "./AppFooter";
+} from '../components/Layout';
+import { GlobalStyle } from '../components/GlobalStyle';
+import { ThemeInitializer } from '../components/Theme';
+import { AppNavbar } from './AppNavbar';
+import { AppFooter } from './AppFooter';
 
 export function AppLayout({ children }) {
   return (

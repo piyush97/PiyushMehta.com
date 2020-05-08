@@ -1,4 +1,4 @@
-import styled, { th, keyframes } from "@xstyled/styled-components";
+import styled, { th, keyframes } from '@xstyled/styled-components';
 
 const move = keyframes`
   to {
@@ -9,8 +9,8 @@ const move = keyframes`
 export const Card = styled.box`
   background: linear-gradient(
     340deg,
-    ${th.color("card-gradient-light")} 0%,
-    ${th.color("card-gradient-dark")} 100%
+    ${th.color('card-gradient-light')} 0%,
+    ${th.color('card-gradient-dark')} 100%
   );
   border: 1;
   border-color: card-border;
@@ -41,7 +41,7 @@ export const Card = styled.box`
 
     &::before {
       display: inline-block;
-      content: "★";
+      content: '★';
       font-size: 0.6em;
       margin-right: 2;
       vertical-align: 15%;

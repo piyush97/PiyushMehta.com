@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import styled from "@xstyled/styled-components";
-import { PageContainer } from "../components/Container";
-import { SectionDescription } from "../components/Section";
+import React, { useEffect } from 'react';
+import styled from '@xstyled/styled-components';
+import { PageContainer } from '../components/Container';
+import { SectionDescription } from '../components/Section';
 
 const Title = styled.h1`
   color: lighter;
@@ -15,9 +15,9 @@ export default function NotFound() {
     };
   });
   return (
-    <PageContainer style={{ textAlign: "center" }}>
+    <PageContainer style={{ textAlign: 'center' }}>
       <Title>
-        Page not found{" "}
+        Page not found{' '}
         <span role="img" aria-label="afraid emoji">
           😰
         </span>
@@ -27,7 +27,7 @@ export default function NotFound() {
           <img
             alt="404 gif"
             src="https://assets.materialup.com/uploads/c13818e8-9e42-4f4d-b657-38743a81b270/preview.gif"
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
           />
         </a>
       </SectionDescription>

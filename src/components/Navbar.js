@@ -1,9 +1,9 @@
-import React from "react";
-import styled, { css, up } from "@xstyled/styled-components";
-import { useDialogState, Dialog, DialogDisclosure } from "reakit/Dialog";
-import { Container } from "./Container";
-import { Burger } from "./Burger";
-import { DarkModeSwitcher } from "./DarkModeSwitcher";
+import React from 'react';
+import styled, { css, up } from '@xstyled/styled-components';
+import { useDialogState, Dialog, DialogDisclosure } from 'reakit/Dialog';
+import { Container } from './Container';
+import { Burger } from './Burger';
+import { DarkModeSwitcher } from './DarkModeSwitcher';
 
 export const Nav = styled.nav`
   padding: 3 3;
@@ -19,7 +19,7 @@ export const Nav = styled.nav`
   backdrop-filter: blur(8px);
 
   ${up(
-    "md",
+    'md',
     css`
       position: initial;
       padding: 5 3;
@@ -53,7 +53,7 @@ export const NavbarSecondary = styled.div`
   display: none;
 
   ${up(
-    "md",
+    'md',
     css`
       flex: 1;
       display: flex;
@@ -78,7 +78,7 @@ export const NavbarLink = styled.a`
   }
 
   ${up(
-    "md",
+    'md',
     css`
       margin: 0 3;
       font-size: 18;
@@ -106,7 +106,7 @@ const MobileMenuContainer = styled.div`
     transition: 300ms ease-out;
     transition-property: opacity, transform;
 
-    &[data-animating="true"] {
+    &[data-animating='true'] {
       opacity: 1;
       transform: translateY(0);
 
@@ -118,7 +118,7 @@ const MobileMenuContainer = styled.div`
   }
 
   ${up(
-    "md",
+    'md',
     css`
       display: none;
     `
@@ -131,7 +131,7 @@ function MobileMenu({ children, ...props }) {
     setShow(true);
   }, []);
   const handleClick = (event) => {
-    if (event.target.tagName === "A") {
+    if (event.target.tagName === 'A') {
       props.hide();
     }
   };
@@ -184,7 +184,7 @@ export function Navbar({ children }) {
         maxWidth="container-lg"
         display="flex"
         alignItems="center"
-        justifyContent={{ xs: "space-between", md: "flex-start" }}
+        justifyContent={{ xs: 'space-between', md: 'flex-start' }}
       >
         {children}
         <DarkModeSwitcher />
