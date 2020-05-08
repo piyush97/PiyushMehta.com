@@ -11,6 +11,14 @@ module.exports = {
     ],
   },
   plugins: [
+    {
+      resolve: 'gatsby-plugin-robots-txt',
+      options: {
+        host: 'https://www.piyushmehta.com',
+        sitemap: 'https://www.piyushmehta.com/sitemap.xml',
+        policy: [{ userAgent: '*', allow: '/' }],
+      },
+    },
     'gatsby-plugin-sitemap',
     {
       resolve: `gatsby-source-filesystem`,
