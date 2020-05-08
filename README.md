@@ -3,5 +3,3 @@
 
 ------------
 [👉 Check it Out](https://piyushmehta.com)
-<br/>
-
