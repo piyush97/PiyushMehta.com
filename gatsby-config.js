@@ -11,6 +11,14 @@ module.exports = {
     ],
   },
   plugins: [
+    {
+      resolve: 'gatsby-plugin-robots-txt',
+      options: {
+        host: 'https://www.piyushmehta.com',
+        sitemap: 'https://www.piyushmehta.com/sitemap.xml',
+        policy: [{ userAgent: '*', allow: '/' }],
+      },
+    },
     'gatsby-plugin-sitemap',
     {
       resolve: `gatsby-source-filesystem`,
@@ -65,7 +73,8 @@ module.exports = {
         background_color: `#1f2347`,
         theme_color: `#FFCC68`,
         display: `standalone`,
-        icon: `src/images/icon.png`, // This path is relative to the root of the site.
+        icon: `src/images/icon.png`, // This path is relative to the root of
+        // the site.
       },
     },
     'gatsby-plugin-offline',
