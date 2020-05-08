@@ -1,5 +1,5 @@
-import React from "react";
-import Helmet from "react-helmet";
+import React from 'react';
+import Helmet from 'react-helmet';
 
 export function SchemaOrg({
   isBlogPost,
@@ -13,8 +13,8 @@ export function SchemaOrg({
 }) {
   const baseSchema = [
     {
-      "@context": "http://schema.org",
-      "@type": "WebSite",
+      '@context': 'http://schema.org',
+      '@type': 'WebSite',
       url,
       name: title,
       alternateName: defaultTitle,
@@ -25,14 +25,14 @@ export function SchemaOrg({
     ? [
         ...baseSchema,
         {
-          "@context": "http://schema.org",
-          "@type": "BreadcrumbList",
+          '@context': 'http://schema.org',
+          '@type': 'BreadcrumbList',
           itemListElement: [
             {
-              "@type": "ListItem",
+              '@type': 'ListItem',
               position: 1,
               item: {
-                "@id": url,
+                '@id': url,
                 name: title,
                 image,
               },
@@ -40,28 +40,28 @@ export function SchemaOrg({
           ],
         },
         {
-          "@context": "http://schema.org",
-          "@type": "BlogPosting",
+          '@context': 'http://schema.org',
+          '@type': 'BlogPosting',
           url,
           name: title,
           alternateName: defaultTitle,
           headline: title,
           image: {
-            "@type": "ImageObject",
+            '@type': 'ImageObject',
             url: image,
           },
           description,
           author: {
-            "@type": "Person",
-            name: "Piyush Mehta",
+            '@type': 'Person',
+            name: 'Piyush Mehta',
           },
           publisher: {
-            "@type": "Person",
-            name: "Piyush Mehta",
+            '@type': 'Person',
+            name: 'Piyush Mehta',
           },
           mainEntityOfPage: {
-            "@type": "WebSite",
-            "@id": canonicalUrl,
+            '@type': 'WebSite',
+            '@id': canonicalUrl,
           },
           datePublished,
         },

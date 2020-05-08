@@ -1,10 +1,9 @@
-/* eslint-disable jsx-a11y/accessible-emoji */
-import styled from "@xstyled/styled-components";
-import { motion } from "framer-motion";
-import React from "react";
-import { FaEnvelope, FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import styled from '@xstyled/styled-components';
+import { motion } from 'framer-motion';
+import React from 'react';
+import { FaEnvelope, FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
-import { Container } from "../components/Container";
+import { Container } from '../components/Container';
 
 const Copyright = styled.div`
   color: light100;
@@ -36,10 +35,10 @@ const SocialLink = styled.a`
 const currentYear = new Date().getFullYear();
 
 const locales = {
-  twitter: "My Twitter profile",
-  github: "My GitHub profile",
-  linkedin: "My LinkedIn profile",
-  email: "Send me an email",
+  twitter: 'My Twitter profile',
+  github: 'My GitHub profile',
+  linkedin: 'My LinkedIn profile',
+  email: 'Send me an email',
 };
 
 export function AppFooter() {
@@ -54,7 +53,7 @@ export function AppFooter() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            {" "}
+            {' '}
             <FaTwitter />
           </SocialLink>
         </motion.span>
@@ -65,7 +64,7 @@ export function AppFooter() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            {" "}
+            {' '}
             <FaGithub />
           </SocialLink>
         </motion.span>
@@ -77,7 +76,7 @@ export function AppFooter() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            {" "}
+            {' '}
             <FaLinkedin />
           </SocialLink>
         </motion.span>

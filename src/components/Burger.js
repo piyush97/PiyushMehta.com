@@ -1,5 +1,5 @@
-import React from "react";
-import styled, { th, up, css } from "@xstyled/styled-components";
+import React from 'react';
+import styled, { th, up, css } from '@xstyled/styled-components';
 
 const StyledBurger = styled.button`
   display: flex;
@@ -32,23 +32,23 @@ const StyledBurger = styled.button`
     }
   }
 
-  &[aria-expanded="true"] {
+  &[aria-expanded='true'] {
     span {
       :first-child {
-        transform: translateY(${th.px("6rpx")}) rotate(45deg);
+        transform: translateY(${th.px('6rpx')}) rotate(45deg);
       }
       :nth-child(2) {
         opacity: 0;
         transform: translateX(${th.px(10)});
       }
       :nth-child(3) {
-        transform: translateY(${th.px("-6rpx")}) rotate(-45deg);
+        transform: translateY(${th.px('-6rpx')}) rotate(-45deg);
       }
     }
   }
 
   ${up(
-    "md",
+    'md',
     css`
       display: none;
     `

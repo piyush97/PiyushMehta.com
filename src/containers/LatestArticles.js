@@ -1,13 +1,13 @@
-import React from "react";
-import { Box } from "@xstyled/styled-components";
-import { Link } from "gatsby";
+import React from 'react';
+import { Box } from '@xstyled/styled-components';
+import { Link } from 'gatsby';
 import {
   Card,
   CardLink,
   CardTitle,
   CardBody,
   CardText,
-} from "../components/Card";
+} from '../components/Card';
 
 export function LatestArticles({ edges }) {
   return (

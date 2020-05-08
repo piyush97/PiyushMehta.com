@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "@xstyled/styled-components";
+import React from 'react';
+import styled from '@xstyled/styled-components';
 
 export const Container = styled.box`
   max-width: container-base;

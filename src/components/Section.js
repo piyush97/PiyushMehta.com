@@ -1,4 +1,4 @@
-import styled, { up, css, th } from "@xstyled/styled-components";
+import styled, { up, css, th } from '@xstyled/styled-components';
 
 export const SectionTitle = styled.h2Box`
   font-weight: 500;
@@ -13,7 +13,7 @@ export const SectionTitle = styled.h2Box`
   overflow: hidden;
 
   &::before {
-    content: "★";
+    content: '★';
     margin-right: 3;
     font-family: monospace;
     color: accent;
@@ -22,7 +22,7 @@ export const SectionTitle = styled.h2Box`
   }
 
   &::after {
-    content: "";
+    content: '';
     display: block;
     height: 1px;
     max-width: 280;
@@ -34,7 +34,7 @@ export const SectionTitle = styled.h2Box`
   }
 
   ${up(
-    "md",
+    'md',
     css`
       font-size: 32;
       margin: 0 0 4 3;

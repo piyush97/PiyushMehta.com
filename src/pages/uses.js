@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
-import styled from "@xstyled/styled-components";
-import { Seo } from "../containers/Seo";
-import { SectionTitle, SectionDescription } from "../components/Section";
-import { Card, CardBody, CardHeader } from "../components/Card";
-import { PageContainer } from "../components/Container";
+import styled from '@xstyled/styled-components';
+import { Seo } from '../containers/Seo';
+import { SectionTitle, SectionDescription } from '../components/Section';
+import { Card, CardBody, CardHeader } from '../components/Card';
+import { PageContainer } from '../components/Container';
 
 const CardTitle = styled.h2`
   margin: 0;
@@ -44,7 +44,7 @@ export default function Uses() {
           <CardBody>
             <p>
               <li>
-                Desktop Apps:{" "}
+                Desktop Apps:{' '}
                 <Links>
                   <a
                     href="https://github.com/piyush97/DotFiles/blob/master/packages/system_apps_list.txt"
@@ -63,16 +63,16 @@ export default function Uses() {
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    {" "}
-                    Brave Browser{" "}
+                    {' '}
+                    Brave Browser{' '}
                   </a>
-                </Links>{" "}
+                </Links>{' '}
                 It helps me to make Dapps and it focus on your security!
               </li>
 
               <li>
                 <Sectitle>Code Editor:</Sectitle>VSCode, find my configurations
-                here{" "}
+                here{' '}
                 <Links>
                   <a
                     href="https://github.com/piyush97/dotfiles"
@@ -80,9 +80,9 @@ export default function Uses() {
                     target="_blank"
                   >
                     GitHub/DotFiles
-                  </a>{" "}
+                  </a>{' '}
                 </Links>
-                with{" "}
+                with{' '}
               </li>
               <li>
                 <Sectitle>Font: </Sectitle>
@@ -99,7 +99,7 @@ export default function Uses() {
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    {" "}
+                    {' '}
                     Spark
                   </a>
                 </Links>
@@ -107,7 +107,7 @@ export default function Uses() {
               <li>
                 <Sectitle>Todos:</Sectitle>
                 <Links>
-                  {" "}
+                  {' '}
                   <a
                     href="https://ticktick.com"
                     rel="noopener noreferrer"
@@ -120,7 +120,7 @@ export default function Uses() {
               <li>
                 <Sectitle>Terminal:</Sectitle>
                 <Links>
-                  {" "}
+                  {' '}
                   <a
                     href="https://github.com/piyush97/dotfiles"
                     rel="noopener noreferrer"
@@ -135,7 +135,7 @@ export default function Uses() {
                 <Sectitle>Password Manager & VPN:</Sectitle> DashLane
               </li>
               <li>
-                My Clover BootLoader Configuration EFI and Plist is Available{" "}
+                My Clover BootLoader Configuration EFI and Plist is Available{' '}
                 <Links>
                   <a href="https://github.com/piyush97/EFI">Here</a>
                 </Links>
@@ -168,10 +168,10 @@ export default function Uses() {
                   >
                     27UK850
                   </a>
-                </Links>{" "}
-                LG 4K UHD Monitor with HDR &{" "}
+                </Links>{' '}
+                LG 4K UHD Monitor with HDR &{' '}
                 <Links>
-                  {" "}
+                  {' '}
                   <a
                     href="https://www.lg.com/in/monitors/lg-25UM58"
                     rel="noopener noreferrer"
@@ -179,7 +179,7 @@ export default function Uses() {
                   >
                     25UM58
                   </a>
-                </Links>{" "}
+                </Links>{' '}
                 21:9 UltraWide Monitor
               </li>
               <hr />
@@ -268,7 +268,7 @@ export default function Uses() {
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    Antec Prizm 120 ARGB 120mm Fans{" "}
+                    Antec Prizm 120 ARGB 120mm Fans{' '}
                   </a>
                 </Links>
                 <br />
@@ -284,7 +284,7 @@ export default function Uses() {
                 </Links>
                 <br />
                 <Links>
-                  {" "}
+                  {' '}
                   <a
                     href="https://photos.app.goo.gl/P5FLbtwNw9ZeyuG36"
                     rel="noopener noreferrer"
@@ -296,7 +296,7 @@ export default function Uses() {
               </li>
               <hr />
               <li>
-                {" "}
+                {' '}
                 <Sectitle>Keyboard: </Sectitle>
                 <Links>
                   <a

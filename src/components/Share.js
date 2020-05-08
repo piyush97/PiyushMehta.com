@@ -1,7 +1,7 @@
-import React from "react";
-import styled, { Box, keyframes, th } from "@xstyled/styled-components";
-import { FaTwitter, FaFacebook } from "react-icons/fa";
-import { TwitterShareButton, FacebookShareButton } from "react-share";
+import React from 'react';
+import styled, { Box, keyframes, th } from '@xstyled/styled-components';
+import { FaTwitter, FaFacebook } from 'react-icons/fa';
+import { TwitterShareButton, FacebookShareButton } from 'react-share';
 
 const InnerShare = styled.div`
   font-size: 18;
@@ -33,7 +33,7 @@ const InnerShare = styled.div`
 `;
 
 const neon = (p) => {
-  const red = th.color("danger")(p);
+  const red = th.color('danger')(p);
 
   return keyframes`
     from {

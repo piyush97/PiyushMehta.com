@@ -1,8 +1,8 @@
-import React from "react";
-import styled, { up, css } from "@xstyled/styled-components";
-import { PageContainer, Container } from "../components/Container";
-import dotBg from "../assets/dot-bg.svg";
-import heroBg from "../assets/hero.svg";
+import React from 'react';
+import styled, { up, css } from '@xstyled/styled-components';
+import { PageContainer, Container } from '../components/Container';
+import dotBg from '../assets/dot-bg.svg';
+import heroBg from '../assets/hero.svg';
 
 const Dots = styled.div`
   pointer-events: none;
@@ -52,7 +52,7 @@ export const HeroTitle = styled.h1`
   }
 
   ${up(
-    "md",
+    'md',
     css`
       font-size: 70;
     `

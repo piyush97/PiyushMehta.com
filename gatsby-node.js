@@ -1,4 +1,4 @@
-const DEFAULT_LANG_KEY = "en";
+const DEFAULT_LANG_KEY = 'en';
 
 function getLangKey(node) {
   const matches = node.fileAbsolutePath.match(/\.([a-z]{2})\.md/);
@@ -14,7 +14,7 @@ function getPath(node) {
 
 exports.onCreateNode = ({ node, actions }) => {
   const { createNodeField } = actions;
-  if (node.internal.type === "Mdx") {
+  if (node.internal.type === 'Mdx') {
     const langKey = getLangKey(node);
     createNodeField({
       node,
@@ -36,7 +36,7 @@ exports.onCreateNode = ({ node, actions }) => {
       name: `editLink`,
       value: `https://github.com/piyush97/piyushmehta.com/edit/master${node.fileAbsolutePath.replace(
         __dirname,
-        ""
+        ''
       )}`,
     });
   }
@@ -67,14 +67,14 @@ exports.createPages = async ({ graphql, actions }) => {
 
   if (result.errors) {
     console.log(result.errors); // eslint-disable-line no-console
-    throw new Error("Error during page creation");
+    throw new Error('Error during page creation');
   }
 
   // Create blog posts pages.
   result.data.allMdx.edges.forEach(({ node }) => {
     createPage({
       path: getPath(node),
-      component: require.resolve("./src/templates/post.js"),
+      component: require.resolve('./src/templates/post.js'),
       context: {
         id: node.id,
         slug: node.frontmatter.slug,

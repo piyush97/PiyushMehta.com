@@ -1,13 +1,13 @@
-import React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import Helmet from "react-helmet";
-import { Location } from "@reach/router";
-import defaultImage from "../images/social.jpg";
-import { SchemaOrg } from "./SchemaOrg";
+import React from 'react';
+import { useStaticQuery, graphql } from 'gatsby';
+import Helmet from 'react-helmet';
+import { Location } from '@reach/router';
+import defaultImage from '../images/social.jpg';
+import { SchemaOrg } from './SchemaOrg';
 
 const locales = {
   description:
-    "Personal website of Piyush Mehta. Learn and level-up about React & JavaScript.",
+    'Personal website of Piyush Mehta. Learn and level-up about React & JavaScript.',
 };
 
 export function Seo({
@@ -29,7 +29,7 @@ export function Seo({
     }
   `);
 
-  const title = customTitle || "Piyush Mehta";
+  const title = customTitle || 'Piyush Mehta';
   const description = customDescription || locales.description;
   const image = customImage || defaultImage;
 

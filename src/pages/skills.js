@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
-import styled, { up, css, keyframes } from "@xstyled/styled-components";
-import { Seo } from "../containers/Seo";
-import { SectionTitle, SectionDescription } from "../components/Section";
-import { Card, CardBody, CardHeader, CardTitle } from "../components/Card";
-import { PageContainer } from "../components/Container";
-import { AdvancedReactLogo } from "../components/AdvancedReactLogo";
+import styled, { up, css, keyframes } from '@xstyled/styled-components';
+import { Seo } from '../containers/Seo';
+import { SectionTitle, SectionDescription } from '../components/Section';
+import { Card, CardBody, CardHeader, CardTitle } from '../components/Card';
+import { PageContainer } from '../components/Container';
+import { AdvancedReactLogo } from '../components/AdvancedReactLogo';
 
 const rotation = keyframes`
   from {
@@ -38,7 +38,7 @@ const Logo = styled(AdvancedReactLogo)`
   animation-direction: alternate-reverse;
 
   ${up(
-    "md",
+    'md',
     css`
       animation-name: ${rotationMd};
     `
@@ -83,7 +83,7 @@ export default function Uses() {
             <div>
               <CardTitle>Softwares</CardTitle>
               <strong>
-                Desktop Apps:{" "}
+                Desktop Apps:{' '}
                 <Links>
                   <a
                     href="https://github.com/piyush97/DotFiles/blob/master/packages/system_apps_list.txt"
@@ -103,16 +103,16 @@ export default function Uses() {
                       rel="noopener noreferrer"
                       target="_blank"
                     >
-                      {" "}
-                      Brave Browser{" "}
+                      {' '}
+                      Brave Browser{' '}
                     </a>
-                  </Links>{" "}
+                  </Links>{' '}
                   It helps me to make Dapps and it focus on your security!
                 </li>
 
                 <li>
                   <Sectitle>Code Editor:</Sectitle>VSCode, find my
-                  configurations here{" "}
+                  configurations here{' '}
                   <Links>
                     <a
                       href="https://github.com/piyush97/dotfiles"
@@ -120,9 +120,9 @@ export default function Uses() {
                       target="_blank"
                     >
                       GitHub/DotFiles
-                    </a>{" "}
+                    </a>{' '}
                   </Links>
-                  with{" "}
+                  with{' '}
                 </li>
                 <li>
                   <Sectitle>Font: </Sectitle>
@@ -139,7 +139,7 @@ export default function Uses() {
                       rel="noopener noreferrer"
                       target="_blank"
                     >
-                      {" "}
+                      {' '}
                       Spark
                     </a>
                   </Links>
@@ -147,7 +147,7 @@ export default function Uses() {
                 <li>
                   <Sectitle>Todos:</Sectitle>
                   <Links>
-                    {" "}
+                    {' '}
                     <a
                       href="https://ticktick.com"
                       rel="noopener noreferrer"
@@ -160,7 +160,7 @@ export default function Uses() {
                 <li>
                   <Sectitle>Terminal:</Sectitle>
                   <Links>
-                    {" "}
+                    {' '}
                     <a
                       href="https://github.com/piyush97/dotfiles"
                       rel="noopener noreferrer"
@@ -212,10 +212,10 @@ export default function Uses() {
                   >
                     27UK850
                   </a>
-                </Links>{" "}
-                LG 4K UHD Monitor with HDR &{" "}
+                </Links>{' '}
+                LG 4K UHD Monitor with HDR &{' '}
                 <Links>
-                  {" "}
+                  {' '}
                   <a
                     href="https://www.lg.com/in/monitors/lg-25UM58"
                     rel="noopener noreferrer"
@@ -223,14 +223,14 @@ export default function Uses() {
                   >
                     25UM58
                   </a>
-                </Links>{" "}
+                </Links>{' '}
                 21:9 UltraWide Monitor
               </li>
               <li>
-                {" "}
-                <Sectitle>PC: </Sectitle> I7-9k 16gb 32000mhz 8gb rx580{" "}
+                {' '}
+                <Sectitle>PC: </Sectitle> I7-9k 16gb 32000mhz 8gb rx580{' '}
                 <Links>
-                  {" "}
+                  {' '}
                   <a
                     href="https://photos.app.goo.gl/P5FLbtwNw9ZeyuG36"
                     rel="noopener noreferrer"
@@ -241,7 +241,7 @@ export default function Uses() {
                 </Links>
               </li>
               <li>
-                {" "}
+                {' '}
                 <Sectitle>Keyboard: </Sectitle>
                 <Links>
                   <a

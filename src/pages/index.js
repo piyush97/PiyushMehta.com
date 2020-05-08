@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import { graphql } from "gatsby";
-import { SectionTitle } from "../components/Section";
-import { Container } from "../components/Container";
-import { Hero, HeroIntro, HeroTitle, HeroTeaser } from "../containers/Hero";
-import { LatestArticles } from "../containers/LatestArticles";
-import { Seo } from "../containers/Seo";
+import React, { useEffect } from 'react';
+import { graphql } from 'gatsby';
+import { SectionTitle } from '../components/Section';
+import { Container } from '../components/Container';
+import { Hero, HeroIntro, HeroTitle, HeroTeaser } from '../containers/Hero';
+import { LatestArticles } from '../containers/LatestArticles';
+import { Seo } from '../containers/Seo';
 
 export default function IndexPage({ data }) {
   useEffect(() => {

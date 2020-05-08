@@ -1,18 +1,18 @@
-import { motion } from "framer-motion";
-import { Link } from "gatsby";
-import React from "react";
+import { motion } from 'framer-motion';
+import { Link } from 'gatsby';
+import React from 'react';
 
 import {
   Navbar,
   NavbarBrand,
   NavbarSecondary,
   NavbarLink,
-} from "../components/Navbar";
+} from '../components/Navbar';
 
 const links = {
-  about: "$whoami",
-  blog: "Blog",
-  uses: "Uses",
+  about: '$whoami',
+  blog: 'Blog',
+  uses: 'Uses',
   // skills: "Skills",
 };
 
@@ -20,14 +20,14 @@ const list = {
   visible: {
     opacity: 1,
     transition: {
-      when: "beforeChildren",
+      when: 'beforeChildren',
       staggerChildren: 0.3,
     },
   },
   hidden: {
     opacity: 0,
     transition: {
-      when: "afterChildren",
+      when: 'afterChildren',
     },
   },
 };
@@ -40,7 +40,7 @@ export function AppNavbar() {
   return (
     <motion.div initial="hidden" animate="visible" variants={list}>
       <Navbar>
-        {" "}
+        {' '}
         <motion.span
           whileHover={{ scale: 1.1 }}
           whileTap={{
@@ -66,10 +66,10 @@ export function AppNavbar() {
             whileTap={{ scale: 0.9 }}
             variants={item}
           >
-            {" "}
+            {' '}
             <NavbarLink>
               <Link to="/blog">{links.blog}</Link>
-            </NavbarLink>{" "}
+            </NavbarLink>{' '}
           </motion.span>
           <motion.span
             whileHover={{ scale: 1.1 }}
