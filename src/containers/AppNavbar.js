@@ -50,7 +50,6 @@ export function AppNavbar() {
   return (
     <motion.div initial="hidden" animate="visible" variants={list}>
       <Navbar>
-        {' '}
         <motion.span
           whileHover={{ scale: 1.1 }}
           whileTap={{
@@ -105,16 +104,6 @@ export function AppNavbar() {
               </a>
             </NavbarLink>
           </motion.span>
-
-          {/* <motion.span
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              variants={item}
-            >
-              <NavbarLink>
-                <Link to="/skills">{links.skills}</Link>
-              </NavbarLink>
-            </motion.span> */}
         </NavbarSecondary>
       </Navbar>
     </motion.div>
