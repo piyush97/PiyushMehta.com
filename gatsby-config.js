@@ -1,8 +1,8 @@
 const siteUrl = 'https://piyushmehta.com';
-
+const TitleName = 'Piyush Mehta';
 module.exports = {
   siteMetadata: {
-    title: 'Piyush Mehta',
+    title: TitleName,
     siteUrl,
     canonicalUrl: siteUrl,
     keywords: [
