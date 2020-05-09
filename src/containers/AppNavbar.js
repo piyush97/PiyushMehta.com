@@ -50,12 +50,7 @@ export function AppNavbar() {
   return (
     <motion.div initial="hidden" animate="visible" variants={list}>
       <Navbar>
-        <motion.span
-          whileHover={{ scale: 1.1 }}
-          whileTap={{
-            scale: 0.9,
-          }}
-        >
+        <motion.span whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Link to="/">
             <NavbarBrand>{data.site.siteMetadata.title}</NavbarBrand>
           </Link>
@@ -85,8 +80,9 @@ export function AppNavbar() {
             <NavbarLink>
               <Link
                 to="/blog
-       "
+  "
               >
+                {' '}
                 {links.blog}
               </Link>
             </NavbarLink>{' '}
