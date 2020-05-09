@@ -1,7 +1,7 @@
 import styled from '@xstyled/styled-components';
 import { motion } from 'framer-motion';
+import { graphql, useStaticQuery } from 'gatsby';
 import React from 'react';
-import { useStaticQuery, graphql } from 'gatsby';
 import { FaEnvelope, FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
 import { Container } from '../components/Container';
