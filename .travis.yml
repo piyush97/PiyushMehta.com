@@ -6,7 +6,7 @@ node_js:
 deploy:
   provider: script
   script:
-    - npm ci && npm run deploy
+    - yarn && yarn run deploy
     - echo "skipping tests"
   skip_cleanup: true
   on:
