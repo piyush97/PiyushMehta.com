@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Link } from 'gatsby';
+import { Link, useStaticQuery, graphql } from 'gatsby';
 import React from 'react';
 
 import {
@@ -36,7 +36,17 @@ const item = {
   visible: { opacity: 1, x: 0 },
   hidden: { opacity: 0, x: -460 },
 };
+
 export function AppNavbar() {
+  const data = useStaticQuery(graphql`
+    query {
+      site {
+        siteMetadata {
+          title
+        }
+      }
+    }
+  `);
   return (
     <motion.div initial="hidden" animate="visible" variants={list}>
       <Navbar>
@@ -48,7 +58,7 @@ export function AppNavbar() {
           }}
         >
           <Link to="/">
-            <NavbarBrand>Piyush Mehta</NavbarBrand>
+            <NavbarBrand>{data.site.siteMetadata.title}</NavbarBrand>
           </Link>
         </motion.span>
         <NavbarSecondary>

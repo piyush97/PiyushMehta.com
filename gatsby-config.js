@@ -2,6 +2,7 @@ const siteUrl = 'https://piyushmehta.com';
 
 module.exports = {
   siteMetadata: {
+    title: 'Piyush Mehta',
     siteUrl,
     canonicalUrl: siteUrl,
     keywords: [

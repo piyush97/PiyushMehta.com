@@ -1,6 +1,7 @@
 import styled from '@xstyled/styled-components';
 import { motion } from 'framer-motion';
 import React from 'react';
+import { useStaticQuery, graphql } from 'gatsby';
 import { FaEnvelope, FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
 import { Container } from '../components/Container';
@@ -42,9 +43,20 @@ const locales = {
 };
 
 export function AppFooter() {
+  const data = useStaticQuery(graphql`
+    query {
+      site {
+        siteMetadata {
+          title
+        }
+      }
+    }
+  `);
   return (
     <Container display="flex" alignItems="center" mt={4} pb={4}>
-      <Copyright>Piyush Mehta © {currentYear}</Copyright>
+      <Copyright>
+        {data.site.siteMetadata.title} © {currentYear}
+      </Copyright>
       <Socials>
         <motion.span whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <SocialLink
