@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
-import { Link, useStaticQuery, graphql } from 'gatsby';
+import { graphql, Link, useStaticQuery } from 'gatsby';
 import React from 'react';
 
 import {
   Navbar,
   NavbarBrand,
-  NavbarSecondary,
   NavbarLink,
+  NavbarSecondary,
 } from '../components/Navbar';
 
 const links = {
@@ -50,12 +50,7 @@ export function AppNavbar() {
   return (
     <motion.div initial="hidden" animate="visible" variants={list}>
       <Navbar>
-        <motion.span
-          whileHover={{ scale: 1.1 }}
-          whileTap={{
-            scale: 0.9,
-          }}
-        >
+        <motion.span whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Link to="/">
             <NavbarBrand>{data.site.siteMetadata.title}</NavbarBrand>
           </Link>
@@ -67,7 +62,12 @@ export function AppNavbar() {
             variants={item}
           >
             <NavbarLink>
-              <Link to="/about">{links.about}</Link>
+              <Link
+                to="/about
+       "
+              >
+                {links.about}
+              </Link>
             </NavbarLink>
           </motion.span>
           <motion.span
@@ -86,7 +86,12 @@ export function AppNavbar() {
             variants={item}
           >
             <NavbarLink>
-              <Link to="/uses">{links.uses}</Link>
+              <Link
+                to="/uses
+          "
+              >
+                {links.uses}
+              </Link>
             </NavbarLink>
           </motion.span>
           <motion.span
@@ -94,6 +99,7 @@ export function AppNavbar() {
             whileTap={{ scale: 0.9 }}
             variants={item}
           >
+            {' '}
             <NavbarLink>
               <a
                 href="https://sourcerer.io/piyush97"
