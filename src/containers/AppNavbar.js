@@ -111,8 +111,7 @@ export function AppNavbar() {
             {' '}
             <NavbarLink>
               <a
-                href="https:/ /
-          sourcerer.io / piyush97 "
+                href="https://sourcerer.io/piyush97"
                 target="_blank"
                 rel="noopener noreferrer"
               >
