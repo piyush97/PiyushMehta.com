@@ -1,3 +1,6 @@
+branches:
+  only:
+    - 'master'
 language: node_js
 before_script:
   - npm install -g gatsby-cli
@@ -10,5 +13,3 @@ deploy:
     - yarn && yarn run deploy
     - echo "skipping tests"
   skip_cleanup: true
-  on:
-    branch: master
