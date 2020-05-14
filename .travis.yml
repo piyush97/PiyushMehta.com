@@ -4,6 +4,8 @@ before_script:
 node_js:
   - '10'
 deploy:
+  on:
+    branch: master
   provider: script
   script:
     - yarn && yarn run deploy
