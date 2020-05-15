@@ -21,7 +21,6 @@ export default function IndexPage({ data }) {
           <strong>Piyush Mehta</strong>
           <br />I make the web great.
         </HeroTitle>
-        <img src={data.photo.childImageSharp}></img>
         <HeroTeaser>
           I am a Full Stack Developer/Designer based in India. I create, Design
           tools for web and teach how to build high quality websites and
