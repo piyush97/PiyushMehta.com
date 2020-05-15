@@ -86,5 +86,15 @@ module.exports = {
         anonymize: true,
       },
     },
+    {
+      resolve: 'gatsby-plugin-sentry',
+      options: {
+        dsn:
+          'https://96c7558cd24e4da5bc1b8741b7c5cc95@o393383.ingest.sentry.io/5242381',
+        environment: process.env.NODE_ENV,
+        enabled: (() =>
+          ['production', 'stage'].indexOf(process.env.NODE_ENV) !== -1)(),
+      },
+    },
   ],
 };
