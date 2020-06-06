@@ -1,0 +1,17 @@
+name: Uptime Monitor
+
+on:
+  schedule:
+    # Run every hour
+    - cron: '*/60 *  * * *'
+
+jobs:
+  ping_site:
+    runs-on: ubuntu-latest
+    name: Uptime Check
+    steps:
+    - name: Ping Site
+      uses: srt32/uptime@v0.2
+      with:
+        url-to-hit: "https://piyushmehta.com/"
+        expected-statuses: "200"
