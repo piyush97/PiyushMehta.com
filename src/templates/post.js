@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { graphql } from 'gatsby';
+import { Helmet } from 'react-helmet';
 import styled, { up, css, th } from '@xstyled/styled-components';
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer';
 import { MDXProvider } from '@mdx-js/react';
@@ -9,7 +10,6 @@ import { PageContainer } from '../components/Container';
 import { Code } from '../components/Code';
 import { Share } from '../components/Share';
 import { Seo } from '../containers/Seo';
-
 export function formatReadingTime(minutes) {
   const cups = Math.round(minutes / 5);
   if (cups > 5) {
@@ -251,9 +251,15 @@ const locales = {
 
 export default function Post({ data }) {
   const { frontmatter, body } = data.mdx;
-
   return (
     <>
+      <Helmet>
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/applause-button/dist/applause-button.css"
+        />
+        <script src="https://unpkg.com/applause-button/dist/applause-button.js"></script>
+      </Helmet>
       <Seo
         title={frontmatter.title}
         description={frontmatter.description}
@@ -274,12 +280,25 @@ export default function Post({ data }) {
             <Markdown>{frontmatter.description}</Markdown>
             <MDXRenderer>{body}</MDXRenderer>
           </Article>
+
           <Location>
             {({ location }) => (
               <>
                 <DiscussEdit>
                   <a href={data.mdx.fields.editLink}>{locales.edit}</a>
                 </DiscussEdit>
+                <applause-button
+                  style={{
+                    width: '68px',
+                    height: '68px',
+                    position: 'relative',
+                    zIndex: 100,
+                  }}
+                  id="applause"
+                  multiclap="true"
+                  color="#FFCC68"
+                  url={`piyushmehta.com/${frontmatter.slug}`}
+                />
                 <Share
                   url={`${data.site.siteMetadata.canonicalUrl}${location.pathname}`}
                   title={frontmatter.title}
