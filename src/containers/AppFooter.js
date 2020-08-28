@@ -61,7 +61,7 @@ export function AppFooter() {
         <motion.span whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <SocialLink
             title={locales.twitter}
-            href="https://twitter.com/coderWhoKnows"
+            href="https://twitter.com/PiyushMehtas"
             rel="noopener noreferrer"
             target="_blank"
           >

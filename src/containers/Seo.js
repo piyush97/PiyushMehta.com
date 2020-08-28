@@ -64,7 +64,7 @@ export function Seo({
 
               {/* Twitter Card tags */}
               <meta name="twitter:card" content="summary_large_image" />
-              <meta name="twitter:creator" content="@coderwhoknows" />
+              <meta name="twitter:creator" content="@PiyushMehtas" />
               <meta name="twitter:title" content={title} />
               <meta name="twitter:description" content={description} />
               <meta
