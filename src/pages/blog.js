@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { graphql } from 'gatsby';
 import { SectionTitle, SectionDescription } from '../components/Section';
 import { PageContainer } from '../components/Container';
@@ -6,11 +6,7 @@ import { LatestArticles } from '../containers/LatestArticles';
 import { Seo } from '../containers/Seo';
 
 export default function Blog({ data }) {
-  useEffect(() => {
-    document.oncontextmenu = () => {
-      return false;
-    };
-  });
+
   return (
     <>
       <Seo title="Piyush Mehta — Blog" />
