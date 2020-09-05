@@ -68,7 +68,7 @@ export default function Uses() {
       <Seo title="Piyush Mehta - Skills" />
       <PageContainer>
         <SectionTitle>Skills</SectionTitle>
-        <SectionDescription></SectionDescription>
+        <SectionDescription />
         <Card
           forwardedAs="section"
           my={6}

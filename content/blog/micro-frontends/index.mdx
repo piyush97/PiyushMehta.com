@@ -1,13 +1,17 @@
 ---
 slug: 'micro-frontend-react'
 title: 'What the hell is microfrontend?'
-date: '1020-09-05'
+date: '2020-09-05'
 author: 'Piyush Mehta'
 banner: './images/deployment.png'
 published: true
 description: 'What is Microfrontend and why should I make it?'
 categories:
-  - 'React, Microfrontend, frontend, web development, piyush mehta'
+  - 'React'
+  - 'Microfrontend'
+  - 'frontend'
+  - 'web development'
+  - 'piyush mehta'
 ---
 The term Micro Frontends first came up in <a target="__blank" href="https://www.thoughtworks.com/radar/techniques/micro-frontends">ThoughtWorks Technology Radar</a> at the end of 2016.
 
@@ -20,15 +24,13 @@ This concept is vaguely inspired by, and named after, microservices.
 
 The current trend is to build a feature-rich and powerful browser application, aka single page app, which sits on top of a micro service architecture. Over time the frontend layer, often developed by a separate team, grows and gets more difficult to maintain. That’s what we call a Frontend Monolith.
 
-**The benefits of the micro-frontend pattern include:
-**
+### The benefits of the micro-frontend pattern include:
 
 1. Micro-frontend architectures may be simpler, and thus easier to reason about and manage.
 1. Independent development teams can collaborate on a front-end app more easily.
 1. They can provide a means for migrating from an “old” app by having a “new” app running side by side with it.
 
-**Best Practices of Micro-Frontend
-**
+### Best Practices of Micro-Frontend
 
 1. The Single-SPA meta-framework to combine multiple frameworks on the same page without refreshing the page such a React, Vue, Angular 1, Angular 2 etc.
 1. Multiple single-page application lives at different URLs. For shared functionality application use NPM or Bower components.
@@ -39,6 +41,56 @@ The current trend is to build a feature-rich and powerful browser application, a
 1. Independent deployment
 
 
+## The easiest beginner friendly way to begin with (React) Micro frontend
+
+```bash
+npm i react-microfrontend
+```
+
+### Import
+
+```javascript
+ // index.js
+
+ import { ImportMicrofrontend } from 'react-microfrontend';
+
+ ReactDOM.render((
+   <ImportMicrofrontend>
+     <App />
+   </ImportMicrofrontend>
+ ), document.getElementById('root'));
+
+
+ // App.js
+ import { withMicrofrontend } from 'react-microfrontend';
+
+ const App = ({ microfrontends }) => (
+   <div>
+     {
+       Object.keys(microfrontends).map(microfrontend => (
+         <div>
+           {microfrontend.content}
+         </div>
+       ))
+     }
+   </div>
+ );
+
+ export default withMicrofrontend(App);
+```
+
+### Export
+
+```javascript
+
+import App from './App';
+import { ExportMicrofrontend } from 'react-microfrontend';
+
+ExportMicrofrontend(App);
+
+```
+
+>In short, micro frontends are all about slicing up big and scary things into smaller, more manageable pieces, and then being explicit about the dependencies between them. Our technology choices, our codebases, our teams, and our release processes should all be able to operate and evolve independently of each other, without excessive coordination.
 
 
 

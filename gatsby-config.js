@@ -69,8 +69,7 @@ module.exports = {
         start_url: `/`,
         name: `Piyush Mehta`,
         short_name: `mehta`,
-        description:
-          'The personal website of Piyush Mehta. Learn and level-up about React & JavaScript.',
+        description: 'The personal website of Piyush Mehta.',
         background_color: `#1f2347`,
         theme_color: `#FFCC68`,
         display: `standalone`,
@@ -87,13 +86,10 @@ module.exports = {
       },
     },
     {
-      resolve: 'gatsby-plugin-sentry',
+      resolve: '@sentry/gatsby',
       options: {
         dsn:
           'https://96c7558cd24e4da5bc1b8741b7c5cc95@o393383.ingest.sentry.io/5242381',
-        environment: process.env.NODE_ENV,
-        enabled: (() =>
-          ['production', 'stage'].indexOf(process.env.NODE_ENV) !== -1)(),
       },
     },
   ],
