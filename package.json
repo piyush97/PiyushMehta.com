@@ -103,12 +103,10 @@
   },
   "lint-staged": {
     "{gatsby-*.js,src/**/*.{js,jsx,json,css}}": [
-      "yarn format",
-      "git add"
+      "yarn format"
     ],
     "src/pages/**/*.md": [
-      "yarn run js-to-jsx",
-      "git add"
+      "yarn run js-to-jsx"
     ]
   },
   "resolutions": {
