@@ -319,10 +319,10 @@ export const pageQuery = graphql`
         date
         banner {
           childImageSharp {
-            social: fixed(width: 1041, height: 640) {
+            social: fixed(width: 900, height: 640) {
               src
             }
-            fluid(maxWidth: 800) {
+            fluid(maxWidth: 700) {
               ...GatsbyImageSharpFluid_withWebp
             }
           }
