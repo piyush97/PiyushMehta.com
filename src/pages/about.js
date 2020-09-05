@@ -18,7 +18,7 @@ export default function AboutPage() {
     }
   `);
   useEffect(() => {
-    document.oncontextmenu = function () {
+    document.oncontextmenu = () => {
       return false;
     };
   });
@@ -37,8 +37,9 @@ export default function AboutPage() {
         <AboutImage img={data.photo.childImageSharp} />
         <AboutText>
           <p>
-            I've trained <strong>500+</strong> students for HTML, CSS, JS, React
-            , Git and Data Structures with Placement Training while I was{' '}
+            I`&apos;`ve trained <strong>500+</strong> students for HTML, CSS,
+            JS, React , Git and Data Structures with Placement Training while I
+            was{' '}
             <a
               href="https://developers.google.com/community/dsc"
               rel="noopener noreferrer"

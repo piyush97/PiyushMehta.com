@@ -7,7 +7,7 @@ import { Seo } from '../containers/Seo';
 
 export default function Blog({ data }) {
   useEffect(() => {
-    document.oncontextmenu = function () {
+    document.oncontextmenu = () => {
       return false;
     };
   });

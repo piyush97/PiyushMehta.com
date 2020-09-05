@@ -20,7 +20,7 @@ const Sectitle = styled.a`
 `;
 export default function Uses() {
   useEffect(() => {
-    document.oncontextmenu = function () {
+    document.oncontextmenu = () => {
       return false;
     };
   });
@@ -155,8 +155,8 @@ export default function Uses() {
           <CardBody>
             <div>
               <li>
-                <Sectitle>Mobile Computing Drivers: </Sectitle>MacBook Pro 13"
-                2016 with TouchBar and Dell Xps 15
+                <Sectitle>Mobile Computing Drivers: </Sectitle>MacBook Pro
+                13`&quot;` 2016 with TouchBar and Dell Xps 15
               </li>
               <li>
                 <Sectitle>Displays: (2 Monitors) </Sectitle>
@@ -309,8 +309,8 @@ export default function Uses() {
                 </Links>
               </li>
               <li>
-                <Sectitle>Tablet & Stylus: </Sectitle> iPad Pro 11" 2019 with
-                Apple Pencil Gen 2
+                <Sectitle>Tablet & Stylus: </Sectitle> iPad Pro 11`&quot;` 2019
+                with Apple Pencil Gen 2
               </li>
               <li>
                 <Sectitle>Watch: </Sectitle>Apple Watch series 5
