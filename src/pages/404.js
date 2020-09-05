@@ -31,7 +31,7 @@ export default function NotFound() {
           />
         </a>
       </SectionDescription>
-      <div></div>
+      <div />
     </PageContainer>
   );
 }
