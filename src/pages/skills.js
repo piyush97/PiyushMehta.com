@@ -59,7 +59,7 @@ const Sectitle = styled.a`
 `;
 export default function Uses() {
   useEffect(() => {
-    document.oncontextmenu = function () {
+    document.oncontextmenu = () => {
       return false;
     };
   });
@@ -68,7 +68,7 @@ export default function Uses() {
       <Seo title="Piyush Mehta - Skills" />
       <PageContainer>
         <SectionTitle>Skills</SectionTitle>
-        <SectionDescription></SectionDescription>
+        <SectionDescription />
         <Card
           forwardedAs="section"
           my={6}
@@ -190,8 +190,8 @@ export default function Uses() {
                   <Sectitle>Password Manager & VPN:</Sectitle> DashLane
                 </li>
                 <li>
-                  I'm a huge <Sectitle>Alfred</Sectitle> fan and i love using it
-                  due to it's ease of use and PowerPack.
+                  I`&apos;`m a huge <Sectitle>Alfred</Sectitle> fan and i love
+                  using it due to it`&apos;`s ease of use and PowerPack.
                 </li>
                 <li>
                   I currently use <Sectitle>Postman</Sectitle> for all my api
@@ -200,7 +200,8 @@ export default function Uses() {
               </p>
               <CardTitle>Hardware</CardTitle>
               <li>
-                <Sectitle>Laptop: </Sectitle>MacBook Pro 13" 2016 with TouchBar
+                <Sectitle>Laptop: </Sectitle>MacBook Pro 13`&quot;` 2016 with
+                TouchBar
               </li>
               <li>
                 <Sectitle>Displays: (2 Lg Monitors) </Sectitle>
@@ -254,8 +255,8 @@ export default function Uses() {
                 </Links>
               </li>
               <li>
-                <Sectitle>Tablet & Stylus: </Sectitle> iPad Pro 11" 2019 with
-                Apple Pencil Gen 2
+                <Sectitle>Tablet & Stylus: </Sectitle> iPad Pro 11`&quot;` 2019
+                with Apple Pencil Gen 2
               </li>
               <li>
                 <Sectitle>Watch: </Sectitle>Apple Watch series 5
