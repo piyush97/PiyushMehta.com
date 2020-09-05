@@ -1,8 +1,8 @@
 import React from 'react';
 import styled, { css, up } from '@xstyled/styled-components';
-import { Navbar, NavbarBrand, NavbarSecondary } from '../components/Navbar';
 import { Link } from 'gatsby';
 import { motion } from 'framer-motion';
+import { Navbar, NavbarBrand, NavbarSecondary } from '../components/Navbar';
 
 const links = {
   about: '$whoami',

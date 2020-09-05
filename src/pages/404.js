@@ -10,7 +10,7 @@ const Title = styled.h1`
 
 export default function NotFound() {
   useEffect(() => {
-    document.oncontextmenu = function () {
+    document.oncontextmenu = () => {
       return false;
     };
   });
