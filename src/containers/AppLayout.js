@@ -16,7 +16,7 @@ export function AppLayout({ children }) {
     <ThemeInitializer>
       <Helmet>
         <html lang="en" />
-        <link rel="alternate" hrefLang="en" href={`https://piyushmehta.com`} />
+        <link rel="alternate" hrefLang="en" href="https://piyushmehta.com" />
       </Helmet>
       <Layout>
         <GlobalStyle />

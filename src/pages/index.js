@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react';
 import { graphql } from 'gatsby';
 import GitHubButton from 'react-github-btn';
@@ -9,7 +10,7 @@ import { Seo } from '../containers/Seo';
 
 export default class IndexPage extends React.Component {
   componentDidMount() {
-    document.oncontextmenu = function () {
+    document.oncontextmenu = () => {
       return false;
     };
     console.log(
