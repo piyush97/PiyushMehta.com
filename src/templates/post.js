@@ -1,5 +1,6 @@
 import React from 'react';
 import { graphql } from 'gatsby';
+import Img from 'gatsby-image';
 import styled, { up, css, th } from '@xstyled/styled-components';
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer';
 import { MDXProvider } from '@mdx-js/react';
@@ -257,6 +258,7 @@ export default function Post({ data }) {
       <Seo
         title={frontmatter.title}
         description={frontmatter.description}
+        image={frontmatter.banner.childImageSharp.social.src}
         datePublished={frontmatter.date}
         isBlogPost
       />
@@ -270,9 +272,11 @@ export default function Post({ data }) {
               </time>
               <span>{formatReadingTime(data.mdx.timeToRead)}</span>
             </section>
-
-            <Markdown>{frontmatter.description}</Markdown>
-            <MDXRenderer>{body}</MDXRenderer>
+            <figure className="top-img">
+              <Img fluid={frontmatter.banner.childImageSharp.fluid} />
+              <Markdown>{frontmatter.description}</Markdown>
+              <MDXRenderer>{body}</MDXRenderer>
+            </figure>
           </Article>
           <Location>
             {({ location }) => (
@@ -313,7 +317,16 @@ export const pageQuery = graphql`
         author
         slug
         date
-        slug
+        banner {
+          childImageSharp {
+            social: fixed(width: 1041, height: 640) {
+              src
+            }
+            fluid(maxWidth: 800) {
+              ...GatsbyImageSharpFluid_withWebp
+            }
+          }
+        }
       }
     }
 

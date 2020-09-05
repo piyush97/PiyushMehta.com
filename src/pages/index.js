@@ -44,9 +44,14 @@ export default class IndexPage extends React.Component {
               <br />I make the web great.
             </HeroTitle>
             <HeroTeaser>
-              I am a Full Stack Developer/Designer based in India. I create,
-              Design tools for web and teach how to build high quality websites
-              and applications using JavaScript, React
+              I am a full-time Full Stack Developer/Designer, a hobbyist Virtual
+              Aviation Simmer with an experience of (180+ hours) and a trumpet
+              player based in India.
+              <br />
+              <br />
+              I create, design tools and Apps for companies and individuals.
+              <br />I write down my learnings in my blog sections so that people
+              can learn from my mistakes.
             </HeroTeaser>
           </Hero>
           <Container forwardedAs="section" pb={5}>
@@ -62,8 +67,8 @@ export default class IndexPage extends React.Component {
 export const pageQuery = graphql`
   query {
     allMdx(
-      limit: 5
-      sort: { fields: [frontmatter___date], order: DESC }
+      limit: 6
+      sort: { fields: [frontmatter___date], order: ASC }
       filter: { frontmatter: { published: { ne: false } } }
     ) {
       edges {
