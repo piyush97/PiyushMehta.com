@@ -6,7 +6,6 @@ import { LatestArticles } from '../containers/LatestArticles';
 import { Seo } from '../containers/Seo';
 
 export default function Blog({ data }) {
-
   return (
     <>
       <Seo title="Piyush Mehta — Blog" />

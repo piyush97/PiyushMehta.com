@@ -10,9 +10,6 @@ import { Seo } from '../containers/Seo';
 
 export default class IndexPage extends React.Component {
   componentDidMount() {
-    document.oncontextmenu = () => {
-      return false;
-    };
     console.log(
       '%c Made By Piyush Mehta',
       'font-family:Comic Sans MS; font-size:50px; font-weight:bold; background: linear-gradient(#f00, yellow); border-radius: 5px; padding: 20px'

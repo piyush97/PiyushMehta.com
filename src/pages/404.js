@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from '@xstyled/styled-components';
 import { PageContainer } from '../components/Container';
 import { SectionDescription } from '../components/Section';
@@ -9,11 +9,6 @@ const Title = styled.h1`
 `;
 
 export default function NotFound() {
-  useEffect(() => {
-    document.oncontextmenu = () => {
-      return false;
-    };
-  });
   return (
     <PageContainer style={{ textAlign: 'center' }}>
       <Title>
