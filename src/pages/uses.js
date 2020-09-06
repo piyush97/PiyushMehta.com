@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import styled from '@xstyled/styled-components';
 import { Seo } from '../containers/Seo';
@@ -19,11 +19,6 @@ const Sectitle = styled.a`
   color: accent;
 `;
 export default function Uses() {
-  useEffect(() => {
-    document.oncontextmenu = () => {
-      return false;
-    };
-  });
   return (
     <>
       <Seo title="Piyush Mehta - Uses" />

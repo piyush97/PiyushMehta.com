@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import { SectionTitle, SectionDescription } from '../components/Section';
 import { Container } from '../components/Container';
@@ -17,11 +17,7 @@ export default function AboutPage() {
       }
     }
   `);
-  useEffect(() => {
-    document.oncontextmenu = () => {
-      return false;
-    };
-  });
+
   return (
     <>
       <Seo title="About - Piyush Mehta" />
