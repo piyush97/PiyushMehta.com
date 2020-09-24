@@ -58,6 +58,7 @@ module.exports = {
             },
           },
           { resolve: 'gatsby-remark-embedder' },
+          `gatsby-remark-smartypants`,
         ],
       },
     },
