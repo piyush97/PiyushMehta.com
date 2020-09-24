@@ -6,6 +6,7 @@ import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer';
 import { MDXProvider } from '@mdx-js/react';
 import Markdown from 'react-markdown';
 import { Location } from '@reach/router';
+import Snakke from 'react-snakke';
 import { PageContainer } from '../components/Container';
 import { Code } from '../components/Code';
 import { Share } from '../components/Share';
@@ -265,8 +266,11 @@ export default function Post({ data }) {
         datePublished={frontmatter.date}
         isBlogPost
       />
+
       <MDXProvider components={components}>
         <PageContainer>
+          <Snakke color="#eebf66" height="5px" opacity=".8" zIndex="999" />
+
           <Article>
             <h1>{frontmatter.title}</h1>
             <section className="metadata">

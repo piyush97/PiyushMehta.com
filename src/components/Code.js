@@ -84,9 +84,9 @@ const config = {
 const Button = (props) => (
   <button
     style={{
+      position: 'absolute',
       top: 0,
       right: 0,
-      float: 'right',
       border: 'none',
       boxShadow: 'none',
       textDecoration: 'none',
