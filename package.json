@@ -50,6 +50,7 @@
     "gatsby-remark-copy-linked-files": "^2.3.13",
     "gatsby-remark-embedder": "^3.0.0",
     "gatsby-remark-images": "^3.3.28",
+    "gatsby-remark-smartypants": "^2.3.11",
     "gatsby-source-filesystem": "^2.3.27",
     "gatsby-transformer-sharp": "^2.5.14",
     "human-number": "^1.0.5",
