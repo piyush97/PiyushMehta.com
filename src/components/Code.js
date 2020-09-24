@@ -29,7 +29,28 @@ const Editor = styled.div`
     `
   )}
 `;
+const LangKey = styled.pre`
+  margin-top: 0;
+  border: 2px solid;
+  padding: 0 1em 0.2em 1em;
+  max-width: max-content;
+`;
 
+const Line = styled.div`
+  display: table-row;
+`;
+
+const LineNo = styled.span`
+  display: table-cell;
+  text-align: right;
+  padding-right: 1em;
+  user-select: none;
+  opacity: 0.5;
+`;
+
+const LineContent = styled.span`
+  display: table-cell;
+`;
 const globalModules = {
   react: 'React',
 };
@@ -48,25 +69,31 @@ export function usePrismTheme() {
 export function Code({ children, lang = 'markup' }) {
   const prismTheme = usePrismTheme();
   return (
-    <Editor>
-      <Highlight
-        {...defaultProps}
-        code={children.trim()}
-        language={lang}
-        theme={prismTheme}
-      >
-        {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <pre className={className} style={style}>
-            {tokens.map((line, i) => (
-              <div {...getLineProps({ line, key: i })}>
-                {line.map((token, key) => (
-                  <span {...getTokenProps({ token, key })} />
-                ))}
-              </div>
-            ))}
-          </pre>
-        )}
-      </Highlight>
-    </Editor>
+    <>
+      <Editor>
+        <LangKey>{lang}</LangKey>
+        <Highlight
+          {...defaultProps}
+          code={children.trim()}
+          language={lang}
+          theme={prismTheme}
+        >
+          {({ className, style, tokens, getLineProps, getTokenProps }) => (
+            <pre className={className} style={style}>
+              {tokens.map((line, i) => (
+                <Line key={i} {...getLineProps({ line, key: i })}>
+                  <LineNo>{i + 1}</LineNo>
+                  <LineContent>
+                    {line.map((token, key) => (
+                      <span key={key} {...getTokenProps({ token, key })} />
+                    ))}
+                  </LineContent>
+                </Line>
+              ))}
+            </pre>
+          )}
+        </Highlight>
+      </Editor>
+    </>
   );
 }

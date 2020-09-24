@@ -50,6 +50,9 @@ const Article = styled.article`
   font-size: 18;
   line-height: 1.6;
 
+  *::selection {
+    background: #eebf66;
+  }
   .metadata {
     font-size: 15;
     display: flex;
