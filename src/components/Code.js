@@ -1,3 +1,4 @@
+/* eslint-disable react/button-has-type */
 import React from 'react';
 import styled, {
   css,
@@ -6,8 +7,8 @@ import styled, {
   up,
 } from '@xstyled/styled-components';
 import Highlight, { defaultProps } from 'prism-react-renderer';
+import Confetti from 'react-dom-confetti';
 import getPrismTheme from './prismTheme';
-import Clipboard from 'react-clipboard.js';
 
 const Editor = styled.div`
   background-color: light800;
@@ -100,6 +101,12 @@ const Button = (props) => (
   />
 );
 
+const Wrapper = (props) => <div style={{ position: 'relative' }} {...props} />;
+
+const ConfettiWrapper = (props) => (
+  <div style={{ position: 'absolute', top: 0, right: 0 }} {...props} />
+);
+
 export function Code({ children, lang = 'markup' }) {
   const prismTheme = usePrismTheme();
   const [isCopied, setIsCopied] = React.useState(false);
@@ -116,41 +123,44 @@ export function Code({ children, lang = 'markup' }) {
   };
   return (
     <>
-      <Editor>
-        <LangKey>{lang}</LangKey>
-        {/* <Clipboard data-clipboard-text={children.trim()}>Copy</Clipboard> */}
-
-        <Highlight
-          {...defaultProps}
-          code={children.trim()}
-          language={lang}
-          theme={prismTheme}
-        >
-          {({ className, style, tokens, getLineProps, getTokenProps }) => (
-            <pre className={className} style={style}>
-              <Button
-                onClick={() => {
-                  copyToClipboard(children.trim());
-                  setIsCopied(true);
-                  setTimeout(() => setIsCopied(false), 3000);
-                }}
-              >
-                {isCopied ? '🎉 Copied!' : 'Copy'}
-              </Button>
-              {tokens.map((line, i) => (
-                <Line key={i} {...getLineProps({ line, key: i })}>
-                  <LineNo>{i + 1}</LineNo>
-                  <LineContent>
-                    {line.map((token, key) => (
-                      <span key={key} {...getTokenProps({ token, key })} />
-                    ))}
-                  </LineContent>
-                </Line>
-              ))}
-            </pre>
-          )}
-        </Highlight>
-      </Editor>
+      <Wrapper>
+        <Editor>
+          <LangKey>{lang}</LangKey>
+          <Highlight
+            {...defaultProps}
+            code={children.trim()}
+            language={lang}
+            theme={prismTheme}
+          >
+            {({ className, style, tokens, getLineProps, getTokenProps }) => (
+              <pre className={className} style={style}>
+                <Button
+                  onClick={() => {
+                    copyToClipboard(children.trim());
+                    setIsCopied(true);
+                    setTimeout(() => setIsCopied(false), 3000);
+                  }}
+                >
+                  {isCopied ? '🎉 Copied!' : 'Copy'}
+                </Button>
+                {tokens.map((line, i) => (
+                  <Line key={i} {...getLineProps({ line, key: i })}>
+                    <LineNo>{i + 1}</LineNo>
+                    <LineContent>
+                      {line.map((token, key) => (
+                        <span key={key} {...getTokenProps({ token, key })} />
+                      ))}
+                    </LineContent>
+                  </Line>
+                ))}
+              </pre>
+            )}
+          </Highlight>
+        </Editor>
+        <ConfettiWrapper>
+          <Confetti active={isCopied} config={config} />
+        </ConfettiWrapper>
+      </Wrapper>
     </>
   );
 }
