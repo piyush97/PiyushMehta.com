@@ -50,7 +50,7 @@ const components = {
 const Article = styled.article`
   font-size: 18;
   line-height: 1.6;
-
+  padding: 0 25px 0 25px;
   *::selection {
     background: #eebf66;
   }
