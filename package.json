@@ -59,7 +59,7 @@
     "husky": "4.2.5",
     "jsonp": "0.2.1",
     "lint-staged": "10.3.0",
-    "polished": "3.6.6",
+    "polished": "3.6.7",
     "prism-react-renderer": "1.1.1",
     "prismjs": "1.21.0",
     "prop-types": "15.7.2",
