@@ -56,7 +56,7 @@
     "gatsby-source-filesystem": "2.3.27",
     "gatsby-transformer-sharp": "2.5.14",
     "human-number": "1.0.5",
-    "husky": "4.2.5",
+    "husky": "4.3.0",
     "jsonp": "0.2.1",
     "lint-staged": "10.3.0",
     "polished": "3.6.6",
