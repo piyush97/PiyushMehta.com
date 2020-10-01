@@ -33,7 +33,7 @@
     "email-validator": "2.0.4",
     "final-form": "4.20.1",
     "framer-motion": "2.6.6",
-    "gatsby": "2.24.53",
+    "gatsby": "^2.24.67",
     "gatsby-image": "2.4.16",
     "gatsby-plugin-feed": "^2.5.12",
     "gatsby-plugin-google-analytics": "2.3.13",
@@ -95,7 +95,7 @@
     "prettier": "2.1.1"
   },
   "scripts": {
-    "build": "gatsby build",
+    "build": "GATSBY_EXPERIMENTAL_PAGE_BUILD_ON_DATA_CHANGES=true gatsby build --log-pages",
     "test": " echo Success!",
     "dev": "./node_modules/.bin/env-cmd -f ./.env gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
