@@ -1,7 +1,0 @@
-https://piyushmehta.com/*    https://piyushmehta.com/:splat 301!
-http://piyushmehta.com/*     https://piyushmehta.com/:splat 301!
-
-/wp-login                         https://www.piyushmehta.com
-/wp-login.php                     https://www.piyushmehta.com
-/wp-admin                         https://www.piyushmehta.com
-/wp-admin.php                     https://www.piyushmehta.com
