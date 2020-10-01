@@ -7,11 +7,11 @@ import { MDXProvider } from '@mdx-js/react';
 import Markdown from 'react-markdown';
 import { Location } from '@reach/router';
 import Snakke from 'react-snakke';
+import { DiscussionEmbed } from 'disqus-react'
 import { PageContainer } from '../components/Container';
 import { Code } from '../components/Code';
 import { Share } from '../components/Share';
 import { Seo } from '../containers/Seo';
-import { DiscussionEmbed } from 'disqus-react'
 
 export function formatReadingTime(minutes) {
   const cups = Math.round(minutes / 5);
@@ -262,8 +262,11 @@ export default function Post({ data }) {
 
   const disqusConfig = {
     shortname: process.env.GATSBY_DISQUS_NAME,
-    config: { identifier: frontmatter.title },
-  }
+    config: { 
+      identifier: frontmatter.title,
+      url: window.location.href 
+    },
+  };
 
   return (
     <>
@@ -274,6 +277,7 @@ export default function Post({ data }) {
         datePublished={frontmatter.date}
         isBlogPost
       />
+
 
       <MDXProvider components={components}>
         <PageContainer>
