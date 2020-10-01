@@ -264,7 +264,6 @@ export default function Post({ data }) {
     shortname: process.env.GATSBY_DISQUS_NAME,
     config: { 
       identifier: frontmatter.title,
-      url: window.location.href 
     },
   };
 
