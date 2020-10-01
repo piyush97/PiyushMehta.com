@@ -11,6 +11,7 @@ import { PageContainer } from '../components/Container';
 import { Code } from '../components/Code';
 import { Share } from '../components/Share';
 import { Seo } from '../containers/Seo';
+import Tags from '../components/Tags';
 
 export function formatReadingTime(minutes) {
   const cups = Math.round(minutes / 5);
@@ -252,22 +253,6 @@ const DiscussEdit = styled.box`
 
 const locales = {
   edit: 'Edit on GitHub',
-};
-
-const Span = styled.span`
-  ${'' /* border: 1px white solid;
-  border-radius: 5px; */}
-`;
-
-const Tags = ({ categories }) => {
-  return (
-    <div>
-      <h3>Tags: </h3>
-      {categories.map((cate) => (
-        <Span>{cate} </Span>
-      ))}
-    </div>
-  );
 };
 
 export default function Post({ data }) {
