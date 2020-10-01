@@ -11,6 +11,7 @@ import { PageContainer } from '../components/Container';
 import { Code } from '../components/Code';
 import { Share } from '../components/Share';
 import { Seo } from '../containers/Seo';
+import { DiscussionEmbed } from 'disqus-react'
 
 export function formatReadingTime(minutes) {
   const cups = Math.round(minutes / 5);
@@ -254,8 +255,15 @@ const locales = {
   edit: 'Edit on GitHub',
 };
 
+
+
 export default function Post({ data }) {
   const { frontmatter, body } = data.mdx;
+
+  const disqusConfig = {
+    shortname: process.env.GATSBY_DISQUS_NAME,
+    config: { identifier: frontmatter.title },
+  }
 
   return (
     <>
@@ -298,6 +306,7 @@ export default function Post({ data }) {
               </>
             )}
           </Location>
+          <DiscussionEmbed { ...disqusConfig } />
         </PageContainer>
       </MDXProvider>
     </>

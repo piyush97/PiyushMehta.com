@@ -30,6 +30,7 @@
     "@xstyled/styled-components": "1.18.1",
     "babel-plugin-styled-components": "1.11.1",
     "clipboard": "2.0.6",
+    "disqus-react": "^1.0.10",
     "email-validator": "2.0.4",
     "final-form": "4.20.1",
     "framer-motion": "2.6.6",
