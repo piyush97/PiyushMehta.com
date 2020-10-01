@@ -254,6 +254,22 @@ const locales = {
   edit: 'Edit on GitHub',
 };
 
+const Span = styled.span`
+  ${'' /* border: 1px white solid;
+  border-radius: 5px; */}
+`;
+
+const Tags = ({ categories }) => {
+  return (
+    <div>
+      <h3>Tags: </h3>
+      {categories.map((cate) => (
+        <Span>{cate} </Span>
+      ))}
+    </div>
+  );
+};
+
 export default function Post({ data }) {
   const { frontmatter, body } = data.mdx;
 
@@ -285,6 +301,7 @@ export default function Post({ data }) {
               <MDXRenderer>{body}</MDXRenderer>
             </figure>
           </Article>
+          <Tags categories={frontmatter.categories} />
           <Location>
             {({ location }) => (
               <>
@@ -324,6 +341,7 @@ export const pageQuery = graphql`
         author
         slug
         date
+        categories
         banner {
           childImageSharp {
             social: fixed(width: 900, height: 640) {
