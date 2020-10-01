@@ -67,4 +67,5 @@ yarn-error.log
 .pnp.js
 # Yarn Integrity file
 .yarn-integrity
-
+# Conflicts with yarn build system
+package-lock.json 

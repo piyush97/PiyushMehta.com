@@ -1,8 +1,6 @@
 # Piyush Mehta's HomePage
 
-Is it Up? ![Uptime Monitor](https://github.com/piyush97/PiyushMehta.com/workflows/Uptime%20Monitor/badge.svg)
-
-[![Build Status](https://travis-ci.com/piyush97/PiyushMehta.com.svg?token=g3CxDf8EXQoxGMAHdh9U&branch=master)](https://travis-ci.com/piyush97/PiyushMehta.com)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9463ab38-9522-48b4-a448-5b2c51a8b23d/deploy-status)](https://app.netlify.com/sites/piyushmehta/deploys)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <div style="text-align:center" align="center">
