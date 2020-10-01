@@ -1,4 +1,7 @@
 # Piyush Mehta's HomePage
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/9463ab38-9522-48b4-a448-5b2c51a8b23d/deploy-status)](https://app.netlify.com/sites/piyushmehta/deploys)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -37,3 +40,22 @@ At this point, you’ve got a fully functional website. For additional informati
 ---
 
 [👉 Check it Out](https://piyushmehta.com)
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/Haqverdi"><img src="https://avatars1.githubusercontent.com/u/24776121?v=4" width="100px;" alt=""/><br /><sub><b>Haqverdi Behbudov</b></sub></a><br /><a href="#maintenance-Haqverdi" title="Maintenance">🚧</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
