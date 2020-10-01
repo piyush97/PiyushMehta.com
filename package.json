@@ -97,7 +97,7 @@
   "scripts": {
     "build": "gatsby build",
     "test": " echo Success!",
-    "dev": "./node_modules/.bin/env-cmd -f ./.env gatsby develop",
+    "dev": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "serve": "gatsby serve",
     "deploy": "gatsby build --prefix-paths && cp CNAME public && gh-pages -d public -r https://$GH_TOKEN@github.com/piyush97/Piyushmehta.com.git",
