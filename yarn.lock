@@ -2383,38 +2383,38 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
-"@xstyled/core@^1.18.1":
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/@xstyled/core/-/core-1.18.1.tgz#6f0ba150dd318ed6a3d0826e83fa58d5f200ddc1"
-  integrity sha512-yJShh5d+VjpP48ncNSCTiXLUQo0JVNa7WIgNmFesC27RZm5KBBSgLncc6xD61PUxoNnTwzrmYFrMJrfX1L04yA==
+"@xstyled/core@^1.19.0":
+  version "1.19.0"
+  resolved "https://registry.yarnpkg.com/@xstyled/core/-/core-1.19.0.tgz#95b7a4765051ba4e657d2b61b02e9a9a447fcf01"
+  integrity sha512-lSLvHe+vPLMadb/fy5DA/9hW8oclOw5kYDotTDB1bJRYNhuhBAnV4hsXMjsmSEeXIDZGCJZomvWG2yu1nMh6/w==
   dependencies:
-    "@babel/runtime" "^7.10.5"
-    "@xstyled/system" "^1.17.2"
+    "@babel/runtime" "^7.11.2"
+    "@xstyled/system" "^1.19.0"
 
-"@xstyled/styled-components@1.18.1":
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/@xstyled/styled-components/-/styled-components-1.18.1.tgz#d5aba1e07fc9e76a2037bfb958743d1508348266"
-  integrity sha512-KVMlcG+0G/6F0+H+KOWvRBlrOjhEMiTU5yVGzRT0vQKkWRzfobHDpJuC0xakF/d5JWTu0dRYKZ0kyWVX3cH1Lw==
+"@xstyled/styled-components@1.19.0":
+  version "1.19.0"
+  resolved "https://registry.yarnpkg.com/@xstyled/styled-components/-/styled-components-1.19.0.tgz#7deb974efb429ce80d787af7a8379aa0888503bc"
+  integrity sha512-8XamW0aXpdh2lufu7m0HJ3jlu/sE2XMIEuKvYOYO0LOXKaUQrHFCfXmfLyBr08bboMw7ZuNv+5S69bYD2aUGzg==
   dependencies:
-    "@babel/runtime" "^7.10.5"
-    "@xstyled/core" "^1.18.1"
-    "@xstyled/system" "^1.17.2"
-    "@xstyled/util" "^1.17.2"
+    "@babel/runtime" "^7.11.2"
+    "@xstyled/core" "^1.19.0"
+    "@xstyled/system" "^1.19.0"
+    "@xstyled/util" "^1.19.0"
 
-"@xstyled/system@^1.17.2":
-  version "1.17.2"
-  resolved "https://registry.yarnpkg.com/@xstyled/system/-/system-1.17.2.tgz#06459804fd47abc1a3dca967c46feda9406f92b6"
-  integrity sha512-XzNpCfOnsPzP23sS5HzhYBkS0hyM0zFKUEeprtuXjeF2OJWX8ZzsHMTE2z7KEy/OW7OWw3tkoPJmmiiBQ+6/CQ==
+"@xstyled/system@^1.19.0":
+  version "1.19.0"
+  resolved "https://registry.yarnpkg.com/@xstyled/system/-/system-1.19.0.tgz#8cb7aaa4121c9273f4c31bffc592bb200dc498c5"
+  integrity sha512-w4m1tRtoN+URN3+2JXo5PBd38yc+CwMMm2JFfzxIYAWr9O/s/HKa2XLu1hxFSJU1EsZugyxJWrBvkWIoHW8Eww==
   dependencies:
-    "@babel/runtime" "^7.10.5"
-    "@xstyled/util" "^1.17.2"
+    "@babel/runtime" "^7.11.2"
+    "@xstyled/util" "^1.19.0"
 
-"@xstyled/util@^1.17.2":
-  version "1.17.2"
-  resolved "https://registry.yarnpkg.com/@xstyled/util/-/util-1.17.2.tgz#6b6fed6f8c8acada1805721d054f31a508c59d02"
-  integrity sha512-+JaSZK1k2rOEM2YMwUOum77CPghhTyrlxuTuxyiJbdIxYSTtzBRVmPAul30V6pFRYgK8NMdfm7f+yT28rTr8pg==
+"@xstyled/util@^1.19.0":
+  version "1.19.0"
+  resolved "https://registry.yarnpkg.com/@xstyled/util/-/util-1.19.0.tgz#e378e717ed8af1c8ce43cf8d1228a43de6b5e650"
+  integrity sha512-65ytqg6iqTPtL1lLY9pGxhR7uKhuriBhuNssQVIJk/qdmo8I3QeYE9jZphozDSAWvgkTCjI9W/ytQYuoDML28Q==
   dependencies:
-    "@babel/runtime" "^7.10.5"
+    "@babel/runtime" "^7.11.2"
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
