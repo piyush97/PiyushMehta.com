@@ -1,0 +1,118 @@
+---
+slug: 'tricks-to-write-less-js'
+title: 'Tricks to write Less Javascript code'
+date: '2020-10-02'
+author: 'Sachin Kumar maurya'
+banner: './images/lessjs.jpg'
+published: true
+description: 'Learn to write JS with new features'
+categories:
+  - 'JS, Web, JS developer, es6'
+---
+
+Here we Learn about ES6 features and know How to write less JS code in efficient way
+
+## Let's Start 
+
+## 1. Conditional Statement
+
+```JavaScript
+let port;
+if (process.env.port){
+    port = process.env.port;
+}
+else {
+    port = 8080;
+}
+```
+Can be Written as 
+
+```JavaScript
+let port = process.env.port || 8080
+```
+
+## 2. Destructuring
+## 2.1 With Array
+```JavaScript
+let value = [10, 20, 30]
+x= value[0]
+y= value[1]
+z= value[2]
+```
+Can be Written as 
+
+```JavaScript
+[x,y,z]= [10, 20, 30]
+```
+
+## 2.2 With Object
+
+
+```JavaScript
+let data = {
+    firstName: "john",
+    lastName: "Doe"
+    age: 30,
+    }
+const firstName = data.firstName;
+const lastname= data.LastName;
+const age = data.age
+```
+Can be Written as 
+
+```JavaScript
+const { firstname, lastName, age } = data;
+```
+
+## 3. Ternary operator
+
+```JavaScript
+let value;
+if(value){
+    console.log(true);
+}
+else {
+    console.log(false);
+}
+```
+Can be Written as 
+
+```JavaScript
+value ? console.log(true) : console.log(false);
+```
+
+## 4. Loop
+
+```JavaScript
+const langs = ["JS", "C", "C++", "python"]
+for(let i=0; i < lang.length; i++){
+    console.log(lang[i])
+}
+```
+Can be Written as 
+
+```JavaScript
+for(let lang of langs ) console.log(lang);
+```
+
+## 5. Object with identical keys and values
+
+```JavaScript
+const data = {
+    name: name,
+    age: age,
+    address: address,
+}
+```
+Can be Written as 
+
+```JavaScript
+const data = { name, age, address };
+```
+
+Hope you enjoy it!!
+
+Happy Learning 😊
+
+You can follow me on Medium for more articles
+<a target="__blank" href="https://medium.com/@sachin.mca16.du">https://medium.com/@sachin.mca16.du</a>
