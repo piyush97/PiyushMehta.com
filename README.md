@@ -1,6 +1,6 @@
 # Piyush Mehta's HomePage
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/9463ab38-9522-48b4-a448-5b2c51a8b23d/deploy-status)](https://app.netlify.com/sites/piyushmehta/deploys)
@@ -52,6 +52,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/Haqverdi"><img src="https://avatars1.githubusercontent.com/u/24776121?v=4" width="100px;" alt=""/><br /><sub><b>Haqverdi Behbudov</b></sub></a><br /><a href="#maintenance-Haqverdi" title="Maintenance">🚧</a></td>
     <td align="center"><a href="https://piyushmehta.com"><img src="https://avatars3.githubusercontent.com/u/18229627?v=4" width="100px;" alt=""/><br /><sub><b>Piyush Mehta</b></sub></a><br /><a href="#blog-piyush97" title="Blogposts">📝</a></td>
+    <td align="center"><a href="https://github.com/mihirgupta0900"><img src="https://avatars0.githubusercontent.com/u/37367148?v=4" width="100px;" alt=""/><br /><sub><b>Mihir Gupta</b></sub></a><br /><a href="#design-mihirgupta0900" title="Design">🎨</a> <a href="https://github.com/piyush97/PiyushMehta.com/commits?author=mihirgupta0900" title="Code">💻</a></td>
   </tr>
 </table>
 
