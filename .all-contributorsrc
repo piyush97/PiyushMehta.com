@@ -22,6 +22,16 @@
       "contributions": [
         "blog"
       ]
+    },
+    {
+      "login": "mihirgupta0900",
+      "name": "Mihir Gupta",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/37367148?v=4",
+      "profile": "https://github.com/mihirgupta0900",
+      "contributions": [
+        "design",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
