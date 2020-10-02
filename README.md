@@ -17,19 +17,26 @@ Made with
 You can get a site up and running on your local dev environment in 5 minutes with these four steps:
 
 1. **Install Dependencies.**
+  
+   First move into your new site's directory and install dependencies
 
    ```shell
+   cd PiyushMehta.com
    npm install
    ```
 
 2. **Start the site in `develop` mode.**
 
-   Next, move into your new site’s directory and start it up:
+   Next, use following command to start it up:
 
    ```shell
-   cd PiyushMehta.com
    gatsby develop
    ```
+    OR
+
+   ```shell
+    npm run dev
+    ```
 
 3. **Open the source code and start editing!**
 
