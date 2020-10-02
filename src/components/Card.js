@@ -12,7 +12,7 @@ export const Card = styled.box`
     ${th.color('card-gradient-light')} 0%,
     ${th.color('card-gradient-dark')} 100%
   );
-  border: 1;
+  border: 1.5;
   border-color: card-border;
   box-sizing: border-box;
   box-shadow: ${th.px(5)} ${th.px(5)} ${th.px(15)} rgba(0, 0, 0, 0.12);
@@ -64,7 +64,7 @@ export const CardLink = styled.a`
   &:focus > ${Card}, &:hover > ${Card} {
     transform: translateY(${th.px(-3)}) scale(1.03);
     box-shadow: ${th.px(7)} ${th.px(7)} ${th.px(36)} rgba(0, 0, 0, 0.12);
-    border-color: card-border-hover;
+    border-color: card-border;
     outline: 0;
   }
 `;
