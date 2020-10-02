@@ -1,0 +1,48 @@
+---
+slug: 'testing-RN-with-Appium'
+title: 'How we test our React-Native application with Appium'
+date: '2020-10-02'
+author: 'Andrew Sherman'
+published: true
+description: 'Software testing made simple'
+categories:
+  - 'react-native'
+  - 'appium'
+---
+
+## Where it all started
+
+I know what you're thinking... "Oh boy, everyone's favorite phase of the software development life cycle: TESTING!". At least, that was my initial thought. However, proper testing is critical, especially when it comes to my current role in mobile development. When you are writing for an app that will hit the hands of thousands of people, you need to plan for all possible "what if"'s.
+
+Since I began my job at Papa, the mobile testing was done by the engineers, by hand, every time. While it was getting us through our releases, it was obviously not going to be sustainable in the long term as the company continues to grow and features continue to be added. A colleague did some research in to automated testing, and I was then tasked with implementing her results.
+
+## Getting rolling with Appium
+
+For anyone unfamiliar, Appium is an open source test automation framework for use with native, hybrid and mobile web apps. As we are building our app with React-Native, this was the clear front runner for our team. (For reference, I do all of my work on macOS) The installation of Appium is as easy as
+
+```npm install -g appium```
+
+After successfully doing that, all you then need to do is run the command 
+
+```appium```
+
+ and you'll have a local Appium server running on port 4723! It is in this window you'll be able to see all the output and logs from any tests you run.
+
+### Quick suggestion
+I began my testing process exactly as described above, which does work fine, however if you are going to be writing extensive testing using Appium, I highly recommend you download the Appium desktop client. This will give you a dedicated window for the server, easier view and searching of the logs, among many other customization and capabilities.
+
+## Writing the tests
+What is normally considered the most painful part of mobile testing is made a lot easier with Appium. The ability to set the desired capabilities of the test right up front allows you to customize the test to your needs and make sure you are testing exactly what you want to be testing. Now, Appium has a very long list of supported capability settings, which can be found here. The best thing you can do is to familiarize yourself with this list before you even get started so you save yourself some major headaches while testing.
+
+## Downsides
+I know I know, I've been gushing so much over Appium you're probably assuming I work for them, but I don't. As much as their product has begun to make things easier for myself and my team, there is certainly plenty of room for improvement. I could write a whole separate post on that, but for now I'll leave you with my 2 biggest gripes:
+
+### Utilities
+My biggest road block I ran in to throughout the process was that the app I am testing requires location permissions. The issue being that this notification always pops up before the app is fully loaded, so the built-in "handleAlert" functions are useless. I spent hours trying to track down a solution and settled on [AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils), which allows you to set permissions for the simulator in the background and not have to rely on responding to alerts.
+
+### Sleeping
+As far as I could find, there was no easy way to "slow down" Appium as it blasted through all of the test commands. Anyone who has worked in a simulator knows that sometimes they are a little slow and laggy. This often caused the tests to fail because Appium would click a button and then try clicking another one before the next screen had loaded. Appium does have the ability to wait for certain elements to be present before acting, however including the `isElementDisplayed()` after every screen transition could be a bit tiresome.
+
+My solution was to write a simple sleep function and include that after each command, as it was a lot easier to reuse and adjust as needed, and didn't require the constant discovery of elementId's.
+
+fin.
