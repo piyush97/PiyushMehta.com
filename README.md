@@ -12,9 +12,24 @@ Made with
 
 <img width=240px height=180px src="https://feather.ca/static/f2de18ae782e79c820a2127551c30685/86c28/gatsby-react-graphql.png" /></div>
 
+
 ## 🚀 Get Up and Running
 
 You can get a site up and running on your local dev environment in 5 minutes with these four steps:
+
+## Things to know about contributing this project
+
+<b>Fork the project</b> <br>
+    You can see this option, at the right side of this project.<br>
+    Then select your github profile when prompted.<br>
+    Your browser will automatically redirect you, to your github and would take some 20 sec to fork this project on your github.<br>
+    Once it is done, you are ready to contribute.
+    
+## Edit locally on your machine
+
+  If you want to edit this project locally on your machine, go to your preffered IDE, open the terminal and clone this project, using the link(You can find link, on download symbol)
+  
+  Then,
 
 1. **Install Dependencies.**
 
@@ -36,6 +51,12 @@ You can get a site up and running on your local dev environment in 5 minutes wit
    Your site is now running at `http://localhost:8000`. Open the `PiyushMehta.com` directory in your code editor of choice and edit `src/pages/index.js`. Save your changes, and the browser will update in real time!
 
 At this point, you’ve got a fully functional website. For additional information on how you can customize your Gatsby site, see our [plugins](https://gatsbyjs.com/plugins/) and [the official tutorial](https://www.gatsbyjs.com/tutorial/).
+
+ 4. **Merge**
+ After you have made your changes, then add the commit message and push your code to the master branch using <b>git push</b>
+  
+ 5. **Pull Request**
+ Then, create a pull request with a message, you about the changes you have made.
 
 ---
 
