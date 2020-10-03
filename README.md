@@ -1,6 +1,9 @@
 # Piyush Mehta's HomePage
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/9463ab38-9522-48b4-a448-5b2c51a8b23d/deploy-status)](https://app.netlify.com/sites/piyushmehta/deploys)
@@ -10,7 +13,9 @@
   
 Made with
 
-<img width=240px height=180px src="https://feather.ca/static/f2de18ae782e79c820a2127551c30685/86c28/gatsby-react-graphql.png" /></div>
+![TechStack](src\images\gatsby-react-graphql-readme.png 'ReactJs Gatsby Graphql')
+
+</div>
 
 ## 🚀 Get Up and Running
 
@@ -58,6 +63,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
