@@ -3,8 +3,8 @@ import styled from '@xstyled/styled-components';
 
 export const Container = styled.box`
   max-width: container-base;
-  padding-left: 4;
-  padding-right: 4;
+  padding-left: 5;
+  padding-right: 5;
   margin: 0 auto;
 `;
 
