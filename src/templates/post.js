@@ -12,6 +12,7 @@ import { PageContainer } from '../components/Container';
 import { Code } from '../components/Code';
 import { Share } from '../components/Share';
 import { Seo } from '../containers/Seo';
+import Tags from '../components/Tags';
 
 export function formatReadingTime(minutes) {
   const cups = Math.round(minutes / 5);
@@ -296,6 +297,7 @@ export default function Post({ data }) {
               <MDXRenderer>{body}</MDXRenderer>
             </figure>
           </Article>
+          <Tags categories={frontmatter.categories} />
           <Location>
             {({ location }) => (
               <>
@@ -336,6 +338,7 @@ export const pageQuery = graphql`
         author
         slug
         date
+        categories
         banner {
           childImageSharp {
             social: fixed(width: 900, height: 640) {
