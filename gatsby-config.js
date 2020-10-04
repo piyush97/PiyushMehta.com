@@ -23,6 +23,12 @@ module.exports = {
     },
     'gatsby-plugin-sitemap',
     {
+      resolve: `gatsby-plugin-disqus`,
+      options: {
+        shortname: `piyushmehta-com`,
+      },
+    },
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `images`,
