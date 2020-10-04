@@ -43,4 +43,8 @@ export const GlobalStyle = createGlobalStyle`
   [type="search"] {
     appearance: none;
   }
+
+  applause-button .count {
+    color: var(--xstyled-colors-lighter);
+  }
 `;

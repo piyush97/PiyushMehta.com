@@ -17,6 +17,11 @@ export function AppLayout({ children }) {
       <Helmet>
         <html lang="en" />
         <link rel="alternate" hrefLang="en" href="https://piyushmehta.com" />
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/applause-button/dist/applause-button.css"
+        />
+        <script src="https://unpkg.com/applause-button/dist/applause-button.js" />
       </Helmet>
       <Layout>
         <GlobalStyle />

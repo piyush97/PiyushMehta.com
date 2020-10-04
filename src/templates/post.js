@@ -13,6 +13,7 @@ import { Code } from '../components/Code';
 import { Share } from '../components/Share';
 import { Seo } from '../containers/Seo';
 import Tags from '../components/Tags';
+import Claps from '../components/Claps';
 
 export function formatReadingTime(minutes) {
   const cups = Math.round(minutes / 5);
@@ -292,6 +293,7 @@ export default function Post({ data }) {
             </figure>
           </Article>
           <Tags categories={frontmatter.categories} />
+          <Claps />
           <Location>
             {({ location }) => (
               <>
