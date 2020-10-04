@@ -140,7 +140,7 @@ module.exports = {
         // the site.
       },
     },
-    'gatsby-plugin-offline',
+    `gatsby-plugin-remove-serviceworker`,
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
