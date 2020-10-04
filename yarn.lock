@@ -1799,7 +1799,7 @@
     "@sentry/utils" "5.24.2"
     tslib "^1.9.3"
 
-"@sentry/gatsby@^5.24.2":
+"@sentry/gatsby@5.24.2":
   version "5.24.2"
   resolved "https://registry.yarnpkg.com/@sentry/gatsby/-/gatsby-5.24.2.tgz#3f5051d9dbca21d6b089d2c3f17d82bf939097c0"
   integrity sha512-8/JRYlK+eODS97TLFdReTbFakPY7fEV8/QSc9WsJUjxC4KJ/GekorO+4UyhY9YstAwtyVxdvtvSPOdclrhG1KA==
@@ -7282,12 +7282,12 @@ gatsby-page-utils@^0.2.27:
     lodash "^4.17.20"
     micromatch "^4.0.2"
 
-gatsby-plugin-disqus@^1.2.2:
+gatsby-plugin-disqus@1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/gatsby-plugin-disqus/-/gatsby-plugin-disqus-1.2.2.tgz#d10e72c2ac0f7205abd7dda2e8cb4ecc0743a824"
   integrity sha512-RWiU8Jtg94kVphjBnxqnF+0txyJ3eZN/9vw/VlMgz0mor1FwULkiiiOyNXAJxbX6tFqYmypnmfa+edQWX/rMpQ==
 
-gatsby-plugin-feed@^2.5.12:
+gatsby-plugin-feed@2.5.13:
   version "2.5.13"
   resolved "https://registry.yarnpkg.com/gatsby-plugin-feed/-/gatsby-plugin-feed-2.5.13.tgz#aee9eac139e39336a2068ab667610712e113659e"
   integrity sha512-vzwEmXNIgVoWVW7VrRAAtmCVJaQplugfv1Uge/1aWpm3r3u5oM9wrwg3+yNZTbqi7CgSdhahrYFdQAEN5KQvdA==
@@ -7688,7 +7688,7 @@ gatsby-transformer-sharp@2.5.16:
     semver "^7.3.2"
     sharp "^0.25.4"
 
-gatsby@^2.24.67:
+gatsby@2.24.67:
   version "2.24.67"
   resolved "https://registry.yarnpkg.com/gatsby/-/gatsby-2.24.67.tgz#94afba4664d5c33e67d791859127d4cc2855025d"
   integrity sha512-hZe1wUQdiIF4MxR0USfiGqbIc3MoWpT0Ds+RM74QtIOrXx9M4wKWyc0//cFHq6D0Iljkn5p5ourLJDwr15avwA==
