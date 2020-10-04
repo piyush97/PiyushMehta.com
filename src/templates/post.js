@@ -2,6 +2,7 @@ import React from 'react';
 import { graphql } from 'gatsby';
 import Img from 'gatsby-image';
 import styled, { up, css, th } from '@xstyled/styled-components';
+import { Disqus, CommentCount } from 'gatsby-plugin-disqus';
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer';
 import { MDXProvider } from '@mdx-js/react';
 import Markdown from 'react-markdown';
@@ -257,7 +258,11 @@ const locales = {
 
 export default function Post({ data }) {
   const { frontmatter, body } = data.mdx;
-
+  const disqusConfig = {
+    // url: `${data.site.siteMetadata.canonicalUrl}${location.pathname}`,
+    identifier: frontmatter.date,
+    title: frontmatter.title,
+  };
   return (
     <>
       <Seo
@@ -297,6 +302,10 @@ export default function Post({ data }) {
                   url={`${data.site.siteMetadata.canonicalUrl}${location.pathname}`}
                   title={frontmatter.title}
                 />
+                <div style={{ marginTop: '2em' }}>
+                  <CommentCount config={disqusConfig} placeholder=" " />
+                  <Disqus config={disqusConfig} />
+                </div>
               </>
             )}
           </Location>
