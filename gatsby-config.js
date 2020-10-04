@@ -22,7 +22,6 @@ module.exports = {
       },
     },
     'gatsby-plugin-sitemap',
-    'gatsby-plugin-remove-serviceworker',
     {
       resolve: `gatsby-plugin-disqus`,
       options: {
@@ -141,6 +140,7 @@ module.exports = {
         // the site.
       },
     },
+    `gatsby-plugin-remove-serviceworker`,
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
