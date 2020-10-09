@@ -151,7 +151,7 @@ export default function Uses() {
             <div>
               <li>
                 <Sectitle>Mobile Computing Drivers: </Sectitle>MacBook Pro
-                13`&quot;` 2016 with TouchBar and Dell Xps 15
+                13&quot; 2016 with TouchBar and Dell Xps 15
               </li>
               <li>
                 <Sectitle>Displays: (2 Monitors) </Sectitle>
@@ -183,111 +183,107 @@ export default function Uses() {
                 <Sectitle>
                   PC: <br />
                 </Sectitle>
-                <Links>
-                  <a
-                    href="https://www.amazon.in/gp/product/B01MTDEYHU/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    G.SKILL Trident Z RGB Series DDR4 Memory Module (8GB X 2pcs,
-                    3200Mhz)
-                  </a>
-                </Links>
-                <br />
-                <Links>
-                  <a
-                    href="https://www.amazon.in/gp/product/B07FKNYHYX/ref=ppx_yo_dt_b_asin_title_o09_s01?ie=UTF8&psc=1"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    Corsair SPEC 05 CC-9011152-UK Mid Tower Red LED Cabinet with
-                    VS650 PSU (Black)
-                  </a>
-                </Links>
-                <br />
-                <Links>
-                  <a
-                    href="https://www.amazon.in/gp/product/B07598HLB4/ref=ppx_yo_dt_b_asin_title_o07_s00?ie=UTF8&psc=1"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    Intel Core i7-8700 Desktop Processor 6 Cores up to 4.6 GHz
-                    LGA 1151 300 Series 95W
-                  </a>
-                </Links>
-                <br />
-                <Links>
-                  <a
-                    href="https://www.amazon.in/gp/product/B078211KBB/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    1TB (Crucial)& 250 GB SSD (Corsair)
-                  </a>
-                </Links>
-                <br />
-                <Links>
-                  <a
-                    href="https://www.amazon.in/gp/product/B06ZZ6FMF8/ref=ppx_yo_dt_b_asin_title_o04_s01?ie=UTF8&psc=1"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    Sapphire 11265-05-20G Radeon Pulse RX 580 8GB GDDR5
-                  </a>
-                </Links>
-                <br />
-                <Links>
-                  <a
-                    href="https://www.amazon.in/gp/product/B079JF6NDC/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    NZXT Kraken M22 CAM Powered 120 mm RGB AIO Liquid Cooler
-                    with AER P Radiator-Optimized Fan
-                  </a>
-                </Links>
-                <br />
-                <Links>
-                  <a
-                    href="https://www.amazon.in/gp/product/B07HS59X7P/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    Gigabyte Z390 UD
-                  </a>
-                </Links>
-                <br />
-                <Links>
-                  <a
-                    href="https://www.amazon.in/gp/product/B07FNHTQNW/ref=ppx_yo_dt_b_asin_title_o08_s00?ie=UTF8&psc=1"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    Antec Prizm 120 ARGB 120mm Fans{' '}
-                  </a>
-                </Links>
-                <br />
-                <Links>
-                  <a
-                    href="
+                <li>
+                  <Links>
+                    <a
+                      href="https://www.amazon.in/gp/product/B01MTDEYHU/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      G.SKILL Trident Z DDR4
+                    </a>
+                  </Links>
+                </li>
+                <li>
+                  <Links>
+                    <a
+                      href="https://www.amazon.in/gp/product/B07598HLB4/ref=ppx_yo_dt_b_asin_title_o07_s00?ie=UTF8&psc=1"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Intel Core i7-8700
+                    </a>
+                  </Links>
+                </li>
+                <li>
+                  <Links>
+                    <a
+                      href="https://www.amazon.in/gp/product/B078211KBB/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      1TB (Crucial) & 250 GB SSD (Corsair)
+                    </a>
+                  </Links>
+                </li>
+                <li>
+                  <Links>
+                    <a
+                      href="https://www.amazon.in/gp/product/B06ZZ6FMF8/ref=ppx_yo_dt_b_asin_title_o04_s01?ie=UTF8&psc=1"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      RX 580 8GB GDDR5
+                    </a>
+                  </Links>
+                </li>
+                <li>
+                  <Links>
+                    <a
+                      href="https://www.amazon.in/gp/product/B079JF6NDC/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      NZXT Kraken M22
+                    </a>
+                  </Links>
+                </li>
+                <li>
+                  <Links>
+                    <a
+                      href="https://www.amazon.in/gp/product/B07HS59X7P/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Gigabyte Z390 UD
+                    </a>
+                  </Links>
+                </li>
+                <li>
+                  <Links>
+                    <a
+                      href="https://www.amazon.in/gp/product/B07FNHTQNW/ref=ppx_yo_dt_b_asin_title_o08_s00?ie=UTF8&psc=1"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Antec Prizm 120 ARGB 120mm Fans{' '}
+                    </a>
+                  </Links>
+                </li>
+                <li>
+                  <Links>
+                    <a
+                      href="
                     https: //www.amazon.in/gp/product/B01IFGFTJ2/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    NZXT Internal USB Hub
-                  </a>
-                </Links>
-                <br />
-                <Links>
-                  {' '}
-                  <a
-                    href="https://photos.app.goo.gl/P5FLbtwNw9ZeyuG36"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    (MY RIG)
-                  </a>
-                </Links>
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      NZXT Internal USB Hub
+                    </a>
+                  </Links>
+                </li>
+                <li>
+                  <Links>
+                    {' '}
+                    <a
+                      href="https://photos.app.goo.gl/P5FLbtwNw9ZeyuG36"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      (MY RIG)
+                    </a>
+                  </Links>
+                </li>
               </li>
               <hr />
               <li>
@@ -302,9 +298,21 @@ export default function Uses() {
                     Hyperx Elite RGB MX BLUE Keys
                   </a>
                 </Links>
+                <li>
+                  <Sectitle>Mouse: </Sectitle>
+                  <Links>
+                    <a
+                      href="https://www.logitech.com/en-in/products/mice/mx-master-3.html"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Logitech MX Master 3
+                    </a>
+                  </Links>
+                </li>
               </li>
               <li>
-                <Sectitle>Tablet & Stylus: </Sectitle> iPad Pro 11`&quot;` 2019
+                <Sectitle>Tablet & Stylus: </Sectitle> iPad Pro 11&quot; 2019
                 with Apple Pencil Gen 2
               </li>
               <li>

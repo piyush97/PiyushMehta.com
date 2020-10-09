@@ -2,13 +2,15 @@ import React from 'react';
 import styled, { css, up } from '@xstyled/styled-components';
 import { Link } from 'gatsby';
 import { motion } from 'framer-motion';
+import resume from '../assets/_resume_.pdf';
 import { Navbar, NavbarBrand, NavbarSecondary } from '../components/Navbar';
 
 const links = {
   about: '$whoami',
   blog: 'Blog',
   uses: 'Uses',
-  // skills: "Skills",
+  projects: 'Projects',
+  resume: 'Resume',
 };
 const LinkStyle = styled.p`
   display: block;
@@ -97,23 +99,19 @@ export function AppNavbar() {
             variants={item}
           >
             <LinkStyle>
-              <a
-                href="https://sourcerer.io/piyush97"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Portfolio
+              <Link to="/projects">{links.projects}</Link>
+            </LinkStyle>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            variants={item}
+          >
+            <LinkStyle>
+              <a href={resume} target="_blank" rel="noreferrer">
+                {links.resume}
               </a>
             </LinkStyle>
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              variants={item}
-            >
-              <LinkStyle>
-                <Link to="/skills">{links.skills}</Link>
-              </LinkStyle>
-            </motion.div>
           </motion.div>
         </NavbarSecondary>
       </Navbar>

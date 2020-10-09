@@ -1,7 +1,17 @@
 import React from 'react';
 import styled, { Box, keyframes, th } from '@xstyled/styled-components';
-import { FaTwitter, FaFacebook } from 'react-icons/fa';
-import { TwitterShareButton, FacebookShareButton } from 'react-share';
+import {
+  FaTwitter,
+  FaFacebook,
+  FaWhatsapp,
+  FaLinkedinIn,
+} from 'react-icons/fa';
+import {
+  TwitterShareButton,
+  FacebookShareButton,
+  WhatsappShareButton,
+  LinkedinShareButton,
+} from 'react-share';
 
 const InnerShare = styled.div`
   font-size: 18;
@@ -80,6 +90,16 @@ export function Share({ url, title }) {
           <FacebookShareButton url={url} quote={title}>
             <FaFacebook />
           </FacebookShareButton>
+        </Box>
+        <Box col="auto" px={2}>
+          <WhatsappShareButton url={url} title={title}>
+            <FaWhatsapp />
+          </WhatsappShareButton>
+        </Box>
+        <Box col="auto" px={2}>
+          <LinkedinShareButton url={url} title={title} source="piyushmehta.com">
+            <FaLinkedinIn />
+          </LinkedinShareButton>
         </Box>
       </Box>
     </InnerShare>

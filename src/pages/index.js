@@ -37,6 +37,7 @@ export default class IndexPage extends React.Component {
             <br />
             <br />I write down my learnings in my blog sections so that people
             can learn from my mistakes.
+            <br />
           </HeroTeaser>
           <GitHubButton
             href="https://github.com/piyush97"
@@ -48,6 +49,7 @@ export default class IndexPage extends React.Component {
             Follow @piyush97
           </GitHubButton>
         </Hero>
+
         <Container forwardedAs="section" pb={5}>
           <SectionTitle forwardedAs="h2">Blog</SectionTitle>
           <LatestArticles edges={this.props.data.allMdx.edges} />
