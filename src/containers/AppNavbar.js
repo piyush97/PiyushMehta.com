@@ -8,6 +8,7 @@ const links = {
   about: '$whoami',
   blog: 'Blog',
   uses: 'Uses',
+  projects: 'Projects',
   // skills: "Skills",
 };
 const LinkStyle = styled.p`
@@ -97,13 +98,7 @@ export function AppNavbar() {
             variants={item}
           >
             <LinkStyle>
-              <a
-                href="https://sourcerer.io/piyush97"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Portfolio
-              </a>
+              <Link to="/projects">{links.projects}</Link>
             </LinkStyle>
             <motion.div
               whileHover={{ scale: 1.1 }}

@@ -30,6 +30,7 @@
     "@xstyled/styled-components": "1.18.1",
     "babel-plugin-styled-components": "1.11.1",
     "clipboard": "2.0.6",
+    "date-fns": "^2.16.1",
     "email-validator": "2.0.4",
     "final-form": "4.20.1",
     "framer-motion": "2.6.6",
@@ -77,6 +78,7 @@
     "react-share": "4.2.1",
     "react-snakke": "1.2.3",
     "react-spring": "8.0.27",
+    "react-transition-group": "^4.4.1",
     "reakit": "1.2.4",
     "recharts": "1.8.5",
     "styled-components": "5.2.0"
