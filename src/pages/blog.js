@@ -8,7 +8,7 @@ import { Seo } from '../containers/Seo';
 export default function Blog({ data }) {
   return (
     <>
-      <Seo title="Piyush Mehta — Blog" />
+      <Seo title="Piyush Mehta - Blog" />
       <PageContainer>
         <SectionTitle>Blog</SectionTitle>
         <SectionDescription>
