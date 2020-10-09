@@ -39,7 +39,7 @@ export default function ProjectsPage() {
           description: (
             <>
               gonuclei.com is a beautiful blend of GraphQL, Gatsby and
-              <strong>contentful CMS.</strong>
+              <strong> Contentful CMS.</strong>
             </>
           ),
         },
