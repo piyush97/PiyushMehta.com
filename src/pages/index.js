@@ -8,6 +8,7 @@ import { Hero, HeroIntro, HeroTitle, HeroTeaser } from '../containers/Hero';
 import { LatestArticles } from '../containers/LatestArticles';
 import { Seo } from '../containers/Seo';
 import '../styles/cursor.css';
+
 export default class IndexPage extends React.Component {
   componentDidMount() {
     console.log(
