@@ -381,7 +381,7 @@ function Projects({ projects }) {
       github="https://github.com/piyush97/GoGitter"
       isGithub={true}
       url="https://gogitter-16d93.web.app/"
-      color="#fbfbfb"
+      color="#EF9B0F"
       description={projects['GoGitter'].description}
       tags={['React', 'Redux']}
     />,
