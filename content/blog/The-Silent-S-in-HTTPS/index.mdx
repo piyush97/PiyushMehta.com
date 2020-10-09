@@ -7,11 +7,12 @@ banner: './images/security.png'
 published: true
 description: 'Why http(s) is not secure?'
 categories:
-  - 'HTTPS, Web, WWW'
+  - 'HTTPS'
+  - 'web'
+  - 'www'
 ---
 
 Before we start to learn about what is HTTPS, let us first know the benefits:
-
 
 ## 1. HTTPS makes your website less vulnerable to cybercrimes
 
@@ -41,15 +42,15 @@ HTTPS is the code-text that is written using standard HTTPS format and secured w
 
 There are a number of reasons to use an HTTPS connection:
 
-* It helps to establish a secure communication between server and browser.
+- It helps to establish a secure communication between server and browser.
 
-* It secures websites against tampering activities or eavesdropping.
+- It secures websites against tampering activities or eavesdropping.
 
-* It protects users from man-in-the-middle attacks.
+- It protects users from man-in-the-middle attacks.
 
-* It is used worldwide by business of all sizes to process secure payment transactions.
+- It is used worldwide by business of all sizes to process secure payment transactions.
 
-* It is used by banking, healthcare, eCommerce, social media, and government industries.
+- It is used by banking, healthcare, eCommerce, social media, and government industries.
 
 Regardless of what your situation might be, you need to look into the benefits of implementing SSL, HTTPS, and TLS secure connections in your business. You never know just how beneficial these secure methods are until you have to use them.
 
@@ -60,6 +61,7 @@ TLS uses a technology called public key encryption: there are two keys, a public
 All HTTP requests and responses are then encrypted with these session keys (this takes place at layer 6 in the OSI model), so that anyone who intercepts communications can only see a random string of characters, not the plaintext.
 
 ![](https://cdn-images-1.medium.com/max/2000/1*YFgtmTFNaL1MA6dIB1YjUQ.png)
+
 > # But HTTPS doesn’t always mean the site is safe
 
 Let’s be honest, when most people see a little green lock with the word “Secure” to the left of a URL, they think the site is safe. Ditto for spotting the words “this site uses a secure connection” or a URL beginning with the letters “https.” More and more sites these days are switching to HTTPS. Most have no choice, in fact. So what’s the problem? The more secure sites there are, the better — right?
@@ -76,7 +78,7 @@ Sure, encrypting transmitted data is a good thing. It means that information exc
 
 But the problem is that the green lock and the issued certificate say nothing about the site itself. A phishing page can just as readily get a certificate and encrypt all traffic that flows between you and it.
 
-Put simply, all a green lock ensures is that no one *else* can spy on the data you enter. But your password can still be stolen by the site itself, if it’s fake.
+Put simply, all a green lock ensures is that no one _else_ can spy on the data you enter. But your password can still be stolen by the site itself, if it’s fake.
 
 Phishers make active use of this: [According to Phishlabs](https://info.phishlabs.com/blog/quarter-phishing-attacks-hosted-https-domains), a quarter of all phishing attacks today are carried out on HTTPS sites (two years ago it was less than 1 percent). Moreover, [more than 80 percent of users believe](https://info.phishlabs.com/blog/quarter-phishing-attacks-hosted-https-domains) that the mere presence of a little green lock and the word “Secure” next to the URL means the site is safe, and they don’t think too hard before entering their data.
 
@@ -86,9 +88,9 @@ To sum up, the presence of a certificate and the green lock means only that the 
 
 So always be alert, no matter how safe the site seems at first glance.
 
-* Never enter logins, passwords, banking credentials, or any other personal information on the site unless you are sure of its authenticity. To do so, always check the domain name — and very carefully; the name of a fake site might differ by only one character. And ensure links are reliable before clicking.
+- Never enter logins, passwords, banking credentials, or any other personal information on the site unless you are sure of its authenticity. To do so, always check the domain name — and very carefully; the name of a fake site might differ by only one character. And ensure links are reliable before clicking.
 
-* Always consider what a particular site is offering, whether it looks suspicious, and whether you really need to register on it.
+- Always consider what a particular site is offering, whether it looks suspicious, and whether you really need to register on it.
 
 ## SSL (Secure Socket Layer)
 
@@ -96,9 +98,9 @@ SSL was created by Netscape Communications Corporation back in 1994. It was desi
 
 SSL utilizes two keys:
 
-* Public keys that are knowable by everyone.
+- Public keys that are knowable by everyone.
 
-* Private keys known only by the person receiving the message.
+- Private keys known only by the person receiving the message.
 
 The two keys work together to form an encrypted connection via the Web.
 
@@ -110,13 +112,13 @@ Authentication means verifying that a person or machine is who they claim to be.
 
 Just like an ID card confirms a person’s identity, a private key confirms server identity. When a client opens a channel with an origin server (e.g. when a user navigates to a website), possession of the private key that matches with the public key in a website’s SSL certificate proves that the server is actually the legitimate host of the website. This prevents or helps block a number of attacks that are possible when there is no authentication, such as:
 
-* Man-in-the-middle attacks
+- Man-in-the-middle attacks
 
-* DNS hijacking
+- DNS hijacking
 
-* BGP hijacking
+- BGP hijacking
 
-* Domain spoofing
+- Domain spoofing
 
 ## HTTPS myth-conceptions (src: CloudFlare)
 
@@ -136,7 +138,7 @@ Performance is an important factor in both user experience and how Google return
 
 When an HTTP connection occurs, there are a number of trips the connection needs to make between the client requesting the webpage and the server. Aside from the normal latency associated with a TCP handshake (shown in blue below), an additional TLS/SSL handshake (shown in yellow) must occur to use HTTPS.
 
-![src: CloudFlare](https://cdn-images-1.medium.com/max/5200/0*Ko_Zxcb4EiN7xyF7.png)*src: CloudFlare*
+![src: CloudFlare](https://cdn-images-1.medium.com/max/5200/0*Ko_Zxcb4EiN7xyF7.png)_src: CloudFlare_
 
 Improvements can be implemented to reduce the total latency of creating a SSL connection, including TLS session resumption and TLS false start.
 
@@ -156,7 +158,8 @@ There are risks associated with website migration, and done improperly a negativ
 
 Two of the most important migration practices are:
 
-1) using 301 redirects and 2) the proper placement of canonical tags. By using server 301 redirects on the HTTP site to point to the HTTPS version, a website tells Google to move to the new location for all search and indexing purposes. By placing canonical tags on the HTTPS site only, crawlers such as Googlebot will know that the new secure content should be considered canonical going forward.
+1. using 301 redirects and 2) the proper placement of canonical tags. By using server 301 redirects on the HTTP site to point to the HTTPS version, a website tells Google to move to the new location for all search and indexing purposes. By placing canonical tags on the HTTPS site only, crawlers such as Googlebot will know that the new secure content should be considered canonical going forward.
 
 If you have a large number of pages and are concerned that the recrawl will take too long, reach out to Google and tell them how much traffic you’re willing to put through your website. The network engineers will then crank up the crawl rate to help parse your site quickly and get it indexed.
+
 > # Stay Curious!
