@@ -20,7 +20,7 @@ export default function AboutPage() {
 
   return (
     <>
-      <Seo title="About - Piyush Mehta" />
+      <Seo title="Piyush Mehta - About" />
       <AboutContainer>
         <Container>
           <SectionTitle>Hi I&#39;m Piyush!</SectionTitle>
@@ -33,9 +33,8 @@ export default function AboutPage() {
         <AboutImage img={data.photo.childImageSharp} />
         <AboutText>
           <p>
-            I`&apos;`ve trained <strong>500+</strong> students for HTML, CSS,
-            JS, React , Git and Data Structures with Placement Training while I
-            was{' '}
+            I&apos;ve trained <strong>500+</strong> students for HTML, CSS, JS,
+            React, Git and Data Structures with Placement Training while I was{' '}
             <a
               href="https://developers.google.com/community/dsc"
               rel="noopener noreferrer"
