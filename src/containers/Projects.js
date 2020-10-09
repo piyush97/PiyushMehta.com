@@ -425,7 +425,7 @@ function Projects({ projects }) {
 export function ProjectsPageTemplate({ title, intro, projects }) {
   return (
     <>
-      <Seo title={`Piyush Mehta — ${title}`} />
+      <Seo title={`Piyush Mehta - ${title}`} />
       <PageContainer>
         <SectionTitle>{title}</SectionTitle>
         <SectionDescription>{intro}</SectionDescription>
