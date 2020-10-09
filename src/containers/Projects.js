@@ -1,13 +1,8 @@
 import React from 'react';
-import styled, {
-  keyframes,
-  th,
-  css,
-  Box,
-  useColorMode,
-} from '@xstyled/styled-components';
+import styled, { keyframes, th, css, Box } from '@xstyled/styled-components';
 import { format } from 'date-fns';
-import Rotate from 'react-reveal/Rotate';
+import humanNumber from 'human-number';
+import { FaGithub } from 'react-icons/fa';
 import iconLogo from '../images/Piyush.svg';
 import NTC from '../images/NTC.svg';
 import Nuclei from '../images/Nuclei.svg';
@@ -17,16 +12,12 @@ import Zapify from '../images/Zapify.svg';
 import GitApp from '../images/GitApp.svg';
 import Aidapp from '../images/Aidapp.svg';
 
-import { useStaticQuery, graphql } from 'gatsby';
-import humanNumber from 'human-number';
 // import N from '../images/N.webp';
-import { FaGithub } from 'react-icons/fa';
 import { Seo } from './Seo';
 import { SectionTitle, SectionDescription } from '../components/Section';
 import { PageContainer } from '../components/Container';
 import { ProjectShape } from '../components/Project';
 import { Card, CardBody, CardText } from '../components/Card';
-import { motion } from 'framer-motion';
 
 const rotateRight = keyframes`
   from {
@@ -260,7 +251,7 @@ function ProjectTemplate({
       .catch(() => {
         // ignore errors
       });
-  }, [stats, npm, github]);
+  }, [stats, npm, github, isGithub]);
 
   const stars = stats && isGithub && github && (
     <ShineTag key="stars" title="Number of stars on GitHub">
@@ -336,7 +327,7 @@ function Projects({ projects }) {
       logo={iconLogo}
       label={projects['piyushmehta.com'].label}
       title="PiyushMehta.com"
-      isGithub={true}
+      isGithub
       github="https://github.com/piyush97/PiyushMehta.com"
       url="https://github.com/piyush97/PiyushMehta.com"
       color="#667EEA"
@@ -345,77 +336,77 @@ function Projects({ projects }) {
     />,
     <ProjectTemplate
       logo={NTC}
-      label={projects['Netflix'].label}
+      label={projects.Netflix.label}
       title="Netflix TypeScript Clone"
-      isGithub={true}
+      isGithub
       github="https://github.com/piyush97/Netflix-React-Clone"
       url="https://netflix-reactjs-clone.netlify.app/"
       color="#E50914"
-      description={projects['Netflix'].description}
+      description={projects.Netflix.description}
       tags={['TypeScript', 'React']}
     />,
     <ProjectTemplate
       logo={Nuclei}
-      label={projects['Nuclei'].label}
+      label={projects.Nuclei.label}
       title="GoNuclei.com"
       isGithub={false}
       url="https://gonuclei.com/"
       color="#0092EB"
-      description={projects['Nuclei'].description}
+      description={projects.Nuclei.description}
       tags={['Gatsby', 'GraphQL', 'Contentful']}
     />,
     <ProjectTemplate
       logo={Meaww}
-      label={projects['Meaww'].label}
+      label={projects.Meaww.label}
       title="Dashboard"
       isGithub={false}
       url="https://meaww.com/"
       color="#000"
-      description={projects['Meaww'].description}
+      description={projects.Meaww.description}
       tags={['React', 'Redux']}
     />,
     <ProjectTemplate
       logo={GoGitter}
-      label={projects['GoGitter'].label}
+      label={projects.GoGitter.label}
       title="GoGitter"
       github="https://github.com/piyush97/GoGitter"
-      isGithub={true}
+      isGithub
       url="https://gogitter-16d93.web.app/"
       color="#EF9B0F"
-      description={projects['GoGitter'].description}
+      description={projects.GoGitter.description}
       tags={['React', 'Redux']}
     />,
     <ProjectTemplate
       logo={Zapify}
-      label={projects['Zapify'].label}
+      label={projects.Zapify.label}
       title="Zapify"
       github="https://github.com/zapify-ui/zapify"
-      isGithub={true}
+      isGithub
       url="https://zapify-ui.github.io/"
       color="#6C2478"
-      description={projects['Zapify'].description}
+      description={projects.Zapify.description}
       tags={['React', 'Webpack', 'SASS']}
     />,
     <ProjectTemplate
       logo={GitApp}
-      label={projects['GitApp'].label}
+      label={projects.GitApp.label}
       title="GitApp"
       github="https://github.com/piyush97/GitApp"
-      isGithub={true}
+      isGithub
       url="https://whispering-island-83455.herokuapp.com/"
       color="#00CDCD"
-      description={projects['GitApp'].description}
+      description={projects.GitApp.description}
       tags={['React', 'ElasticSearch', 'SASS']}
     />,
     <ProjectTemplate
       logo={Aidapp}
-      label={projects['AidApp'].label}
+      label={projects.AidApp.label}
       title="Saledrive - Sales Management Made Easy"
       // github="https://github.com/piyush97/GitApp"
       isGithub={false}
       url="https://play.google.com/store/apps/details?id=com.aidapp.saledrive&hl=en_GB"
       color="#fff"
-      description={projects['AidApp'].description}
+      description={projects.AidApp.description}
       tags={['Ionic', 'Sass', 'React']}
     />,
   ];
