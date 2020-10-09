@@ -7,7 +7,7 @@ import styled, {
   useColorMode,
 } from '@xstyled/styled-components';
 import { format } from 'date-fns';
-import Img from 'gatsby-image';
+import Rotate from 'react-reveal/Rotate';
 import iconLogo from '../images/Piyush.svg';
 import NTC from '../images/NTC.svg';
 import Nuclei from '../images/Nuclei.svg';
@@ -26,6 +26,7 @@ import { SectionTitle, SectionDescription } from '../components/Section';
 import { PageContainer } from '../components/Container';
 import { ProjectShape } from '../components/Project';
 import { Card, CardBody, CardText } from '../components/Card';
+import { motion } from 'framer-motion';
 
 const rotateRight = keyframes`
   from {
