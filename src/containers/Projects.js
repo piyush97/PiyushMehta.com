@@ -8,6 +8,15 @@ import styled, {
 } from '@xstyled/styled-components';
 import { format } from 'date-fns';
 import Img from 'gatsby-image';
+import iconLogo from '../images/Piyush.svg';
+import NTC from '../images/NTC.svg';
+import Nuclei from '../images/Nuclei.svg';
+import Meaww from '../images/Meaww.svg';
+import GoGitter from '../images/GoGitter.svg';
+import Zapify from '../images/Zapify.svg';
+import GitApp from '../images/GitApp.svg';
+import Aidapp from '../images/Aidapp.svg';
+
 import { useStaticQuery, graphql } from 'gatsby';
 import humanNumber from 'human-number';
 // import N from '../images/N.webp';
@@ -292,7 +301,7 @@ function ProjectTemplate({
     <Project position={position}>
       <ProjectImageLink href={url}>
         <ProjectShape position={position} color={color} />
-        <img src={logo} />
+        <img src={logo} alt={logo} width="150em" />
       </ProjectImageLink>
       <ProjectBody>
         <ProjectLabel>{label}</ProjectLabel>
@@ -323,7 +332,7 @@ function ProjectTemplate({
 function Projects({ projects }) {
   const projectElements = [
     <ProjectTemplate
-      logo={''}
+      logo={iconLogo}
       label={projects['piyushmehta.com'].label}
       title="PiyushMehta.com"
       isGithub={true}
@@ -334,7 +343,7 @@ function Projects({ projects }) {
       tags={['GatsbyJs', 'GraphQL']}
     />,
     <ProjectTemplate
-      logo={''}
+      logo={NTC}
       label={projects['Netflix'].label}
       title="Netflix TypeScript Clone"
       isGithub={true}
@@ -345,7 +354,7 @@ function Projects({ projects }) {
       tags={['TypeScript', 'React']}
     />,
     <ProjectTemplate
-      logo={''}
+      logo={Nuclei}
       label={projects['Nuclei'].label}
       title="GoNuclei.com"
       isGithub={false}
@@ -355,7 +364,7 @@ function Projects({ projects }) {
       tags={['Gatsby', 'GraphQL', 'Contentful']}
     />,
     <ProjectTemplate
-      logo={''}
+      logo={Meaww}
       label={projects['Meaww'].label}
       title="Dashboard"
       isGithub={false}
@@ -365,7 +374,7 @@ function Projects({ projects }) {
       tags={['React', 'Redux']}
     />,
     <ProjectTemplate
-      logo={''}
+      logo={GoGitter}
       label={projects['GoGitter'].label}
       title="GoGitter"
       github="https://github.com/piyush97/GoGitter"
@@ -376,7 +385,7 @@ function Projects({ projects }) {
       tags={['React', 'Redux']}
     />,
     <ProjectTemplate
-      logo={''}
+      logo={Zapify}
       label={projects['Zapify'].label}
       title="Zapify"
       github="https://github.com/zapify-ui/zapify"
@@ -387,7 +396,7 @@ function Projects({ projects }) {
       tags={['React', 'Webpack', 'SASS']}
     />,
     <ProjectTemplate
-      logo={''}
+      logo={GitApp}
       label={projects['GitApp'].label}
       title="GitApp"
       github="https://github.com/piyush97/GitApp"
@@ -398,7 +407,7 @@ function Projects({ projects }) {
       tags={['React', 'ElasticSearch', 'SASS']}
     />,
     <ProjectTemplate
-      logo={''}
+      logo={Aidapp}
       label={projects['AidApp'].label}
       title="Saledrive - Sales Management Made Easy"
       // github="https://github.com/piyush97/GitApp"
