@@ -62,7 +62,7 @@ export default class IndexPage extends React.Component {
 export const pageQuery = graphql`
   query {
     allMdx(
-      limit: 6
+      limit: 7
       sort: { fields: [frontmatter___date], order: DESC }
       filter: { frontmatter: { published: { ne: false } } }
     ) {
