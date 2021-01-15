@@ -316,7 +316,7 @@ export default function Uses() {
                 with Apple Pencil Gen 2
               </li>
               <li>
-                <Sectitle>Watch: </Sectitle>Apple Watch series 5
+                <Sectitle>Watch: </Sectitle>Apple Watch series 5 and Series 6
               </li>
               <li>
                 <Sectitle>Controller: </Sectitle>Xbox one Controller
