@@ -34,9 +34,18 @@ Well today 9227+ companies reportedly use React in their tech stacks, including 
 * You want to experiment or get started with React
 * You want to try a new React project and pick utility libraries on your own
 
->> Shouldn't I use gatsby? It's so cool! 
-##### When to use Gatsby!
-* You are building a landing page
-* You are building a static website (and the team likes React?)
-* There are particular pages of your website in React that need to be super performers (move them to Gatsby if they are already in CRA for instance)
-* You need better Search Engine Optimization (SEO) or AMP (Accelerated Mobile Pages)
+###### What's the benefit? 
+* Get started with a single command
+```bash 
+npx create-react-app my-app
+```
+* Less to Learn. You can just focus on React alone and don't have to worry about webpack, babel, and other such build dependencies.
+* Only one build dependency react-scripts. This maintains all your build dependencies, so it's easy to maintain and upgrade with just one command.
+
+###### What's the issue then?
+* Difficult to add custom build configs. One way to add custom configs is to eject the app, but then it overrides the Only one build dependency advantage. The other way is you can use packages like customize-cra or react-app-rewired but then they have limited capabilities.
+* Abstracts everything. It's important to understand the things that need to run a React app. But due to it's Only one build dependency advantage, a beginner might think that react-scripts is the only dependency needed to run react apps and might not know that transpiler(babel), bundler(webpack) are the key dependencies which are used under the hood by react-scripts. This happened to me until I read this awesome [article](https://medium.com/the-node-js-collection/modern-javascript-explained-for-dinosaurs-f695e9747b70).
+
+* CRA is bloated - In my Opinion. For example, CRA comes with SASS support, if you are using plain CSS or Less it's an extra dependency that you will never use. Here is a package.json of an ejected CRA app.
+<iframe src="https://gist.github.com/piyush97/6a1af0bcfb19284902b4fb8410a56deb.pibb" style="width:100%"></iframe>
+* The alternative for CRA is to set up your own boilerplate. The only advantage that we can take from CRA is Get started with a single command and we can eliminate all of its disadvantages by setting up dependencies and configs by ourselves. We cannot take the other two advantages because it introduces two disadvantages(Abstracts everything and Difficult to add custom build configs).
