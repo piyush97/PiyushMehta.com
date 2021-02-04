@@ -9,11 +9,11 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/9463ab38-9522-48b4-a448-5b2c51a8b23d/deploy-status)](https://app.netlify.com/sites/piyushmehta/deploys)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-<div style="text-align:center" align="center">
-  
-Made with
+Piyush's personal website running on Gatsby, React, and Node.js.
 
-<img width=240px height=180px src="https://feather.ca/static/f2de18ae782e79c820a2127551c30685/86c28/gatsby-react-graphql.png" /></div>
+Note: The source for this site was not created to be a template or theme, but for my own use. Feel free to take whatever inspiration from it that you want, but this code was not written with the intention of being cloned and deployed. As such, I do not provide support or guidance for doing that. I recommend using the [Gatsby Advanced Starter](https://github.com/vagr9k/gatsby-advanced-starter/) to set up a blog or an existing theme created for that purpose. 
+
+
 
 ## 🚀 Get Up and Running
 
