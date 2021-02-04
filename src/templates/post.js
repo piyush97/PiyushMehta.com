@@ -303,8 +303,14 @@ export default function Post({ data }) {
                   title={frontmatter.title}
                 />
                 <div style={{ marginTop: '2em' }}>
-                  <CommentCount config={disqusConfig} placeholder=" " />
-                  <Disqus config={disqusConfig} />
+                  <script
+                    src="https://utteranc.es/client.js"
+                    repo="piyush97/comments"
+                    issue-term="pathname"
+                    theme="preferred-color-scheme"
+                    crossOrigin="anonymous"
+                    async
+                  />
                 </div>
               </>
             )}
