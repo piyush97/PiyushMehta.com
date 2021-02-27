@@ -89,6 +89,12 @@ export default function ProjectsPage() {
             </>
           ),
         },
+        Quickstagram: {
+          label: 'React Instagram Clone',
+          description: (
+            <>Instagram Implementation with TailwindCSS, React and Firebase</>
+          ),
+        },
       }}
     />
   );
