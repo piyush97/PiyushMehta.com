@@ -1,23 +1,22 @@
-import React from 'react';
-import styled, { keyframes, th, css, Box } from '@xstyled/styled-components';
+import styled, { Box, css, keyframes, th } from '@xstyled/styled-components';
 import { format } from 'date-fns';
 import humanNumber from 'human-number';
+import React from 'react';
 import { FaGithub } from 'react-icons/fa';
-import iconLogo from '../images/Piyush.svg';
-import NTC from '../images/NTC.svg';
-import Nuclei from '../images/Nuclei.svg';
-import Meaww from '../images/Meaww.svg';
-import GoGitter from '../images/GoGitter.svg';
-import Zapify from '../images/Zapify.svg';
-import GitApp from '../images/GitApp.svg';
-import Aidapp from '../images/Aidapp.svg';
-
-// import N from '../images/N.webp';
-import { Seo } from './Seo';
-import { SectionTitle, SectionDescription } from '../components/Section';
+import { Card, CardBody, CardText } from '../components/Card';
 import { PageContainer } from '../components/Container';
 import { ProjectShape } from '../components/Project';
-import { Card, CardBody, CardText } from '../components/Card';
+import { SectionDescription, SectionTitle } from '../components/Section';
+import Aidapp from '../images/Aidapp.svg';
+import GitApp from '../images/GitApp.svg';
+import GoGitter from '../images/GoGitter.svg';
+import Meaww from '../images/Meaww.svg';
+import NTC from '../images/NTC.svg';
+import Nuclei from '../images/Nuclei.svg';
+import iconLogo from '../images/Piyush.svg';
+import Zapify from '../images/Zapify.svg';
+// import N from '../images/N.webp';
+import { Seo } from './Seo';
 
 const rotateRight = keyframes`
   from {
@@ -408,6 +407,17 @@ function Projects({ projects }) {
       color="#fff"
       description={projects.AidApp.description}
       tags={['Ionic', 'Sass', 'React']}
+    />,
+    <ProjectTemplate
+      logo="http://assets.stickpng.com/images/580b57fcd9996e24bc43c521.png"
+      label={projects.Quickstagram.label}
+      title="Quickstagram - React Instagram Clone"
+      github="https://github.com/piyush97/quickstagram"
+      isGithub
+      url="http://quickstagram.piyushmehta.com/"
+      color="#fff"
+      description={projects.Quickstagram.description}
+      tags={['Firebase', 'TailwindCss', 'React']}
     />,
   ];
   return (
