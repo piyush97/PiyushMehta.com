@@ -1,9 +1,9 @@
+import { graphql, useStaticQuery } from 'gatsby';
 import React from 'react';
-import { useStaticQuery, graphql } from 'gatsby';
-import { SectionTitle, SectionDescription } from '../components/Section';
 import { Container } from '../components/Container';
+import { SectionDescription, SectionTitle } from '../components/Section';
+import { AboutContainer, AboutImage, AboutText } from '../containers/About';
 import { Seo } from '../containers/Seo';
-import { AboutContainer, AboutText, AboutImage } from '../containers/About';
 
 export default function AboutPage() {
   const data = useStaticQuery(graphql`
@@ -27,7 +27,15 @@ export default function AboutPage() {
           <SectionDescription>
             I&#39;m a software engineer based in India, who enjoys building
             things. I&#39;m a cross trainer, brass instrument player and a
-            fitness enthusiast.
+            fitness enthusiast and a{' '}
+            <a
+              style={{ textDecoration: 'underline', color: '#FFCC68' }}
+              href="https://www.youtube.com/channel/UCK8jrKCxTyhrDcF_pHLgWSw"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              YouTube Educator .
+            </a>
           </SectionDescription>
         </Container>
         <AboutImage img={data.photo.childImageSharp} />
