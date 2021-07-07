@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
-import React from 'react';
 import { graphql } from 'gatsby';
+import React from 'react';
 import GitHubButton from 'react-github-btn';
-import { SectionTitle } from '../components/Section';
 import { Container } from '../components/Container';
-import { Hero, HeroIntro, HeroTitle, HeroTeaser } from '../containers/Hero';
+import { SectionTitle } from '../components/Section';
+import YouTubeSubscribe from '../components/YouTubeSubscribe';
+import { Hero, HeroIntro, HeroTeaser, HeroTitle } from '../containers/Hero';
 import { LatestArticles } from '../containers/LatestArticles';
 import { Seo } from '../containers/Seo';
 
@@ -28,9 +29,10 @@ export default class IndexPage extends React.Component {
           </HeroTitle>
 
           <HeroTeaser>
-            I am a full-time Full Stack Developer/Designer, a hobbyist Virtual
-            Aviation Simmer with an experience of (180+ hours) and a trumpet
-            player based in India.
+            I am a full-time Full Stack Developer/Designer, an educator on
+            youtube also known as CoderWhoKnows, a hobbyist Virtual Aviation
+            Simmer with an experience of (180+ hours) and a trumpet player based
+            in India.
             <br />
             <br />
             I create, design tools and Apps for companies and individuals.
@@ -48,6 +50,7 @@ export default class IndexPage extends React.Component {
           >
             Follow @piyush97
           </GitHubButton>
+          <YouTubeSubscribe theme="default" layout="full" count="default" />
         </Hero>
 
         <Container forwardedAs="section" pb={5}>
