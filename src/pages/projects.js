@@ -95,6 +95,15 @@ export default function ProjectsPage() {
             <>Instagram Implementation with TailwindCSS, React and Firebase</>
           ),
         },
+        Sawan: {
+          label: 'Sawan Dry Fruits',
+          description: (
+            <>
+              An ecommerce retail Immunity store, serving 25,000 orders per
+              month
+            </>
+          ),
+        },
       }}
     />
   );

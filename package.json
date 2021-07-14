@@ -56,6 +56,8 @@
     "gatsby-remark-images": "3.3.31",
     "gatsby-remark-smartypants": "2.3.12",
     "gatsby-source-filesystem": "2.3.31",
+    "gatsby-source-youtube-v2": "^1.0.1",
+    "gatsby-source-youtube-v3": "^3.0.1",
     "gatsby-transformer-sharp": "2.5.16",
     "human-number": "1.0.5",
     "husky": "4.2.5",
