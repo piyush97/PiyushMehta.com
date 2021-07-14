@@ -401,7 +401,6 @@ function Projects({ projects }) {
       logo={Aidapp}
       label={projects.AidApp.label}
       title="Saledrive - Sales Management Made Easy"
-      // github="https://github.com/piyush97/GitApp"
       isGithub={false}
       url="https://play.google.com/store/apps/details?id=com.aidapp.saledrive&hl=en_GB"
       color="#fff"
@@ -414,10 +413,20 @@ function Projects({ projects }) {
       title="Quickstagram - React Instagram Clone"
       github="https://github.com/piyush97/quickstagram"
       isGithub
-      url="http://quickstagram.piyushmehta.com/"
+      url="https://quickstagram.piyushmehta.com/"
       color="#fff"
       description={projects.Quickstagram.description}
       tags={['Firebase', 'TailwindCss', 'React']}
+    />,
+    <ProjectTemplate
+      logo="https://i.ibb.co/bKh7DWv/Piyush-2.png"
+      label={projects.Sawan.label}
+      title="Sawan - Online Immunity Retail Store"
+      isGithub={false}
+      url="https://sawandryfruits.com/"
+      color="#00CDCD"
+      description={projects.Sawan.description}
+      tags={['Ecommerece', 'Checkout', 'Shopify']}
     />,
   ];
   return (

@@ -1,7 +1,7 @@
-import React from 'react';
 import styled, { css, up } from '@xstyled/styled-components';
-import { Link } from 'gatsby';
 import { motion } from 'framer-motion';
+import { Link } from 'gatsby';
+import React from 'react';
 import resume from '../assets/_resume_.pdf';
 import { Navbar, NavbarBrand, NavbarSecondary } from '../components/Navbar';
 
@@ -10,6 +10,7 @@ const links = {
   blog: 'Blog',
   uses: 'Uses',
   projects: 'Projects',
+  videos: 'Videos',
   resume: 'Resume',
 };
 const LinkStyle = styled.p`
@@ -100,6 +101,15 @@ export function AppNavbar() {
           >
             <LinkStyle>
               <Link to="/projects">{links.projects}</Link>
+            </LinkStyle>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            variants={item}
+          >
+            <LinkStyle>
+              <Link to="/videos">{links.videos}</Link>
             </LinkStyle>
           </motion.div>
           <motion.div
