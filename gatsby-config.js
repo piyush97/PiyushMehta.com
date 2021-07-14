@@ -72,6 +72,14 @@ module.exports = {
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {
+      resolve: `gatsby-source-youtube-v3`,
+      options: {
+        channelId: ['UCK8jrKCxTyhrDcF_pHLgWSw'],
+        apiKey: 'AIzaSyBHmVXrwxlH4gAJm694H7t7h2uVl_edS3M',
+        maxVideos: 50,
+      },
+    },
+    {
       resolve: `gatsby-plugin-feed`,
       options: {
         query: `
