@@ -1,3 +1,7 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 const siteUrl = 'https://piyushmehta.com';
 const TitleName = 'Piyush Mehta';
 module.exports = {
@@ -75,7 +79,7 @@ module.exports = {
       resolve: `gatsby-source-youtube-v3`,
       options: {
         channelId: ['UCK8jrKCxTyhrDcF_pHLgWSw'],
-        apiKey: 'AIzaSyBHmVXrwxlH4gAJm694H7t7h2uVl_edS3M',
+        apiKey: process.env.YT_API_KEY,
         maxVideos: 50,
       },
     },
