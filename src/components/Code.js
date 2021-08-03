@@ -1,12 +1,12 @@
 /* eslint-disable react/button-has-type */
-import React from 'react';
 import styled, {
   css,
   ThemeContext,
-  useColorMode,
   up,
+  useColorMode,
 } from '@xstyled/styled-components';
 import Highlight, { defaultProps } from 'prism-react-renderer';
+import React from 'react';
 import Confetti from 'react-dom-confetti';
 import getPrismTheme from './prismTheme';
 
@@ -81,7 +81,7 @@ const config = {
   colors: ['#a864fd', '#29cdff', '#78ff44', '#ff718d', '#fdff6a'],
 };
 
-const Button = (props) => (
+export const Button = (props) => (
   <button
     style={{
       position: 'absolute',
