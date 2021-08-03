@@ -1,9 +1,8 @@
-import { Box } from '@xstyled/styled-components';
-import { React } from 'react';
-import { Card, CardBody, CardLink, CardTitle } from '../components/Card';
+import React from 'react';
 import { PageContainer } from '../components/Container';
 import { SectionDescription, SectionTitle } from '../components/Section';
 import { Seo } from '../containers/Seo';
+import WorkshopsContainer from '../containers/WorkshopsContainer';
 
 export default function Workshops() {
   return (
@@ -15,19 +14,7 @@ export default function Workshops() {
           I train student and Developers in Computer Science, Programming,
           Javascript, Web Development and some soft skills too
         </SectionDescription>
-        <Box>
-          <CardLink>
-            <Card>
-              <CardBody>
-                <CardTitle>Test</CardTitle>
-                {/* <Img
-                    fluid={edge.node.localThumbnail.childImageSharp.fluid}
-                    draggable={false}
-                  /> */}
-              </CardBody>
-            </Card>
-          </CardLink>
-        </Box>
+        <WorkshopsContainer />
       </PageContainer>
     </>
   );
