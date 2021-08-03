@@ -12,7 +12,7 @@ const links = {
   projects: 'Projects',
   videos: 'Videos',
   workshops: 'Workshops',
-  contact: 'Contact Me',
+  // contact: 'Contact Me',
   resume: 'Resume',
 };
 const LinkStyle = styled.p`
@@ -123,7 +123,7 @@ export function AppNavbar() {
               <Link to="/workshops">{links.workshops}</Link>
             </LinkStyle>
           </motion.div>
-          <motion.div
+          {/* <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             variants={item}
@@ -131,7 +131,7 @@ export function AppNavbar() {
             <LinkStyle>
               <Link to="/contact-me">{links.contact}</Link>
             </LinkStyle>
-          </motion.div>
+          </motion.div> */}
           <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
