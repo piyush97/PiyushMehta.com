@@ -34,8 +34,9 @@ export const pageQuery = graphql`
           channelTitle
           localThumbnail {
             childImageSharp {
-              fluid {
+              fluid(maxWidth: 400, quality: 50) {
                 ...GatsbyImageSharpFluid
+                ...GatsbyImageSharpFluidLimitPresentationSize
               }
             }
           }
