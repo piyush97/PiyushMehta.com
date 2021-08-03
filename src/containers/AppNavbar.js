@@ -11,6 +11,8 @@ const links = {
   uses: 'Uses',
   projects: 'Projects',
   videos: 'Videos',
+  workshops: 'Workshops',
+  contact: 'Contact Me',
   resume: 'Resume',
 };
 const LinkStyle = styled.p`
@@ -110,6 +112,24 @@ export function AppNavbar() {
           >
             <LinkStyle>
               <Link to="/videos">{links.videos}</Link>
+            </LinkStyle>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            variants={item}
+          >
+            <LinkStyle>
+              <Link to="/workshops">{links.workshops}</Link>
+            </LinkStyle>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            variants={item}
+          >
+            <LinkStyle>
+              <Link to="/contact-me">{links.contact}</Link>
             </LinkStyle>
           </motion.div>
           <motion.div
