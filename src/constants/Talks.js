@@ -5,7 +5,12 @@ import React from 'react';
 import { Card, CardBody, CardTitle } from '../components/Card';
 
 export const TalksData = () => {
-  const { talk1Image, talk2Image, talk3Image } = useStaticQuery(graphql`
+  const {
+    talk1Image,
+    talk2Image,
+    talk3Image,
+    talk4Image,
+  } = useStaticQuery(graphql`
     query {
       talk1Image: file(relativePath: { eq: "talk1.png" }) {
         childImageSharp {
@@ -22,6 +27,13 @@ export const TalksData = () => {
         }
       }
       talk3Image: file(relativePath: { eq: "talk3.jpeg" }) {
+        childImageSharp {
+          fluid(maxWidth: 400, quality: 100) {
+            ...GatsbyImageSharpFluid_withWebp
+          }
+        }
+      }
+      talk4Image: file(relativePath: { eq: "talk4.jpeg" }) {
         childImageSharp {
           fluid(maxWidth: 400, quality: 100) {
             ...GatsbyImageSharpFluid_withWebp
@@ -48,6 +60,12 @@ export const TalksData = () => {
         <CardBody>
           <CardTitle>Introduction To Programming</CardTitle>
           <Img fluid={talk3Image.childImageSharp.fluid} alt="test" />
+        </CardBody>
+      </Card>
+      <Card my="2">
+        <CardBody>
+          <CardTitle>Data Structures & Algo MasterClass</CardTitle>
+          <Img fluid={talk4Image.childImageSharp.fluid} alt="test" />
         </CardBody>
       </Card>
     </Box>
