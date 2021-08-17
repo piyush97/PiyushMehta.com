@@ -1,18 +1,17 @@
-import React from 'react';
+import { MDXProvider } from '@mdx-js/react';
+import { Location } from '@reach/router';
+import styled, { css, th, up } from '@xstyled/styled-components';
 import { graphql } from 'gatsby';
 import Img from 'gatsby-image';
-import styled, { up, css, th } from '@xstyled/styled-components';
-import { Disqus, CommentCount } from 'gatsby-plugin-disqus';
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer';
-import { MDXProvider } from '@mdx-js/react';
+import React from 'react';
 import Markdown from 'react-markdown';
-import { Location } from '@reach/router';
 import Snakke from 'react-snakke';
-import { PageContainer } from '../components/Container';
 import { Code } from '../components/Code';
+import { PageContainer } from '../components/Container';
 import { Share } from '../components/Share';
-import { Seo } from '../containers/Seo';
 import Tags from '../components/Tags';
+import { Seo } from '../containers/Seo';
 
 export function formatReadingTime(minutes) {
   const cups = Math.round(minutes / 5);
@@ -258,11 +257,7 @@ const locales = {
 
 export default function Post({ data }) {
   const { frontmatter, body } = data.mdx;
-  const disqusConfig = {
-    // url: `${data.site.siteMetadata.canonicalUrl}${location.pathname}`,
-    identifier: frontmatter.date,
-    title: frontmatter.title,
-  };
+
   return (
     <>
       <Seo
