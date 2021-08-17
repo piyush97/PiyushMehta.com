@@ -104,6 +104,11 @@ export default function ProjectsPage() {
             </>
           ),
         },
+        awesomePortfolio: {
+          label: 'Awesome Portfolio',
+          description:
+            'Awesome Portfolio template made for students to be used and modified',
+        },
       }}
     />
   );

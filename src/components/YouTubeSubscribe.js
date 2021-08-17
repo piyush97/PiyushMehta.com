@@ -2,22 +2,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 export default class YouTubeSubscribe extends Component {
-  static propTypes = {
-    channelName: PropTypes.string,
-    channelid: PropTypes.string.isRequired,
-    theme: PropTypes.string,
-    layout: PropTypes.string,
-    count: PropTypes.string,
-  };
-
-  static defaultProps = {
-    channelName: '',
-    channelid: 'UCK8jrKCxTyhrDcF_pHLgWSw',
-    theme: 'full',
-    layout: 'default',
-    count: 'default',
-  };
-
   /**
    *  React.createRef to attach script after mount
    *  Ref) https://reactjs.org/docs/refs-and-the-dom.html
@@ -54,24 +38,11 @@ export default class YouTubeSubscribe extends Component {
       return;
     }
 
-    // Make <script src="https://apis.google.com/js/platform.js" ></script>
     const youtubescript = document.createElement('script');
     youtubescript.src = 'https://apis.google.com/js/platform.js';
     this.youtubeSubscribeNode.current.parentNode.appendChild(youtubescript);
     this.initialized();
   }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   if (this.props.channelName === nextProps.channelName) {
-  //     return false;
-  //   }
-
-  //   if (this.props.channelid === nextProps.channelid) {
-  //     return false;
-  //   }
-
-  //   return true;
-  // }
 
   render() {
     const { theme, layout, count, channelName, channelid } = this.props;
@@ -91,3 +62,18 @@ export default class YouTubeSubscribe extends Component {
     );
   }
 }
+
+YouTubeSubscribe.propTypes = {
+  channelName: PropTypes.string,
+  channelid: PropTypes.string.isRequired,
+  theme: PropTypes.string,
+  layout: PropTypes.string,
+  count: PropTypes.string,
+};
+
+YouTubeSubscribe.defaultProps = {
+  channelName: '',
+  theme: 'full',
+  layout: 'default',
+  count: 'default',
+};
