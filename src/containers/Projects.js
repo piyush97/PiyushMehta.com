@@ -428,6 +428,17 @@ function Projects({ projects }) {
       description={projects.Sawan.description}
       tags={['Ecommerece', 'Checkout', 'Shopify']}
     />,
+    <ProjectTemplate
+      logo="https://i.ibb.co/L5Qnqdt/Awesome.png"
+      label={projects.awesomePortfolio.label}
+      title="Awesome Portfolio - Free customizable deployable theme made by me"
+      isGithub
+      github="https://github.com/piyush97/awesome-portfolio"
+      url="https://awesome-portfolio.piyushmehta.com/"
+      color="#F000B8"
+      description={projects.awesomePortfolio.description}
+      tags={['React', 'TailWindCSS', 'Framer']}
+    />,
   ];
   return (
     <Box mt={5} row mb={{ xs: -4, md: -5 }}>
