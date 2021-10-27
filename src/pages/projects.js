@@ -109,6 +109,11 @@ export default function ProjectsPage() {
           description:
             'Awesome Portfolio template made for students to be used and modified',
         },
+        divvy: {
+          label: 'Divvy',
+          description:
+            'Divvy is an NFT Marketplace Deployed on Polygon Matic Chain',
+        },
       }}
     />
   );

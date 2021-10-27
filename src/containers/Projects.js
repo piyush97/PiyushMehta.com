@@ -439,6 +439,17 @@ function Projects({ projects }) {
       description={projects.awesomePortfolio.description}
       tags={['React', 'TailWindCSS', 'Framer']}
     />,
+    <ProjectTemplate
+      logo="https://i.ibb.co/Cn9CL28/Divvy.png"
+      label={projects.divvy.label}
+      title="Divvy - NFT Marketplace on Polygon Matic"
+      isGithub
+      github="https://github.com/piyush97/divvy"
+      url="https://github.com/piyush97/divvy"
+      color="#fff"
+      description={projects.divvy.description}
+      tags={['React', 'TailWindCSS', 'NextJS', 'Solidity', 'Matic', 'Infura']}
+    />,
   ];
   return (
     <Box mt={5} row mb={{ xs: -4, md: -5 }}>
