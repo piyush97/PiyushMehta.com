@@ -37,9 +37,6 @@ export default class IndexPage extends React.Component {
             <br />
             I create, design tools and Apps for companies and individuals.
             <br />
-            <br />I write down my learnings in my blog sections so that people
-            can learn from my mistakes.
-            <br />
           </HeroTeaser>
           <GitHubButton
             href="https://github.com/piyush97"
