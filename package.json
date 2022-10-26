@@ -15,6 +15,9 @@
     "react",
     "js"
   ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "author": "Piyush Mehta",
   "license": "MIT",
   "bugs": {
