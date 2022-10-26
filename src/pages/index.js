@@ -32,7 +32,10 @@ export default class IndexPage extends React.Component {
             I am a full-time Full Stack Developer/Designer, an educator on
             youtube also known as CoderWhoKnows, a hobbyist Virtual Aviation
             Simmer with an experience of (180+ hours) and a trumpet player based
-            in Canada 🇨🇦
+            in Canada{' '}
+            <span role="img" aria-label="Canada Flag">
+              🇨🇦
+            </span>
             <br />
             <br />
             I create, design tools and Apps for companies and individuals.
