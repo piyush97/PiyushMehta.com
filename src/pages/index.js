@@ -4,7 +4,6 @@ import React from 'react';
 import GitHubButton from 'react-github-btn';
 import { Container } from '../components/Container';
 import { SectionTitle } from '../components/Section';
-import YouTubeSubscribe from '../components/YouTubeSubscribe';
 import { Hero, HeroIntro, HeroTeaser, HeroTitle } from '../containers/Hero';
 import { LatestArticles } from '../containers/LatestArticles';
 import { Seo } from '../containers/Seo';
@@ -50,7 +49,6 @@ export default class IndexPage extends React.Component {
           >
             Follow @piyush97
           </GitHubButton>
-          <YouTubeSubscribe theme="default" layout="full" count="default" />
         </Hero>
 
         <Container forwardedAs="section" pb={5}>
