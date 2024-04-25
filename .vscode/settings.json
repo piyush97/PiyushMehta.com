@@ -1,3 +1,14 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#0c4771",
+        "activityBar.background": "#0c4771",
+        "sash.hoverBorder": "#0c4771",
+        "statusBar.background": "#072a43",
+        "statusBarItem.hoverBackground": "#0c4771",
+        "statusBarItem.remoteBackground": "#072a43",
+        "titleBar.activeBackground": "#072a43",
+        "titleBar.inactiveBackground": "#072a4399"
+    },
+    "peacock.color": "#072a43"
 }
