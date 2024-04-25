@@ -11,7 +11,7 @@ const Copyright: FC = () => {
   const currentYear = new Date().getFullYear().toString();
 
   return (
-    <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+    <div className="flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
       <p className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-left">
         &#169; {currentYear} Designed and developed by{" "}
         <a
