@@ -1,4 +1,5 @@
-import Header from "@/components/custom/header";
+import Footer from "@/components/custom/Footer/footer";
+import Header from "@/components/custom/Header/header";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -46,6 +47,7 @@ export default function RootLayout({
           <Header />
           <Separator className="sticky" />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
