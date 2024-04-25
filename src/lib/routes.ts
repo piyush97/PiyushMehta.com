@@ -1,4 +1,5 @@
-import { Route } from "./types";
+import { EMAIL, GITHUB, INSTAGRAM, LINKEDIN, TWITTER } from "./constants";
+import { Route, Social } from "./types";
 
 /**
  * Represents the website's routes.
@@ -44,13 +45,25 @@ export const routes: Route[] = [
   },
 ];
 
-export const socials = [
+export const socials: Social[] = [
   {
     name: "Twitter",
-    url: "https://twitter.com/piyushmehtas",
+    url: TWITTER,
   },
   {
     name: "GitHub",
-    url: "https://github.com/piyush97",
+    url: GITHUB,
+  },
+  {
+    name: "Linkedin",
+    url: LINKEDIN,
+  },
+  {
+    name: "Instagram",
+    url: INSTAGRAM,
+  },
+  {
+    name: "Email",
+    url: EMAIL,
   },
 ];
