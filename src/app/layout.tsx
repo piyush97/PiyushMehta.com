@@ -3,10 +3,8 @@ import Header from "@/components/custom/Common/Header/header";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { VisualEditing } from "next-sanity";
 import { ThemeProvider } from "next-themes";
 import { Inter as FontSans } from "next/font/google";
-import { draftMode } from "next/headers";
 import "./globals.css";
 
 /**
@@ -45,18 +43,10 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        {draftMode().isEnabled && (
-          <div>
-            <a className="p-4 bg-blue-300 block" href="/api/disable-draft">
-              Disable preview mode
-            </a>
-          </div>
-        )}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />
           <Separator className="sticky" />
           <main> {children}</main>
-          {draftMode().isEnabled && <VisualEditing />}
 
           <Footer />
         </ThemeProvider>
