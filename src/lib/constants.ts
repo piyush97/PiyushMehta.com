@@ -9,6 +9,7 @@ import {
   FolderGitIcon,
   GitlabIcon,
   LayoutIcon,
+  LucideIcon,
   NetworkIcon,
   QrCodeIcon,
   RedoIcon,
@@ -68,7 +69,7 @@ export const ABOUT_ME_WHAT_TO_EXPECT = `This website is a reflection of my dedic
                 passion and expertise shine through in every line of my work.`;
 
 type SkillType = {
-  Icon: React.ComponentType;
+  Icon: LucideIcon;
   skill: string;
 };
 
