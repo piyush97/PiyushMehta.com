@@ -1,6 +1,6 @@
 "use client";
-import AuxBar from "@/components/custom/Header/auxbar";
-import Navbar from "@/components/custom/Header/navbar";
+import AuxBar from "@/components/custom/Common/Header/auxbar";
+import Navbar from "@/components/custom/Common/Header/navbar";
 import { Menubar, MenubarLabel } from "@/components/ui/menubar";
 import { AUTHOR_NAME } from "@/lib/constants";
 import { routes } from "@/lib/routes";
@@ -14,7 +14,7 @@ import { FC, memo } from "react";
  */
 const Header: FC = () => {
   return (
-    <header className="sticky top-0 z-50 w-full border-0 container px-4 md:px-6">
+    <header className="sticky top-0 z-50 w-full border-0 container px-4 md:px-6 bg-white dark:bg-[#1c1b22]">
       <Menubar className="container flex h-14 max-w-screen-2xl items-center border-0 ">
         <Link href="/">
           <MenubarLabel>{AUTHOR_NAME}</MenubarLabel>
