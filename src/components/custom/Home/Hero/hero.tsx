@@ -9,7 +9,7 @@ import Linkbar from "./linkbar";
  */
 const Hero: FC = () => {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32">
+    <section className="w-full py-12 md:py-24 lg:py-30">
       <div className="container px-4 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[1fr_500px] lg:gap-12 xl:grid-cols-[1fr_550px]">
           <div className="flex flex-col justify-center space-y-4">
