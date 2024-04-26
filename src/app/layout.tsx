@@ -1,5 +1,5 @@
-import Footer from "@/components/custom/Footer/footer";
-import Header from "@/components/custom/Header/header";
+import Footer from "@/components/custom/Common/Footer/footer";
+import Header from "@/components/custom/Common/Header/header";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
