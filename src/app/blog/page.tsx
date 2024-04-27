@@ -5,11 +5,12 @@ import Posts from "@/components/custom/Posts/posts";
 import { SanityDocument } from "next-sanity";
 import { sanityFetch } from "../../../sanity/lib/fetch";
 import { POSTS_QUERY } from "../../../sanity/lib/queries";
-const posts = await sanityFetch<SanityDocument[]>({
-  query: POSTS_QUERY,
-});
 
-const Page: React.FC = () => {
+const Page: React.FC = async () => {
+  const posts = await sanityFetch<SanityDocument[]>({
+    query: POSTS_QUERY,
+  });
+
   return (
     <Main>
       <Container>
