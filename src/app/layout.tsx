@@ -46,7 +46,8 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />
           <Separator className="sticky" />
-          {children}
+          <main> {children}</main>
+
           <Footer />
         </ThemeProvider>
       </body>
