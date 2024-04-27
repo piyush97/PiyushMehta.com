@@ -1,3 +1,4 @@
+import SectionTitle from "@/components/custom/Common/SectionTitle/sectionTitle";
 import React, { memo } from "react";
 
 type SectionProps = {
@@ -10,9 +11,7 @@ type SectionProps = {
  */
 const Section: React.FC<SectionProps> = ({ title, content }) => (
   <div className="space-y-2">
-    <h2 className="text-lg font-semibold tracking-wide uppercase text-gray-500 dark:text-gray-400">
-      {title}
-    </h2>
+    <SectionTitle>{title}</SectionTitle>
     <p className="text-gray-500 md:text-base dark:text-gray-400 text-justify">
       {content}
     </p>

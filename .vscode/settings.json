@@ -10,5 +10,11 @@
         "titleBar.activeBackground": "#072a43",
         "titleBar.inactiveBackground": "#072a4399"
     },
-    "peacock.color": "#072a43"
+    "peacock.color": "#072a43", 
+    "tailwindCSS.experimental.classRegex": [
+        "twc\\.[^`]+`([^`]*)`",
+        "twc\\(.*?\\).*?`([^`]*)",
+        ["twc\\.[^`]+\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+        ["twc\\(.*?\\).*?\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+    ]
 }
