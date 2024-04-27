@@ -3,11 +3,13 @@ import Link from "next/link";
 
 export default function Posts({ posts }: { posts: SanityDocument[] }) {
   return (
-    <main className="container mx-auto grid grid-cols-1 divide-y divide-blue-100">
+    <main className="container mx-auto grid grid-cols-2 divide-x-4 divide-y-2 divide-gray-100">
       {posts?.length > 0 ? (
         posts.map((post) => (
-          <Link key={post._id} href={post.slug.current}>
-            <h2 className="p-4 hover:bg-blue-50">{post.title}</h2>
+          <Link key={post._id} href={`/blog/${post.slug.current}`}>
+            <h2 className="p-4 hover:bg-blue-50 dark:hover:bg-slate-900">
+              {post.title}
+            </h2>
           </Link>
         ))
       ) : (
