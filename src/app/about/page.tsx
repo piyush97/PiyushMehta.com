@@ -1,6 +1,7 @@
 import Section from "@/components/custom/About/Section/section";
 import SectionHeader from "@/components/custom/About/SectionHeader/sectionHeader";
 import Skill from "@/components/custom/About/Skill/skill";
+import SectionTitle from "@/components/custom/Common/SectionTitle/sectionTitle";
 import {
   ABOUT_ME,
   ABOUT_ME_APPROACH,
@@ -20,9 +21,7 @@ const Page: React.FC = () => {
           <div className="space-y-6">
             <Section title="Background" content={ABOUT_ME_BG} />
             <div className="space-y-2">
-              <h2 className="text-lg font-semibold tracking-wide uppercase text-gray-500 dark:text-gray-400">
-                Skills
-              </h2>
+              <SectionTitle>Skills</SectionTitle>
               <Skill />
             </div>
           </div>
