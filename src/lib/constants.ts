@@ -1,24 +1,40 @@
 import {
   AccessibilityIcon,
+  ActivityIcon,
+  AirplayIcon,
   ArrowRightIcon,
+  AtomIcon,
   ChromeIcon,
   CloudIcon,
+  CodeIcon,
+  CodepenIcon,
   ComponentIcon,
   ContainerIcon,
   DatabaseIcon,
+  FigmaIcon,
   FolderGitIcon,
   GitlabIcon,
+  HardDriveIcon,
+  HashIcon,
+  ImageIcon,
+  LaptopIcon,
   LayoutIcon,
-  LucideIcon,
+  Link2Icon,
   NetworkIcon,
   QrCodeIcon,
   RedoIcon,
   SearchIcon,
+  ShellIcon,
+  SlackIcon,
   SofaIcon,
+  SubtitlesIcon,
+  TabletIcon,
+  TerminalIcon,
   TextIcon,
   TypeIcon,
   WindIcon,
 } from "lucide-react";
+import { Section, SkillType } from "./types";
 
 export const AUTHOR_NAME = "Piyush Mehta";
 
@@ -68,11 +84,6 @@ export const ABOUT_ME_WHAT_TO_EXPECT = `This website is a reflection of my dedic
                 simply someone who appreciates well-crafted code, I hope my
                 passion and expertise shine through in every line of my work.`;
 
-type SkillType = {
-  Icon: LucideIcon;
-  skill: string;
-};
-
 export const skills: SkillType[] = [
   { Icon: ChromeIcon, skill: "JavaScript (ES6+)" },
   { Icon: ComponentIcon, skill: "React.js" },
@@ -94,4 +105,96 @@ export const skills: SkillType[] = [
   { Icon: RedoIcon, skill: "Redis" },
   { Icon: SearchIcon, skill: "Elasticsearch" },
   { Icon: SofaIcon, skill: "Apache Kafka" },
+];
+export const sections: Section[] = [
+  {
+    Icon: CodeIcon,
+    title: "Text Editor",
+    items: [
+      {
+        Icon: AtomIcon,
+        title: "Atom",
+        description: "A hackable text editor for the 21st Century.",
+      },
+      {
+        Icon: CodepenIcon,
+        title: "Visual Studio Code",
+        description: "A free, open-source, and powerful code editor.",
+      },
+      {
+        Icon: SubtitlesIcon,
+        title: "Sublime Text",
+        description: "A sophisticated text editor for code, markup, and prose.",
+      },
+    ],
+  },
+  {
+    Icon: TerminalIcon,
+    title: "Terminal",
+    items: [
+      {
+        Icon: Link2Icon,
+        title: "iTerm2",
+        description:
+          "A replacement for Terminal and the best terminal emulator on macOS.",
+      },
+      {
+        Icon: HashIcon,
+        title: "Hyper",
+        description: "A terminal built on web technologies.",
+      },
+      {
+        Icon: ShellIcon,
+        title: "Zsh",
+        description:
+          "A powerful shell that operates as both an interactive shell and a scripting language interpreter.",
+      },
+    ],
+  },
+  {
+    Icon: ActivityIcon,
+    title: "Productivity",
+    items: [
+      {
+        Icon: ImageIcon,
+        title: "Notion",
+        description:
+          "A all-in-one workspace for notes, tasks, wikis, and databases.",
+      },
+      {
+        Icon: SlackIcon,
+        title: "Slack",
+        description:
+          "A collaboration hub for work, no matter what work you do.",
+      },
+      {
+        Icon: FigmaIcon,
+        title: "Figma",
+        description: "A collaborative interface design tool.",
+      },
+    ],
+  },
+  {
+    Icon: HardDriveIcon,
+    title: "Hardware",
+    items: [
+      {
+        Icon: LaptopIcon,
+        title: "MacBook Pro",
+        description: "A powerful and versatile laptop for professional use.",
+      },
+      {
+        Icon: TabletIcon,
+        title: "iPad Pro",
+        description:
+          "A tablet with desktop-class performance and Apple Pencil support.",
+      },
+      {
+        Icon: AirplayIcon,
+        title: "AirPods Pro",
+        description:
+          "Wireless earbuds with active noise cancellation and spatial audio.",
+      },
+    ],
+  },
 ];
