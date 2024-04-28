@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 /**
  * Route interface to represent a route in the website.
  *
@@ -16,3 +18,20 @@ export interface Social {
   name: IconName;
   url: string;
 }
+
+export type SkillType = {
+  Icon: LucideIcon;
+  skill: string;
+};
+
+export type Item = {
+  Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  title: string;
+  description: string;
+};
+
+export type Section = {
+  Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  title: string;
+  items: Item[];
+};
