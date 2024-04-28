@@ -35,3 +35,15 @@ export type Section = {
   title: string;
   items: Item[];
 };
+
+export type Project = {
+  id: number;
+  title: string;
+  description: string;
+  stars: number;
+  forks: number;
+  href: string;
+  githubUrl: string;
+  lastActivity: string;
+  languages: string[];
+};
