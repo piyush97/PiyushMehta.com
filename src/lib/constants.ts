@@ -267,3 +267,31 @@ export const projects: Project[] = [
     languages: ["React", "Tailwind CSS", "Next.js"],
   },
 ];
+
+export const books = [
+  {
+    id: "1",
+    title: "Atomic Habits",
+    subtitle: "Tiny Changes, Remarkable Results",
+    quote:
+      "You do not rise to the level of your goals. You fall to the level of your systems.",
+    coverUrl: "https://picsum.photos/300/450?random=1",
+  },
+  {
+    id: "2",
+    title: "The Lean Startup",
+    subtitle:
+      "How Today's Entrepreneurs Use Continuous Innovation to Create Radically Successful Businesses",
+    quote:
+      "Success is not delivering a feature, it is learning how to solve the customer's problem.",
+    coverUrl: "https://picsum.photos/300/450?random=1",
+  },
+  {
+    id: "3",
+    title: "The Subtle Art of Not Giving a F*ck",
+    subtitle: "A Counterintuitive Approach to Living a Good Life",
+    quote:
+      "The desire for more positive experience is itself a negative experience. And, paradoxically, the acceptance of one's negative experience is itself a positive experience.",
+    coverUrl: "https://picsum.photos/300/450?random=1",
+  },
+];

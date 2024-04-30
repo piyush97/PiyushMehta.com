@@ -47,3 +47,11 @@ export type Project = {
   lastActivity: string;
   languages: string[];
 };
+
+export type Book = {
+  id: string;
+  title: string;
+  subtitle: string;
+  quote: string;
+  coverUrl: string;
+};
