@@ -1,56 +1,56 @@
+// Destructure the imports for cleaner code
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { locales } from "@/config";
-import { useLocale, useTranslations } from "next-intl";
-import { useParams, usePathname } from "next/navigation";
-import router from "next/router";
-import { ChangeEvent, useTransition } from "react";
 
-type Props = {
+import { locales } from "@/config";
+import { usePathname, useRouter } from "@/navigation";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
+import { useTransition } from "react";
+
+// Define the type of the props outside the component for better readability
+type LocaleSelectProps = {
   defaultValue: string;
   label: string;
 };
 
-const LocaleSelect = ({ defaultValue, label }: Props) => {
+const LocaleSelect: React.FC<LocaleSelectProps> = ({ defaultValue, label }) => {
   const t = useTranslations("LocaleSwitcher");
-  const locale = useLocale();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition(); // Explicitly use React.useTransition
   const pathname = usePathname();
   const params = useParams();
+  const router = useRouter();
 
-  function onSelectChange(event: ChangeEvent<HTMLSelectElement>) {
-    const nextLocale = event.target.value;
+  // Define the type of the event for better type safety
+  const onSelectChange = (event: string) => {
+    const nextLocale = event;
     startTransition(() => {
-      router.replace(
-        // @ts-expect-error -- TypeScript will validate that only known `params`
-        // are used in combination with a given `pathname`. Since the two will
-        // always match for the current route, we can skip runtime checks.
-        { pathname, params },
-        { locale: nextLocale }
-      );
+      router.replace(pathname, { ...params, locale: nextLocale });
     });
-  }
+  };
 
   return (
-    <Select defaultValue={defaultValue}>
+    <Select onValueChange={onSelectChange}>
       <SelectTrigger
-        className="w-[180px]"
+        className="w-[180px] border-gray-200  rounded shadow-sm  text-gray-900  dark:text-gray-100"
         disabled={isPending}
-        defaultValue={defaultValue}
       >
         <SelectValue placeholder={label} />
       </SelectTrigger>
-      <SelectContent onChange={onSelectChange}>
-        {locales.map((cur) => (
-          <SelectItem key={cur} value={cur}>
-            {t("locale", { locale: cur })}
-          </SelectItem>
-        ))}
+      <SelectContent className="border-gray-200 rounded shadow-sm ">
+        <SelectGroup>
+          {locales.map((cur) => (
+            <SelectItem key={cur} value={cur}>
+              {t("locale", { locale: cur })}
+            </SelectItem>
+          ))}
+        </SelectGroup>
       </SelectContent>
     </Select>
   );

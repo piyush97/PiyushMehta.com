@@ -5,7 +5,7 @@
         "keywords": "Piyush Mehta, Piyush, Mehta, Site personnel, Site, Personnel, Piyush Mehta Site personnel, Piyush Mehta Site, Piyush Mehta Personnel, Piyush Mehta Site Personnel"
     },
     "LocaleSwitcher": {
-        "label": "Sprache ändern",
+        "label": "Changer de langue",
         "locale": "{locale, select, fr {🇨🇦 French} en {🇺🇸 English} other {Inconnu}}"
     }
 }
