@@ -1,9 +1,6 @@
-import Hero from "@/components/custom/Home/Hero/hero";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  return (
-    <main>
-      <Hero />
-    </main>
-  );
+// This page only renders when the app is built statically (output: 'export')
+export default function RootPage() {
+  redirect("/en");
 }

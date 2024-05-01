@@ -3,8 +3,8 @@ import Container from "@/components/custom/Common/Container/container";
 import Main from "@/components/custom/Common/Main/main";
 import Posts from "@/components/custom/Posts/posts";
 import { SanityDocument } from "next-sanity";
-import { sanityFetch } from "../../../sanity/lib/fetch";
-import { POSTS_QUERY } from "../../../sanity/lib/queries";
+import { sanityFetch } from "../../../../sanity/lib/fetch";
+import { POSTS_QUERY } from "../../../../sanity/lib/queries";
 
 const Page: React.FC = async () => {
   const posts = await sanityFetch<SanityDocument[]>({

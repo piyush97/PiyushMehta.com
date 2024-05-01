@@ -10,5 +10,9 @@
         "titleBar.activeBackground": "#072a43",
         "titleBar.inactiveBackground": "#072a4399"
     },
-    "peacock.color": "#072a43"
+    "peacock.color": "#072a43",
+    "i18n-ally.localesPaths": [
+        "messages"
+    ],
+    "i18n-ally.keystyle": "nested"
 }

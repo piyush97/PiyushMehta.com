@@ -2,8 +2,8 @@ import { QueryParams, SanityDocument } from "next-sanity";
 import { notFound } from "next/navigation";
 
 import Post from "@/components/custom/Posts/post";
-import { sanityFetch } from "../../../../sanity/lib/fetch";
-import { POSTS_QUERY, POST_QUERY } from "../../../../sanity/lib/queries";
+import { sanityFetch } from "../../../../../sanity/lib/fetch";
+import { POSTS_QUERY, POST_QUERY } from "../../../../../sanity/lib/queries";
 
 export async function generateStaticParams() {
   const posts = await sanityFetch<SanityDocument[]>({
