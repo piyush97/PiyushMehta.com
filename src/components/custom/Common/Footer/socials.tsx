@@ -1,0 +1,46 @@
+import { socials } from "@/lib/routes";
+import {
+  EnvelopeClosedIcon,
+  GitHubLogoIcon,
+  InstagramLogoIcon,
+  LinkedInLogoIcon,
+  TwitterLogoIcon,
+} from "@radix-ui/react-icons";
+import Link from "next/link";
+import { FC, memo } from "react";
+
+/**
+ * Represents the social media icons of the website.
+ * This component displays the social media icons.
+ */
+const Socials: FC = () => {
+  const icons = {
+    Twitter: (
+      <TwitterLogoIcon className="w-6 h-6 hover:text-blue-500 transition-colors" />
+    ),
+    GitHub: (
+      <GitHubLogoIcon className="w-6 h-6 hover:text-blue-500 transition-colors" />
+    ),
+    Linkedin: (
+      <LinkedInLogoIcon className="w-6 h-6 hover:text-blue-500 transition-colors" />
+    ),
+    Instagram: (
+      <InstagramLogoIcon className="w-6 h-6 hover:text-blue-500 transition-colors" />
+    ),
+    Email: (
+      <EnvelopeClosedIcon className="w-6 h-6 hover:text-blue-500 transition-colors" />
+    ),
+  };
+
+  return (
+    <div className="flex space-x-4">
+      {socials.map(({ name, url }) => (
+        <Link key={name} href={url} target="_blank" rel="noreferrer">
+          {icons[name]}
+        </Link>
+      ))}
+    </div>
+  );
+};
+
+export default memo(Socials);

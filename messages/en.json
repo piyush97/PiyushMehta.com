@@ -1,0 +1,11 @@
+{
+    "Metadata": {
+        "title": "Piyush Mehta",
+        "description": "Piyush Mehta's personal website",
+        "keywords": "Piyush Mehta, Piyush, Mehta, personal website, portfolio, resume, blog"
+    },
+    "LocaleSwitcher": {
+        "label": "Change language",
+        "locale": "{locale, select, fr {🇨🇦 French} en {🇺🇸 English} other {Unknown}}"
+    }
+}
