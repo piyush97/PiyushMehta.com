@@ -1,0 +1,15 @@
+{
+    "Metadata": {
+        "title": "Piyush Mehta",
+        "description": "Site personnel de Piyush Mehta",
+        "keywords": "Piyush Mehta, Piyush, Mehta, Site personnel, Site, Personnel, Piyush Mehta Site personnel, Piyush Mehta Site, Piyush Mehta Personnel, Piyush Mehta Site Personnel"
+    },
+    "LocaleSwitcher": {
+        "label": "Changer de langue",
+        "locale": "{locale, select, fr {🇨🇦 French} en {🇺🇸 English} other {Inconnu}}"
+    },
+     "AboutMe": {
+        "title": "À propos de moi",
+        "about": "Je suis un développeur de logiciels passionné et polyvalent, doté d'un sens aigu du détail et d'une volonté inébranlable de créer des solutions élégantes et centrées sur l'utilisateur. Mon expertise couvre l'ensemble de la pile technologique, de la conception d'interfaces visuellement époustouflantes à l'architecture de systèmes backend robustes."
+    }
+}
