@@ -7,12 +7,16 @@
     "LocaleSwitcher": {
         "label": "Change language",
         "locale": "{locale, select, fr {🇨🇦 French} en {🇺🇸 English} other {Unknown}}"
-    }, 
+    },
     "AboutMe": {
         "title": "About Me",
         "about": "I'm a passionate and versatile software developer with a keen eye for detail and a relentless drive to create elegant, user-centric solutions. My expertise spans the full stack, from crafting visually stunning interfaces to architecting robust backend systems."
     },
     "BookShelf": {
         "title": "BookShelf"
+    },
+    "Hero": {
+        "title": "I'm a Sofware Developer",
+        "bio": "I specialize in building modern, responsive web applications using the latest technologies. With over 4 years of experience, I have honed my skills in JavaScript, React, Node.js, and more."
     }
 }

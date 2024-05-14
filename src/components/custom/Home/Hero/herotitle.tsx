@@ -1,4 +1,5 @@
 import { AUTHOR_NAME } from "@/lib/constants";
+import { useTranslations } from "next-intl";
 import { FC, memo } from "react";
 import Title from "../../Common/Title/title";
 
@@ -14,11 +15,12 @@ interface HeroTitleProps {
  * @returns {JSX.Element} The rendered title component.
  */
 const HeroTitle: FC<HeroTitleProps> = ({ bio }) => {
+  const t = useTranslations("Hero");
   return (
     <div className="space-y-2">
       <Title>Hi, I&apos;m {AUTHOR_NAME}</Title>
       <h2 className="text-2xl font-semibold text-gray-500 dark:text-gray-400 sm:text-3xl">
-        I&apos;m a software developer
+        {t("title")}
       </h2>
       <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
         {bio}

@@ -1,4 +1,5 @@
-import { BIO, IMG_CDN } from "@/lib/constants";
+import { IMG_CDN } from "@/lib/constants";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { FC, memo } from "react";
 import HeroTitle from "./herotitle";
@@ -8,12 +9,13 @@ import Linkbar from "./linkbar";
  * Represents the hero component of the website.
  */
 const Hero: FC = () => {
+  const t = useTranslations("Hero");
   return (
     <section className="w-full py-12 md:py-24 lg:py-30">
       <div className="container px-4 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[1fr_500px] lg:gap-12 xl:grid-cols-[1fr_550px]">
           <div className="flex flex-col justify-center space-y-4">
-            <HeroTitle bio={BIO} />
+            <HeroTitle bio={t("bio")} />
             <Linkbar />
           </div>
           <Image
