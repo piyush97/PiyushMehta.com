@@ -11,5 +11,9 @@
     "AboutMe": {
         "title": "À propos de moi",
         "about": "Je suis un développeur de logiciels passionné et polyvalent avec un souci du détail aiguisé et une volonté inébranlable de créer des solutions élégantes et centrées sur l'utilisateur. Mon expertise couvre l'ensemble de la pile technologique, de la création d'interfaces visuellement impressionnantes à l'architecture de systèmes backend robustes."
+    },
+    "Hero": {
+        "title": "Développeur de logiciels",
+        "bio": "Je me spécialise dans la création d'applications web modernes et réactives en utilisant les dernières technologies. Avec plus de 4 ans d'expérience, j'ai perfectionné mes compétences en JavaScript, React, Node.js, etc."
     }
 }
