@@ -11,5 +11,8 @@
     "AboutMe": {
         "title": "About Me",
         "about": "I'm a passionate and versatile software developer with a keen eye for detail and a relentless drive to create elegant, user-centric solutions. My expertise spans the full stack, from crafting visually stunning interfaces to architecting robust backend systems."
+    },
+    "BookShelf": {
+        "title": "BookShelf"
     }
 }
