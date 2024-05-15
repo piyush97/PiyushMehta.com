@@ -6,11 +6,14 @@
     },
     "LocaleSwitcher": {
         "label": "Change language",
-        "locale": "{locale, select, fr {🇨🇦 French} en {🇺🇸 English} other {Unknown}}"
+        "locale": "{locale, select, en {🇺🇸 English} ca-fr {🇨🇦 Canadian French} other {Unknown}}"    
     },
     "AboutMe": {
         "title": "About Me",
-        "about": "I'm a passionate and versatile software developer with a keen eye for detail and a relentless drive to create elegant, user-centric solutions. My expertise spans the full stack, from crafting visually stunning interfaces to architecting robust backend systems."
+        "about": "I'm a passionate and versatile software developer with a keen eye for detail and a relentless drive to create elegant, user-centric solutions. My expertise spans the full stack, from crafting visually stunning interfaces to architecting robust backend systems.",
+        "aboutme": "I discovered my passion for coding at a young age, and have since honed my skills through a combination of formal education and hands-on experience. After obtaining my degree in Computer Science, I dove headfirst into the world of software development, embracing the ever-evolving nature of technology and continuously expanding my knowledge.",
+        "skills": "Skills",
+        "background": "Background"
     },
     "BookShelf": {
         "title": "BookShelf"

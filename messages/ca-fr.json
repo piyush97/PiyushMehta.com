@@ -6,11 +6,14 @@
     },
     "LocaleSwitcher": {
         "label": "Changer de langue",
-        "locale": "{locale, select, fr {🇨🇦 French} en {🇺🇸 English} other {Inconnu}}"
+        "locale": "{locale, select, en {🇺🇸 English} ca-fr {🇨🇦 Canadian French} other {Unknown}}"
     },
     "AboutMe": {
         "title": "À propos de moi",
-        "about": "Je suis un développeur de logiciels passionné et polyvalent avec un souci du détail aiguisé et une volonté inébranlable de créer des solutions élégantes et centrées sur l'utilisateur. Mon expertise couvre l'ensemble de la pile technologique, de la création d'interfaces visuellement impressionnantes à l'architecture de systèmes backend robustes."
+        "about": "Je suis un développeur de logiciels passionné et polyvalent avec un souci du détail aiguisé et une volonté inébranlable de créer des solutions élégantes et centrées sur l'utilisateur. Mon expertise couvre l'ensemble de la pile technologique, de la création d'interfaces visuellement impressionnantes à l'architecture de systèmes backend robustes.",
+        "aboutme": "J'ai découvert ma passion pour le codage à un jeune âge et j'ai depuis perfectionné mes compétences grâce à une combinaison d'éducation formelle et d'expérience pratique. Après avoir obtenu mon diplôme en informatique, j'ai plongé tête première dans le monde du développement de logiciels, embrassant la nature en constante évolution de la technologie et élargissant continuellement mes connaissances.",
+        "skills": "Compétences",
+        "background": "Historique"
     },
     "Hero": {
         "title": "Développeur de logiciels",
