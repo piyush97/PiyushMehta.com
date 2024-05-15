@@ -6,7 +6,7 @@
     },
     "LocaleSwitcher": {
         "label": "Changer de langue",
-        "locale": "{locale, select, en {🇺🇸 English} ca-fr {🇨🇦 Canadian French} other {Unknown}}"
+        "locale": "🇨🇦 Canadian French"
     },
     "AboutMe": {
         "title": "À propos de moi",

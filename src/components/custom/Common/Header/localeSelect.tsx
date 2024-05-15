@@ -8,7 +8,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { locales } from "@/config";
 import { usePathname, useRouter } from "@/navigation";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
@@ -45,11 +44,12 @@ const LocaleSelect: React.FC<LocaleSelectProps> = ({ defaultValue, label }) => {
       </SelectTrigger>
       <SelectContent className="border-gray-200 rounded shadow-sm ">
         <SelectGroup>
-          {locales.map((cur) => (
-            <SelectItem key={cur} value={cur}>
-              {t("locale", { locale: cur })}
-            </SelectItem>
-          ))}
+          <SelectItem key={"en"} value={"en"}>
+            🇺🇸 English
+          </SelectItem>
+          <SelectItem key={"ca-fr"} value={"ca-fr"}>
+            🇨🇦 Canadian French
+          </SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
