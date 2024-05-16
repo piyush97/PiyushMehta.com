@@ -2,7 +2,7 @@
     "Metadata": {
         "title": "Piyush Mehta",
         "description": "Piyush Mehta's personal website",
-        "keywords": "Piyush Mehta, Piyush, Mehta, personal website, portfolio, resume, blog"
+        "keywords": "Piyush Mehta, Piyush, Mehta, personal website, uses, resume, blog"
     },
     "LocaleSwitcher": {
         "label": "Change language",
@@ -21,5 +21,14 @@
     "Hero": {
         "title": "I'm a Sofware Developer",
         "bio": "I specialize in building modern, responsive web applications using the latest technologies. With over 4 years of experience, I have honed my skills in JavaScript, React, Node.js, and more."
+    },
+    "Header": {
+        "home": "Home",
+        "about": "About",
+        "uses": "Uses",
+        "blog": "Blog",
+        "projects": "Projects",
+        "bookshelf": "Bookshelf",
+        "404": "404"
     }
 }

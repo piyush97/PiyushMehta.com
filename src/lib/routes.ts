@@ -7,36 +7,28 @@ import { Route, Social } from "./types";
 export const routes: Route[] = [
   {
     path: "/",
-    name: "Home",
+    name: "home",
     isVisible: false,
   },
   {
     path: "/about",
-    name: "About",
+    name: "about",
   },
   {
     path: "/blog",
-    name: "Blog",
+    name: "blog",
   },
   {
     path: "/uses",
-    name: "Uses",
-  },
-  {
-    path: "/videos",
-    name: "Videos",
-  },
-  {
-    path: "/workshops",
-    name: "Workshops",
+    name: "uses",
   },
   {
     path: "/projects",
-    name: "Projects",
+    name: "projects",
   },
   {
     path: "/bookshelf",
-    name: "Bookshelf",
+    name: "bookshelf",
   },
   {
     path: "/404",

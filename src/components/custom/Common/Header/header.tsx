@@ -5,6 +5,7 @@ import { Menubar, MenubarLabel } from "@/components/ui/menubar";
 import { AUTHOR_NAME } from "@/lib/constants";
 import { routes } from "@/lib/routes";
 import { Route } from "@/lib/types";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { FC, memo } from "react";
 
@@ -13,6 +14,7 @@ import { FC, memo } from "react";
  * This component displays the website's logo and navigation menu.
  */
 const Header: FC = () => {
+  const t = useTranslations("Header");
   return (
     <header className="sticky top-0 z-50 w-full border-0 container px-4 md:px-6 bg-white dark:bg-[#1c1b22]">
       <Menubar className="container flex h-14 max-w-screen-2xl items-center border-0 ">
@@ -21,7 +23,7 @@ const Header: FC = () => {
         </Link>
         <nav className="flex items-center gap-4 text-sm lg:gap-6 ">
           {routes.map(({ path, name, isVisible = true }: Route) =>
-            isVisible ? <Navbar key={name} name={name} path={path} /> : null
+            isVisible ? <Navbar key={name} name={t(name)} path={path} /> : null
           )}
         </nav>
         <AuxBar />

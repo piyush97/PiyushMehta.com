@@ -18,5 +18,14 @@
     "Hero": {
         "title": "Développeur de logiciels",
         "bio": "Je me spécialise dans la création d'applications web modernes et réactives en utilisant les dernières technologies. Avec plus de 4 ans d'expérience, j'ai perfectionné mes compétences en JavaScript, React, Node.js, etc."
+    },
+    "Header": {
+        "home": "Maison",
+        "about": "å Propos",
+        "uses": "Les Usages",
+        "blog": "Blog",
+        "projects": "Projets",
+        "bookshelf": "Étagère à livres",
+        "404": "404"
     }
 }
