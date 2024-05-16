@@ -16,6 +16,7 @@
         "background": "Historique"
     },
     "Hero": {
+        "main": "Salut, je m'appelle Piyush Mehta",
         "title": "Développeur de logiciels",
         "bio": "Je me spécialise dans la création d'applications web modernes et réactives en utilisant les dernières technologies. Avec plus de 4 ans d'expérience, j'ai perfectionné mes compétences en JavaScript, React, Node.js, etc."
     },
@@ -27,5 +28,14 @@
         "projects": "Projets",
         "bookshelf": "Étagère à livres",
         "404": "404"
+    },
+    "Footer": {
+        "design": "Conçu et développé par",
+        "source": "Code source disponible sur"
+    },
+    "Linkbar": {
+        "viewProjects": "Afficher les projets",
+        "contactMe": "Contactez-moi"
     }
+
 }

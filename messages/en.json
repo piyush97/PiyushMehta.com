@@ -19,6 +19,7 @@
         "title": "BookShelf"
     },
     "Hero": {
+        "main": "Hi, I'm Piyush Mehta",
         "title": "I'm a Sofware Developer",
         "bio": "I specialize in building modern, responsive web applications using the latest technologies. With over 4 years of experience, I have honed my skills in JavaScript, React, Node.js, and more."
     },
@@ -30,5 +31,12 @@
         "projects": "Projects",
         "bookshelf": "Bookshelf",
         "404": "404"
+    },
+    "Footer": {
+        "design": "Designed and developed by",
+        "source": "Source code available on"
+    },"Linkbar": {
+        "viewProjects": "View Projects",
+        "contactMe": "Contact Me"
     }
 }

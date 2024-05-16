@@ -1,4 +1,3 @@
-import { AUTHOR_NAME } from "@/lib/constants";
 import { useTranslations } from "next-intl";
 import { FC, memo } from "react";
 import Title from "../../Common/Title/title";
@@ -18,7 +17,7 @@ const HeroTitle: FC<HeroTitleProps> = ({ bio }) => {
   const t = useTranslations("Hero");
   return (
     <div className="space-y-2">
-      <Title>Hi, I&apos;m {AUTHOR_NAME}</Title>
+      <Title>{t("main")}</Title>
       <h2 className="text-2xl font-semibold text-gray-500 dark:text-gray-400 sm:text-3xl">
         {t("title")}
       </h2>
