@@ -2,7 +2,6 @@ import Section from "@/components/custom/About/Section/section";
 import SectionHeader from "@/components/custom/About/SectionHeader/sectionHeader";
 import Skill from "@/components/custom/About/Skill/skill";
 import SectionTitle from "@/components/custom/Common/SectionTitle/sectionTitle";
-import { ABOUT_ME_APPROACH, ABOUT_ME_WHAT_TO_EXPECT } from "@/lib/constants";
 import { useTranslations } from "next-intl";
 
 /**
@@ -24,8 +23,8 @@ const Page: React.FC = () => {
             </div>
           </div>
           <div className="space-y-6">
-            <Section title="My Approach" content={ABOUT_ME_APPROACH} />
-            <Section title="What to Expect" content={ABOUT_ME_WHAT_TO_EXPECT} />
+            <Section title={t("myapproach")} content={t("approach")} />
+            <Section title={t("whattoexpect")} content={t("expectation")} />
           </div>
         </div>
       </div>

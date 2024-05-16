@@ -13,7 +13,11 @@
         "about": "I'm a passionate and versatile software developer with a keen eye for detail and a relentless drive to create elegant, user-centric solutions. My expertise spans the full stack, from crafting visually stunning interfaces to architecting robust backend systems.",
         "aboutme": "I discovered my passion for coding at a young age, and have since honed my skills through a combination of formal education and hands-on experience. After obtaining my degree in Computer Science, I dove headfirst into the world of software development, embracing the ever-evolving nature of technology and continuously expanding my knowledge.",
         "skills": "Skills",
-        "background": "Background"
+        "background": "Background",
+        "myapproach": "My Approach",
+        "approach": "I believe in the power of continuous learning and staying up-to-date with the latest tools and technologies. Every project is an opportunity to push the boundaries of innovation while ensuring accessibility, inclusivity, and exceptional user experiences. I take a collaborative approach, working closely with clients and stakeholders to understand their unique needs and translate them into visually stunning and highly functional digital solutions.",
+        "whattoexpect": "What to Expect",
+        "expectation": "This website is a reflection of my dedication to craftsmanshipand attention to detail. I invite you to explore my portfolio,where you'll find a curated collection of my work, showcasing myability to blend cutting-edge technology with elegant design.Whether you're a fellow developer, a potential collaborator, orsimply someone who appreciates well-crafted code, I hope mypassion and expertise shine through in every line of my work."
     },
     "BookShelf": {
         "title": "BookShelf"

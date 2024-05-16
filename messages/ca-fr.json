@@ -13,7 +13,12 @@
         "about": "Je suis un développeur de logiciels passionné et polyvalent avec un souci du détail aiguisé et une volonté inébranlable de créer des solutions élégantes et centrées sur l'utilisateur. Mon expertise couvre l'ensemble de la pile technologique, de la création d'interfaces visuellement impressionnantes à l'architecture de systèmes backend robustes.",
         "aboutme": "J'ai découvert ma passion pour le codage à un jeune âge et j'ai depuis perfectionné mes compétences grâce à une combinaison d'éducation formelle et d'expérience pratique. Après avoir obtenu mon diplôme en informatique, j'ai plongé tête première dans le monde du développement de logiciels, embrassant la nature en constante évolution de la technologie et élargissant continuellement mes connaissances.",
         "skills": "Compétences",
-        "background": "Historique"
+        "background": "Historique",
+        "myapproach": "Mon approche",
+        "approach": "Je crois au pouvoir de l'apprentissage continu et du fait de rester à jour avec les derniers outils et technologies. Chaque projet est une opportunité de repousser les limites de l'innovation tout en garantissant l'accessibilité, l'inclusivité et des expériences utilisateur exceptionnelles. J'adopte une approche collaborative, en travaillant en étroite collaboration avec les clients et les parties prenantes pour comprendre leurs besoins uniques et les traduire en solutions numériques visuellement époustouflantes et hautement fonctionnelles.",
+        "whattoexpect": "À quoi s'attendre",
+        "expectation": "Ce site Web est le reflet de mon dévouement au savoir-faire et de mon souci du détail. Je vous invite à explorer mon portfolio, où vous trouverez une collection organisée de mon travail, mettant en valeur ma capacité à mélanger une technologie de pointe avec un design élégant. Que vous soyez un collègue développeur, un collaborateur potentiel ou simplement quelqu'un qui apprécie bien- code conçu, j'espère que ma passion et mon expertise transparaîtront dans chaque ligne de mon travail."
+
     },
     "Hero": {
         "main": "Salut, je m'appelle Piyush Mehta",
