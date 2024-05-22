@@ -16,7 +16,7 @@ import { FC, memo } from "react";
 const Header: FC = () => {
   const t = useTranslations("Header");
   return (
-    <header className="sticky top-0 z-50 w-full border-0 container px-4 md:px-6 bg-white dark:bg-[#1c1b22]">
+    <header className="sticky top-0 z-50 w-full border-0 container px-4 md:px-6">
       <Menubar className="container flex h-14 max-w-screen-2xl items-center border-0 ">
         <Link href="/">
           <MenubarLabel>{AUTHOR_NAME}</MenubarLabel>

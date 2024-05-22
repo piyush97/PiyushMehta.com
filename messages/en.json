@@ -6,7 +6,7 @@
     },
     "LocaleSwitcher": {
         "label": "Change language",
-        "locale": "🇺🇸 English"    
+        "locale": "🇺🇸 English"
     },
     "AboutMe": {
         "title": "About Me",
@@ -39,8 +39,41 @@
     "Footer": {
         "design": "Designed and developed by",
         "source": "Source code available on"
-    },"Linkbar": {
+    },
+    "Linkbar": {
         "viewProjects": "View Projects",
         "contactMe": "Contact Me"
+    },
+    "Uses": {
+        "title": "My Tech and Tools",
+        "uses": "Here are some of the tools, technologies, and resources that I use on a daily basis to build and maintain my projects. I'm always on the lookout for new tools and technologies to improve my workflow, so feel free to reach out if you have any recommendations!",
+        "sections": {
+            "textEditor": {
+                "title": "Text Editor",
+                "items": {
+                    "vscode": {
+                        "title": "Visual Studio Code",
+                        "description": "A free, open-source, and powerful code editor."
+                    }
+                }
+            },
+            "terminal": {
+                "title": "Terminal",
+                "items": {
+                    "iterm2": {
+                        "title": "iTerm2",
+                        "description": "A replacement for Terminal and the best terminal emulator on macOS."
+                    },
+                    "warp": {
+                        "title": "Warp",
+                        "description": "A terminal built on web technologies."
+                    },
+                    "zsh": {
+                        "title": "Zsh",
+                        "description": "A powerful shell that operates as both an interactive shell and a scripting language interpreter."
+                    }
+                }
+            }
+        }
     }
 }

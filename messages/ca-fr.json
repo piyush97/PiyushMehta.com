@@ -41,5 +41,10 @@
     "Linkbar": {
         "viewProjects": "Afficher les projets",
         "contactMe": "Contactez-moi"
+    },
+    "Uses": {
+     "title": "Ma technologie et mes outils",
+         "uses": "Voici quelques-uns des outils, technologies et ressources que j'utilise quotidiennement pour créer et maintenir mes projets. Je suis toujours à la recherche de nouveaux outils et technologies pour améliorer mon flux de travail, alors n'hésitez pas à nous contacter si vous avez des recommandations !"
+         
     }
 }

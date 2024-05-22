@@ -3,11 +3,9 @@ import {
   ActivityIcon,
   AirplayIcon,
   ArrowRightIcon,
-  AtomIcon,
   ChromeIcon,
   CloudIcon,
   CodeIcon,
-  CodepenIcon,
   ComponentIcon,
   ContainerIcon,
   DatabaseIcon,
@@ -27,7 +25,6 @@ import {
   ShellIcon,
   SlackIcon,
   SofaIcon,
-  SubtitlesIcon,
   TabletIcon,
   TerminalIcon,
   TextIcon,
@@ -99,19 +96,9 @@ export const sections: Section[] = [
     title: "Text Editor",
     items: [
       {
-        Icon: AtomIcon,
-        title: "Atom",
-        description: "A hackable text editor for the 21st Century.",
-      },
-      {
-        Icon: CodepenIcon,
+        Icon: CodeIcon,
         title: "Visual Studio Code",
         description: "A free, open-source, and powerful code editor.",
-      },
-      {
-        Icon: SubtitlesIcon,
-        title: "Sublime Text",
-        description: "A sophisticated text editor for code, markup, and prose.",
       },
     ],
   },
@@ -127,7 +114,7 @@ export const sections: Section[] = [
       },
       {
         Icon: HashIcon,
-        title: "Hyper",
+        title: "Warp",
         description: "A terminal built on web technologies.",
       },
       {

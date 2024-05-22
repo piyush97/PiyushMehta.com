@@ -13,7 +13,7 @@ const SectionHeader: React.FC<Props> = ({ title, body }: Props) => (
   <div className="container flex flex-col items-center space-y-10 px-4 md:px-6">
     <div className="text-center space-y-4">
       <Title>{title}</Title>
-      <p className="max-w-[800px] text-gray-500 md:text-xl md:mx-auto dark:text-gray-400 text-justify">
+      <p className="max-w-[800px] text-gray-500 md:text-xl md:mx-auto dark:text-gray-400 ">
         {body}
       </p>
     </div>
