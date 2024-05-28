@@ -17,7 +17,7 @@ interface NavbarProps {
  */
 const Navbar: FC<NavbarProps> = ({ name, path }) => {
   return (
-    <MenubarGroup className="flex">
+    <MenubarGroup className="flex md:flex-row">
       <MenubarMenu>
         <Link href={path} className="hover:text-blue-500 transition-colors">
           <MenubarTrigger>{name}</MenubarTrigger>
