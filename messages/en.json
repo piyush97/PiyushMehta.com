@@ -44,6 +44,10 @@
         "viewProjects": "View Projects",
         "contactMe": "Contact Me"
     },
+    "Projects":{
+        "title": "Projects",
+        "description": "I have worked on a variety of projects. Here are a few of them."
+    },
     "Uses": {
         "title": "My Tech and Tools",
         "uses": "Here are some of the tools, technologies, and resources that I use on a daily basis to build and maintain my projects. I'm always on the lookout for new tools and technologies to improve my workflow, so feel free to reach out if you have any recommendations!",

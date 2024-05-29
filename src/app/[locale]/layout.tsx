@@ -47,6 +47,12 @@ export default function LocaleLayout({
   const messages = useMessages();
   return (
     <html lang={locale}>
+      <head>
+        <meta
+          property="og:image"
+          content={`/${locale}/api/og?title=Piyush Mehta`}
+        />
+      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
