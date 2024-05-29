@@ -1,8 +1,10 @@
 import Uses from "@/components/custom/Uses/uses";
 
-type Props = {};
+type Props = {
+  params: { locale: string };
+};
 
-const Page = (props: Props) => {
+const Page: React.FC<Props> = ({ params: { locale } }: Props) => {
   return <Uses />;
 };
 

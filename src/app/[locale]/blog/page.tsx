@@ -1,15 +1,26 @@
+"use client";
 import SectionHeader from "@/components/custom/About/SectionHeader/sectionHeader";
 import Container from "@/components/custom/Common/Container/container";
 import Main from "@/components/custom/Common/Main/main";
 import Posts from "@/components/custom/Posts/posts";
 import { SanityDocument } from "next-sanity";
+import { useEffect, useState } from "react";
 import { sanityFetch } from "../../../../sanity/lib/fetch";
 import { POSTS_QUERY } from "../../../../sanity/lib/queries";
 
-const Page: React.FC = async () => {
-  const posts = await sanityFetch<SanityDocument[]>({
-    query: POSTS_QUERY,
-  });
+const Page: React.FC = () => {
+  const [posts, setPosts] = useState<SanityDocument[]>([]);
+
+  useEffect(() => {
+    const getPosts = async () => {
+      const posts = await sanityFetch<SanityDocument[]>({
+        query: POSTS_QUERY,
+      });
+      setPosts(posts);
+      return posts;
+    };
+    getPosts();
+  }, []);
 
   return (
     <Main>

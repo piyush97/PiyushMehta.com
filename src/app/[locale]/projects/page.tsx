@@ -4,8 +4,13 @@ import Container from "@/components/custom/Common/Container/container";
 import Main from "@/components/custom/Common/Main/main";
 import ProjectCard from "@/components/custom/Project/projectCard";
 import { useTranslations } from "next-intl";
+import { unstable_setRequestLocale } from "next-intl/server";
 import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
+
+type Props = {
+  params: { locale: string };
+};
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_API_TOKEN,
@@ -25,7 +30,8 @@ const getProjectsFromGithub = async () => {
   return response.data;
 };
 
-const Page: React.FC = () => {
+const Page: React.FC<Props> = ({ params: { locale } }: Props) => {
+  unstable_setRequestLocale(locale);
   const [projects, setProjects] = useState([]);
   useEffect(() => {
     getProjectsFromGithub().then((data) => setProjects(data));

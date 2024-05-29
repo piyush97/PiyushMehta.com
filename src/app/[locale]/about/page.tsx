@@ -3,11 +3,18 @@ import SectionHeader from "@/components/custom/About/SectionHeader/sectionHeader
 import Skill from "@/components/custom/About/Skill/skill";
 import SectionTitle from "@/components/custom/Common/SectionTitle/sectionTitle";
 import { useTranslations } from "next-intl";
+import { unstable_setRequestLocale } from "next-intl/server";
+
+type Props = {
+  params: { locale: string };
+};
 
 /**
  * About page component that displays information about the author.
  */
-const Page: React.FC = () => {
+const Page: React.FC<Props> = ({ params: { locale } }: Props) => {
+  unstable_setRequestLocale(locale);
+
   const t = useTranslations("AboutMe");
 
   return (
