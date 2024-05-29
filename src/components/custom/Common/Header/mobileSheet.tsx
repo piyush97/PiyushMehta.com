@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { routes } from "@/lib/routes";
+import { Route } from "@/lib/types";
 import { MenuIcon } from "lucide-react";
-import { Route } from "next";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 
@@ -24,14 +24,14 @@ const MobileSheet = (props: Props) => {
           <span className="sr-only">Piyush Mehta</span>
         </Link>
         <div className="grid gap-2 py-6">
-          {routes.map(({ path, name, isVisible = true }: Route) =>
-            isVisible ? (
+          {routes.map((route: Route) =>
+            route.isVisible ? (
               <Link
                 className="flex w-full items-center py-2 text-lg font-semibold"
-                href={path}
-                key={name}
+                href={route.path}
+                key={route.name}
               >
-                {t(name)}
+                {t(route.name)}
               </Link>
             ) : null
           )}
