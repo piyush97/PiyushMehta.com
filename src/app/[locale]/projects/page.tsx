@@ -4,7 +4,6 @@ import Container from "@/components/custom/Common/Container/container";
 import Main from "@/components/custom/Common/Main/main";
 import ProjectCard from "@/components/custom/Project/projectCard";
 import { useTranslations } from "next-intl";
-import { Project } from "next/dist/build/swc";
 import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
 
@@ -38,7 +37,7 @@ const Page: React.FC = () => {
       <Container>
         <SectionHeader title={t("title")} body={t("description")} />
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project: Project) => (
+          {projects.map((project: any) => (
             <ProjectCard key={project.id} {...project} />
           ))}
         </div>

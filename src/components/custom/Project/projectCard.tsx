@@ -16,7 +16,6 @@ type Owner = {
 
 type Project = {
   name: string;
-  description: string;
   forks_count: number;
   stargazers_count: number;
   pushed_at: string;
@@ -27,7 +26,6 @@ type Project = {
 
 export default function ProjectCard({
   name,
-  description,
   forks_count,
   stargazers_count,
   pushed_at,
@@ -48,11 +46,6 @@ export default function ProjectCard({
           }}
           width="920"
         />
-        {/* <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" /> */}
-        {/* <div className="absolute bottom-4 left-4 text-white">
-          <h2 className="text-lg font-semibold">{name}</h2>
-          <p className="text-sm">{description}</p>
-        </div> */}
       </div>
       <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-b-lg">
         <div className="flex items-center justify-between mb-2">
