@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --debug",
     "start": "next start",
     "lint": "next lint"
   },
@@ -25,6 +25,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.30.9",
+    "framer-motion": "^11.2.9",
     "lucide-react": "^0.372.0",
     "negotiator": "^0.6.3",
     "next": "14.2.2",

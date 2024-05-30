@@ -4,7 +4,6 @@ import Container from "@/components/custom/Common/Container/container";
 import Main from "@/components/custom/Common/Main/main";
 import ProjectCard from "@/components/custom/Project/projectCard";
 import { useTranslations } from "next-intl";
-import { unstable_setRequestLocale } from "next-intl/server";
 import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
 
@@ -31,7 +30,7 @@ const getProjectsFromGithub = async () => {
 };
 
 const Page: React.FC<Props> = ({ params: { locale } }: Props) => {
-  unstable_setRequestLocale(locale);
+  // unstable_setRequestLocale(locale);
   const [projects, setProjects] = useState([]);
   useEffect(() => {
     getProjectsFromGithub().then((data) => setProjects(data));
