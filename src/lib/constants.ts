@@ -3,11 +3,9 @@ import {
   ActivityIcon,
   AirplayIcon,
   ArrowRightIcon,
-  AtomIcon,
   ChromeIcon,
   CloudIcon,
   CodeIcon,
-  CodepenIcon,
   ComponentIcon,
   ContainerIcon,
   DatabaseIcon,
@@ -27,14 +25,13 @@ import {
   ShellIcon,
   SlackIcon,
   SofaIcon,
-  SubtitlesIcon,
   TabletIcon,
   TerminalIcon,
   TextIcon,
   TypeIcon,
   WindIcon,
 } from "lucide-react";
-import { Project, Section, SkillType } from "./types";
+import { Section, SkillType } from "./types";
 
 export const AUTHOR_NAME = "Piyush Mehta";
 
@@ -99,19 +96,9 @@ export const sections: Section[] = [
     title: "Text Editor",
     items: [
       {
-        Icon: AtomIcon,
-        title: "Atom",
-        description: "A hackable text editor for the 21st Century.",
-      },
-      {
-        Icon: CodepenIcon,
+        Icon: CodeIcon,
         title: "Visual Studio Code",
         description: "A free, open-source, and powerful code editor.",
-      },
-      {
-        Icon: SubtitlesIcon,
-        title: "Sublime Text",
-        description: "A sophisticated text editor for code, markup, and prose.",
       },
     ],
   },
@@ -127,7 +114,7 @@ export const sections: Section[] = [
       },
       {
         Icon: HashIcon,
-        title: "Hyper",
+        title: "Warp",
         description: "A terminal built on web technologies.",
       },
       {
@@ -183,75 +170,6 @@ export const sections: Section[] = [
           "Wireless earbuds with active noise cancellation and spatial audio.",
       },
     ],
-  },
-];
-
-export const projects: Project[] = [
-  {
-    id: 1,
-    title: "Project 1",
-    description: "A brief description of Project 1.",
-    stars: 100,
-    forks: 50,
-    href: "",
-    githubUrl: "",
-    lastActivity: "2 weeks ago",
-    languages: ["React", "Tailwind CSS", "Next.js"],
-  },
-  {
-    id: 2,
-    title: "Project 2",
-    description: "A brief description of Project 2.",
-    stars: 200,
-    forks: 75,
-    githubUrl: "",
-    href: "",
-    lastActivity: "1 month ago",
-    languages: ["React", "Tailwind CSS", "Next.js"],
-  },
-  {
-    id: 3,
-    title: "Project 3",
-    description: "A brief description of Project 3.",
-    stars: 150,
-    forks: 60,
-    href: "",
-    githubUrl: "",
-    lastActivity: "3 months ago",
-    languages: ["React", "Tailwind CSS", "Next.js"],
-  },
-  {
-    id: 4,
-    title: "Project 4",
-    description: "A brief description of Project 4.",
-    stars: 80,
-    href: "",
-    githubUrl: "",
-    forks: 30,
-    lastActivity: "6 months ago",
-    languages: ["React", "Tailwind CSS", "Next.js"],
-  },
-  {
-    id: 5,
-    title: "Project 5",
-    description: "A brief description of Project 5.",
-    stars: 120,
-    forks: 40,
-    githubUrl: "",
-    href: "",
-    lastActivity: "4 months ago",
-    languages: ["React", "Tailwind CSS", "Next.js"],
-  },
-  {
-    id: 6,
-    title: "Project 6",
-    description: "A brief description of Project 6.",
-    stars: 90,
-    forks: 25,
-    githubUrl: "",
-    href: "",
-    lastActivity: "8 months ago",
-    languages: ["React", "Tailwind CSS", "Next.js"],
   },
 ];
 

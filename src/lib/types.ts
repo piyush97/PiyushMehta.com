@@ -42,7 +42,7 @@ export type Project = {
   description: string;
   stars: number;
   forks: number;
-  href: string;
+  repos_url: string;
   githubUrl: string;
   lastActivity: string;
   languages: string[];
