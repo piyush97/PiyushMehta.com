@@ -15,10 +15,6 @@ export const routes: Route[] = [
     name: "about",
   },
   {
-    path: "/blog",
-    name: "blog",
-  },
-  {
     path: "/uses",
     name: "uses",
   },
@@ -29,6 +25,10 @@ export const routes: Route[] = [
   {
     path: "/bookshelf",
     name: "bookshelf",
+  },
+  {
+    path: "/resume",
+    name: "resume",
   },
   {
     path: "/404",
