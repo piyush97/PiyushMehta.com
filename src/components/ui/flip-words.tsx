@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 
 export const FlipWords = ({
   words,
-  duration = 3000,
+  duration = 1500,
   className,
 }: {
   words: string[];
@@ -16,16 +16,25 @@ export const FlipWords = ({
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   const startAnimation = useCallback(() => {
-    const word = words[words.indexOf(currentWord) + 1] || words[0];
-    setCurrentWord(word);
+    const currentIndex = words.indexOf(currentWord);
+    const nextIndex = (currentIndex + 1) % words.length;
+    const nextWord = words[nextIndex];
+    setCurrentWord(nextWord);
     setIsAnimating(true);
   }, [currentWord, words]);
 
   useEffect(() => {
-    if (!isAnimating)
-      setTimeout(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (!isAnimating) {
+      timeoutId = setTimeout(() => {
         startAnimation();
       }, duration);
+    }
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [isAnimating, duration, startAnimation]);
 
   return (
