@@ -5,10 +5,10 @@ import {
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 
 import { usePathname, useRouter } from "@/navigation";
+import { LanguagesIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useTransition } from "react";
@@ -35,24 +35,23 @@ const LocaleSelect: React.FC<LocaleSelectProps> = ({ defaultValue, label }) => {
   };
 
   return (
-    <Select onValueChange={onSelectChange}>
-      <SelectTrigger
-        className="w-[180px] border-gray-200  rounded shadow-sm  text-gray-900  dark:text-gray-100"
-        disabled={isPending}
-      >
-        <SelectValue placeholder={label} />
-      </SelectTrigger>
-      <SelectContent className="border-gray-200 rounded shadow-sm ">
-        <SelectGroup>
-          <SelectItem key={"en"} value={"en"}>
-            🇺🇸 English
-          </SelectItem>
-          <SelectItem key={"ca-fr"} value={"ca-fr"}>
-            🇨🇦 Canadian French
-          </SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <>
+      <Select onValueChange={onSelectChange}>
+        <SelectTrigger className="px-1 border-none " disabled={isPending}>
+          <LanguagesIcon />
+        </SelectTrigger>
+        <SelectContent className="border-gray-200 rounded shadow-sm ">
+          <SelectGroup>
+            <SelectItem key={"en"} value={"en"}>
+              🇺🇸 English
+            </SelectItem>
+            <SelectItem key={"ca-fr"} value={"ca-fr"}>
+              🇨🇦 Canadian French
+            </SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </>
   );
 };
 

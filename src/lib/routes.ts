@@ -13,22 +13,27 @@ export const routes: Route[] = [
   {
     path: "/about",
     name: "about",
+    isVisible: true,
   },
   {
     path: "/blog",
     name: "blog",
+    isVisible: true,
   },
   {
     path: "/uses",
     name: "uses",
+    isVisible: true,
   },
   {
     path: "/projects",
     name: "projects",
+    isVisible: true,
   },
   {
     path: "/bookshelf",
     name: "bookshelf",
+    isVisible: true,
   },
   {
     path: "/404",

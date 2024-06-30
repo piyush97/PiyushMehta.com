@@ -20,8 +20,8 @@ const MobileSheet = (props: Props) => {
         </Button>
       </SheetTrigger>
       <SheetContent side="left">
-        <Link className="mr-6 hidden lg:flex" href="#">
-          <span className="sr-only">Piyush Mehta</span>
+        <Link className="mr-6  lg:flex" href="#">
+          <span>Piyush Mehta</span>
         </Link>
         <div className="grid gap-2 py-6">
           {routes.map((route: Route) =>

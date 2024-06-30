@@ -10,6 +10,7 @@ export default getRequestConfig(async ({ locale }) => {
 
   return {
     locale,
-    messages: (await import(`../messages/${locale}.json`)).default,
+    messages: (await import(`../i18n/locales/${locale}.json`)).default,
+    timeZone: "Etc/UTC",
   };
 });
