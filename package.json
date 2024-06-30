@@ -42,6 +42,7 @@
     "react-twc": "^1.4.1",
     "rxjs": "^7.8.1",
     "sanity": "3",
+    "sharp": "^0.33.4",
     "styled-components": "6",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7"

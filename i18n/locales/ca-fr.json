@@ -1,54 +1,52 @@
 {
-    "Metadata": {
-        "title": "Piyush Mehta",
-        "description": "Site personnel de Piyush Mehta",
-        "keywords": "Piyush Mehta, Piyush, Mehta, Site personnel, Site, Personnel, Piyush Mehta Site personnel, Piyush Mehta Site, Piyush Mehta Personnel, Piyush Mehta Site Personnel"
-    },
-    "LocaleSwitcher": {
-        "label": "Changer de langue",
-        "locale": "🇨🇦 Canadian French"
-    },
-    "AboutMe": {
-        "title": "À propos de moi",
-        "about": "Je suis un développeur de logiciels passionné et polyvalent avec un souci du détail aiguisé et une volonté inébranlable de créer des solutions élégantes et centrées sur l'utilisateur. Mon expertise couvre l'ensemble de la pile technologique, de la création d'interfaces visuellement impressionnantes à l'architecture de systèmes backend robustes.",
-        "aboutme": "J'ai découvert ma passion pour le codage à un jeune âge et j'ai depuis perfectionné mes compétences grâce à une combinaison d'éducation formelle et d'expérience pratique. Après avoir obtenu mon diplôme en informatique, j'ai plongé tête première dans le monde du développement de logiciels, embrassant la nature en constante évolution de la technologie et élargissant continuellement mes connaissances.",
-        "skills": "Compétences",
-        "background": "Historique",
-        "myapproach": "Mon approche",
-        "approach": "Je crois au pouvoir de l'apprentissage continu et du fait de rester à jour avec les derniers outils et technologies. Chaque projet est une opportunité de repousser les limites de l'innovation tout en garantissant l'accessibilité, l'inclusivité et des expériences utilisateur exceptionnelles. J'adopte une approche collaborative, en travaillant en étroite collaboration avec les clients et les parties prenantes pour comprendre leurs besoins uniques et les traduire en solutions numériques visuellement époustouflantes et hautement fonctionnelles.",
-        "whattoexpect": "À quoi s'attendre",
-        "expectation": "Ce site Web est le reflet de mon dévouement au savoir-faire et de mon souci du détail. Je vous invite à explorer mon portfolio, où vous trouverez une collection organisée de mon travail, mettant en valeur ma capacité à mélanger une technologie de pointe avec un design élégant. Que vous soyez un collègue développeur, un collaborateur potentiel ou simplement quelqu'un qui apprécie bien- code conçu, j'espère que ma passion et mon expertise transparaîtront dans chaque ligne de mon travail."
-
-    },
-    "Hero": {
-        "main": "Salut, je m'appelle Piyush Mehta",
-        "title": "Je suis un développeur de logiciels, un routard et un passionné de café ☕",
-        "bio": "Je suis un ingénieur logiciel polyvalent avec une passion pour l'apprentissage continu et un talent pour résoudre des problèmes complexes en utilisant une gamme diversifiée de technologies. Mon approche est impartiale, me permettant de m'adapter et d'exceller dans diverses piles technologiques."
-    },
-    "Header": {
-        "home": "Maison",
-        "about": "å Propos",
-        "uses": "Les Usages",
-        "blog": "Blog",
-        "projects": "Projets",
-        "bookshelf": "Étagère à livres",
-        "404": "404"
-    },
-    "Footer": {
-        "design": "Conçu et développé par",
-        "source": "Code source disponible sur"
-    },
-    "Linkbar": {
-        "viewProjects": "Afficher les projets",
-        "contactMe": "Contactez-moi"
-    },
-       "Projects":{
-        "title": "Projets",
-        "description": "Ont travaillé sur une variété de projets. En voici quelques-uns."
-    },
-    "Uses": {
-     "title": "Ma technologie et mes outils",
-         "uses": "Voici quelques-uns des outils, technologies et ressources que j'utilise quotidiennement pour créer et maintenir mes projets. Je suis toujours à la recherche de nouveaux outils et technologies pour améliorer mon flux de travail, alors n'hésitez pas à nous contacter si vous avez des recommandations !"
-         
-    }
+  "Metadata": {
+    "title": "Piyush Mehta",
+    "description": "Site personnel de Piyush Mehta",
+    "keywords": "Piyush Mehta, Piyush, Mehta, Site personnel, Site, Personnel, Piyush Mehta Site personnel, Piyush Mehta Site, Piyush Mehta Personnel, Piyush Mehta Site Personnel"
+  },
+  "LocaleSwitcher": {
+    "label": "Changer de langue",
+    "locale": "🇨🇦 Canadian French"
+  },
+  "AboutMe": {
+    "title": "À propos de moi",
+    "about": "Je suis un développeur de logiciels passionné et polyvalent avec un souci du détail aiguisé et une volonté inébranlable de créer des solutions élégantes et centrées sur l'utilisateur. Mon expertise couvre l'ensemble de la pile technologique, de la création d'interfaces visuellement impressionnantes à l'architecture de systèmes backend robustes.",
+    "aboutme": "J'ai découvert ma passion pour le codage à un jeune âge et j'ai depuis perfectionné mes compétences grâce à une combinaison d'éducation formelle et d'expérience pratique. Après avoir obtenu mon diplôme en informatique, j'ai plongé tête première dans le monde du développement de logiciels, embrassant la nature en constante évolution de la technologie et élargissant continuellement mes connaissances.",
+    "skills": "Compétences",
+    "background": "Historique",
+    "myapproach": "Mon approche",
+    "approach": "Je crois au pouvoir de l'apprentissage continu et du fait de rester à jour avec les derniers outils et technologies. Chaque projet est une opportunité de repousser les limites de l'innovation tout en garantissant l'accessibilité, l'inclusivité et des expériences utilisateur exceptionnelles. J'adopte une approche collaborative, en travaillant en étroite collaboration avec les clients et les parties prenantes pour comprendre leurs besoins uniques et les traduire en solutions numériques visuellement époustouflantes et hautement fonctionnelles.",
+    "whattoexpect": "À quoi s'attendre",
+    "expectation": "Ce site Web est le reflet de mon dévouement au savoir-faire et de mon souci du détail. Je vous invite à explorer mon portfolio, où vous trouverez une collection organisée de mon travail, mettant en valeur ma capacité à mélanger une technologie de pointe avec un design élégant. Que vous soyez un collègue développeur, un collaborateur potentiel ou simplement quelqu'un qui apprécie bien- code conçu, j'espère que ma passion et mon expertise transparaîtront dans chaque ligne de mon travail."
+  },
+  "Hero": {
+    "main": "Salut 👋, je m'appelle Piyush Mehta",
+    "title": "Je suis un développeur de logiciels, un routard et un passionné de café ☕",
+    "bio": "Je suis un ingénieur logiciel polyvalent avec une passion pour l'apprentissage continu et un talent pour résoudre des problèmes complexes en utilisant une gamme diversifiée de technologies. Mon approche est impartiale, me permettant de m'adapter et d'exceller dans diverses piles technologiques."
+  },
+  "Header": {
+    "home": "Maison",
+    "about": "å Propos",
+    "uses": "Les Usages",
+    "blog": "Blog",
+    "projects": "Projets",
+    "bookshelf": "Étagère à livres",
+    "404": "404"
+  },
+  "Footer": {
+    "design": "Conçu et développé par",
+    "source": "Code source disponible sur"
+  },
+  "Linkbar": {
+    "viewProjects": "Afficher les projets",
+    "contactMe": "Contactez-moi"
+  },
+  "Projects": {
+    "title": "Projets",
+    "description": "Ont travaillé sur une variété de projets. En voici quelques-uns."
+  },
+  "Uses": {
+    "title": "Ma technologie et mes outils",
+    "uses": "Voici quelques-uns des outils, technologies et ressources que j'utilise quotidiennement pour créer et maintenir mes projets. Je suis toujours à la recherche de nouveaux outils et technologies pour améliorer mon flux de travail, alors n'hésitez pas à nous contacter si vous avez des recommandations !"
+  }
 }

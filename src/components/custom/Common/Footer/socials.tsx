@@ -16,19 +16,19 @@ import { FC, memo } from "react";
 const Socials: FC = () => {
   const icons = {
     Twitter: (
-      <TwitterLogoIcon className="w-6 h-6 hover:text-blue-500 transition-colors" />
+      <TwitterLogoIcon className="w-6 h-6 hover:text-primary transition-colors" />
     ),
     GitHub: (
-      <GitHubLogoIcon className="w-6 h-6 hover:text-blue-500 transition-colors" />
+      <GitHubLogoIcon className="w-6 h-6 hover:text-primary transition-colors" />
     ),
     Linkedin: (
-      <LinkedInLogoIcon className="w-6 h-6 hover:text-blue-500 transition-colors" />
+      <LinkedInLogoIcon className="w-6 h-6 hover:text-primary transition-colors" />
     ),
     Instagram: (
-      <InstagramLogoIcon className="w-6 h-6 hover:text-blue-500 transition-colors" />
+      <InstagramLogoIcon className="w-6 h-6 hover:text-primary transition-colors" />
     ),
     Email: (
-      <EnvelopeClosedIcon className="w-6 h-6 hover:text-blue-500 transition-colors" />
+      <EnvelopeClosedIcon className="w-6 h-6 hover:text-primary transition-colors" />
     ),
   };
 

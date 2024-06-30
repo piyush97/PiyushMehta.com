@@ -23,7 +23,7 @@ const AuxBar: FC = () => {
       <MenubarGroup className="flex items-center justify-between space-x-4 md:justify-end">
         <LocaleSelect defaultValue={locale} label={t("label")} />
         <Link href={socials[1].url}>
-          <GitHubLogoIcon className="h-6 w-6  hover:text-blue-500 transition-colors" />
+          <GitHubLogoIcon className="h-6 w-6  hover:text-primary transition-colors" />
         </Link>
         <Button
           variant="link"

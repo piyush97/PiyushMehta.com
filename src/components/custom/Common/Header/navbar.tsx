@@ -19,7 +19,7 @@ const Navbar: FC<NavbarProps> = ({ name, path }) => {
   return (
     <MenubarGroup className="flex md:flex-row">
       <MenubarMenu>
-        <Link href={path} className="hover:text-blue-500 transition-colors">
+        <Link href={path} className="hover:text-primary transition-colors">
           <MenubarTrigger>{name}</MenubarTrigger>
         </Link>
       </MenubarMenu>
