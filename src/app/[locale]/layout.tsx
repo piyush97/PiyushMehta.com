@@ -59,7 +59,27 @@ export default function LocaleLayout({
           fontSans.variable
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          themes={[
+            "light",
+            "dark",
+            "zinc",
+            "slate",
+            "stone",
+            "gray",
+            "neutral",
+            "red",
+            "rose",
+            "blue",
+            "green",
+            "yellow",
+            "violet",
+            "orange",
+          ]}
+          enableSystem
+        >
           <NextIntlClientProvider messages={messages}>
             <Header />
             <Separator className="sticky" />

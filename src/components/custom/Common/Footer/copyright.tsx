@@ -20,7 +20,7 @@ const Copyright: FC = () => {
           href={socials[0].url}
           target="_blank"
           rel="noreferrer"
-          className="font-medium underline underline-offset-4 hover:text-primary transition-colors"
+          className="font-medium underline underline-offset-4 text-primary  hover:text-background transition-colors"
         >
           {AUTHOR_NAME}
         </a>
@@ -29,7 +29,7 @@ const Copyright: FC = () => {
           href="https://github.com/piyush97/piyushmehta.com"
           target="_blank"
           rel="noreferrer"
-          className="font-medium underline underline-offset-4 hover:text-primary transition-colors"
+          className="font-medium underline underline-offset-4 text-primary hover:text-background transition-colors"
         >
           {" "}
           GitHub

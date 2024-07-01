@@ -9,8 +9,8 @@ const Linkbar: FC = () => {
   const t = useTranslations("Linkbar");
   return (
     <div className="flex flex-col gap-2 min-[400px]:flex-row">
-      <Button variant="default">{t("viewProjects")}</Button>
-      <Button variant="outline">{t("contactMe")}</Button>
+      <Button variant="outline">{t("viewProjects")}</Button>
+      <Button variant="default">{t("contactMe")}</Button>
     </div>
   );
 };

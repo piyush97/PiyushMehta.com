@@ -19,7 +19,7 @@ const HeroTitle: FC<HeroTitleProps> = ({ bio }) => {
     <div className="space-y-2">
       <Title>{t("main")}</Title>
 
-      <h1 className="text-xl font-semibold text-gray-500 dark:text-gray-400 sm:text-3xl">
+      <h1 className="text-xl font-semibold text-primary dark:text-primary sm:text-3xl">
         {t("title")}
       </h1>
       <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
