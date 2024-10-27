@@ -1,6 +1,5 @@
 import Footer from "@/components/custom/Common/Footer/footer";
 import Header from "@/components/custom/Common/Header/header";
-import { Separator } from "@/components/ui/separator";
 import { locales } from "@/config";
 import { cn } from "@/lib/utils";
 import { Metadata } from "next";
@@ -24,6 +23,7 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+// #region Metadata for locale based layout
 export async function generateMetadata({
   params: { locale },
 }: Omit<Props, "children">) {
@@ -36,6 +36,7 @@ export async function generateMetadata({
   return metadata;
 }
 
+// #region Local Layout for locale
 export default function LocaleLayout({
   children,
   params: { locale },
@@ -55,36 +56,28 @@ export default function LocaleLayout({
       </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          " bg-background font-sans antialiased dark:bg-black min-h-[100dvh]",
           fontSans.variable
         )}
       >
         <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark-classic"
+          enableColorScheme
           themes={[
             "light",
-            "dark",
-            "zinc",
-            "slate",
-            "stone",
-            "gray",
-            "neutral",
-            "red",
-            "rose",
-            "blue",
-            "green",
-            "yellow",
-            "violet",
-            "orange",
+            "dark-classic",
+            "tangerine",
+            "dark-tangerine",
+            "mint",
+            "dark-mint",
           ]}
-          enableSystem
         >
           <NextIntlClientProvider messages={messages}>
-            <Header />
-            <Separator className="sticky" />
-            <main> {children}</main>
-            <Footer />
+            <div className="flex flex-col min-h-[100dvh]">
+              <Header />
+              <main className="container">{children}</main>
+              <Footer />
+            </div>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>
