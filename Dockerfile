@@ -7,9 +7,12 @@ WORKDIR /app
 # Copy package.json and bun.lockb
 COPY package.json bun.lockb ./
 
-# Install Bun and dependencies
-RUN npm install -g bun && \
-    bun install --frozen-lockfile
+# Install dependencies
+RUN apk add --no-cache curl unzip && \
+    curl -fsSL https://bun.sh/install | bash && \
+    mv /root/.bun/bin/bun /usr/local/bin/bun && \
+    bun install --frozen-lockfile && \
+    apk del curl unzip
 
 # Copy the rest of your app's source code
 COPY . .
