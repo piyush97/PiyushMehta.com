@@ -1,27 +1,37 @@
-# Use the official Node.js 18 image as a parent image
-FROM node:20-alpine
+# Use the official Bun image
+FROM oven/bun:1 AS base
+WORKDIR /usr/src/app
 
-# Set the working directory
-WORKDIR /app
+# Install dependencies into temp directory
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lockb /temp/dev/
+RUN cd /temp/dev && bun install --frozen-lockfile
 
-# Copy package.json and bun.lockb
-COPY package.json bun.lockb ./
+# Install with --production (exclude devDependencies)
+RUN mkdir -p /temp/prod
+COPY package.json bun.lockb /temp/prod/
+RUN cd /temp/prod && bun install --frozen-lockfile --production
 
-# Install dependencies
-RUN apk add --no-cache curl unzip && \
-    curl -fsSL https://bun.sh/install | bash && \
-    mv /root/.bun/bin/bun /usr/local/bin/bun && \
-    bun install --frozen-lockfile && \
-    apk del curl unzip
-
-# Copy the rest of your app's source code
+# Copy node_modules from temp directory
+# Then copy all (non-ignored) project files into the image
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
 # Build your Next.js app
+ENV NODE_ENV=production
 RUN bun run build
 
-# Expose the port Next.js runs on
-EXPOSE 3000
+# Copy production dependencies and built app into final image
+FROM base AS release
+COPY --from=install /temp/prod/node_modules node_modules
+COPY --from=prerelease /usr/src/app/.next ./.next
+COPY --from=prerelease /usr/src/app/public ./public
+COPY --from=prerelease /usr/src/app/package.json .
+COPY --from=prerelease /usr/src/app/next.config.js .
 
 # Run the app
+USER bun
+EXPOSE 3000
 CMD ["bun", "start"]
