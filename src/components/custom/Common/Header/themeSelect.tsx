@@ -18,7 +18,8 @@ const ThemeSelect = () => {
   };
   const RenderColor = twc.div<{ themeName: string }>`
   w-4 h-4 rounded-full mr-2
-  ${(props) => (props.themeName === "dark" ? "bg-black" : "bg-white")}
+  ${(props: { themeName: string }) =>
+    props.themeName === "dark" ? "bg-black" : "bg-white"}
 `;
   if (!theme) return null;
   return (
