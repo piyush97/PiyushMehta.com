@@ -27,6 +27,7 @@ const nextConfig = {
   experimental: {
     taint: true,
   },
+  output: "standalone",
 };
 
 export default withNextIntl(nextConfig);
