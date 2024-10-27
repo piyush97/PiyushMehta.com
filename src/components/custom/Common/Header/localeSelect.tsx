@@ -35,23 +35,24 @@ const LocaleSelect: React.FC<LocaleSelectProps> = ({ defaultValue, label }) => {
   };
 
   return (
-    <>
-      <Select onValueChange={onSelectChange}>
-        <SelectTrigger className="px-1 border-none " disabled={isPending}>
-          <LanguagesIcon />
-        </SelectTrigger>
-        <SelectContent className="border-gray-200 rounded shadow-sm ">
-          <SelectGroup>
-            <SelectItem key={"en"} value={"en"}>
-              🇺🇸 English
-            </SelectItem>
-            <SelectItem key={"ca-fr"} value={"ca-fr"}>
-              🇨🇦 Canadian French
-            </SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </>
+    <Select onValueChange={onSelectChange}>
+      <SelectTrigger
+        className="px-1 border-none bg-transparent text-primary"
+        disabled={isPending}
+      >
+        <LanguagesIcon />
+      </SelectTrigger>
+      <SelectContent className="border-gray-200 rounded shadow-sm text-primary">
+        <SelectGroup>
+          <SelectItem key={"en"} value={"en"}>
+            🇺🇸 English
+          </SelectItem>
+          <SelectItem key={"ca-fr"} value={"ca-fr"}>
+            🇨🇦 Canadian French
+          </SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 };
 
