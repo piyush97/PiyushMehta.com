@@ -34,7 +34,8 @@
     "blog": "Blog",
     "projects": "Projects",
     "bookshelf": "Bookshelf",
-    "404": "404"
+    "404": "404",
+    "label": "Change language"
   },
   "Footer": {
     "design": "Designed and developed by",

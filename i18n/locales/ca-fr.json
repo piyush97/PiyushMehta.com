@@ -31,7 +31,8 @@
     "blog": "Blog",
     "projects": "Projets",
     "bookshelf": "Étagère à livres",
-    "404": "404"
+    "404": "404",
+    "label": "Changer de langue"
   },
   "Footer": {
     "design": "Conçu et développé par",

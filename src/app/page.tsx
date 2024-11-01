@@ -1,4 +1,4 @@
-import { unstable_setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 type Props = {
@@ -6,7 +6,8 @@ type Props = {
 };
 // This page only renders when the app is built statically (output: 'export')
 export default function RootPage({ params: { locale } }: Props) {
-  unstable_setRequestLocale(locale);
+  setRequestLocale(locale);
+  ``;
 
-  redirect("/en");
+  redirect("/pathnames");
 }
