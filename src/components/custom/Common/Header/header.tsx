@@ -2,11 +2,11 @@
 import AuxBar from "@/components/custom/Common/Header/auxbar";
 import Navbar from "@/components/custom/Common/Header/navbar";
 import { Menubar, MenubarLabel } from "@/components/ui/menubar";
+import { Link } from "@/i18n/routing";
 import { AUTHOR_NAME } from "@/lib/constants";
 import { routes } from "@/lib/routes";
 import { Route } from "@/lib/types";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { FC, memo } from "react";
 import MobileSheet from "./mobileSheet";
 

@@ -1,5 +1,5 @@
+import { Link } from "@/i18n/routing";
 import { SanityDocument } from "next-sanity";
-import Link from "next/link";
 
 export default function Posts({ posts }: { posts: SanityDocument[] }) {
   return (

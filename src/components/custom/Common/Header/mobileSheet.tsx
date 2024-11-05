@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Link } from "@/i18n/routing";
 import { AUTHOR_NAME } from "@/lib/constants";
 import { routes, socials } from "@/lib/routes";
 import { Route } from "@/lib/types";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { MenuIcon } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
 import LocaleSelect from "./localeSelect";
 import ThemeSelect from "./themeSelect";
 

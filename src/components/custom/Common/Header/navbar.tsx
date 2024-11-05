@@ -1,10 +1,10 @@
+import { Link } from "@/i18n/routing";
 import {
   MenubarGroup,
   MenubarMenu,
   MenubarTrigger,
 } from "@radix-ui/react-menubar";
-import Link from "next/link";
-import { FC, memo } from "react";
+import { FC } from "react";
 
 interface NavbarProps {
   name: string;
@@ -27,4 +27,4 @@ const Navbar: FC<NavbarProps> = ({ name, path }) => {
   );
 };
 
-export default memo(Navbar);
+export default Navbar;

@@ -1,9 +1,9 @@
+import { Link } from "@/i18n/routing";
 import { socials } from "@/lib/routes";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { MenubarGroup } from "@radix-ui/react-menubar";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import Link from "next/link";
 import { FC, memo } from "react";
 
 import LocaleSelect from "./localeSelect";

@@ -1,7 +1,7 @@
+import { Link } from "@/i18n/routing";
 import { AUTHOR_NAME } from "@/lib/constants";
 import { socials } from "@/lib/routes";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { FC, memo } from "react";
 
 /**

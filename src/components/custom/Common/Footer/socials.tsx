@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/routing";
 import { socials } from "@/lib/routes";
 import {
   EnvelopeClosedIcon,
@@ -6,7 +7,6 @@ import {
   LinkedInLogoIcon,
   TwitterLogoIcon,
 } from "@radix-ui/react-icons";
-import Link from "next/link";
 import { FC, memo } from "react";
 
 /**

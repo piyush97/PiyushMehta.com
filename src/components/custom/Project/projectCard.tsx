@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { Link } from "@/i18n/routing";
 import {
   ActivityIcon,
   ExternalLinkIcon,
@@ -7,7 +8,6 @@ import {
   StarIcon,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 type Owner = {
   avatar_url: string;
