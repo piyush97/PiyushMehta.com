@@ -1,4 +1,3 @@
-import { Link } from "@/i18n/routing";
 import { socials } from "@/lib/routes";
 import {
   EnvelopeClosedIcon,
@@ -35,9 +34,9 @@ const Socials: FC = () => {
   return (
     <div className="flex space-x-4">
       {socials.map(({ name, url }) => (
-        <Link key={name} href={url} target="_blank" rel="noreferrer">
+        <a key={name} href={url} target="_blank" rel="noreferrer">
           {icons[name]}
-        </Link>
+        </a>
       ))}
     </div>
   );
