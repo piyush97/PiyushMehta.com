@@ -12,7 +12,7 @@ import { apiVersion, dataset, projectId } from "./sanity/env";
 import { schema } from "./sanity/schema";
 
 export default defineConfig({
-  basePath: "/studio",
+  basePath: "/en/studio",
   projectId,
   dataset,
   // Add and edit the content schema in the './sanity/schema' folder

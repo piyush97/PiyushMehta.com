@@ -26,7 +26,7 @@ const MobileSheet = (props: Props) => {
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
-            <Link className="text-3xl lg:flex" href="#">
+            <Link className="text-3xl lg:flex" href="/">
               <span>∆ {AUTHOR_NAME}</span>
             </Link>
             <div className="grid gap-2 py-6">
@@ -44,7 +44,7 @@ const MobileSheet = (props: Props) => {
             </div>
           </SheetContent>
         </Sheet>
-        <Link className="text-3xl lg:flex" href="#">
+        <Link className="text-3xl lg:flex" href="/">
           <span>∆ {AUTHOR_NAME}</span>
         </Link>
       </div>

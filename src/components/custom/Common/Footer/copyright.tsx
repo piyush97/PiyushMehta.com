@@ -1,4 +1,3 @@
-import { Link } from "@/i18n/routing";
 import { AUTHOR_NAME } from "@/lib/constants";
 import { socials } from "@/lib/routes";
 import { useTranslations } from "next-intl";
@@ -25,7 +24,7 @@ const Copyright: FC = () => {
           {AUTHOR_NAME}
         </a>
         . {t("source")}
-        <Link
+        <a
           href="https://github.com/piyush97/piyushmehta.com"
           target="_blank"
           rel="noreferrer"
@@ -33,8 +32,7 @@ const Copyright: FC = () => {
         >
           {" "}
           GitHub
-        </Link>
-        .
+        </a>
       </p>
     </div>
   );
