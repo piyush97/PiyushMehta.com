@@ -1,4 +1,3 @@
-import { Link } from "@/i18n/routing";
 import { socials } from "@/lib/routes";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { MenubarGroup } from "@radix-ui/react-menubar";
@@ -21,9 +20,9 @@ const AuxBar: FC = () => {
     <nav className="flex flex-1 items-center justify-between space-x-2 md:justify-end ">
       <MenubarGroup className="flex items-center justify-between space-x-4 md:justify-end">
         <LocaleSelect defaultValue={locale} label={t("label")} />
-        <Link href={socials[1].url}>
+        <a href={socials[1].url}>
           <GitHubLogoIcon className="h-6 w-6 text-primary transition-colors" />
-        </Link>
+        </a>
         <ThemeSelect />
       </MenubarGroup>
     </nav>
