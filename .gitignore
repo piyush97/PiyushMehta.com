@@ -136,3 +136,6 @@ graphql_schema.json
 
 # Turborepo
 .turbo
+
+# database
+postgres-data/*

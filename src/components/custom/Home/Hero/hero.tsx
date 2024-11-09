@@ -21,9 +21,9 @@ const Hero: FC = () => {
           <Image
             alt="Hero"
             className="mx-auto aspect-square overflow-hidden rounded-xl object-cover"
-            height={550}
+            height={450}
             src={IMG_CDN}
-            width={550}
+            width={450}
           />
         </div>
       </div>

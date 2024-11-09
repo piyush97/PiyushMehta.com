@@ -16,7 +16,7 @@ const MobileSheet = (props: Props) => {
   const locale = useLocale();
 
   return (
-    <div className="lg:hidden flex justify-between items-center w-full text-primary pb-8">
+    <div className="lg:hidden flex justify-between items-center w-full text-primary fixed dark:bg-black bg-white backdrop-blur bg-opacity-60 dark:backdrop-blur dark:bg-opacity-60">
       <div className="flex">
         <Sheet>
           <SheetTrigger asChild>
@@ -25,8 +25,11 @@ const MobileSheet = (props: Props) => {
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left">
-            <Link className="text-3xl lg:flex" href="#">
+          <SheetContent
+            className="bg-white dark:bg-black text-primary"
+            side="left"
+          >
+            <Link className="text-primary lg:flex text-xl font-bold" href="#">
               <span>∆ {AUTHOR_NAME}</span>
             </Link>
             <div className="grid gap-2 py-6">
@@ -42,26 +45,28 @@ const MobileSheet = (props: Props) => {
                 ) : null
               )}
             </div>
+            <div className="flex">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center h-10">
+                  <LocaleSelect defaultValue={locale} label={t("label")} />
+                </div>
+                <div className="flex items-center h-8 w-8">
+                  <Link href={socials[1].url}>
+                    <GitHubLogoIcon className="h-8 w-8 hover:text-primary transition-colors" />
+                  </Link>
+                </div>
+                <div className="flex items-center">
+                  <ThemeSelect />
+                </div>
+              </div>
+            </div>
           </SheetContent>
         </Sheet>
-        <Link className="text-3xl lg:flex" href="#">
-          <span>∆ {AUTHOR_NAME}</span>
+        <Link className="flex items-center " href="#">
+          <span className="text-xl font-bold text-primary">
+            ∆ {AUTHOR_NAME}
+          </span>
         </Link>
-      </div>
-      <div className="flex">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center h-10">
-            <LocaleSelect defaultValue={locale} label={t("label")} />
-          </div>
-          <div className="flex items-center h-10">
-            <Link href={socials[1].url}>
-              <GitHubLogoIcon className="h-8 w-8 hover:text-primary transition-colors" />
-            </Link>
-          </div>
-          <div className="flex items-center h-10">
-            <ThemeSelect />
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -40,7 +40,7 @@ const LocaleSelect: React.FC<LocaleSelectProps> = ({ defaultValue, label }) => {
         className="px-1 border-none bg-transparent text-primary"
         disabled={isPending}
       >
-        <LanguagesIcon />
+        <LanguagesIcon className="h-8 w-8" />
       </SelectTrigger>
       <SelectContent className="border-gray-200 rounded shadow-sm text-primary">
         <SelectGroup>

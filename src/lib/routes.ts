@@ -18,7 +18,7 @@ export const routes: Route[] = [
   {
     path: "/blog",
     name: "blog",
-    isVisible: true,
+    isVisible: false,
   },
   {
     path: "/uses",

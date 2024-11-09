@@ -25,7 +25,7 @@ const ThemeSelect = () => {
   return (
     <Select onValueChange={onSelectChange} defaultValue={theme}>
       <SelectTrigger className="px-1 border-none bg-transparent font-primary">
-        <SwatchBook className="text-primary" />
+        <SwatchBook className="text-primary h-8 w-8" />
       </SelectTrigger>
       <SelectContent className="border-gray-200 rounded shadow-sm font-primary">
         <SelectGroup>
