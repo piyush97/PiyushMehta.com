@@ -6,26 +6,182 @@ import Layout from '../layouts/Layout.astro';
   title="Contact - Piyush Mehta"
   description="Get in touch with Piyush Mehta for speaking opportunities, collaborations, or questions"
 >
+  <!-- Enhanced Hero Section -->
+  <section class="contact-hero-section">
+    <!-- Animated background elements -->
+    <div class="contact-hero-bg-pattern"></div>
+    <div class="contact-hero-bg-gradient"></div>
+    <div class="contact-hero-particle-field">
+      <div class="particle particle-1"></div>
+      <div class="particle particle-2"></div>
+      <div class="particle particle-3"></div>
+      <div class="particle particle-4"></div>
+      <div class="particle particle-5"></div>
+      <div class="particle particle-6"></div>
+    </div>
+    <div class="contact-hero-floating-elements">
+      <div class="contact-floating-element contact-element-1">
+        <div class="floating-icon">📧</div>
+        <div class="floating-pulse"></div>
+      </div>
+      <div class="contact-floating-element contact-element-2">
+        <div class="floating-icon">💬</div>
+        <div class="floating-pulse"></div>
+      </div>
+      <div class="contact-floating-element contact-element-3">
+        <div class="floating-icon">🤝</div>
+        <div class="floating-pulse"></div>
+      </div>
+      <div class="contact-floating-element contact-element-4">
+        <div class="floating-icon">✨</div>
+        <div class="floating-pulse"></div>
+      </div>
+    </div>
+
+    <!-- Content container -->
+    <div class="relative z-10 container-base">
+      <div class="py-16 text-center md:py-24">
+        <div class="hero-content-wrapper">
+          <p class="contact-hero-intro">
+            <span class="intro-icon">💫</span>
+            <span class="intro-text">Ready to connect?</span>
+          </p>
+          <h1 class="contact-hero-title">
+            <span class="title-primary">Let's</span>
+            <strong class="title-accent">Talk</strong>
+            <div class="title-underline"></div>
+          </h1>
+          <p class="contact-hero-teaser">
+            Whether you're looking for a <span class="highlight">speaker</span> at
+            your next event, want to
+            <span class="highlight">collaborate</span> on an exciting project, or
+            simply have questions about
+            <span class="highlight">software development</span>, I'm here to
+            help. Let's create something amazing together!
+          </p>
+
+          <div class="contact-hero-cta">
+            <a
+              href="mailto:contact@piyushmehta.com"
+              class="btn-primary btn-enhanced"
+            >
+              <span class="btn-content">
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Send Email
+                <svg
+                  class="w-4 h-4 ml-2 transition-transform btn-arrow"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </span>
+              <div class="btn-bg-effect"></div>
+            </a>
+            <a
+              href="https://linkedin.com/in/piyush24"
+              target="_blank"
+              rel="noopener"
+              class="btn-secondary btn-enhanced"
+            >
+              <span class="btn-content">
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                  ></path>
+                </svg>
+                Connect on LinkedIn
+                <svg
+                  class="w-4 h-4 ml-2 transition-transform btn-arrow"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  ></path>
+                </svg>
+              </span>
+              <div class="btn-bg-effect"></div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Response time indicators -->
+        <div class="contact-hero-stats">
+          <div class="contact-stat-item">
+            <span class="contact-stat-number">&lt; 24h</span>
+            <span class="contact-stat-label">Response Time</span>
+          </div>
+          <div class="contact-stat-item">
+            <span class="contact-stat-number">25+</span>
+            <span class="contact-stat-label">Speaking Events</span>
+          </div>
+          <div class="contact-stat-item">
+            <span class="contact-stat-number">100%</span>
+            <span class="contact-stat-label">Commitment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="contact-scroll-indicator">
+      <div class="contact-scroll-text">Explore contact options</div>
+      <div class="contact-scroll-arrow">
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+      </div>
+    </div>
+  </section>
+
   <main class="page-container">
     <div class="max-w-4xl mx-auto space-y-12">
-      <!-- Header Section -->
-      <header class="space-y-4 text-center">
-        <h1
-          class="text-4xl font-bold text-transparent md:text-5xl bg-gradient-to-r from-accent to-accent-light bg-clip-text"
-        >
-          Contact Me
-        </h1>
-        <p
-          class="max-w-2xl mx-auto text-lg leading-relaxed md:text-xl text-text-secondary"
-        >
-          I'd love to hear from you! Whether you're interested in having me
-          speak at your event, want to collaborate on a project, or just have
-          questions about software development, feel free to reach out.
-        </p>
-      </header>
-
       <!-- Contact Methods Grid -->
       <section class="contact-options">
+        <div class="mb-12 text-center">
+          <h2 class="mb-4 text-3xl font-bold md:text-4xl text-text-primary">
+            Ways to Connect
+          </h2>
+          <p class="max-w-2xl mx-auto text-lg text-text-secondary">
+            Choose your preferred method to get in touch. I'm active on all
+            these platforms and respond promptly to all messages.
+          </p>
+        </div>
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div class="contact-card group">
             <div class="mb-4 text-4xl">📧</div>
@@ -63,7 +219,7 @@ import Layout from '../layouts/Layout.astro';
               Connect with me for professional networking.
             </p>
             <a
-              href="https://linkedin.com/in/piyush-mehta"
+              href="https://linkedin.com/in/piyush24"
               target="_blank"
               rel="noopener"
               class="inline-flex items-center font-medium transition-colors text-accent hover:text-accent-light"
@@ -92,7 +248,7 @@ import Layout from '../layouts/Layout.astro';
               Check out my open source contributions.
             </p>
             <a
-              href="https://github.com/piyush-mehta"
+              href="https://github.com/piyush97"
               target="_blank"
               rel="noopener"
               class="inline-flex items-center font-medium transition-colors text-accent hover:text-accent-light"
@@ -123,12 +279,12 @@ import Layout from '../layouts/Layout.astro';
               Follow me for tech updates and thoughts.
             </p>
             <a
-              href="https://twitter.com/piyush_mehta"
+              href="https://twitter.com/piyushmehtas"
               target="_blank"
               rel="noopener"
               class="inline-flex items-center font-medium transition-colors text-accent hover:text-accent-light"
             >
-              @piyush_mehta
+              @piyushmehtas
               <svg
                 class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
                 fill="none"
@@ -189,4 +345,561 @@ import Layout from '../layouts/Layout.astro';
       </section>
     </div>
   </main>
+
+  <style>
+    /* Contact Hero Section Styles */
+    .contact-hero-section {
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(
+        135deg,
+        var(--color-bg) 0%,
+        var(--color-light-950) 100%
+      );
+    }
+
+    /* Animated dot pattern background */
+    .contact-hero-bg-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: radial-gradient(
+        circle at 1px 1px,
+        var(--color-accent) 1px,
+        transparent 0
+      );
+      background-size: 60px 60px;
+      opacity: 0.08;
+      animation: contactPatternMove 25s linear infinite;
+    }
+
+    /* Gradient overlay */
+    .contact-hero-bg-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(
+          ellipse at 30% 70%,
+          rgba(255, 204, 104, 0.08) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          ellipse at 70% 30%,
+          rgba(255, 204, 104, 0.05) 0%,
+          transparent 50%
+        );
+      animation: contactGradientPulse 10s ease-in-out infinite;
+    }
+
+    /* Particle field */
+    .contact-hero-particle-field {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--color-accent);
+      border-radius: 50%;
+      opacity: 0.3;
+    }
+
+    .particle-1 {
+      top: 10%;
+      left: 20%;
+      animation: particleFloat 8s ease-in-out infinite;
+    }
+
+    .particle-2 {
+      top: 30%;
+      right: 25%;
+      animation: particleFloat 10s ease-in-out infinite 2s;
+    }
+
+    .particle-3 {
+      top: 60%;
+      left: 10%;
+      animation: particleFloat 12s ease-in-out infinite 1s;
+    }
+
+    .particle-4 {
+      bottom: 20%;
+      right: 15%;
+      animation: particleFloat 9s ease-in-out infinite 3s;
+    }
+
+    .particle-5 {
+      top: 45%;
+      left: 60%;
+      animation: particleFloat 11s ease-in-out infinite 4s;
+    }
+
+    .particle-6 {
+      bottom: 35%;
+      left: 35%;
+      animation: particleFloat 7s ease-in-out infinite 1.5s;
+    }
+
+    /* Floating emoji elements */
+    .contact-hero-floating-elements {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+    }
+
+    .contact-floating-element {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.15;
+      user-select: none;
+    }
+
+    .contact-element-1 {
+      top: 20%;
+      left: 15%;
+      animation: contactFloat1 8s ease-in-out infinite;
+    }
+
+    .contact-element-2 {
+      top: 60%;
+      right: 20%;
+      animation: contactFloat2 10s ease-in-out infinite;
+    }
+
+    .contact-element-3 {
+      top: 30%;
+      right: 30%;
+      animation: contactFloat3 9s ease-in-out infinite;
+    }
+
+    .contact-element-4 {
+      bottom: 25%;
+      left: 25%;
+      animation: contactFloat4 11s ease-in-out infinite;
+    }
+
+    /* Typography styles */
+    .contact-hero-intro {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: var(--color-accent);
+      margin: 0 0 1rem 0;
+      opacity: 0;
+      animation: contactSlideInUp 0.8s ease-out 0.2s forwards;
+    }
+
+    .contact-hero-title {
+      font-size: clamp(3rem, 10vw, 5rem);
+      font-weight: 700;
+      margin: 0 0 1.5rem 0;
+      line-height: 1.1;
+      opacity: 0;
+      animation: contactSlideInUp 0.8s ease-out 0.4s forwards;
+    }
+
+    .contact-hero-title span {
+      display: inline-block;
+      background: linear-gradient(
+        135deg,
+        var(--color-text-primary) 0%,
+        var(--color-accent) 100%
+      );
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .contact-hero-title strong {
+      display: inline-block;
+      background: linear-gradient(
+        135deg,
+        var(--color-accent) 0%,
+        var(--color-text-primary) 100%
+      );
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transform: rotate(-2deg);
+      margin-left: 0.2em;
+    }
+
+    .contact-hero-teaser {
+      font-size: 1.3rem;
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      opacity: 0;
+      animation: contactSlideInUp 0.8s ease-out 0.6s forwards;
+    }
+
+    .contact-hero-cta {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: contactSlideInUp 0.8s ease-out 0.8s forwards;
+    }
+
+    .contact-hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: contactSlideInUp 0.8s ease-out 1s forwards;
+    }
+
+    .contact-stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--color-card-border);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .contact-stat-item:hover {
+      transform: translateY(-5px);
+      border-color: var(--color-accent);
+      box-shadow: 0 10px 30px rgba(255, 204, 104, 0.2);
+    }
+
+    .contact-stat-number {
+      display: block;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-stat-label {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Scroll indicator */
+    .contact-scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      animation: contactFadeInBounce 2s ease-out 1.5s forwards;
+      opacity: 0;
+    }
+
+    .contact-scroll-text {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .contact-scroll-arrow {
+      color: var(--color-accent);
+      animation: contactBounce 2s infinite;
+    }
+
+    /* Enhanced Contact Cards */
+    .contact-options {
+      margin-top: 5rem;
+      margin-bottom: 5rem;
+    }
+
+    .contact-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--color-card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(
+        90deg,
+        var(--color-accent) 0%,
+        transparent 100%
+      );
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .contact-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .contact-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--color-accent);
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(255, 204, 104, 0.15);
+    }
+
+    .contact-card .group:hover .w-4 {
+      transform: translateX(4px);
+    }
+
+    /* Speaking section enhancements */
+    .speaking {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .speaking::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 204, 104, 0.05) 0%,
+        transparent 50%,
+        rgba(255, 204, 104, 0.02) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* Animations */
+    @keyframes contactPatternMove {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(60px, 60px);
+      }
+    }
+
+    @keyframes contactGradientPulse {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    @keyframes contactFloat1 {
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      25% {
+        transform: translateY(-20px) rotate(5deg);
+      }
+      50% {
+        transform: translateY(-10px) rotate(-3deg);
+      }
+      75% {
+        transform: translateY(-25px) rotate(3deg);
+      }
+    }
+
+    @keyframes contactFloat2 {
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      33% {
+        transform: translateY(-15px) rotate(-5deg);
+      }
+      66% {
+        transform: translateY(-30px) rotate(3deg);
+      }
+    }
+
+    @keyframes contactFloat3 {
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      20% {
+        transform: translateY(-25px) rotate(4deg);
+      }
+      40% {
+        transform: translateY(-5px) rotate(-2deg);
+      }
+      60% {
+        transform: translateY(-20px) rotate(2deg);
+      }
+      80% {
+        transform: translateY(-10px) rotate(-3deg);
+      }
+    }
+
+    @keyframes contactFloat4 {
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      25% {
+        transform: translateY(-30px) rotate(-4deg);
+      }
+      50% {
+        transform: translateY(-15px) rotate(2deg);
+      }
+      75% {
+        transform: translateY(-20px) rotate(-2deg);
+      }
+    }
+
+    @keyframes contactSlideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes contactFadeInBounce {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    @keyframes contactBounce {
+      0%,
+      20%,
+      50%,
+      80%,
+      100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+
+    @keyframes particleFloat {
+      0%,
+      100% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.3;
+      }
+      25% {
+        transform: translateY(-30px) scale(1.2);
+        opacity: 0.6;
+      }
+      50% {
+        transform: translateY(-15px) scale(0.8);
+        opacity: 0.4;
+      }
+      75% {
+        transform: translateY(-40px) scale(1.1);
+        opacity: 0.5;
+      }
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.2;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0.1;
+      }
+    }
+
+    @keyframes iconSpin {
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+      25% {
+        transform: rotate(10deg);
+      }
+      75% {
+        transform: rotate(-10deg);
+      }
+    }
+
+    @keyframes underlineExpand {
+      to {
+        scale: 1;
+      }
+    }
+
+    @keyframes highlightUnderline {
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    /* Enhanced responsive styles */
+    @media (max-width: 768px) {
+      .floating-icon {
+        font-size: 2rem;
+      }
+
+      .floating-pulse {
+        width: 50px;
+        height: 50px;
+      }
+
+      .btn-enhanced {
+        padding: 0.9rem 1.8rem;
+        font-size: 1rem;
+      }
+
+      .particle {
+        width: 2px;
+        height: 2px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .contact-hero-title {
+        font-size: clamp(2.5rem, 10vw, 4rem);
+      }
+    }
+  </style>
 </Layout>

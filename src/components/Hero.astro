@@ -1,68 +1,789 @@
 ---
-// Hero component for the homepage
+// Enhanced Hero component for the homepage
 ---
 
 <section class="hero-section">
-  <div class="hero-bg-dots"></div>
-  <div class="hero-bg-mix"></div>
-  <div class="container-base page-container relative">
+  <!-- Animated background elements -->
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-bg-gradient"></div>
+  <div class="hero-particle-field">
+    <div class="particle particle-1"></div>
+    <div class="particle particle-2"></div>
+    <div class="particle particle-3"></div>
+    <div class="particle particle-4"></div>
+    <div class="particle particle-5"></div>
+    <div class="particle particle-6"></div>
+    <div class="particle particle-7"></div>
+    <div class="particle particle-8"></div>
+  </div>
+  <div class="hero-floating-elements">
+    <div class="floating-element element-1">
+      <div class="floating-icon">🚀</div>
+      <div class="floating-pulse"></div>
+    </div>
+    <div class="floating-element element-2">
+      <div class="floating-icon">💻</div>
+      <div class="floating-pulse"></div>
+    </div>
+    <div class="floating-element element-3">
+      <div class="floating-icon">⚡</div>
+      <div class="floating-pulse"></div>
+    </div>
+    <div class="floating-element element-4">
+      <div class="floating-icon">🎯</div>
+      <div class="floating-pulse"></div>
+    </div>
+    <div class="floating-element element-5">
+      <div class="floating-icon">🌟</div>
+      <div class="floating-pulse"></div>
+    </div>
+  </div>
+
+  <!-- Content container -->
+  <div class="container-base relative z-10">
     <slot />
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator">
+    <div class="scroll-text">Scroll to explore</div>
+    <div class="scroll-arrow">
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
+    </div>
   </div>
 </section>
 
 <style>
   .hero-section {
-    min-height: 85vh;
+    min-height: 100vh;
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(
+      135deg,
+      var(--color-bg) 0%,
+      var(--color-light-950) 50%,
+      var(--color-bg) 100%
+    );
   }
 
-  .hero-bg-dots {
-    pointer-events: none;
+  /* Enhanced animated dot pattern background */
+  .hero-bg-pattern {
     position: absolute;
     top: 0;
+    left: 0;
     right: 0;
     bottom: 0;
-    left: 0;
-    background-image: url('/src/assets/dot-bg.svg');
-    mix-blend-mode: overlay;
-    mask-image:
-      linear-gradient(to top, transparent 5%, black 95%),
-      linear-gradient(to right, transparent 20%, black 80%);
-    -webkit-mask-composite: source-in;
-    mask-composite: exclude;
+    background-image:
+      radial-gradient(
+        circle at 25% 25%,
+        var(--color-accent) 2px,
+        transparent 2px
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        var(--color-accent) 1px,
+        transparent 1px
+      ),
+      radial-gradient(
+        circle at 50% 50%,
+        var(--color-accent) 1.5px,
+        transparent 1.5px
+      );
+    background-size:
+      60px 60px,
+      40px 40px,
+      80px 80px;
+    background-position:
+      0 0,
+      20px 20px,
+      40px 40px;
+    opacity: 0.08;
+    animation: patternMove 25s linear infinite;
   }
 
-  .hero-bg-mix {
-    pointer-events: none;
+  /* Enhanced gradient overlay with multiple layers */
+  .hero-bg-gradient {
     position: absolute;
     top: 0;
+    left: 0;
     right: 0;
     bottom: 0;
-    left: 0;
-    background-image: url('/src/assets/hero.svg');
-    background-size: cover;
-    mix-blend-mode: overlay;
-    mask-image:
-      linear-gradient(to top, transparent 5%, black 95%),
-      linear-gradient(to right, transparent 20%, black 80%);
-    -webkit-mask-composite: source-in;
-    mask-composite: exclude;
+    background:
+      radial-gradient(
+        ellipse at 30% 20%,
+        var(--color-accent) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse at 70% 80%,
+        var(--color-accent) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        var(--color-accent) 70%,
+        transparent 100%
+      );
+    opacity: 0.05;
+    animation: gradientPulse 12s ease-in-out infinite;
   }
 
+  /* Particle field system */
+  .hero-particle-field {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    background: var(--color-accent);
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+
+  .particle-1 {
+    width: 4px;
+    height: 4px;
+    top: 15%;
+    left: 10%;
+    animation: particleFloat1 8s ease-in-out infinite;
+  }
+
+  .particle-2 {
+    width: 2px;
+    height: 2px;
+    top: 25%;
+    right: 20%;
+    animation: particleFloat2 10s ease-in-out infinite;
+  }
+
+  .particle-3 {
+    width: 3px;
+    height: 3px;
+    top: 60%;
+    left: 15%;
+    animation: particleFloat3 12s ease-in-out infinite;
+  }
+
+  .particle-4 {
+    width: 5px;
+    height: 5px;
+    bottom: 30%;
+    right: 15%;
+    animation: particleFloat4 9s ease-in-out infinite;
+  }
+
+  .particle-5 {
+    width: 2px;
+    height: 2px;
+    top: 40%;
+    left: 60%;
+    animation: particleFloat5 11s ease-in-out infinite;
+  }
+
+  .particle-6 {
+    width: 3px;
+    height: 3px;
+    bottom: 20%;
+    left: 30%;
+    animation: particleFloat6 7s ease-in-out infinite;
+  }
+
+  .particle-7 {
+    width: 4px;
+    height: 4px;
+    top: 70%;
+    right: 30%;
+    animation: particleFloat7 13s ease-in-out infinite;
+  }
+
+  .particle-8 {
+    width: 2px;
+    height: 2px;
+    top: 35%;
+    right: 45%;
+    animation: particleFloat8 6s ease-in-out infinite;
+  }
+
+  /* Enhanced floating elements with icons */
+  .hero-floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .floating-element {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .floating-icon {
+    font-size: 2rem;
+    opacity: 0.7;
+    animation: iconFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(var(--color-accent-rgb), 0.3));
+  }
+
+  .floating-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--color-accent);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .element-1 {
+    width: 80px;
+    height: 80px;
+    top: 15%;
+    left: 8%;
+    animation: elementFloat1 8s ease-in-out infinite;
+  }
+
+  .element-2 {
+    width: 70px;
+    height: 70px;
+    top: 20%;
+    right: 12%;
+    animation: elementFloat2 10s ease-in-out infinite;
+  }
+
+  .element-3 {
+    width: 60px;
+    height: 60px;
+    top: 50%;
+    right: 8%;
+    animation: elementFloat3 7s ease-in-out infinite;
+  }
+
+  .element-4 {
+    width: 90px;
+    height: 90px;
+    bottom: 20%;
+    left: 15%;
+    animation: elementFloat4 12s ease-in-out infinite;
+  }
+
+  .element-5 {
+    width: 65px;
+    height: 65px;
+    bottom: 15%;
+    right: 20%;
+    animation: elementFloat5 9s ease-in-out infinite;
+  }
+
+  /* Typography styles with enhanced effects */
   .hero-intro {
-    @apply font-mono text-base text-accent m-0;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--color-accent);
+    margin: 0 0 1rem 0;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.2s forwards;
+    position: relative;
+  }
+
+  .hero-intro::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 2px;
+    background: var(--color-accent);
+    animation: lineExpand 0.8s ease-out 0.6s forwards;
+    transform-origin: left;
+    scale: 0 1;
   }
 
   .hero-title {
-    @apply text-4xl md:text-6xl font-bold m-0;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+    line-height: 1;
+    background: linear-gradient(
+      135deg,
+      var(--color-text-primary) 0%,
+      var(--color-accent) 50%,
+      var(--color-text-primary) 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 100%;
+    animation:
+      slideInUp 0.8s ease-out 0.4s forwards,
+      gradientShift 4s ease-in-out infinite;
+    opacity: 0;
   }
 
   .hero-title strong {
-    @apply text-lighter;
+    display: block;
+    background: linear-gradient(
+      135deg,
+      var(--color-accent) 0%,
+      var(--color-text-primary) 50%,
+      var(--color-accent) 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 100%;
+    animation: gradientShift 3s ease-in-out infinite reverse;
   }
 
   .hero-teaser {
-    @apply my-4 text-xl max-w-xl;
+    font-size: 1.25rem;
+    max-width: 650px;
+    margin: 0 auto 2.5rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.6s forwards;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.8s forwards;
+  }
+
+  .hero-stats {
+    margin-top: 4rem;
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 1s forwards;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 12px;
+    background: rgba(var(--color-accent-rgb), 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .stat-item:hover {
+    transform: translateY(-5px);
+    background: rgba(var(--color-accent-rgb), 0.1);
+    border-color: rgba(var(--color-accent-rgb), 0.2);
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+    animation: counterUp 1s ease-out 1.2s forwards;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: 0.5rem;
+    font-weight: 500;
+  }
+
+  /* Enhanced scroll indicator */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-secondary);
+    animation: scrollBounce 3s ease-in-out infinite;
+    opacity: 0.8;
+  }
+
+  .scroll-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .scroll-arrow {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  .scroll-indicator:hover .scroll-arrow {
+    opacity: 1;
+  }
+
+  /* Animations */
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes lineExpand {
+    to {
+      scale: 1 1;
+    }
+  }
+
+  @keyframes gradientShift {
+    0%,
+    100% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 0%;
+    }
+  }
+
+  @keyframes patternMove {
+    0% {
+      transform: translateX(0) translateY(0);
+    }
+    25% {
+      transform: translateX(-15px) translateY(-15px);
+    }
+    50% {
+      transform: translateX(15px) translateY(-30px);
+    }
+    75% {
+      transform: translateX(-8px) translateY(-15px);
+    }
+    100% {
+      transform: translateX(0) translateY(0);
+    }
+  }
+
+  @keyframes gradientPulse {
+    0%,
+    100% {
+      opacity: 0.05;
+    }
+    50% {
+      opacity: 0.12;
+    }
+  }
+
+  @keyframes iconFloat {
+    0%,
+    100% {
+      transform: translateY(0px) scale(1);
+    }
+    50% {
+      transform: translateY(-8px) scale(1.05);
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.3;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0.3;
+    }
+  }
+
+  @keyframes particleFloat1 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    33% {
+      transform: translateY(-30px) translateX(15px);
+    }
+    66% {
+      transform: translateY(15px) translateX(-10px);
+    }
+  }
+
+  @keyframes particleFloat2 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-20px) translateX(-15px);
+    }
+  }
+
+  @keyframes particleFloat3 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    25% {
+      transform: translateY(-15px) translateX(20px);
+    }
+    75% {
+      transform: translateY(10px) translateX(-15px);
+    }
+  }
+
+  @keyframes particleFloat4 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    40% {
+      transform: translateY(-25px) translateX(-12px);
+    }
+    80% {
+      transform: translateY(8px) translateX(18px);
+    }
+  }
+
+  @keyframes particleFloat5 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    60% {
+      transform: translateY(-18px) translateX(10px);
+    }
+  }
+
+  @keyframes particleFloat6 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    30% {
+      transform: translateY(-22px) translateX(-8px);
+    }
+    70% {
+      transform: translateY(12px) translateX(15px);
+    }
+  }
+
+  @keyframes particleFloat7 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    45% {
+      transform: translateY(-20px) translateX(12px);
+    }
+  }
+
+  @keyframes particleFloat8 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    35% {
+      transform: translateY(-16px) translateX(-10px);
+    }
+    75% {
+      transform: translateY(8px) translateX(14px);
+    }
+  }
+
+  @keyframes elementFloat1 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    33% {
+      transform: translateY(-25px) translateX(15px) rotate(120deg);
+    }
+    66% {
+      transform: translateY(12px) translateX(-8px) rotate(240deg);
+    }
+  }
+
+  @keyframes elementFloat2 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) translateX(-12px) rotate(180deg);
+    }
+  }
+
+  @keyframes elementFloat3 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-18px) translateX(10px) rotate(90deg);
+    }
+    75% {
+      transform: translateY(10px) translateX(-15px) rotate(270deg);
+    }
+  }
+
+  @keyframes elementFloat4 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    40% {
+      transform: translateY(-30px) translateX(-10px) rotate(144deg);
+    }
+    80% {
+      transform: translateY(15px) translateX(20px) rotate(288deg);
+    }
+  }
+
+  @keyframes elementFloat5 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    60% {
+      transform: translateY(-22px) translateX(8px) rotate(216deg);
+    }
+  }
+
+  @keyframes scrollBounce {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    40% {
+      transform: translateX(-50%) translateY(-15px);
+    }
+    60% {
+      transform: translateX(-50%) translateY(-8px);
+    }
+  }
+
+  @keyframes counterUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .hero-section {
+      min-height: 90vh;
+    }
+
+    .hero-teaser {
+      font-size: 1.125rem;
+      max-width: 90%;
+    }
+
+    .hero-stats {
+      gap: 2rem;
+    }
+
+    .stat-item {
+      padding: 0.75rem;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+    }
+
+    .floating-element {
+      opacity: 0.6;
+    }
+
+    .floating-icon {
+      font-size: 1.5rem;
+    }
+
+    .particle {
+      opacity: 0.4;
+    }
+
+    .scroll-indicator {
+      bottom: 1rem;
+    }
+  }
+
+  /* Light mode adjustments */
+  :root.light .hero-section {
+    background: linear-gradient(
+      135deg,
+      var(--color-bg) 0%,
+      var(--color-light-700) 50%,
+      var(--color-bg) 100%
+    );
+  }
+
+  :root.light .hero-bg-pattern {
+    opacity: 0.04;
+  }
+
+  :root.light .hero-bg-gradient {
+    opacity: 0.03;
+  }
+
+  :root.light .floating-element {
+    opacity: 0.5;
+  }
+
+  :root.light .particle {
+    opacity: 0.3;
+  }
+
+  :root.light .stat-item {
+    background: rgba(var(--color-accent-rgb), 0.03);
+    border-color: rgba(var(--color-accent-rgb), 0.08);
+  }
+
+  :root.light .stat-item:hover {
+    background: rgba(var(--color-accent-rgb), 0.08);
+    border-color: rgba(var(--color-accent-rgb), 0.15);
   }
 </style>

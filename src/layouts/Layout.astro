@@ -1,5 +1,6 @@
 ---
 import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
 export interface Props {
@@ -47,11 +48,12 @@ const {
       }
     </script>
   </head>
-  <body class="min-h-screen">
+  <body class="min-h-screen flex flex-col">
     <Navbar />
-    <main>
+    <main class="flex-1 pt-16">
       <slot />
     </main>
+    <Footer />
 
     <script>
       // Theme toggle functionality
