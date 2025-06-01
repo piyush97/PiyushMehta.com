@@ -15,20 +15,110 @@ const latestPosts = allPosts
 <Layout title="Piyush Mehta - Software Engineer & Tech Speaker">
   <!-- Hero Section -->
   <Hero>
-    <div class="text-center py-16 md:py-24">
-      <p class="hero-intro">Hello, my name is</p>
-      <h1 class="hero-title">
-        <strong>Piyush Mehta</strong>
-      </h1>
-      <p class="hero-teaser">
-        Software Engineer, Tech Speaker, and Open Source Enthusiast. I build
-        scalable web applications and love sharing knowledge through talks and
-        writing.
-      </p>
+    <div class="py-16 text-center md:py-24">
+      <div class="hero-content-wrapper">
+        <p class="hero-intro">
+          <span class="intro-icon">👋</span>
+          <span class="intro-text">Hello, my name is</span>
+        </p>
+        <h1 class="hero-title">
+          <span class="title-primary">Piyush</span>
+          <strong class="title-accent">Mehta</strong>
+          <div class="title-underline"></div>
+        </h1>
+        <p class="hero-teaser">
+          <span class="highlight">Software Engineer</span>,
+          <span class="highlight">Tech Speaker</span>, and
+          <span class="highlight">Open Source Enthusiast</span>. I build
+          scalable web applications with modern technologies and love sharing
+          knowledge through talks, writing, and open source contributions.
+        </p>
 
-      <div class="flex justify-center gap-4 mt-8">
-        <a href="/blog/" class="btn btn-primary">Read My Blog</a>
-        <a href="/contact-me/" class="btn btn-secondary">Get In Touch</a>
+        <div class="hero-cta">
+          <a href="/blog/" class="btn-primary btn-enhanced">
+            <span class="btn-content">
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                ></path>
+              </svg>
+              Read My Blog
+              <svg
+                class="w-4 h-4 ml-2 transition-transform btn-arrow"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </span>
+            <div class="btn-bg-effect"></div>
+          </a>
+          <a href="/contact-me/" class="btn-secondary btn-enhanced">
+            <span class="btn-content">
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                ></path>
+              </svg>
+              Get In Touch
+              <svg
+                class="w-4 h-4 ml-2 transition-transform btn-arrow"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                ></path>
+              </svg>
+            </span>
+            <div class="btn-bg-effect"></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number">50+</span>
+          <span class="stat-label">Projects Built</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">25+</span>
+          <span class="stat-label">Tech Talks</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">10K+</span>
+          <span class="stat-label">GitHub Stars</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">5+</span>
+          <span class="stat-label">Years Experience</span>
+        </div>
       </div>
     </div>
   </Hero>
@@ -73,4 +163,392 @@ const latestPosts = allPosts
       </a>
     </div>
   </section>
+
+  <style>
+    /* Enhanced Hero Content Styling */
+    .hero-content-wrapper {
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-intro {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--color-accent);
+      margin: 0 0 1.5rem 0;
+      opacity: 0;
+      animation: slideInUp 0.8s ease-out 0.2s forwards;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .intro-icon {
+      font-size: 1.5rem;
+      animation: wave 2s ease-in-out infinite;
+    }
+
+    .intro-text {
+      position: relative;
+    }
+
+    .intro-text::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 2px;
+      background: var(--color-accent);
+      animation: lineExpand 0.8s ease-out 0.6s forwards;
+      transform-origin: left;
+      scale: 0 1;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 10vw, 6rem);
+      font-weight: 700;
+      margin: 0 0 2rem 0;
+      line-height: 0.9;
+      opacity: 0;
+      animation: slideInUp 0.8s ease-out 0.4s forwards;
+      position: relative;
+    }
+
+    .title-primary {
+      display: block;
+      background: linear-gradient(
+        135deg,
+        var(--color-text-primary) 0%,
+        var(--color-accent) 50%,
+        var(--color-text-primary) 100%
+      );
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 200% 100%;
+      animation: gradientShift 4s ease-in-out infinite;
+    }
+
+    .title-accent {
+      display: block;
+      background: linear-gradient(
+        135deg,
+        var(--color-accent) 0%,
+        var(--color-text-primary) 50%,
+        var(--color-accent) 100%
+      );
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 200% 100%;
+      animation: gradientShift 3s ease-in-out infinite reverse;
+      position: relative;
+    }
+
+    .title-underline {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 4px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-accent),
+        transparent
+      );
+      border-radius: 2px;
+      animation: underlineExpand 1s ease-out 1s forwards;
+      width: 0;
+    }
+
+    .hero-teaser {
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      opacity: 0;
+      animation: slideInUp 0.8s ease-out 0.6s forwards;
+    }
+
+    .highlight {
+      color: var(--color-accent);
+      font-weight: 600;
+      position: relative;
+      display: inline-block;
+    }
+
+    .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-accent),
+        transparent
+      );
+      transform: scaleX(0);
+      animation: highlightExpand 0.6s ease-out 1.5s forwards;
+    }
+
+    .highlight:nth-child(2)::after {
+      animation-delay: 1.7s;
+    }
+
+    .highlight:nth-child(3)::after {
+      animation-delay: 1.9s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: slideInUp 0.8s ease-out 0.8s forwards;
+      margin-bottom: 4rem;
+    }
+
+    /* Enhanced Button Styles */
+    .btn-enhanced {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      transform: translateY(0);
+    }
+
+    .btn-enhanced:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(var(--color-accent-rgb), 0.2);
+    }
+
+    .btn-enhanced:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .btn-enhanced:hover .btn-content {
+      transform: translateX(2px);
+    }
+
+    .btn-enhanced:hover .btn-arrow {
+      transform: translateX(4px);
+    }
+
+    .btn-bg-effect {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
+
+    .btn-enhanced:hover .btn-bg-effect {
+      left: 100%;
+    }
+
+    /* Enhanced Stats Section */
+    .hero-stats {
+      margin-top: 4rem;
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: slideInUp 0.8s ease-out 1s forwards;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1.5rem;
+      border-radius: 16px;
+      background: rgba(var(--color-accent-rgb), 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(var(--color-accent-rgb), 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(var(--color-accent-rgb), 0.1),
+        transparent
+      );
+      transition: left 0.6s ease;
+    }
+
+    .stat-item:hover::before {
+      left: 100%;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-8px);
+      background: rgba(var(--color-accent-rgb), 0.1);
+      border-color: rgba(var(--color-accent-rgb), 0.2);
+      box-shadow: 0 15px 35px rgba(var(--color-accent-rgb), 0.15);
+    }
+
+    .stat-number {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      line-height: 1;
+      animation: counterUp 1s ease-out 1.2s forwards;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    /* Animations */
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes wave {
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+      25% {
+        transform: rotate(20deg);
+      }
+      75% {
+        transform: rotate(-10deg);
+      }
+    }
+
+    @keyframes lineExpand {
+      to {
+        scale: 1 1;
+      }
+    }
+
+    @keyframes gradientShift {
+      0%,
+      100% {
+        background-position: 0% 0%;
+      }
+      50% {
+        background-position: 100% 0%;
+      }
+    }
+
+    @keyframes underlineExpand {
+      to {
+        width: 80%;
+      }
+    }
+
+    @keyframes highlightExpand {
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    @keyframes counterUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero-intro {
+        font-size: 0.875rem;
+        gap: 0.5rem;
+      }
+
+      .intro-icon {
+        font-size: 1.25rem;
+      }
+
+      .hero-teaser {
+        font-size: 1.125rem;
+        max-width: 90%;
+        margin-bottom: 2.5rem;
+      }
+
+      .hero-cta {
+        gap: 1rem;
+        margin-bottom: 3rem;
+      }
+
+      .hero-stats {
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .stat-item {
+        padding: 1rem;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+      }
+    }
+
+    /* Light mode adjustments */
+    :root.light .stat-item {
+      background: rgba(var(--color-accent-rgb), 0.03);
+      border-color: rgba(var(--color-accent-rgb), 0.08);
+    }
+
+    :root.light .stat-item:hover {
+      background: rgba(var(--color-accent-rgb), 0.08);
+      border-color: rgba(var(--color-accent-rgb), 0.15);
+    }
+
+    :root.light .btn-enhanced:hover {
+      box-shadow: 0 10px 25px rgba(var(--color-accent-rgb), 0.1);
+    }
+  </style>
 </Layout>

@@ -1,0 +1,289 @@
+---
+// Footer component with responsive design
+---
+
+<footer class="border-t footer-section bg-light-950 border-card-border">
+  <div class="py-12 container-base lg:py-16">
+    <!-- Main Footer Content -->
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">
+      <!-- Brand & Description -->
+      <div class="lg:col-span-2">
+        <div class="footer-brand">
+          <h3 class="mb-4 text-xl font-bold text-accent">Piyush Mehta</h3>
+          <p class="max-w-md mb-6 leading-relaxed text-text-secondary">
+            Software Engineer passionate about building scalable applications,
+            sharing knowledge through tech talks, and contributing to open
+            source projects.
+          </p>
+
+          <!-- Social Links -->
+          <div class="footer-social">
+            <h4
+              class="mb-3 text-sm font-semibold tracking-wider uppercase text-text-primary"
+            >
+              Connect with me
+            </h4>
+            <div class="flex flex-wrap gap-4">
+              <a
+                href="https://github.com/piyush97"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-link"
+                aria-label="GitHub"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">GitHub</span>
+              </a>
+
+              <a
+                href="https://linkedin.com/in/piyush24"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-link"
+                aria-label="LinkedIn"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.338 16.338H13.67V12.16c0-.995-.017-2.277-1.387-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248H8.014v-8.59h2.559v1.174h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.778 3.203 4.092v4.711zM5.005 6.575a1.548 1.548 0 11-.003-3.096 1.548 1.548 0 01.003 3.096zm-1.337 9.763H6.34v-8.59H3.667v8.59zM17.668 1H2.328C1.595 1 1 1.581 1 2.298v15.403C1 18.418 1.595 19 2.328 19h15.34c.734 0 1.332-.582 1.332-1.299V2.298C19 1.581 18.402 1 17.668 1z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">LinkedIn</span>
+              </a>
+
+              <a
+                href="https://twitter.com/Piyushmehtas"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-link"
+                aria-label="Twitter"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"
+                  ></path>
+                </svg>
+                <span class="sr-only">Twitter</span>
+              </a>
+
+              <a
+                href="mailto:contact@piyushmehta.com"
+                class="social-link"
+                aria-label="Email"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+                  ></path>
+                  <path
+                    d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+                  ></path>
+                </svg>
+                <span class="sr-only">Email</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-column">
+        <h4 class="footer-column-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="/" class="footer-link">Home</a></li>
+          <li><a href="/about/" class="footer-link">About</a></li>
+          <li><a href="/blog/" class="footer-link">Blog</a></li>
+          <li><a href="/projects/" class="footer-link">Projects</a></li>
+          <li><a href="/contact-me/" class="footer-link">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Resources -->
+      <div class="footer-column">
+        <h4 class="footer-column-title">Resources</h4>
+        <ul class="footer-links">
+          <li><a href="/uses/" class="footer-link">Uses</a></li>
+          <li><a href="/videos/" class="footer-link">Videos</a></li>
+          <li><a href="/workshops/" class="footer-link">Workshops</a></li>
+          <li>
+            <a
+              href="/rss.xml"
+              class="footer-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              RSS Feed
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Newsletter Signup -->
+    <div class="pt-8 mt-12 border-t footer-newsletter border-card-border">
+      <div class="max-w-md mx-auto md:mx-0">
+        <h4 class="mb-3 text-lg font-semibold text-text-primary">
+          Stay Updated
+        </h4>
+        <p class="mb-4 text-sm text-text-secondary">
+          Get notified about new blog posts and tech talks.
+        </p>
+        <form class="newsletter-form" action="#" method="post">
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              class="flex-1 px-4 py-2 transition-colors border rounded-lg newsletter-input bg-light-800 border-card-border text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+              required
+            />
+            <button
+              type="submit"
+              class="px-6 py-2 btn-primary whitespace-nowrap"
+            >
+              Subscribe
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Bottom -->
+  <div class="border-t footer-bottom border-card-border">
+    <div class="py-6 container-base">
+      <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <div class="text-sm footer-copyright text-text-secondary">
+          <p>
+            &copy; {new Date().getFullYear()} Piyush Mehta. All rights reserved.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-6 text-sm footer-meta">
+          <a
+            href="/privacy/"
+            class="footer-link text-text-secondary hover:text-text-primary"
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="/terms/"
+            class="footer-link text-text-secondary hover:text-text-primary"
+          >
+            Terms of Service
+          </a>
+          <span class="text-text-secondary"> Built with ❤️ using Astro </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* Footer Styles */
+  .footer-section {
+    background: var(--color-light-950);
+    margin-top: auto;
+  }
+
+  .footer-column-title {
+    @apply text-sm font-semibold text-text-primary mb-4 uppercase tracking-wider;
+  }
+
+  .footer-links {
+    @apply space-y-3;
+  }
+
+  .footer-link {
+    @apply text-text-secondary hover:text-accent transition-colors duration-base block;
+  }
+
+  .social-link {
+    @apply flex items-center justify-center w-10 h-10 bg-light-800 text-text-secondary hover:text-accent hover:bg-light-700 rounded-lg transition-all duration-base;
+  }
+
+  .social-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--color-accent-rgb), 0.2);
+  }
+
+  .newsletter-input:focus {
+    box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.1);
+  }
+
+  .footer-bottom {
+    background: rgba(var(--color-light-950), 0.8);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .footer-section {
+      padding-top: 3rem;
+      padding-bottom: 2rem;
+    }
+
+    .footer-meta {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .footer-meta > * {
+      width: 100%;
+    }
+  }
+
+  /* Animation for social links */
+  .social-link svg {
+    transition: transform 0.2s ease;
+  }
+
+  .social-link:hover svg {
+    transform: scale(1.1);
+  }
+
+  /* Newsletter form enhancement */
+  .newsletter-form button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--color-accent-rgb), 0.3);
+  }
+</style>
+
+<script>
+  // Newsletter form handling
+  document.addEventListener('DOMContentLoaded', () => {
+    const newsletterForm = document.querySelector('.newsletter-form');
+
+    newsletterForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const email = (e.target as HTMLFormElement).querySelector(
+        'input[type="email"]'
+      ) as HTMLInputElement;
+      const button = (e.target as HTMLFormElement).querySelector(
+        'button'
+      ) as HTMLButtonElement;
+
+      if (email && button) {
+        const originalText = button.textContent;
+        button.textContent = 'Subscribing...';
+        button.disabled = true;
+
+        // Simulate subscription process
+        setTimeout(() => {
+          button.textContent = 'Subscribed!';
+          email.value = '';
+
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+          }, 2000);
+        }, 1000);
+      }
+    });
+  });
+</script>
