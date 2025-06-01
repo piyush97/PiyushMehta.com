@@ -53,8 +53,9 @@ typings/
 
 # dotenv environment variables file
 .env
+*.env
 
-# gatsby files
+# gatsby files (legacy)
 .cache/
 public
 
@@ -68,5 +69,65 @@ yarn-error.log
 # Yarn Integrity file
 .yarn-integrity
 
+# Astro
 .astro
 dist/*
+
+# Build artifacts
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+.vercel
+.netlify
+_site/
+.astro/
+scripts/smoke/*-main/
+scripts/memory/project/src/pages/
+benchmark/projects/
+benchmark/results/
+test-results/
+*.log
+package-lock.json
+.turbo/
+.eslintcache
+.pnpm-store
+
+# Lock files (use yarn.lock only)
+package-lock.json
+bun.lock
+
+# Database data
+postgres-data/
+
+# do not commit .env files or any files that end with `.env`
+*.env
+
+packages/astro/src/**/*.prebuilt.ts
+packages/astro/src/**/*.prebuilt-dev.ts
+packages/astro/test/units/_temp-fixtures/*
+!packages/astro/test/units/_temp-fixtures/package.json
+packages/integrations/**/.netlify/
+
+# exclude IntelliJ/WebStorm stuff
+.idea
+
+# ignore content collection generated files
+packages/**/test/**/fixtures/**/.astro/
+packages/**/test/**/fixtures/**/env.d.ts
+packages/**/e2e/**/fixtures/**/.astro/
+packages/**/e2e/**/fixtures/**/env.d.ts
+examples/**/.astro/
+examples/**/env.d.ts
+
+# make it easy for people to add project-specific Astro settings that they don't
+# want to share with others (see
+# https://github.com/withastro/astro/pull/11759#discussion_r1721444711)
+*.code-workspace
+
+# Migration scripts (temporary)
+migrate-*.mjs
+fix-*.mjs
+
+# Legacy files
+gatsby-*.js

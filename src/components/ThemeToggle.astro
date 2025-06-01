@@ -1,0 +1,122 @@
+---
+// Interactive theme toggle component that works on the client
+---
+
+<button
+  id="theme-toggle"
+  class="p-2 transition-colors rounded-lg dark-mode-toggle hover:bg-surface-100/20 duration-base"
+  aria-label="Toggle dark mode"
+>
+  <svg
+    id="sun-icon"
+    class="hidden w-5 h-5 text-text-primary"
+    fill="currentColor"
+    viewBox="0 0 20 20"
+  >
+    <path
+      fill-rule="evenodd"
+      d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+      clip-rule="evenodd"
+    >
+    </path>
+  </svg>
+  <svg
+    id="moon-icon"
+    class="w-5 h-5 text-text-primary"
+    fill="currentColor"
+    viewBox="0 0 20 20"
+  >
+    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
+    ></path>
+  </svg>
+</button>
+
+<script>
+  class ThemeToggle extends HTMLElement {
+    private button: HTMLButtonElement | null;
+    private sunIcon: SVGElement | null;
+    private moonIcon: SVGElement | null;
+
+    constructor() {
+      super();
+      this.button = this.querySelector('#theme-toggle') as HTMLButtonElement;
+      this.sunIcon = this.querySelector('#sun-icon') as SVGElement;
+      this.moonIcon = this.querySelector('#moon-icon') as SVGElement;
+      this.init();
+    }
+
+    init() {
+      // Get initial theme
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia(
+        '(prefers-color-scheme: dark)'
+      ).matches;
+      const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+      this.setTheme(initialTheme);
+      this.updateIcons();
+
+      // Add click listener
+      this.button?.addEventListener('click', () => {
+        this.toggleTheme();
+      });
+
+      // Listen for system theme changes
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', (e) => {
+          if (!localStorage.getItem('theme')) {
+            this.setTheme(e.matches ? 'dark' : 'light');
+            this.updateIcons();
+          }
+        });
+    }
+
+    setTheme(theme) {
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(theme);
+      localStorage.setItem('theme', theme);
+
+      // Update CSS custom properties
+      if (theme === 'light') {
+        document.documentElement.style.setProperty('--color-mode', 'light');
+      } else {
+        document.documentElement.style.setProperty('--color-mode', 'dark');
+      }
+    }
+
+    toggleTheme() {
+      const currentTheme = document.documentElement.classList.contains('dark')
+        ? 'dark'
+        : 'light';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+      this.setTheme(newTheme);
+      this.updateIcons();
+
+      // Add transition effect
+      this.button?.classList.add('transition-transform', 'duration-200');
+      if (this.button) {
+        this.button.style.transform = 'scale(0.95)';
+      }
+
+      setTimeout(() => {
+        if (this.button) {
+          this.button.style.transform = 'scale(1)';
+        }
+      }, 150);
+    }
+
+    updateIcons() {
+      const isLight = document.documentElement.classList.contains('light');
+
+      if (this.sunIcon && this.moonIcon) {
+        this.sunIcon.classList.toggle('hidden', !isLight);
+        this.moonIcon.classList.toggle('hidden', isLight);
+      }
+    }
+  }
+
+  // Register the custom element
+  customElements.define('theme-toggle', ThemeToggle);
+</script>
