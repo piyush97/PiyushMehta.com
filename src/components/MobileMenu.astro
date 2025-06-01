@@ -1,0 +1,297 @@
+---
+interface Props {
+  pathname: string;
+}
+
+const { pathname } = Astro.props;
+---
+
+<!-- Mobile Menu Button -->
+<div class="flex items-center space-x-4 md:hidden">
+  <!-- Hamburger Menu Button -->
+  <button
+    id="mobile-menu-toggle"
+    class="p-2 transition-colors rounded-lg mobile-menu-toggle hover:bg-surface-100/20 duration-base"
+    aria-label="Toggle mobile menu"
+  >
+    <svg
+      id="hamburger-icon"
+      class="w-6 h-6 text-text-primary"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+    <svg
+      id="close-icon"
+      class="hidden w-6 h-6 text-text-primary"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M6 18L18 6M6 6l12 12"></path>
+    </svg>
+  </button>
+</div>
+
+<!-- Mobile Navigation Menu -->
+<div
+  id="mobile-menu"
+  class="fixed left-0 right-0 transition-all duration-300 ease-in-out transform -translate-y-full border-t opacity-0 pointer-events-none mobile-menu md:hidden top-full bg-navbar backdrop-blur-navbar border-card-border"
+>
+  <div class="py-6 container-base">
+    <ul class="space-y-4">
+      <li>
+        <a
+          href="/"
+          class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/' ? 'active' : ''}`}
+        >
+          <span class="flex items-center">
+            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M10.707 2.293a1 1 0 00-1.414 0l-9 9a1 1 0 001.414 1.414L2 12.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-4.586l.293.293a1 1 0 001.414-1.414l-9-9z"
+              ></path>
+            </svg>
+            Home
+          </span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/about/"
+          class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/about/' ? 'active' : ''}`}
+        >
+          <span class="flex items-center">
+            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                clip-rule="evenodd"></path>
+            </svg>
+            About
+          </span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/blog/"
+          class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/blog/' ? 'active' : ''}`}
+        >
+          <span class="flex items-center">
+            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z"
+                clip-rule="evenodd"></path>
+            </svg>
+            Blog
+          </span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/projects/"
+          class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/projects/' ? 'active' : ''}`}
+        >
+          <span class="flex items-center">
+            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15 13.586V12a1 1 0 011-1z"
+                clip-rule="evenodd"></path>
+            </svg>
+            Projects
+          </span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/contact-me/"
+          class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/contact-me/' ? 'active' : ''}`}
+        >
+          <span class="flex items-center">
+            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+              ></path>
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+              ></path>
+            </svg>
+            Contact
+          </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<style>
+  .mobile-navbar-link.active {
+    @apply bg-accent/10 text-accent;
+  }
+
+  .mobile-navbar-link:hover {
+    @apply bg-surface-secondary text-accent;
+  }
+
+  .mobile-menu.open {
+    @apply opacity-100 pointer-events-auto translate-y-0;
+  }
+
+  /* Animation improvements */
+  .mobile-menu {
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .mobile-navbar-link {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mobile-navbar-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  .mobile-navbar-link:hover::before {
+    left: 100%;
+  }
+</style>
+
+<script>
+  class MobileMenu extends HTMLElement {
+    private toggleButton: HTMLButtonElement | null;
+    private menu: HTMLElement | null;
+    private hamburgerIcon: SVGElement | null;
+    private closeIcon: SVGElement | null;
+    private isOpen: boolean = false;
+
+    constructor() {
+      super();
+      this.toggleButton = this.querySelector(
+        '#mobile-menu-toggle'
+      ) as HTMLButtonElement;
+      this.menu = this.querySelector('#mobile-menu') as HTMLElement;
+      this.hamburgerIcon = this.querySelector('#hamburger-icon') as SVGElement;
+      this.closeIcon = this.querySelector('#close-icon') as SVGElement;
+      this.init();
+    }
+
+    init() {
+      // Toggle menu on button click
+      this.toggleButton?.addEventListener('click', () => {
+        this.toggleMenu();
+      });
+
+      // Close menu when clicking on links
+      const mobileLinks = this.querySelectorAll('.mobile-navbar-link');
+      mobileLinks.forEach((link) => {
+        link.addEventListener('click', () => {
+          this.closeMenu();
+        });
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (this.isOpen && !this.contains(e.target as Node)) {
+          this.closeMenu();
+        }
+      });
+
+      // Close menu on escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.isOpen) {
+          this.closeMenu();
+        }
+      });
+
+      // Close menu on resize to desktop
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768 && this.isOpen) {
+          this.closeMenu();
+        }
+      });
+    }
+
+    toggleMenu() {
+      if (this.isOpen) {
+        this.closeMenu();
+      } else {
+        this.openMenu();
+      }
+    }
+
+    openMenu() {
+      this.isOpen = true;
+      this.menu?.classList.add('open');
+      this.hamburgerIcon?.classList.add('hidden');
+      this.closeIcon?.classList.remove('hidden');
+
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+
+      // Add aria attributes
+      this.toggleButton?.setAttribute('aria-expanded', 'true');
+      this.menu?.setAttribute('aria-hidden', 'false');
+
+      // Animate menu items
+      const menuItems = this.querySelectorAll('.mobile-navbar-link');
+      menuItems.forEach((item, index) => {
+        (item as HTMLElement).style.opacity = '0';
+        (item as HTMLElement).style.transform = 'translateX(-20px)';
+
+        setTimeout(() => {
+          (item as HTMLElement).style.transition = 'all 0.3s ease';
+          (item as HTMLElement).style.opacity = '1';
+          (item as HTMLElement).style.transform = 'translateX(0)';
+        }, index * 50);
+      });
+    }
+
+    closeMenu() {
+      this.isOpen = false;
+      this.menu?.classList.remove('open');
+      this.hamburgerIcon?.classList.remove('hidden');
+      this.closeIcon?.classList.add('hidden');
+
+      // Restore body scroll
+      document.body.style.overflow = '';
+
+      // Update aria attributes
+      this.toggleButton?.setAttribute('aria-expanded', 'false');
+      this.menu?.setAttribute('aria-hidden', 'true');
+
+      // Reset menu item animations
+      const menuItems = this.querySelectorAll('.mobile-navbar-link');
+      menuItems.forEach((item) => {
+        (item as HTMLElement).style.transition = '';
+        (item as HTMLElement).style.opacity = '';
+        (item as HTMLElement).style.transform = '';
+      });
+    }
+  }
+
+  // Register the custom element
+  customElements.define('mobile-menu', MobileMenu);
+</script>

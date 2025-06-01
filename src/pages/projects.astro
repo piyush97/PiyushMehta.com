@@ -1,5 +1,5 @@
 ---
-import ProjectCard from '../components/ProjectCard.astro';
+import ProjectShowcase from '../components/ProjectShowcase';
 import Layout from '../layouts/Layout.astro';
 
 const projects = [
@@ -220,6 +220,20 @@ const projects = [
     logo: 'https://via.placeholder.com/64x64/0EA5E9/ffffff?text=☁️',
   },
 ];
+
+// Transform projects for ProjectShowcase component
+const projectsForShowcase = projects.map((project, index) => ({
+  id: project.title.toLowerCase().replace(/\s+/g, '-'),
+  title: project.title,
+  description: project.description,
+  technologies: project.tags,
+  githubUrl: project.github,
+  liveUrl: project.url,
+  imageUrl: project.logo,
+  category: project.label || 'Web Application',
+  featured: index < 3, // First 3 projects are featured
+  year: 2024 - index, // Mock years
+}));
 ---
 
 <Layout
@@ -290,25 +304,8 @@ const projects = [
         </div>
       </section>
 
-      <!-- Projects Grid -->
-      <section class="projects-grid">
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {
-            projects.map((project, index) => (
-              <ProjectCard
-                title={project.title}
-                description={project.description}
-                url={project.url}
-                github={project.github}
-                tags={project.tags}
-                logo={project.logo}
-                color={project.color}
-                position={index % 2 === 0 ? 'left' : 'right'}
-              />
-            ))
-          }
-        </div>
-      </section>
+      <!-- Interactive Projects Showcase -->
+      <ProjectShowcase client:load projects={projectsForShowcase} />
 
       <!-- Call to Action -->
       <section class="py-16 space-y-8 text-center">

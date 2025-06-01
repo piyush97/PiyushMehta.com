@@ -10,7 +10,7 @@ export async function GET(context) {
 
     const siteUrl = context.site || 'https://piyushmehta.com';
 
-    return rss({
+    const rssResponse = await rss({
       title: 'Piyush Mehta - Blog',
       description:
         'Thoughts on software development, technology, and the art of building great products. Articles about React, Node.js, DevOps, and modern web development.',
@@ -33,7 +33,6 @@ export async function GET(context) {
           `,
         };
       }),
-      stylesheet: '/rss-styles.xsl',
       customData: `
         <language>en-us</language>
         <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
@@ -54,6 +53,15 @@ export async function GET(context) {
         content: 'http://purl.org/rss/1.0/modules/content/',
         dc: 'http://purl.org/dc/elements/1.1/',
         atom: 'http://www.w3.org/2005/Atom',
+      },
+    });
+
+    // Ensure proper content type
+    return new Response(rssResponse.body, {
+      headers: {
+        'Content-Type': 'application/rss+xml; charset=utf-8',
+        'Cache-Control': 'public, max-age=3600',
+        ...rssResponse.headers,
       },
     });
   } catch (error) {

@@ -1,12 +1,23 @@
 ---
 import { getCollection } from 'astro:content';
-import BlogCard from '../components/BlogCard.astro';
+import BlogFilter from '../components/BlogFilter';
 import Layout from '../layouts/Layout.astro';
 
 const allPosts = await getCollection('blog');
 const publishedPosts = allPosts
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Prepare posts data for the BlogFilter component
+const postsForFilter = publishedPosts.map((post) => ({
+  id: post.slug,
+  title: post.data.title,
+  excerpt: post.data.description,
+  date: post.data.date.toISOString(),
+  slug: post.slug,
+  categories: post.data.tags || [],
+  readingTime: Math.ceil((post.data.description?.length || 0) / 200) || 5,
+}));
 ---
 
 <Layout
@@ -26,28 +37,8 @@ const publishedPosts = allPosts
         </p>
       </header>
 
-      <!-- Posts Grid -->
-      <section class="grid gap-8 md:grid-cols-2 max-w-6xl mx-auto">
-        {
-          publishedPosts.map((post) => (
-            <BlogCard
-              title={post.data.title}
-              description={post.data.description}
-              date={post.data.date.toISOString()}
-              slug={post.slug}
-              tags={post.data.tags}
-            />
-          ))
-        }
-      </section>
-
-      {
-        publishedPosts.length === 0 && (
-          <div class="text-center py-16">
-            <p class="text-xl text-light-400">No blog posts found.</p>
-          </div>
-        )
-      }
+      <!-- Interactive Blog Filter -->
+      <BlogFilter client:load posts={postsForFilter} />
     </div>
   </div>
 </Layout>
