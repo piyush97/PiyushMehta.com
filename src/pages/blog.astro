@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import BlogCard from '../components/BlogCard.astro';
+import Layout from '../layouts/Layout.astro';
+
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<Layout
+  title="Blog - Piyush Mehta"
+  description="Articles about software engineering, web development, and technology"
+>
+  <div class="page-container">
+    <div class="container-base">
+      <!-- Header -->
+      <header class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">
+          <span class="text-gradient">Blog</span>
+        </h1>
+        <p class="text-xl text-light-300 max-w-2xl mx-auto">
+          Thoughts on software development, technology, and the art of building
+          great products.
+        </p>
+      </header>
+
+      <!-- Posts Grid -->
+      <section class="grid gap-8 md:grid-cols-2 max-w-6xl mx-auto">
+        {
+          publishedPosts.map((post) => (
+            <BlogCard
+              title={post.data.title}
+              description={post.data.description}
+              date={post.data.date.toISOString()}
+              slug={post.slug}
+              tags={post.data.tags}
+            />
+          ))
+        }
+      </section>
+
+      {
+        publishedPosts.length === 0 && (
+          <div class="text-center py-16">
+            <p class="text-xl text-light-400">No blog posts found.</p>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</Layout>

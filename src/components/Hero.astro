@@ -1,0 +1,68 @@
+---
+// Hero component for the homepage
+---
+
+<section class="hero-section">
+  <div class="hero-bg-dots"></div>
+  <div class="hero-bg-mix"></div>
+  <div class="container-base page-container relative">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    min-height: 85vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-dots {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url('/src/assets/dot-bg.svg');
+    mix-blend-mode: overlay;
+    mask-image:
+      linear-gradient(to top, transparent 5%, black 95%),
+      linear-gradient(to right, transparent 20%, black 80%);
+    -webkit-mask-composite: source-in;
+    mask-composite: exclude;
+  }
+
+  .hero-bg-mix {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url('/src/assets/hero.svg');
+    background-size: cover;
+    mix-blend-mode: overlay;
+    mask-image:
+      linear-gradient(to top, transparent 5%, black 95%),
+      linear-gradient(to right, transparent 20%, black 80%);
+    -webkit-mask-composite: source-in;
+    mask-composite: exclude;
+  }
+
+  .hero-intro {
+    @apply font-mono text-base text-accent m-0;
+  }
+
+  .hero-title {
+    @apply text-4xl md:text-6xl font-bold m-0;
+  }
+
+  .hero-title strong {
+    @apply text-lighter;
+  }
+
+  .hero-teaser {
+    @apply my-4 text-xl max-w-xl;
+  }
+</style>

@@ -1,0 +1,141 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+
+const { title, description, date, author, tags } = post.data;
+---
+
+<Layout title={title} description={description}>
+  <div class="page-container">
+    <div class="container-base max-w-4xl">
+      <article class="prose">
+        <!-- Back Link -->
+        <div class="mb-8">
+          <a
+            href="/blog/"
+            class="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-medium transition-colors duration-base"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to Blog
+          </a>
+        </div>
+
+        <!-- Post Header -->
+        <header class="mb-12 text-center border-b border-card-border pb-8">
+          <h1 class="text-4xl md:text-5xl font-bold mb-6 text-text-primary">
+            {title}
+          </h1>
+
+          <div
+            class="flex flex-wrap justify-center items-center gap-6 text-light-400 mb-6"
+          >
+            <div class="flex items-center gap-2">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                ></path>
+              </svg>
+              <time>{date.toLocaleDateString()}</time>
+            </div>
+
+            {
+              author && (
+                <div class="flex items-center gap-2">
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  <span>by {author}</span>
+                </div>
+              )
+            }
+          </div>
+
+          {
+            tags && tags.length > 0 && (
+              <div class="flex flex-wrap justify-center gap-2">
+                {tags.map((tag) => (
+                  <span class="bg-light-800 text-light-200 px-3 py-1 rounded-full text-sm font-medium">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )
+          }
+        </header>
+
+        <!-- Post Content -->
+        <div class="prose prose-lg max-w-none">
+          <Content />
+        </div>
+
+        <!-- Post Footer -->
+        <footer class="mt-16 pt-8 border-t border-card-border">
+          <div class="flex justify-between items-center">
+            <a
+              href="/blog/"
+              class="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-medium transition-colors duration-base"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"></path>
+              </svg>
+              Back to Blog
+            </a>
+
+            <div class="text-light-400 text-sm">
+              Last updated: {date.toLocaleDateString()}
+            </div>
+          </div>
+        </footer>
+      </article>
+    </div>
+  </div>
+</Layout>

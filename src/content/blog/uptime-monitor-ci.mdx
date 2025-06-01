@@ -1,0 +1,55 @@
+---
+title: 'Monitor Website Uptime using GitHub Actions'
+date: 2020-07-19
+author: 'Piyush Mehta'
+draft: false
+banner: '../../assets/uptime-monitor-ci/GithubActions.png'
+description: 'How to Monitor any website uptime using GitHub Actions for free'
+tags:
+  - 'How to'
+  - 'github'
+  - 'github actions'
+  - 'web dev'
+---
+
+Create your own website monitor in seconds!
+
+### Step 1
+
+Create a new repository, I'll name it piyushmehta.com
+
+### Step 2
+
+Create a directory named and workflows inside it `.github/workflows`
+
+### Step 3
+
+Create a file with any name, I'll name is `uptime-monitor.yml`
+
+### Step 4
+
+Write the following in uptime-monitor.yaml
+
+```yml
+name: Uptime Monitor
+
+on:
+  schedule:
+    # Run every hour, You can choose your custom time
+    - cron: '*/60 *  * * *'
+
+jobs:
+  ping_site:
+    runs-on: ubuntu-latest
+    name: Uptime Check
+    steps:
+      - name: Ping Site
+        uses: srt32/uptime@v0.2
+        with:
+          url-to-hit: 'https://piyushmehta.com/' # Website whose uptime you want to track
+          expected-statuses: '200'
+```
+
+> Whenever your website is down, you'll get a notification from GitHub.
+
+Fin!

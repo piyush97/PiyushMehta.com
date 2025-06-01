@@ -1,0 +1,222 @@
+---
+import ProjectCard from '../components/ProjectCard.astro';
+import Layout from '../layouts/Layout.astro';
+
+const projects = [
+  {
+    title: 'PiyushMehta.com',
+    label: 'My Personal Website',
+    description:
+      'PiyushMehta.com is a premium JAMStack Website. I publish my learnings as blogs on this website. Its Open Source and you can make your own version of it!',
+    url: 'https://github.com/piyush97/PiyushMehta.com',
+    github: 'https://github.com/piyush97/PiyushMehta.com',
+    tags: ['Astro', 'TypeScript', 'Tailwind CSS'],
+    color: '#667EEA',
+    logo: '/src/images/Piyush.svg',
+  },
+  {
+    title: 'Netflix TypeScript Clone',
+    label: 'Netflix Typescript React',
+    description:
+      'Netflix Typescript Clone is a sample app for devs to learn the Best Practices while developing a Typescript React App.',
+    url: 'https://netflix-reactjs-clone.netlify.app/',
+    github: 'https://github.com/piyush97/Netflix-React-Clone',
+    tags: ['TypeScript', 'React', 'Netflix API'],
+    color: '#E50914',
+    logo: '/src/images/NTC.svg',
+  },
+  {
+    title: 'GoNuclei.com',
+    label: 'Nuclei',
+    description:
+      'gonuclei.com is a beautiful blend of GraphQL, Gatsby and Contentful CMS.',
+    url: 'https://gonuclei.com/',
+    tags: ['Gatsby', 'GraphQL', 'Contentful'],
+    color: '#0092EB',
+    logo: '/src/images/Nuclei.svg',
+  },
+  {
+    title: 'Dashboard',
+    label: 'Meaww Influencers Dashboard',
+    description:
+      'A complete Comprehensive dashboard built for the influencers. Used to track their growth and reach.',
+    url: 'https://meaww.com/',
+    tags: ['React', 'Redux', 'Analytics'],
+    color: '#000',
+    logo: '/src/images/Meaww.svg',
+  },
+  {
+    title: 'GoGitter',
+    label: 'Challenge using GitHub Api',
+    description:
+      'Go Gitter helps you challenge yourself to contribute more on open source',
+    url: 'https://gogitter-16d93.web.app/',
+    github: 'https://github.com/piyush97/GoGitter',
+    tags: ['React', 'GitHub API', 'Firebase'],
+    color: '#EF9B0F',
+    logo: '/src/images/GoGitter.svg',
+  },
+  {
+    title: 'Zapify',
+    label: 'UI Component Library',
+    description:
+      'Zapify is blazing fast Component Library built out of Flexbox and React Hooks',
+    url: 'https://zapify-ui.github.io/',
+    github: 'https://github.com/zapify-ui/zapify',
+    tags: ['React', 'Webpack', 'SASS'],
+    color: '#6C2478',
+    logo: '/src/images/Zapify.svg',
+  },
+  {
+    title: 'GitApp',
+    label: 'GitHub Repository Search Impl',
+    description: 'Elastic Search Implementation for Github Repositories',
+    url: 'https://whispering-island-83455.herokuapp.com/',
+    github: 'https://github.com/piyush97/GitApp',
+    tags: ['React', 'ElasticSearch', 'SASS'],
+    color: '#00CDCD',
+    logo: '/src/images/GitApp.svg',
+  },
+  {
+    title: 'Saledrive - Sales Management Made Easy',
+    label: 'Order Management App',
+    description:
+      'With Saledrive, worry less about sales management. Coordinate with your team in a hassle-free manner. No more guesswork; everyone knows what they are doing.',
+    url: 'https://play.google.com/store/apps/details?id=com.aidapp.saledrive&hl=en_GB',
+    tags: ['Ionic', 'Sass', 'React'],
+    color: '#fff',
+    logo: '/src/images/Aidapp.svg',
+  },
+  {
+    title: 'Quickstagram - React Instagram Clone',
+    label: 'React Instagram Clone',
+    description:
+      'Instagram Implementation with TailwindCSS, React and Firebase',
+    url: 'https://quickstagram.piyushmehta.com/',
+    github: 'https://github.com/piyush97/quickstagram',
+    tags: ['Firebase', 'TailwindCSS', 'React'],
+    color: '#fff',
+    logo: 'https://assets.stickpng.com/images/580b57fcd9996e24bc43c521.png',
+  },
+  {
+    title: 'Sawan - Online Immunity Retail Store',
+    label: 'Sawan Dry Fruits',
+    description:
+      'An ecommerce retail Immunity store, serving 25,000 orders per month',
+    url: 'https://sawandryfruits.com/',
+    tags: ['Ecommerce', 'Checkout', 'Shopify'],
+    color: '#00CDCD',
+    logo: 'https://i.ibb.co/bKh7DWv/Piyush-2.png',
+  },
+  {
+    title: 'Awesome Portfolio - Free customizable deployable theme made by me',
+    label: 'Awesome Portfolio',
+    description:
+      'Awesome Portfolio template made for students to be used and modified',
+    url: 'https://awesome-portfolio.piyushmehta.com/',
+    github: 'https://github.com/piyush97/awesome-portfolio',
+    tags: ['React', 'TailWindCSS', 'Framer'],
+    color: '#F000B8',
+    logo: 'https://i.ibb.co/L5Qnqdt/Awesome.png',
+  },
+  {
+    title: 'Divvy - NFT Marketplace on Polygon Matic',
+    label: 'Divvy',
+    description: 'Divvy is an NFT Marketplace Deployed on Polygon Matic Chain',
+    url: 'https://github.com/piyush97/divvy',
+    github: 'https://github.com/piyush97/divvy',
+    tags: ['React', 'TailWindCSS', 'NextJS', 'Solidity', 'Matic', 'Infura'],
+    color: '#fff',
+    logo: 'https://i.ibb.co/Cn9CL28/Divvy.png',
+  },
+];
+---
+
+<Layout
+  title="Projects - Piyush Mehta"
+  description="Open source projects, dashboards and web apps created by Piyush Mehta with modern technologies"
+>
+  <main class="page-container">
+    <div class="max-w-6xl mx-auto space-y-12">
+      <!-- Header Section -->
+      <header class="text-center space-y-4">
+        <h1
+          class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent"
+        >
+          Projects
+        </h1>
+        <p
+          class="text-lg md:text-xl text-text-secondary max-w-3xl mx-auto leading-relaxed"
+        >
+          Open source is a real passion and a way of thinking. I've made many
+          <strong class="text-accent">Dashboards</strong> and <strong
+            class="text-accent">Web Apps</strong
+          > with strong architecture, great UX and bleeding edge tech for clients
+          and companies worldwide
+        </p>
+      </header>
+
+      <!-- Projects Grid -->
+      <section class="projects-grid">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {
+            projects.map((project, index) => (
+              <ProjectCard
+                title={project.title}
+                description={project.description}
+                url={project.url}
+                github={project.github}
+                tags={project.tags}
+                logo={project.logo}
+                color={project.color}
+                position={index % 2 === 0 ? 'left' : 'right'}
+              />
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- Call to Action -->
+      <section class="text-center space-y-6 py-12">
+        <h2 class="text-2xl md:text-3xl font-bold text-text-primary">
+          Interested in collaborating?
+        </h2>
+        <p class="text-text-secondary max-w-2xl mx-auto">
+          I'm always open to discussing new projects, creative ideas, or
+          opportunities to be part of your visions.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/contact-me/" class="btn-primary">
+            Get In Touch
+            <svg
+              class="w-4 h-4 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+          <a
+            href="https://github.com/piyush97"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-secondary"
+          >
+            View GitHub
+            <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
+                clip-rule="evenodd"></path>
+            </svg>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+</Layout>

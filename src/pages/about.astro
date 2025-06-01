@@ -1,0 +1,133 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="About - Piyush Mehta"
+  description="Learn more about Piyush Mehta - Software Engineer, Tech Speaker, and Open Source Enthusiast"
+>
+  <main>
+    <h1>About Me</h1>
+
+    <section class="intro">
+      <p>
+        Hi! I'm Piyush Mehta, a passionate software engineer with expertise in
+        building scalable web applications and distributed systems. I love
+        sharing knowledge through technical talks, writing, and contributing to
+        open source projects.
+      </p>
+    </section>
+
+    <section class="experience">
+      <h2>What I Do</h2>
+      <ul>
+        <li>🚀 Build scalable web applications using modern technologies</li>
+        <li>🎤 Speak at conferences and meetups about software engineering</li>
+        <li>✍️ Write technical articles and tutorials</li>
+        <li>🌟 Contribute to open source projects</li>
+        <li>👨‍🏫 Mentor developers and lead technical workshops</li>
+      </ul>
+    </section>
+
+    <section class="skills">
+      <h2>Technologies I Work With</h2>
+      <div class="skills-grid">
+        <div class="skill-category">
+          <h3>Frontend</h3>
+          <p>React, TypeScript, Next.js, Astro, HTML/CSS</p>
+        </div>
+        <div class="skill-category">
+          <h3>Backend</h3>
+          <p>Node.js, Python, Microservices, APIs</p>
+        </div>
+        <div class="skill-category">
+          <h3>Cloud & DevOps</h3>
+          <p>Azure, AWS, Docker, Kubernetes, CI/CD</p>
+        </div>
+        <div class="skill-category">
+          <h3>Databases</h3>
+          <p>PostgreSQL, MongoDB, Redis</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact">
+      <h2>Get In Touch</h2>
+      <p>
+        I'm always interested in discussing new opportunities, collaborating on
+        projects, or speaking at events. Feel free to reach out!
+      </p>
+      <a href="/contact-me/" class="contact-button">Contact Me</a>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .intro {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  h2 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    padding: 0.5rem 0;
+    font-size: 1.1rem;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .skill-category {
+    padding: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+  }
+
+  .skill-category h3 {
+    margin-bottom: 0.5rem;
+    color: #0066cc;
+  }
+
+  .contact {
+    text-align: center;
+  }
+
+  .contact-button {
+    display: inline-block;
+    background: #0066cc;
+    color: white;
+    padding: 0.75rem 2rem;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+
+  .contact-button:hover {
+    background: #0052a3;
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+title: 'What the Hell is microfrontend?'
+date: 2020-09-05
+author: 'Piyush Mehta'
+banner: '../../assets/micro-frontends/deployment.png'
+draft: false
+description: "Ever heard the word Micro-Frontend and wondered what the hell is that? Today you'll know all about it!"
+tags:
+  - 'React'
+  - 'Microfrontend'
+  - 'frontend'
+  - 'web development'
+  - 'piyush mehta'
+---
+
+
+
+The term Micro Frontends first came up in <a target="__blank" href="https://www.thoughtworks.com/radar/techniques/micro-frontends">ThoughtWorks Technology Radar</a> at the end of 2016.
+
+Micro-frontend architecture is a design approach in which a front-end app is decomposed into individual, semi-independent “microapps” working loosely together.
+This concept is vaguely inspired by, and named after, microservices.
+
+
+
+>The concept of Micro Frontend Architecture is to think about a web application as a composition of features owned by different independent teams. Each team having a distinct area of business that it specializes in.
+
+The current trend is to build a feature-rich and powerful browser application, aka single page app, which sits on top of a micro service architecture. Over time the frontend layer, often developed by a separate team, grows and gets more difficult to maintain. That’s what we call a Frontend Monolith.
+
+### The benefits of the micro-frontend pattern include
+
+1. Micro-frontend architectures may be simpler, and thus easier to reason about and manage.
+1. Independent development teams can collaborate on a front-end app more easily.
+1. They can provide a means for migrating from an “old” app by having a “new” app running side by side with it.
+
+### Best Practices of Micro-Frontend
+
+1. The Single-SPA meta-framework to combine multiple frameworks on the same page without refreshing the page such a React, Vue, Angular 1, Angular 2 etc.
+1. Multiple single-page application lives at different URLs. For shared functionality application use NPM or Bower components.
+1. Isolating Micro-apps into Iframes using window. post Message APIs and libraries to coordinate. IFrames share APIs exposed by their parent window.
+1. Different modules to communicate over a shared events bus. Each module is built using its own framework, as long as it handles incoming and outgoing events.
+1. Incremental upgrades
+1. Simple, decoupled codebases
+1. Independent deployment
+
+
+## The easiest beginner friendly way to begin with (React) Micro frontend
+
+```bash
+npm i react-microfrontend
+```
+
+### Import
+
+```javascript
+ // index.js
+
+ import { ImportMicrofrontend } from 'react-microfrontend';
+
+ ReactDOM.render((
+   <ImportMicrofrontend>
+     <App />
+   </ImportMicrofrontend>
+ ), document.getElementById('root'));
+
+
+ // App.js
+ import { withMicrofrontend } from 'react-microfrontend';
+
+ const App = ({ microfrontends }) => (
+   <div>
+     {
+       Object.keys(microfrontends).map(microfrontend => (
+         <div>
+           {microfrontend.content}
+         </div>
+       ))
+     }
+   </div>
+ );
+
+ export default withMicrofrontend(App);
+```
+
+### Export
+
+```javascript
+
+import App from './App';
+import { ExportMicrofrontend } from 'react-microfrontend';
+
+ExportMicrofrontend(App);
+
+```
+
+>In short, micro frontends are all about slicing up big and scary things into smaller, more manageable pieces, and then being explicit about the dependencies between them. Our technology choices, our codebases, our teams, and our release processes should all be able to operate and evolve independently of each other, without excessive coordination.
+
+
+
+
+
+
+Fin!
