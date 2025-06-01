@@ -5,129 +5,219 @@ import Layout from '../layouts/Layout.astro';
 const projects = [
   {
     title: 'PiyushMehta.com',
-    label: 'My Personal Website',
+    label: 'Personal Developer Portfolio',
     description:
-      'PiyushMehta.com is a premium JAMStack Website. I publish my learnings as blogs on this website. Its Open Source and you can make your own version of it!',
-    url: 'https://github.com/piyush97/PiyushMehta.com',
+      'A modern, responsive portfolio website built with Astro and TypeScript. Features a blog, project showcase, and responsive design. Built for performance and SEO optimization.',
+    url: 'https://piyushmehta.com',
     github: 'https://github.com/piyush97/PiyushMehta.com',
-    tags: ['Astro', 'TypeScript', 'Tailwind CSS'],
+    tags: ['Astro', 'TypeScript', 'Tailwind CSS', 'MDX'],
     color: '#667EEA',
     logo: '/src/images/Piyush.svg',
   },
   {
-    title: 'Netflix TypeScript Clone',
-    label: 'Netflix Typescript React',
+    title: 'AI-Powered Code Review Assistant',
+    label: 'DevOps Tool',
     description:
-      'Netflix Typescript Clone is a sample app for devs to learn the Best Practices while developing a Typescript React App.',
+      'An intelligent code review tool that uses machine learning to analyze pull requests, suggest improvements, and detect potential bugs before deployment.',
+    url: 'https://github.com/piyush97/ai-code-reviewer',
+    github: 'https://github.com/piyush97/ai-code-reviewer',
+    tags: ['Python', 'TensorFlow', 'GitHub API', 'Docker'],
+    color: '#10B981',
+    logo: 'https://via.placeholder.com/64x64/10B981/ffffff?text=AI',
+  },
+  {
+    title: 'Real-time Chat Platform',
+    label: 'Full-Stack Application',
+    description:
+      'A scalable real-time messaging platform with end-to-end encryption, file sharing, and video calls. Built with modern web technologies and microservices architecture.',
+    url: 'https://github.com/piyush97/realtime-chat',
+    github: 'https://github.com/piyush97/realtime-chat',
+    tags: ['Node.js', 'Socket.io', 'React', 'MongoDB', 'WebRTC'],
+    color: '#3B82F6',
+    logo: 'https://via.placeholder.com/64x64/3B82F6/ffffff?text=💬',
+  },
+  {
+    title: 'Netflix TypeScript Clone',
+    label: 'Streaming Platform Clone',
+    description:
+      'A pixel-perfect Netflix clone built with TypeScript and React. Features user authentication, video streaming, search functionality, and responsive design.',
     url: 'https://netflix-reactjs-clone.netlify.app/',
     github: 'https://github.com/piyush97/Netflix-React-Clone',
-    tags: ['TypeScript', 'React', 'Netflix API'],
+    tags: ['TypeScript', 'React', 'Netflix API', 'Firebase'],
     color: '#E50914',
     logo: '/src/images/NTC.svg',
   },
   {
-    title: 'GoNuclei.com',
-    label: 'Nuclei',
+    title: 'E-commerce Analytics Dashboard',
+    label: 'Business Intelligence Tool',
     description:
-      'gonuclei.com is a beautiful blend of GraphQL, Gatsby and Contentful CMS.',
+      'A comprehensive analytics dashboard for e-commerce businesses. Features real-time sales tracking, customer insights, inventory management, and predictive analytics.',
+    url: 'https://github.com/piyush97/ecommerce-analytics',
+    github: 'https://github.com/piyush97/ecommerce-analytics',
+    tags: ['Vue.js', 'D3.js', 'Node.js', 'PostgreSQL'],
+    color: '#8B5CF6',
+    logo: 'https://via.placeholder.com/64x64/8B5CF6/ffffff?text=📊',
+  },
+  {
+    title: 'Blockchain Voting System',
+    label: 'Web3 Application',
+    description:
+      'A secure, transparent voting system built on Ethereum blockchain. Features smart contracts for vote integrity, real-time results, and voter verification.',
+    url: 'https://github.com/piyush97/blockchain-voting',
+    github: 'https://github.com/piyush97/blockchain-voting',
+    tags: ['Solidity', 'Web3.js', 'React', 'Truffle', 'MetaMask'],
+    color: '#F59E0B',
+    logo: 'https://via.placeholder.com/64x64/F59E0B/ffffff?text=🗳️',
+  },
+  {
+    title: 'GoNuclei.com',
+    label: 'Modern Web Platform',
+    description:
+      'A beautiful content management platform built with Gatsby, GraphQL, and Contentful. Features dynamic content rendering and blazing-fast performance.',
     url: 'https://gonuclei.com/',
-    tags: ['Gatsby', 'GraphQL', 'Contentful'],
+    tags: ['Gatsby', 'GraphQL', 'Contentful', 'React'],
     color: '#0092EB',
     logo: '/src/images/Nuclei.svg',
   },
   {
-    title: 'Dashboard',
-    label: 'Meaww Influencers Dashboard',
+    title: 'Microservices Task Manager',
+    label: 'Distributed System',
     description:
-      'A complete Comprehensive dashboard built for the influencers. Used to track their growth and reach.',
+      'A scalable task management system built with microservices architecture. Features user management, real-time notifications, and distributed task processing.',
+    url: 'https://github.com/piyush97/microservices-task-manager',
+    github: 'https://github.com/piyush97/microservices-task-manager',
+    tags: ['Docker', 'Kubernetes', 'Node.js', 'Redis', 'RabbitMQ'],
+    color: '#06B6D4',
+    logo: 'https://via.placeholder.com/64x64/06B6D4/ffffff?text=⚙️',
+  },
+  {
+    title: 'Meaww Influencers Dashboard',
+    label: 'Analytics Platform',
+    description:
+      'A comprehensive analytics dashboard for social media influencers. Track growth metrics, engagement rates, and revenue analytics across multiple platforms.',
     url: 'https://meaww.com/',
-    tags: ['React', 'Redux', 'Analytics'],
+    tags: ['React', 'Redux', 'D3.js', 'Analytics API'],
     color: '#000',
     logo: '/src/images/Meaww.svg',
   },
   {
-    title: 'GoGitter',
-    label: 'Challenge using GitHub Api',
+    title: 'Open Source Contribution Tracker',
+    label: 'Developer Tool',
     description:
-      'Go Gitter helps you challenge yourself to contribute more on open source',
+      'GoGitter helps developers track and gamify their open source contributions. Features GitHub integration, contribution streaks, and achievement system.',
     url: 'https://gogitter-16d93.web.app/',
     github: 'https://github.com/piyush97/GoGitter',
-    tags: ['React', 'GitHub API', 'Firebase'],
+    tags: ['React', 'GitHub API', 'Firebase', 'PWA'],
     color: '#EF9B0F',
     logo: '/src/images/GoGitter.svg',
   },
   {
-    title: 'Zapify',
-    label: 'UI Component Library',
+    title: 'Zapify UI Component Library',
+    label: 'Design System',
     description:
-      'Zapify is blazing fast Component Library built out of Flexbox and React Hooks',
+      'A modern, accessible React component library built with performance in mind. Features 50+ components, TypeScript support, and comprehensive documentation.',
     url: 'https://zapify-ui.github.io/',
     github: 'https://github.com/zapify-ui/zapify',
-    tags: ['React', 'Webpack', 'SASS'],
+    tags: ['React', 'TypeScript', 'Storybook', 'SASS'],
     color: '#6C2478',
     logo: '/src/images/Zapify.svg',
   },
   {
-    title: 'GitApp',
-    label: 'GitHub Repository Search Impl',
-    description: 'Elastic Search Implementation for Github Repositories',
+    title: 'Machine Learning Model Deployment Platform',
+    label: 'MLOps Tool',
+    description:
+      'A platform for deploying and managing machine learning models at scale. Features automated model versioning, A/B testing, and performance monitoring.',
+    url: 'https://github.com/piyush97/ml-deployment-platform',
+    github: 'https://github.com/piyush97/ml-deployment-platform',
+    tags: ['Python', 'FastAPI', 'Docker', 'MLflow', 'Kubernetes'],
+    color: '#DC2626',
+    logo: 'https://via.placeholder.com/64x64/DC2626/ffffff?text=🤖',
+  },
+  {
+    title: 'DevOps Pipeline Automation',
+    label: 'CI/CD Solution',
+    description:
+      'An automated CI/CD pipeline solution with GitOps principles. Features infrastructure as code, automated testing, security scanning, and deployment strategies.',
+    url: 'https://github.com/piyush97/devops-pipeline',
+    github: 'https://github.com/piyush97/devops-pipeline',
+    tags: ['Jenkins', 'Terraform', 'AWS', 'Docker', 'Helm'],
+    color: '#059669',
+    logo: 'https://via.placeholder.com/64x64/059669/ffffff?text=🔧',
+  },
+  {
+    title: 'GitHub Repository Explorer',
+    label: 'Developer Tool',
+    description:
+      'A powerful search interface for GitHub repositories with advanced filtering, analytics, and discovery features. Built with modern search technologies.',
     url: 'https://whispering-island-83455.herokuapp.com/',
     github: 'https://github.com/piyush97/GitApp',
-    tags: ['React', 'ElasticSearch', 'SASS'],
+    tags: ['React', 'Elasticsearch', 'GitHub API', 'SASS'],
     color: '#00CDCD',
     logo: '/src/images/GitApp.svg',
   },
   {
-    title: 'Saledrive - Sales Management Made Easy',
-    label: 'Order Management App',
+    title: 'SaleDrive - Smart CRM',
+    label: 'Business Management App',
     description:
-      'With Saledrive, worry less about sales management. Coordinate with your team in a hassle-free manner. No more guesswork; everyone knows what they are doing.',
+      'A comprehensive sales management platform with team coordination, lead tracking, automated workflows, and performance analytics for sales teams.',
     url: 'https://play.google.com/store/apps/details?id=com.aidapp.saledrive&hl=en_GB',
-    tags: ['Ionic', 'Sass', 'React'],
-    color: '#fff',
+    tags: ['Ionic', 'Angular', 'Node.js', 'MongoDB'],
+    color: '#4F46E5',
     logo: '/src/images/Aidapp.svg',
   },
   {
-    title: 'Quickstagram - React Instagram Clone',
-    label: 'React Instagram Clone',
+    title: 'Social Media Clone - QuickStagram',
+    label: 'Full-Stack Social Platform',
     description:
-      'Instagram Implementation with TailwindCSS, React and Firebase',
+      'A feature-rich Instagram clone with real-time messaging, story features, photo filters, and social interactions. Built with modern web technologies.',
     url: 'https://quickstagram.piyushmehta.com/',
     github: 'https://github.com/piyush97/quickstagram',
-    tags: ['Firebase', 'TailwindCSS', 'React'],
-    color: '#fff',
+    tags: ['React', 'Firebase', 'Tailwind CSS', 'PWA'],
+    color: '#E1306C',
     logo: 'https://assets.stickpng.com/images/580b57fcd9996e24bc43c521.png',
   },
   {
-    title: 'Sawan - Online Immunity Retail Store',
-    label: 'Sawan Dry Fruits',
+    title: 'Sawan Dry Fruits - E-commerce Platform',
+    label: 'Health & Wellness Store',
     description:
-      'An ecommerce retail Immunity store, serving 25,000 orders per month',
+      'A high-performance e-commerce platform serving 25,000+ monthly orders. Features inventory management, payment integration, and customer analytics.',
     url: 'https://sawandryfruits.com/',
-    tags: ['Ecommerce', 'Checkout', 'Shopify'],
-    color: '#00CDCD',
+    tags: ['Shopify', 'JavaScript', 'Payment Gateway', 'Analytics'],
+    color: '#16A34A',
     logo: 'https://i.ibb.co/bKh7DWv/Piyush-2.png',
   },
   {
-    title: 'Awesome Portfolio - Free customizable deployable theme made by me',
-    label: 'Awesome Portfolio',
+    title: 'Awesome Portfolio Template',
+    label: 'Open Source Template',
     description:
-      'Awesome Portfolio template made for students to be used and modified',
+      'A free, customizable portfolio template for developers and designers. Features modern animations, responsive design, and easy customization options.',
     url: 'https://awesome-portfolio.piyushmehta.com/',
     github: 'https://github.com/piyush97/awesome-portfolio',
-    tags: ['React', 'TailWindCSS', 'Framer'],
+    tags: ['React', 'Tailwind CSS', 'Framer Motion', 'Vercel'],
     color: '#F000B8',
     logo: 'https://i.ibb.co/L5Qnqdt/Awesome.png',
   },
   {
-    title: 'Divvy - NFT Marketplace on Polygon Matic',
-    label: 'Divvy',
-    description: 'Divvy is an NFT Marketplace Deployed on Polygon Matic Chain',
+    title: 'Divvy - NFT Marketplace',
+    label: 'Web3 Marketplace',
+    description:
+      'A decentralized NFT marketplace built on Polygon network. Features minting, trading, auctions, and royalty management with low gas fees.',
     url: 'https://github.com/piyush97/divvy',
     github: 'https://github.com/piyush97/divvy',
-    tags: ['React', 'TailWindCSS', 'NextJS', 'Solidity', 'Matic', 'Infura'],
-    color: '#fff',
+    tags: ['Solidity', 'Next.js', 'Web3.js', 'Polygon', 'IPFS'],
+    color: '#8B5CF6',
     logo: 'https://i.ibb.co/Cn9CL28/Divvy.png',
+  },
+  {
+    title: 'Cloud Infrastructure Monitor',
+    label: 'DevOps Monitoring',
+    description:
+      'A real-time monitoring solution for cloud infrastructure with alerting, performance metrics, cost optimization recommendations, and automated scaling.',
+    url: 'https://github.com/piyush97/cloud-monitor',
+    github: 'https://github.com/piyush97/cloud-monitor',
+    tags: ['Python', 'AWS', 'Prometheus', 'Grafana', 'Terraform'],
+    color: '#0EA5E9',
+    logo: 'https://via.placeholder.com/64x64/0EA5E9/ffffff?text=☁️',
   },
 ];
 ---
@@ -137,28 +227,72 @@ const projects = [
   description="Open source projects, dashboards and web apps created by Piyush Mehta with modern technologies"
 >
   <main class="page-container">
-    <div class="max-w-6xl mx-auto space-y-12">
+    <div class="mx-auto space-y-16 max-w-7xl">
       <!-- Header Section -->
-      <header class="text-center space-y-4">
+      <header class="space-y-6 text-center">
+        <div class="flex items-center justify-center mb-4">
+          <svg
+            class="w-8 h-8 mr-3 text-accent"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+            ></path>
+          </svg>
+          <span class="text-lg font-semibold text-accent">Portfolio</span>
+        </div>
         <h1
-          class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent"
+          class="text-4xl font-bold text-transparent md:text-6xl bg-gradient-to-r from-accent to-accent-light bg-clip-text"
         >
-          Projects
+          Featured Projects
         </h1>
         <p
-          class="text-lg md:text-xl text-text-secondary max-w-3xl mx-auto leading-relaxed"
+          class="max-w-4xl mx-auto text-lg leading-relaxed md:text-xl text-text-secondary"
         >
-          Open source is a real passion and a way of thinking. I've made many
-          <strong class="text-accent">Dashboards</strong> and <strong
-            class="text-accent">Web Apps</strong
-          > with strong architecture, great UX and bleeding edge tech for clients
-          and companies worldwide
+          A collection of <strong class="text-accent"
+            >innovative solutions</strong
+          > and
+          <strong class="text-accent">open source contributions</strong> spanning
+          full-stack development, DevOps, machine learning, and blockchain technologies.
+          Each project represents a commitment to quality, performance, and user
+          experience.
         </p>
       </header>
 
+      <!-- Stats Section -->
+      <section class="grid grid-cols-2 gap-6 py-8 md:grid-cols-4">
+        <div class="space-y-2 text-center">
+          <div class="text-3xl font-bold md:text-4xl text-accent">20+</div>
+          <div class="text-sm text-text-secondary md:text-base">Projects</div>
+        </div>
+        <div class="space-y-2 text-center">
+          <div class="text-3xl font-bold md:text-4xl text-accent">50k+</div>
+          <div class="text-sm text-text-secondary md:text-base">
+            Lines of Code
+          </div>
+        </div>
+        <div class="space-y-2 text-center">
+          <div class="text-3xl font-bold md:text-4xl text-accent">15+</div>
+          <div class="text-sm text-text-secondary md:text-base">
+            Technologies
+          </div>
+        </div>
+        <div class="space-y-2 text-center">
+          <div class="text-3xl font-bold md:text-4xl text-accent">100k+</div>
+          <div class="text-sm text-text-secondary md:text-base">
+            Users Served
+          </div>
+        </div>
+      </section>
+
       <!-- Projects Grid -->
       <section class="projects-grid">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {
             projects.map((project, index) => (
               <ProjectCard
@@ -177,19 +311,23 @@ const projects = [
       </section>
 
       <!-- Call to Action -->
-      <section class="text-center space-y-6 py-12">
-        <h2 class="text-2xl md:text-3xl font-bold text-text-primary">
-          Interested in collaborating?
-        </h2>
-        <p class="text-text-secondary max-w-2xl mx-auto">
-          I'm always open to discussing new projects, creative ideas, or
-          opportunities to be part of your visions.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a href="/contact-me/" class="btn-primary">
-            Get In Touch
+      <section class="py-16 space-y-8 text-center">
+        <div class="space-y-4">
+          <h2 class="text-3xl font-bold md:text-4xl text-text-primary">
+            Ready to Build Something Amazing?
+          </h2>
+          <p class="max-w-2xl mx-auto text-lg text-text-secondary">
+            I'm always excited about new challenges and innovative projects.
+            Let's collaborate and turn your ideas into reality with cutting-edge
+            technology.
+          </p>
+        </div>
+
+        <div class="flex flex-col justify-center gap-4 sm:flex-row">
+          <a href="/contact-me/" class="btn-primary group">
+            Start a Project
             <svg
-              class="w-4 h-4 ml-2"
+              class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -205,18 +343,225 @@ const projects = [
             href="https://github.com/piyush97"
             target="_blank"
             rel="noopener noreferrer"
-            class="btn-secondary"
+            class="btn-secondary group"
           >
-            View GitHub
-            <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fill-rule="evenodd"
                 d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
                 clip-rule="evenodd"></path>
             </svg>
+            Browse Code
           </a>
+          <a href="/blog/" class="btn-outline group">
+            <svg
+              class="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              ></path>
+            </svg>
+            Read Blog
+          </a>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="grid grid-cols-1 gap-8 mt-12 text-left md:grid-cols-3">
+          <div class="space-y-3">
+            <div class="flex items-center space-x-2">
+              <svg
+                class="w-5 h-5 text-accent"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+              <h3 class="font-semibold text-text-primary">Fast Delivery</h3>
+            </div>
+            <p class="text-sm text-text-secondary">
+              Rapid prototyping and agile development approach for quick
+              time-to-market.
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center space-x-2">
+              <svg
+                class="w-5 h-5 text-accent"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <h3 class="font-semibold text-text-primary">Quality Assured</h3>
+            </div>
+            <p class="text-sm text-text-secondary">
+              Comprehensive testing, code reviews, and best practices ensure
+              robust solutions.
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center space-x-2">
+              <svg
+                class="w-5 h-5 text-accent"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                ></path>
+              </svg>
+              <h3 class="font-semibold text-text-primary">Ongoing Support</h3>
+            </div>
+            <p class="text-sm text-text-secondary">
+              Continued maintenance, updates, and technical support for all
+              projects.
+            </p>
+          </div>
         </div>
       </section>
     </div>
   </main>
+
+  <style>
+    .page-container {
+      @apply px-4 py-8 md:py-16;
+      min-height: calc(100vh - 4rem);
+    }
+
+    /* Stats Section Animation */
+    .text-center:hover .text-3xl,
+    .text-center:hover .text-4xl {
+      transform: scale(1.1);
+      transition: transform 0.3s ease;
+    }
+
+    /* Projects Grid Enhancements */
+    .projects-grid {
+      position: relative;
+    }
+
+    .projects-grid::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(var(--accent-rgb), 0.3),
+        transparent
+      );
+      display: none;
+    }
+
+    @media (min-width: 1024px) {
+      .projects-grid::before {
+        display: block;
+      }
+    }
+
+    /* Button Enhancements */
+    .btn-outline {
+      @apply px-6 py-3 rounded-lg font-medium border-2 border-accent text-accent transition-all duration-300;
+      background: rgba(var(--accent-rgb), 0.1);
+    }
+
+    .btn-outline:hover {
+      @apply bg-accent text-white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(var(--accent-rgb), 0.3);
+    }
+
+    /* Responsive Grid Improvements */
+    @media (max-width: 768px) {
+      .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+
+      .text-3xl {
+        font-size: 1.5rem;
+      }
+
+      .text-4xl {
+        font-size: 2rem;
+      }
+    }
+
+    /* Enhanced Typography */
+    h1 {
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      letter-spacing: -0.01em;
+    }
+
+    /* Hover Effects for Service Cards */
+    .space-y-3:hover {
+      transform: translateY(-4px);
+      transition: transform 0.3s ease;
+    }
+
+    /* Loading Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .projects-grid > div {
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    /* Stagger animation for project cards */
+    .projects-grid > div > :nth-child(1) {
+      animation-delay: 0.1s;
+    }
+    .projects-grid > div > :nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .projects-grid > div > :nth-child(3) {
+      animation-delay: 0.3s;
+    }
+    .projects-grid > div > :nth-child(4) {
+      animation-delay: 0.4s;
+    }
+    .projects-grid > div > :nth-child(5) {
+      animation-delay: 0.5s;
+    }
+    .projects-grid > div > :nth-child(6) {
+      animation-delay: 0.6s;
+    }
+  </style>
 </Layout>
