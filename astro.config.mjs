@@ -22,7 +22,6 @@ export default defineConfig({
       enabled: true,
     },
     imageService: true,
-    devImageService: 'sharp',
     isr: true,
     isr: {
       // caches all pages on first request and saves for 1 day
