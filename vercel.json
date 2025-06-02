@@ -1,0 +1,47 @@
+{
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@astrojs/vercel"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                },
+                {
+                    "key": "X-Frame-Options",
+                    "value": "DENY"
+                },
+                {
+                    "key": "X-XSS-Protection",
+                    "value": "1; mode=block"
+                }
+            ]
+        },
+        {
+            "source": "/(.*)\\.(jpg|jpeg|png|gif|ico|svg|webp|avif)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, immutable, max-age=31536000"
+                }
+            ]
+        },
+        {
+            "source": "/(.*)\\.(js|css)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, immutable, max-age=31536000"
+                }
+            ]
+        }
+    ]
+}
