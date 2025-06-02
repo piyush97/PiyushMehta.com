@@ -54,23 +54,35 @@ export default function NewsletterSubscription({
     setErrorMessage('');
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
 
-      // In a real app, you would send the data to your newsletter service
-      console.log('Newsletter subscription:', email);
+      const result = await response.json();
 
-      setSubmitStatus('success');
-      setEmail('');
-      setEmailError('');
-      setShowConfetti(true);
+      if (result.success) {
+        setSubmitStatus('success');
+        setEmail('');
+        setEmailError('');
+        setShowConfetti(true);
 
-      // Reset confetti after animation
-      setTimeout(() => setShowConfetti(false), 3000);
+        // Reset confetti after animation
+        setTimeout(() => setShowConfetti(false), 3000);
 
-      // Reset success message after 10 seconds
-      setTimeout(() => setSubmitStatus('idle'), 10000);
+        // Reset success message after 10 seconds
+        setTimeout(() => setSubmitStatus('idle'), 10000);
+      } else {
+        setSubmitStatus('error');
+        setErrorMessage(
+          result.message || 'Failed to subscribe. Please try again later.'
+        );
+      }
     } catch (error) {
+      console.error('Newsletter subscription error:', error);
       setSubmitStatus('error');
       setErrorMessage('Failed to subscribe. Please try again later.');
     } finally {

@@ -1,12 +1,6 @@
 {
     "cleanUrls": true,
     "trailingSlash": false,
-    "builds": [
-        {
-            "src": "package.json",
-            "use": "@astrojs/vercel"
-        }
-    ],
     "headers": [
         {
             "source": "/(.*)",
