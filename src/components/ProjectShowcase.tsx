@@ -73,11 +73,11 @@ export default function ProjectShowcase({
   const ProjectCard = ({ project }: { project: Project }) => (
     <div className="group bg-surface-secondary rounded-lg border border-card-border hover:border-accent/50 transition-all duration-300 overflow-hidden hover:shadow-lg hover:transform hover:scale-[1.02]">
       {project.imageUrl && (
-        <div className="aspect-video w-full overflow-hidden">
+        <div className="w-full overflow-hidden aspect-video">
           <img
             src={project.imageUrl}
             alt={project.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
             loading="lazy"
           />
         </div>
@@ -86,7 +86,7 @@ export default function ProjectShowcase({
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
           <div>
-            <h3 className="text-xl font-semibold text-text-primary group-hover:text-accent transition-colors duration-200">
+            <h3 className="text-xl font-semibold transition-colors duration-200 text-text-primary group-hover:text-accent">
               {project.title}
             </h3>
             <div className="flex items-center mt-1 text-sm text-text-secondary">
@@ -105,7 +105,7 @@ export default function ProjectShowcase({
           </div>
         </div>
 
-        <p className="text-text-secondary mb-4 line-clamp-3">
+        <p className="mb-4 text-text-secondary line-clamp-3">
           {project.description}
         </p>
 
@@ -114,7 +114,7 @@ export default function ProjectShowcase({
           {project.technologies.map((tech) => (
             <span
               key={tech}
-              className="px-2 py-1 bg-surface-primary text-text-secondary text-xs rounded-md hover:bg-accent/20 hover:text-accent transition-colors duration-200 cursor-pointer"
+              className="px-2 py-1 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent"
               onClick={() => setSelectedTech(tech)}
             >
               {tech}
@@ -129,7 +129,7 @@ export default function ProjectShowcase({
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors duration-200 text-center font-medium"
+              className="flex-1 px-4 py-2 font-medium text-center text-white transition-colors duration-200 rounded-lg bg-accent hover:bg-accent/90"
             >
               <span className="flex items-center justify-center">
                 <svg
@@ -155,7 +155,7 @@ export default function ProjectShowcase({
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 px-4 py-2 border border-card-border text-text-primary rounded-lg hover:bg-surface-primary transition-colors duration-200 text-center font-medium"
+              className="flex-1 px-4 py-2 font-medium text-center transition-colors duration-200 border rounded-lg border-card-border text-text-primary hover:bg-surface-primary"
             >
               <span className="flex items-center justify-center">
                 <svg
@@ -179,13 +179,13 @@ export default function ProjectShowcase({
   );
 
   const ProjectListItem = ({ project }: { project: Project }) => (
-    <div className="flex items-center p-6 bg-surface-secondary rounded-lg border border-card-border hover:border-accent/50 transition-all duration-200">
+    <div className="flex items-center p-6 transition-all duration-200 border rounded-lg bg-surface-secondary border-card-border hover:border-accent/50">
       {project.imageUrl && (
-        <div className="w-20 h-20 rounded-lg overflow-hidden mr-6 flex-shrink-0">
+        <div className="flex-shrink-0 w-20 h-20 mr-6 overflow-hidden rounded-lg">
           <img
             src={project.imageUrl}
             alt={project.title}
-            className="w-full h-full object-cover"
+            className="object-cover w-full h-full"
             loading="lazy"
           />
         </div>
@@ -194,10 +194,10 @@ export default function ProjectShowcase({
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0 mr-4">
-            <h3 className="text-lg font-semibold text-text-primary hover:text-accent transition-colors duration-200 truncate">
+            <h3 className="text-lg font-semibold truncate transition-colors duration-200 text-text-primary hover:text-accent">
               {project.title}
             </h3>
-            <p className="text-text-secondary mt-1 line-clamp-2">
+            <p className="mt-1 text-text-secondary line-clamp-2">
               {project.description}
             </p>
             <div className="flex items-center mt-2 text-sm text-text-secondary">
@@ -215,13 +215,13 @@ export default function ProjectShowcase({
             </div>
           </div>
 
-          <div className="flex space-x-2 flex-shrink-0">
+          <div className="flex flex-shrink-0 space-x-2">
             {project.liveUrl && (
               <a
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1 bg-accent text-white rounded-md hover:bg-accent/90 transition-colors duration-200 text-sm font-medium"
+                className="px-3 py-1 text-sm font-medium text-white transition-colors duration-200 rounded-md bg-accent hover:bg-accent/90"
               >
                 Live Demo
               </a>
@@ -232,7 +232,7 @@ export default function ProjectShowcase({
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1 border border-card-border text-text-primary rounded-md hover:bg-surface-primary transition-colors duration-200 text-sm font-medium"
+                className="px-3 py-1 text-sm font-medium transition-colors duration-200 border rounded-md border-card-border text-text-primary hover:bg-surface-primary"
               >
                 GitHub
               </a>
@@ -246,69 +246,138 @@ export default function ProjectShowcase({
   return (
     <div className={`project-showcase ${className}`}>
       {/* Filter Controls */}
-      <div className="p-6 mb-8 bg-surface-secondary rounded-lg border border-card-border">
+      <div className="p-6 mb-8 border rounded-lg bg-surface-secondary border-card-border">
         <div className="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-6 lg:items-end">
           {/* Category Filter */}
           <div className="flex-1">
             <label
               htmlFor="category"
-              className="block text-sm font-medium text-text-primary mb-2"
+              className="block mb-2 text-sm font-medium text-text-primary"
             >
               Category
             </label>
-            <select
-              id="category"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-2 bg-surface-primary border border-card-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200"
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category === 'all' ? 'All Categories' : category}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                id="category"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full px-4 py-2 pr-10 transition-all duration-200 border rounded-lg appearance-none cursor-pointer bg-surface-primary border-card-border text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent hover:border-accent/50"
+              >
+                {categories.map((category) => (
+                  <option
+                    key={category}
+                    value={category}
+                    className="bg-surface-primary text-text-primary"
+                  >
+                    {category === 'all' ? 'All Categories' : category}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-text-secondary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
 
           {/* Technology Filter */}
           <div className="flex-1">
             <label
               htmlFor="technology"
-              className="block text-sm font-medium text-text-primary mb-2"
+              className="block mb-2 text-sm font-medium text-text-primary"
             >
               Technology
             </label>
-            <select
-              id="technology"
-              value={selectedTech}
-              onChange={(e) => setSelectedTech(e.target.value)}
-              className="w-full px-4 py-2 bg-surface-primary border border-card-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200"
-            >
-              {technologies.map((tech) => (
-                <option key={tech} value={tech}>
-                  {tech === 'all' ? 'All Technologies' : tech}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                id="technology"
+                value={selectedTech}
+                onChange={(e) => setSelectedTech(e.target.value)}
+                className="w-full px-4 py-2 pr-10 transition-all duration-200 border rounded-lg appearance-none cursor-pointer bg-surface-primary border-card-border text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent hover:border-accent/50"
+              >
+                {technologies.map((tech) => (
+                  <option
+                    key={tech}
+                    value={tech}
+                    className="bg-surface-primary text-text-primary"
+                  >
+                    {tech === 'all' ? 'All Technologies' : tech}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-text-secondary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
 
           {/* Sort By */}
           <div className="flex-1">
             <label
               htmlFor="sortBy"
-              className="block text-sm font-medium text-text-primary mb-2"
+              className="block mb-2 text-sm font-medium text-text-primary"
             >
               Sort By
             </label>
-            <select
-              id="sortBy"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'year' | 'title')}
-              className="w-full px-4 py-2 bg-surface-primary border border-card-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200"
-            >
-              <option value="year">Year</option>
-              <option value="title">Title</option>
-            </select>
+            <div className="relative">
+              <select
+                id="sortBy"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'year' | 'title')}
+                className="w-full px-4 py-2 pr-10 transition-all duration-200 border rounded-lg appearance-none cursor-pointer bg-surface-primary border-card-border text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent hover:border-accent/50"
+              >
+                <option
+                  value="year"
+                  className="bg-surface-primary text-text-primary"
+                >
+                  Year
+                </option>
+                <option
+                  value="title"
+                  className="bg-surface-primary text-text-primary"
+                >
+                  Title
+                </option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-text-secondary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
 
           {/* Featured Only Toggle */}
@@ -318,14 +387,14 @@ export default function ProjectShowcase({
                 type="checkbox"
                 checked={showFeaturedOnly}
                 onChange={(e) => setShowFeaturedOnly(e.target.checked)}
-                className="w-4 h-4 text-accent bg-surface-primary border-card-border rounded focus:ring-accent focus:ring-2"
+                className="w-4 h-4 rounded text-accent bg-surface-primary border-card-border focus:ring-accent focus:ring-2"
               />
               <span className="text-sm text-text-primary">Featured only</span>
             </label>
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex border border-card-border rounded-lg overflow-hidden">
+          <div className="flex overflow-hidden border rounded-lg border-card-border">
             <button
               onClick={() => setViewMode('grid')}
               className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
@@ -351,7 +420,7 @@ export default function ProjectShowcase({
           {/* Clear Filters */}
           <button
             onClick={handleClearFilters}
-            className="px-4 py-2 text-text-secondary hover:text-text-primary border border-card-border rounded-lg hover:bg-surface-primary transition-all duration-200"
+            className="px-4 py-2 transition-all duration-200 border rounded-lg text-text-secondary hover:text-text-primary border-card-border hover:bg-surface-primary"
           >
             Clear All
           </button>
@@ -369,17 +438,17 @@ export default function ProjectShowcase({
           showFeaturedOnly) && (
           <div className="flex flex-wrap gap-2">
             {selectedCategory !== 'all' && (
-              <span className="px-3 py-1 bg-accent/20 text-accent rounded-full text-sm">
+              <span className="px-3 py-1 text-sm rounded-full bg-accent/20 text-accent">
                 Category: {selectedCategory}
               </span>
             )}
             {selectedTech !== 'all' && (
-              <span className="px-3 py-1 bg-accent/20 text-accent rounded-full text-sm">
+              <span className="px-3 py-1 text-sm rounded-full bg-accent/20 text-accent">
                 Tech: {selectedTech}
               </span>
             )}
             {showFeaturedOnly && (
-              <span className="px-3 py-1 bg-accent/20 text-accent rounded-full text-sm">
+              <span className="px-3 py-1 text-sm rounded-full bg-accent/20 text-accent">
                 Featured
               </span>
             )}
@@ -389,9 +458,9 @@ export default function ProjectShowcase({
 
       {/* Projects Display */}
       {filteredProjects.length === 0 ? (
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <svg
-            className="mx-auto h-12 w-12 text-text-secondary mb-4"
+            className="w-12 h-12 mx-auto mb-4 text-text-secondary"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -403,7 +472,7 @@ export default function ProjectShowcase({
               d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
             />
           </svg>
-          <h3 className="text-lg font-medium text-text-primary mb-2">
+          <h3 className="mb-2 text-lg font-medium text-text-primary">
             No projects found
           </h3>
           <p className="text-text-secondary">

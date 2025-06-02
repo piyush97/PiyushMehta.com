@@ -18,13 +18,13 @@ const { title, description, date, author, tags } = post.data;
 
 <Layout title={title} description={description}>
   <div class="page-container">
-    <div class="container-base max-w-4xl">
+    <div class="max-w-4xl container-base">
       <article class="prose">
         <!-- Back Link -->
         <div class="mb-8">
           <a
             href="/blog/"
-            class="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-medium transition-colors duration-base"
+            class="inline-flex items-center gap-2 font-medium transition-colors text-accent hover:text-accent/80 duration-base"
           >
             <svg
               class="w-4 h-4"
@@ -43,13 +43,13 @@ const { title, description, date, author, tags } = post.data;
         </div>
 
         <!-- Post Header -->
-        <header class="mb-12 text-center border-b border-card-border pb-8">
-          <h1 class="text-4xl md:text-5xl font-bold mb-6 text-text-primary">
+        <header class="pb-8 mb-12 text-center border-b border-card-border">
+          <h1 class="mb-6 text-4xl font-bold md:text-5xl text-text-primary">
             {title}
           </h1>
 
           <div
-            class="flex flex-wrap justify-center items-center gap-6 text-light-400 mb-6"
+            class="flex flex-wrap items-center justify-center gap-6 mb-6 text-light-400"
           >
             <div class="flex items-center gap-2">
               <svg
@@ -94,7 +94,7 @@ const { title, description, date, author, tags } = post.data;
             tags && tags.length > 0 && (
               <div class="flex flex-wrap justify-center gap-2">
                 {tags.map((tag) => (
-                  <span class="bg-light-800 text-light-200 px-3 py-1 rounded-full text-sm font-medium">
+                  <span class="px-3 py-1 text-sm font-medium rounded-full bg-light-800 text-light-200">
                     {tag}
                   </span>
                 ))}
@@ -109,11 +109,11 @@ const { title, description, date, author, tags } = post.data;
         </div>
 
         <!-- Post Footer -->
-        <footer class="mt-16 pt-8 border-t border-card-border">
-          <div class="flex justify-between items-center">
+        <footer class="pt-8 mt-16 border-t border-card-border">
+          <div class="flex items-center justify-between">
             <a
               href="/blog/"
-              class="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-medium transition-colors duration-base"
+              class="inline-flex items-center gap-2 font-medium transition-colors text-accent hover:text-accent/80 duration-base"
             >
               <svg
                 class="w-4 h-4"
@@ -130,7 +130,7 @@ const { title, description, date, author, tags } = post.data;
               Back to Blog
             </a>
 
-            <div class="text-light-400 text-sm">
+            <div class="text-sm text-light-400">
               Last updated: {date.toLocaleDateString()}
             </div>
           </div>
