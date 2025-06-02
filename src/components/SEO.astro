@@ -16,7 +16,7 @@ export interface Props {
 
 const {
   title,
-  description = 'Piyush Mehta - Software Engineer, Tech Speaker, and Open Source Contributor. Sharing insights on React, Node.js, DevOps, and modern web development.',
+  description = 'Piyush Mehta - Senior Software Engineer, Tech Speaker, and Open Source Contributor. Sharing insights on React, Node.js, DevOps, and modern web development.',
   type = 'website',
   image,
   url = Astro.url.toString(),
@@ -49,8 +49,8 @@ const defaultSchema = {
     url: 'https://piyushmehta.com',
     sameAs: [
       'https://github.com/piyush97',
-      'https://linkedin.com/in/piyushmehta',
-      'https://twitter.com/piyush_mehta97',
+      'https://linkedin.com/in/piyush24',
+      'https://twitter.com/piyushmehtas',
     ],
   },
   url: canonicalUrl,
@@ -101,8 +101,8 @@ const schemaData = schema || defaultSchema;
   property="twitter:image"
   content={new URL(ogImageUrl, Astro.site).toString()}
 />
-<meta property="twitter:creator" content="@piyush_mehta97" />
-<meta property="twitter:site" content="@piyush_mehta97" />
+<meta property="twitter:creator" content="@piyushmehtas" />
+<meta property="twitter:site" content="@piyushmehtas" />
 
 <!-- Article specific meta tags -->
 {
@@ -188,8 +188,8 @@ const schemaData = schema || defaultSchema;
         image: 'https://piyushmehta.com/images/piyush-profile.jpg',
         sameAs: [
           'https://github.com/piyush97',
-          'https://linkedin.com/in/piyushmehta',
-          'https://twitter.com/piyush_mehta97',
+          'https://linkedin.com/in/piyush24',
+          'https://twitter.com/piyushmehtas',
         ],
         worksFor: {
           '@type': 'Organization',
@@ -197,7 +197,7 @@ const schemaData = schema || defaultSchema;
         },
         alumniOf: {
           '@type': 'EducationalOrganization',
-          name: 'Your University',
+          name: 'University of Windsor',
         },
         knowsAbout: [
           'React',

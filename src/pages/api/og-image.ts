@@ -1,4 +1,6 @@
 import type { APIRoute } from 'astro';
+import { ImageResponse } from '@vercel/og';
+import React from 'react';
 
 export const prerender = false;
 
@@ -11,98 +13,254 @@ export const GET: APIRoute = async ({ url }) => {
   const date = searchParams.get('date');
   const tags = searchParams.get('tags');
 
-  // Create SVG with dynamic content
-  const svg = `
-    <svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
-        </linearGradient>
-        <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" style="stop-color:#e94560;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#f39c12;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      
-      <!-- Background -->
-      <rect width="1200" height="630" fill="url(#bgGradient)"/>
-      
-      <!-- Decorative elements -->
-      <circle cx="1100" cy="100" r="80" fill="#e94560" opacity="0.1"/>
-      <circle cx="100" cy="530" r="60" fill="#f39c12" opacity="0.15"/>
-      <rect x="950" y="400" width="200" height="200" rx="20" fill="#f39c12" opacity="0.05"/>
-      <rect x="50" y="50" width="150" height="150" rx="15" fill="#e94560" opacity="0.08"/>
-      
-      <!-- Content area -->
-      <rect x="80" y="80" width="1040" height="470" rx="20" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-      
-      <!-- Title -->
-      <text x="600" y="200" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="${title.length > 40 ? '42' : '52'}" font-weight="bold" fill="white">
-        ${title.length > 50 ? title.substring(0, 50) + '...' : title}
-      </text>
-      
-      <!-- Description -->
-      ${
-        description
-          ? `
-      <text x="600" y="260" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#e2e8f0">
-        ${description.length > 100 ? description.substring(0, 100) + '...' : description}
-      </text>
-      `
-          : ''
-      }
-      
-      <!-- Blog post metadata -->
-      ${
-        type === 'article' && date
-          ? `
-      <text x="600" y="310" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#94a3b8">
-        Published ${new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-      </text>
-      `
-          : ''
-      }
-      
-      <!-- Tags -->
-      ${
-        tags
-          ? `
-      <text x="600" y="350" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#64748b">
-        ${tags.split(',').slice(0, 3).join(' • ')}
-      </text>
-      `
-          : ''
-      }
-      
-      <!-- Author signature -->
-      <rect x="400" y="420" width="400" height="80" rx="40" fill="url(#accentGradient)" opacity="0.9"/>
-      <text x="600" y="450" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="600" fill="white">
-        Piyush Mehta
-      </text>
-      <text x="600" y="475" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="rgba(255,255,255,0.9)">
-        Software Engineer & Tech Speaker
-      </text>
-      
-      <!-- Website URL -->
-      <text x="1120" y="600" text-anchor="end" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#64748b">
-        piyushmehta.com
-      </text>
-      
-      <!-- Tech pattern background -->
-      <defs>
-        <pattern id="techPattern" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
-          <circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/>
-        </pattern>
-      </defs>
-      <rect width="1200" height="630" fill="url(#techPattern)" opacity="0.3"/>
-    </svg>
-  `;
+  // Create the image using Vercel's ImageResponse
+  try {
+    const image = new ImageResponse(
+      React.createElement(
+        'div',
+        {
+          style: {
+            display: 'flex',
+            height: '100%',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            letterSpacing: '-.02em',
+            fontWeight: 700,
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+            position: 'relative',
+          },
+        },
+        [
+          // Background decorative elements
+          React.createElement('div', {
+            key: 'bg1',
+            style: {
+              position: 'absolute',
+              top: '60px',
+              right: '80px',
+              width: '120px',
+              height: '120px',
+              borderRadius: '50%',
+              background: 'rgba(233, 69, 96, 0.15)',
+            },
+          }),
+          React.createElement('div', {
+            key: 'bg2',
+            style: {
+              position: 'absolute',
+              bottom: '60px',
+              left: '80px',
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              background: 'rgba(243, 156, 18, 0.2)',
+            },
+          }),
+          React.createElement('div', {
+            key: 'bg3',
+            style: {
+              position: 'absolute',
+              top: '40px',
+              left: '40px',
+              width: '100px',
+              height: '100px',
+              borderRadius: '20px',
+              background: 'rgba(233, 69, 96, 0.1)',
+            },
+          }),
 
-  return new Response(svg, {
-    headers: {
-      'Content-Type': 'image/svg+xml',
-      'Cache-Control': 'public, max-age=86400, s-maxage=86400',
-    },
-  });
+          // Main content container
+          React.createElement(
+            'div',
+            {
+              key: 'main',
+              style: {
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                maxWidth: '1000px',
+                margin: '0 80px',
+                textAlign: 'center',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '2px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '20px',
+                padding: '60px',
+                backdropFilter: 'blur(10px)',
+              },
+            },
+            [
+              // Title
+              React.createElement(
+                'div',
+                {
+                  key: 'title',
+                  style: {
+                    fontSize: title.length > 40 ? '48px' : '64px',
+                    fontWeight: 'bold',
+                    background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    color: 'transparent',
+                    lineHeight: 1.2,
+                    marginBottom: '20px',
+                    maxWidth: '900px',
+                  },
+                },
+                title.length > 60 ? title.substring(0, 60) + '...' : title
+              ),
+
+              // Description
+              description ? React.createElement(
+                'div',
+                {
+                  key: 'description',
+                  style: {
+                    fontSize: '28px',
+                    color: '#e2e8f0',
+                    marginBottom: '20px',
+                    lineHeight: 1.4,
+                    maxWidth: '800px',
+                  },
+                },
+                description.length > 120
+                  ? description.substring(0, 120) + '...'
+                  : description
+              ) : null,
+
+              // Blog post metadata
+              type === 'article' && date ? React.createElement(
+                'div',
+                {
+                  key: 'date',
+                  style: {
+                    fontSize: '20px',
+                    color: '#94a3b8',
+                    marginBottom: '15px',
+                  },
+                },
+                `Published ${new Date(date).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}`
+              ) : null,
+
+              // Tags
+              tags ? React.createElement(
+                'div',
+                {
+                  key: 'tags',
+                  style: {
+                    fontSize: '18px',
+                    color: '#64748b',
+                    marginBottom: '30px',
+                  },
+                },
+                tags.split(',').slice(0, 3).join(' • ')
+              ) : null,
+
+              // Author signature
+              React.createElement(
+                'div',
+                {
+                  key: 'author',
+                  style: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    background: 'linear-gradient(135deg, #e94560 0%, #f39c12 100%)',
+                    borderRadius: '40px',
+                    padding: '25px 60px',
+                    marginTop: '20px',
+                  },
+                },
+                [
+                  React.createElement(
+                    'div',
+                    {
+                      key: 'name',
+                      style: {
+                        fontSize: '24px',
+                        fontWeight: '600',
+                        color: 'white',
+                        marginBottom: '5px',
+                      },
+                    },
+                    'Piyush Mehta'
+                  ),
+                  React.createElement(
+                    'div',
+                    {
+                      key: 'role',
+                      style: {
+                        fontSize: '16px',
+                        color: 'rgba(255, 255, 255, 0.9)',
+                      },
+                    },
+                    'Software Engineer & Tech Speaker'
+                  ),
+                ]
+              ),
+            ]
+          ),
+
+          // Website URL
+          React.createElement(
+            'div',
+            {
+              key: 'url',
+              style: {
+                position: 'absolute',
+                bottom: '40px',
+                right: '40px',
+                fontSize: '18px',
+                color: '#64748b',
+                fontWeight: '500',
+              },
+            },
+            'piyushmehta.com'
+          ),
+
+          // Subtle pattern overlay
+          React.createElement('div', {
+            key: 'pattern',
+            style: {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: `radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+                          radial-gradient(circle at 80% 20%, rgba(233, 69, 96, 0.1) 0%, transparent 50%),
+                          radial-gradient(circle at 40% 40%, rgba(243, 156, 18, 0.08) 0%, transparent 50%)`,
+              pointerEvents: 'none',
+            },
+          }),
+        ]
+      ),
+      {
+        width: 1200,
+        height: 630,
+      }
+    );
+
+    return new Response(await image.arrayBuffer(), {
+      headers: {
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, max-age=86400, s-maxage=86400',
+      },
+    });
+  } catch (error) {
+    console.error('Error generating OG image:', error);
+    
+    // Fallback to a simple text response if image generation fails
+    return new Response('Error generating image', {
+      status: 500,
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
+  }
 };
