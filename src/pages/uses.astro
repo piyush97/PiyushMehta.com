@@ -657,7 +657,7 @@ const description =
       </section>
 
       <!-- Footer Note -->
-      <section class="pt-8 border-t border-border">
+      <section class="pt-8 border-t border-gray-200 dark:border-gray-700">
         <div class="prose prose-muted">
           <p>
             This page is inspired by <a
@@ -1265,12 +1265,15 @@ const description =
   }
 
   .uses-category {
-    @apply border border-border rounded-lg p-6 bg-card;
+    @apply rounded-lg p-6;
+    background-color: var(--color-light-950);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.1);
   }
 
   .uses-item {
-    @apply p-4 border border-border rounded-lg transition-colors duration-200;
+    @apply p-4 rounded-lg transition-colors duration-200;
     background-color: var(--color-light-950);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.1);
   }
 
   .uses-item:hover {
