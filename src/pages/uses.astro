@@ -1,0 +1,1297 @@
+---
+import SEO from '../components/SEO.astro';
+import Layout from '../layouts/Layout.astro';
+
+const title = 'Uses - My Development Setup';
+const description =
+  'A comprehensive list of the tools, software, hardware, and services I use for development, content creation, and daily productivity.';
+---
+
+<Layout title={title} description={description}>
+  <SEO title={title} description={description} type="website" />
+
+  <!-- Enhanced Hero Section -->
+  <section class="uses-hero-section">
+    <!-- Animated background elements -->
+    <div class="uses-hero-bg-pattern"></div>
+    <div class="uses-hero-bg-gradient"></div>
+    <div class="uses-hero-particle-field">
+      <div class="particle particle-1"></div>
+      <div class="particle particle-2"></div>
+      <div class="particle particle-3"></div>
+      <div class="particle particle-4"></div>
+    </div>
+    <div class="uses-hero-floating-elements">
+      <div class="uses-floating-element uses-element-1">
+        <div class="floating-icon">💻</div>
+        <div class="floating-pulse"></div>
+      </div>
+      <div class="uses-floating-element uses-element-2">
+        <div class="floating-icon">⚙️</div>
+        <div class="floating-pulse"></div>
+      </div>
+      <div class="uses-floating-element uses-element-3">
+        <div class="floating-icon">🛠️</div>
+        <div class="floating-pulse"></div>
+      </div>
+    </div>
+
+    <!-- Content container -->
+    <div class="relative z-10 container-base">
+      <div class="py-16 text-center md:py-24">
+        <div class="hero-content-wrapper">
+          <p class="uses-hero-intro">
+            <span class="intro-icon">⚡</span>
+            <span class="intro-text">My Development Stack</span>
+          </p>
+          <h1 class="uses-hero-title">
+            <span class="title-primary">Uses</span>
+            <strong class="title-accent">Setup</strong>
+            <div class="title-underline"></div>
+          </h1>
+          <p class="uses-hero-teaser">
+            A comprehensive overview of the <span class="highlight">tools</span
+            >, <span class="highlight">hardware</span>, and <span
+              class="highlight">software</span
+            >
+            that power my development workflow and content creation process.
+          </p>
+          <div class="uses-hero-meta">
+            <div class="meta-item">
+              <span class="meta-icon">📅</span>
+              <span class="meta-text">Last updated: June 1, 2025</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">🔄</span>
+              <span class="meta-text">Regularly updated</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="page-container">
+    <div class="max-w-4xl container-base">
+      <!-- Development Tools -->
+      <section class="mb-12">
+        <h2 class="mb-6 text-2xl font-bold text-accent">
+          💻 Development Tools
+        </h2>
+
+        <div class="space-y-8">
+          <!-- Code Editors -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">Code Editors & IDEs</h3>
+            <div class="grid gap-4">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Visual Studio Code</h4>
+                <p class="text-muted">
+                  My primary code editor for most development work. Lightning
+                  fast with excellent extension ecosystem.
+                </p>
+                <div class="uses-details">
+                  <span class="uses-tag">Primary</span>
+                  <a
+                    href="https://code.visualstudio.com/"
+                    class="uses-link"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Visit →
+                  </a>
+                </div>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Zed</h4>
+                <p class="text-muted">
+                  High-performance code editor built for speed and
+                  collaboration, with excellent Rust and modern language
+                  support.
+                </p>
+                <div class="uses-details">
+                  <span class="uses-tag">Fast</span>
+                  <a
+                    href="https://zed.dev/"
+                    class="uses-link"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Visit →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- VS Code Extensions -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">VS Code Extensions</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Prettier</h4>
+                <p class="text-muted">
+                  Code formatter that keeps my code consistent across all
+                  projects.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">ESLint</h4>
+                <p class="text-muted">
+                  JavaScript linter that helps catch errors and enforce coding
+                  standards.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">GitLens</h4>
+                <p class="text-muted">
+                  Supercharges the Git capabilities in VS Code with blame
+                  annotations and history.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Thunder Client</h4>
+                <p class="text-muted">
+                  REST API client for VS Code - great alternative to Postman.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Auto Rename Tag</h4>
+                <p class="text-muted">
+                  Automatically renames paired HTML/JSX tags when editing.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Bracket Pair Colorizer</h4>
+                <p class="text-muted">
+                  Makes matching brackets easier to identify with colors.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Terminal -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">Terminal & Command Line</h3>
+            <div class="grid gap-4">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Warp</h4>
+                <p class="text-muted">
+                  Modern terminal with AI assistance, collaborative features,
+                  and excellent developer experience.
+                </p>
+                <div class="uses-details">
+                  <span class="uses-tag">macOS</span>
+                  <a
+                    href="https://www.warp.dev/"
+                    class="uses-link"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Visit →
+                  </a>
+                </div>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Oh My Zsh</h4>
+                <p class="text-muted">
+                  Framework for Zsh shell with plugins and themes that boost
+                  productivity.
+                </p>
+                <div class="uses-details">
+                  <span class="uses-tag">Shell</span>
+                  <a
+                    href="https://ohmyz.sh/"
+                    class="uses-link"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Visit →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tech Stack -->
+      <section class="mb-12">
+        <h2 class="mb-6 text-2xl font-bold text-accent">🚀 Tech Stack</h2>
+
+        <div class="space-y-8">
+          <!-- Frontend -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">Frontend Development</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">React</h4>
+                <p class="text-muted">
+                  My go-to library for building user interfaces. Love the
+                  component-based architecture.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Next.js</h4>
+                <p class="text-muted">
+                  React framework for production-ready applications with SSR,
+                  SSG, and API routes.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Astro</h4>
+                <p class="text-muted">
+                  Modern static site generator that I used to build this
+                  website. Great for content-focused sites.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">TypeScript</h4>
+                <p class="text-muted">
+                  Adds type safety to JavaScript. Essential for large
+                  applications and team collaboration.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Tailwind CSS</h4>
+                <p class="text-muted">
+                  Utility-first CSS framework that speeds up styling and keeps
+                  designs consistent.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Framer Motion</h4>
+                <p class="text-muted">
+                  Animation library for React that makes creating smooth
+                  animations effortless.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Backend -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">Backend Development</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Node.js</h4>
+                <p class="text-muted">
+                  JavaScript runtime for building scalable server-side
+                  applications.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Express.js</h4>
+                <p class="text-muted">
+                  Minimal and flexible Node.js web application framework.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">PostgreSQL</h4>
+                <p class="text-muted">
+                  Reliable and feature-rich relational database for complex
+                  applications.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">MongoDB</h4>
+                <p class="text-muted">
+                  NoSQL database for flexible, document-based data storage.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Prisma</h4>
+                <p class="text-muted">
+                  Modern database toolkit with type-safe client and powerful
+                  migrations.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Redis</h4>
+                <p class="text-muted">
+                  In-memory data structure store for caching and real-time
+                  applications.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hardware -->
+      <section class="mb-12">
+        <h2 class="mb-6 text-2xl font-bold text-accent">🖥️ Hardware & Setup</h2>
+
+        <div class="space-y-8">
+          <!-- Computer -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">Computer</h3>
+            <div class="grid gap-4">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">
+                  MacBook Pro 14" (M1 Pro)
+                </h4>
+                <p class="text-muted">
+                  Primary development machine with excellent performance and
+                  portability. Perfect for development work and coding on the
+                  go.
+                </p>
+                <div class="uses-details">
+                  <span class="uses-tag">Primary</span>
+                  <span class="uses-tag">2021</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accessories -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">Accessories</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">LG 27UK650-W 27"</h4>
+                <p class="text-muted">
+                  4K UHD monitor with excellent color accuracy and USB-C
+                  connectivity. Great for development and design work.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">
+                  Logitech MX Mechanical Mini
+                </h4>
+                <p class="text-muted">
+                  Compact wireless mechanical keyboard with tactile switches and
+                  excellent battery life.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Logitech MX Master 3</h4>
+                <p class="text-muted">
+                  Wireless mouse with precise tracking, customizable buttons,
+                  and excellent ergonomics for productivity.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">AirPods Pro</h4>
+                <p class="text-muted">
+                  Noise-canceling wireless earbuds for focused work and video
+                  calls.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Services & Hosting -->
+      <section class="mb-12">
+        <h2 class="mb-6 text-2xl font-bold text-accent">
+          ☁️ Services & Hosting
+        </h2>
+
+        <div class="space-y-8">
+          <!-- Hosting -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">Hosting & Deployment</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Vercel</h4>
+                <p class="text-muted">
+                  Primary deployment platform for frontend applications.
+                  Excellent DX and performance.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Netlify</h4>
+                <p class="text-muted">
+                  Alternative hosting platform with great features for static
+                  sites and serverless functions.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">AWS</h4>
+                <p class="text-muted">
+                  Cloud services for more complex applications requiring
+                  scalable infrastructure.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">DigitalOcean</h4>
+                <p class="text-muted">
+                  Simple cloud hosting for backend services and databases.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Services -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">Development Services</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">GitHub</h4>
+                <p class="text-muted">
+                  Version control and collaboration platform for all my
+                  projects.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Sentry</h4>
+                <p class="text-muted">
+                  Error tracking and performance monitoring for production
+                  applications.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Cloudflare</h4>
+                <p class="text-muted">
+                  CDN and DNS management for better performance and security.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">MongoDB Atlas</h4>
+                <p class="text-muted">
+                  Managed MongoDB service for database hosting and management.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Productivity -->
+      <section class="mb-12">
+        <h2 class="mb-6 text-2xl font-bold text-accent">
+          📱 Productivity & Apps
+        </h2>
+
+        <div class="space-y-8">
+          <!-- Design Tools -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">Design & Creativity</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Figma</h4>
+                <p class="text-muted">
+                  Collaborative design tool for UI/UX design and prototyping.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Canva</h4>
+                <p class="text-muted">
+                  Quick graphic design for social media posts and presentations.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">CleanShot X</h4>
+                <p class="text-muted">
+                  Screenshot and screen recording tool with annotation features.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">ImageOptim</h4>
+                <p class="text-muted">
+                  Image compression tool to optimize images for web.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Productivity Apps -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">
+              Productivity & Organization
+            </h3>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Notion</h4>
+                <p class="text-muted">
+                  All-in-one workspace for notes, project management, and
+                  documentation.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Todoist</h4>
+                <p class="text-muted">
+                  Task management app to keep track of personal and work tasks.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">RescueTime</h4>
+                <p class="text-muted">
+                  Time tracking app to understand and improve productivity
+                  habits.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">1Blocker</h4>
+                <p class="text-muted">
+                  Ad blocker for Safari to improve browsing experience and
+                  privacy.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Communication -->
+          <div class="uses-category">
+            <h3 class="mb-4 text-xl font-semibold">Communication</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Slack</h4>
+                <p class="text-muted">
+                  Team communication and collaboration platform.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Discord</h4>
+                <p class="text-muted">
+                  Community platform for developer communities and voice chats.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Zoom</h4>
+                <p class="text-muted">
+                  Video conferencing for meetings and webinars.
+                </p>
+              </div>
+
+              <div class="uses-item">
+                <h4 class="font-medium text-accent">Proton Mail</h4>
+                <p class="text-muted">
+                  Privacy-focused email service with end-to-end encryption and
+                  secure communication.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Learning -->
+      <section class="mb-12">
+        <h2 class="mb-6 text-2xl font-bold text-accent">
+          📚 Learning & Resources
+        </h2>
+
+        <div class="uses-category">
+          <div class="grid gap-4 md:grid-cols-2">
+            <div class="uses-item">
+              <h4 class="font-medium text-accent">MDN Web Docs</h4>
+              <p class="text-muted">
+                The definitive resource for web development documentation.
+              </p>
+            </div>
+
+            <div class="uses-item">
+              <h4 class="font-medium text-accent">Stack Overflow</h4>
+              <p class="text-muted">
+                Community-driven Q&A platform for programming questions.
+              </p>
+            </div>
+
+            <div class="uses-item">
+              <h4 class="font-medium text-accent">GitHub</h4>
+              <p class="text-muted">
+                Exploring open source projects and learning from others' code.
+              </p>
+            </div>
+
+            <div class="uses-item">
+              <h4 class="font-medium text-accent">YouTube</h4>
+              <p class="text-muted">
+                Tech channels for staying updated with latest trends and
+                tutorials.
+              </p>
+            </div>
+
+            <div class="uses-item">
+              <h4 class="font-medium text-accent">Dev.to</h4>
+              <p class="text-muted">
+                Developer community for articles and discussions.
+              </p>
+            </div>
+
+            <div class="uses-item">
+              <h4 class="font-medium text-accent">Hacker News</h4>
+              <p class="text-muted">
+                Tech news and discussions from the developer community.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer Note -->
+      <section class="pt-8 border-t border-border">
+        <div class="prose prose-muted">
+          <p>
+            This page is inspired by <a
+              href="https://uses.tech/"
+              target="_blank"
+              rel="noopener"
+              class="text-accent hover:text-accent/80">uses.tech</a
+            >
+            and is regularly updated as my setup evolves. Some links may be affiliate
+            links, but I only recommend tools I actually use and believe in.
+          </p>
+          <p class="text-sm text-muted">
+            Have questions about any of these tools or want to suggest something
+            new?
+            <a href="/contact-me" class="text-accent hover:text-accent/80"
+              >Feel free to reach out!</a
+            >
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /* Enhanced Uses Hero Section */
+  .uses-hero-section {
+    min-height: 80vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(
+      135deg,
+      var(--color-bg) 0%,
+      var(--color-light-950) 50%,
+      var(--color-bg) 100%
+    );
+  }
+
+  /* Animated background elements */
+  .uses-hero-bg-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      radial-gradient(
+        circle at 25% 25%,
+        var(--color-accent) 2px,
+        transparent 2px
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        var(--color-accent) 1px,
+        transparent 1px
+      );
+    background-size:
+      50px 50px,
+      30px 30px;
+    background-position:
+      0 0,
+      15px 15px;
+    opacity: 0.06;
+    animation: patternMove 20s linear infinite;
+  }
+
+  .uses-hero-bg-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+      radial-gradient(
+        ellipse at 20% 30%,
+        var(--color-accent) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse at 80% 70%,
+        var(--color-accent) 0%,
+        transparent 50%
+      );
+    opacity: 0.04;
+    animation: gradientPulse 10s ease-in-out infinite;
+  }
+
+  .uses-hero-particle-field {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    background: var(--color-accent);
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+
+  .particle-1 {
+    width: 3px;
+    height: 3px;
+    top: 20%;
+    left: 15%;
+    animation: particleFloat1 6s ease-in-out infinite;
+  }
+
+  .particle-2 {
+    width: 2px;
+    height: 2px;
+    top: 40%;
+    right: 20%;
+    animation: particleFloat2 8s ease-in-out infinite;
+  }
+
+  .particle-3 {
+    width: 4px;
+    height: 4px;
+    bottom: 30%;
+    left: 25%;
+    animation: particleFloat3 7s ease-in-out infinite;
+  }
+
+  .particle-4 {
+    width: 3px;
+    height: 3px;
+    top: 70%;
+    right: 30%;
+    animation: particleFloat4 9s ease-in-out infinite;
+  }
+
+  .uses-hero-floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .uses-floating-element {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .floating-icon {
+    font-size: 2rem;
+    opacity: 0.6;
+    animation: iconFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(var(--color-accent-rgb), 0.2));
+  }
+
+  .floating-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--color-accent);
+    border-radius: 50%;
+    opacity: 0.2;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .uses-element-1 {
+    width: 70px;
+    height: 70px;
+    top: 20%;
+    left: 10%;
+    animation: elementFloat1 8s ease-in-out infinite;
+  }
+
+  .uses-element-2 {
+    width: 60px;
+    height: 60px;
+    top: 60%;
+    right: 15%;
+    animation: elementFloat2 10s ease-in-out infinite;
+  }
+
+  .uses-element-3 {
+    width: 80px;
+    height: 80px;
+    bottom: 25%;
+    left: 20%;
+    animation: elementFloat3 7s ease-in-out infinite;
+  }
+
+  /* Hero Content Styling */
+  .hero-content-wrapper {
+    position: relative;
+    z-index: 10;
+  }
+
+  .uses-hero-intro {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--color-accent);
+    margin: 0 0 1.5rem 0;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.2s forwards;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .intro-icon {
+    font-size: 1.5rem;
+    animation: wave 2s ease-in-out infinite;
+  }
+
+  .intro-text {
+    position: relative;
+  }
+
+  .intro-text::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 2px;
+    background: var(--color-accent);
+    animation: lineExpand 0.8s ease-out 0.6s forwards;
+    transform-origin: left;
+    scale: 0 1;
+  }
+
+  .uses-hero-title {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 700;
+    margin: 0 0 2rem 0;
+    line-height: 0.9;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.4s forwards;
+    position: relative;
+  }
+
+  .title-primary {
+    display: block;
+    background: linear-gradient(
+      135deg,
+      var(--color-text-primary) 0%,
+      var(--color-accent) 50%,
+      var(--color-text-primary) 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 100%;
+    animation: gradientShift 4s ease-in-out infinite;
+  }
+
+  .title-accent {
+    display: block;
+    background: linear-gradient(
+      135deg,
+      var(--color-accent) 0%,
+      var(--color-text-primary) 50%,
+      var(--color-accent) 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 100%;
+    animation: gradientShift 3s ease-in-out infinite reverse;
+  }
+
+  .title-underline {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-accent),
+      transparent
+    );
+    border-radius: 2px;
+    animation: underlineExpand 1s ease-out 1s forwards;
+    width: 0;
+  }
+
+  .uses-hero-teaser {
+    font-size: 1.25rem;
+    max-width: 650px;
+    margin: 0 auto 2rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.6s forwards;
+  }
+
+  .highlight {
+    color: var(--color-accent);
+    font-weight: 600;
+    position: relative;
+    display: inline-block;
+  }
+
+  .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-accent),
+      transparent
+    );
+    transform: scaleX(0);
+    animation: highlightExpand 0.6s ease-out 1.5s forwards;
+  }
+
+  .uses-hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.8s forwards;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+  }
+
+  .meta-icon {
+    font-size: 1rem;
+  }
+
+  /* Animation Keyframes */
+  @keyframes patternMove {
+    0% {
+      background-position:
+        0 0,
+        15px 15px;
+    }
+    100% {
+      background-position:
+        50px 50px,
+        65px 65px;
+    }
+  }
+
+  @keyframes gradientPulse {
+    0%,
+    100% {
+      opacity: 0.04;
+    }
+    50% {
+      opacity: 0.08;
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes wave {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(20deg);
+    }
+    75% {
+      transform: rotate(-20deg);
+    }
+  }
+
+  @keyframes lineExpand {
+    to {
+      scale: 1 1;
+    }
+  }
+
+  @keyframes gradientShift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes underlineExpand {
+    to {
+      width: 200px;
+    }
+  }
+
+  @keyframes highlightExpand {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes iconFloat {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(5deg);
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 0.2;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes particleFloat1 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-15px) translateX(10px);
+    }
+  }
+
+  @keyframes particleFloat2 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-20px) translateX(-8px);
+    }
+  }
+
+  @keyframes particleFloat3 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-18px) translateX(12px);
+    }
+  }
+
+  @keyframes particleFloat4 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-12px) translateX(-6px);
+    }
+  }
+
+  @keyframes elementFloat1 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-15px) translateX(8px) rotate(180deg);
+    }
+  }
+
+  @keyframes elementFloat2 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) translateX(-10px) rotate(180deg);
+    }
+  }
+
+  @keyframes elementFloat3 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-18px) translateX(15px) rotate(180deg);
+    }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .uses-hero-section {
+      min-height: 70vh;
+    }
+
+    .page-container {
+      padding: 2rem 1rem;
+    }
+
+    .content-card {
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .uses-hero-title {
+      font-size: 2.5rem;
+    }
+
+    .uses-hero-teaser {
+      font-size: 1.125rem;
+    }
+
+    .uses-hero-meta {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .uses-floating-element {
+      opacity: 0.4;
+    }
+
+    .floating-icon {
+      font-size: 1.5rem;
+    }
+
+    .particle {
+      opacity: 0.3;
+    }
+  }
+
+  /* Light mode adjustments */
+  :root.light .uses-hero-section {
+    background: linear-gradient(
+      135deg,
+      var(--color-bg) 0%,
+      var(--color-light-700) 50%,
+      var(--color-bg) 100%
+    );
+  }
+
+  :root.light .uses-hero-bg-pattern {
+    opacity: 0.03;
+  }
+
+  :root.light .uses-hero-bg-gradient {
+    opacity: 0.02;
+  }
+
+  :root.light .uses-floating-element {
+    opacity: 0.3;
+  }
+
+  :root.light .particle {
+    opacity: 0.2;
+  }
+
+  :root.light .content-card {
+    background: rgba(var(--color-accent-rgb), 0.01);
+    border-color: rgba(var(--color-accent-rgb), 0.08);
+  }
+
+  :root.light .content-card:hover {
+    background: rgba(var(--color-accent-rgb), 0.03);
+    border-color: rgba(var(--color-accent-rgb), 0.12);
+  }
+
+  /* Existing styles */
+  .gradient-text {
+    background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .uses-category {
+    @apply border border-border rounded-lg p-6 bg-card;
+  }
+
+  .uses-item {
+    @apply p-4 border border-border rounded-lg transition-colors duration-200;
+    background-color: var(--color-light-950);
+  }
+
+  .uses-item:hover {
+    background-color: var(--color-light-900);
+  }
+
+  .uses-details {
+    @apply flex items-center justify-between mt-3;
+  }
+
+  .uses-tag {
+    @apply inline-block px-2 py-1 text-xs font-medium text-accent rounded;
+    background-color: rgba(255, 204, 104, 0.1);
+  }
+
+  .uses-link {
+    @apply text-accent font-medium text-sm transition-colors duration-200;
+  }
+
+  .uses-link:hover {
+    text-decoration: none;
+    opacity: 0.8;
+  }
+</style>
