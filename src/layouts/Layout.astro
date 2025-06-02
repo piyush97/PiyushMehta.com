@@ -1,16 +1,35 @@
 ---
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import SEO from '../components/SEO.astro';
 import '../styles/global.css';
 
 export interface Props {
   title: string;
   description?: string;
+  type?: 'website' | 'article';
+  image?: string;
+  author?: string;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  tags?: string[];
+  canonical?: string;
+  noindex?: boolean;
+  schema?: any;
 }
 
 const {
   title,
   description = 'Piyush Mehta - Software Engineer & Tech Speaker',
+  type = 'website',
+  image,
+  author,
+  publishedTime,
+  modifiedTime,
+  tags,
+  canonical,
+  noindex,
+  schema,
 } = Astro.props;
 ---
 
@@ -18,7 +37,6 @@ const {
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link
@@ -28,7 +46,21 @@ const {
       href="/rss.xml"
     />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+
+    <!-- SEO Component -->
+    <SEO
+      title={title}
+      description={description}
+      type={type}
+      image={image}
+      author={author}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      tags={tags}
+      canonical={canonical}
+      noindex={noindex}
+      schema={schema}
+    />
     <script>
       // Theme detection and setting
       const getThemePreference = () => {

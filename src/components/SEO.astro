@@ -1,0 +1,214 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  type?: 'website' | 'article';
+  image?: string;
+  url?: string;
+  author?: string;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  tags?: string[];
+  canonical?: string;
+  noindex?: boolean;
+  schema?: any;
+}
+
+const {
+  title,
+  description = 'Piyush Mehta - Software Engineer, Tech Speaker, and Open Source Contributor. Sharing insights on React, Node.js, DevOps, and modern web development.',
+  type = 'website',
+  image,
+  url = Astro.url.toString(),
+  author = 'Piyush Mehta',
+  publishedTime,
+  modifiedTime,
+  tags = [],
+  canonical,
+  noindex = false,
+  schema,
+} = Astro.props;
+
+// Generate OpenGraph image URL if not provided
+const ogImageUrl =
+  image ||
+  `/api/og-image?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&type=${type}${publishedTime ? `&date=${publishedTime.toISOString()}` : ''}${tags.length > 0 ? `&tags=${tags.join(',')}` : ''}`;
+
+// Construct canonical URL
+const canonicalUrl = canonical || url;
+
+// Generate structured data
+const defaultSchema = {
+  '@context': 'https://schema.org',
+  '@type': type === 'article' ? 'Article' : 'WebPage',
+  headline: title,
+  description: description,
+  author: {
+    '@type': 'Person',
+    name: author,
+    url: 'https://piyushmehta.com',
+    sameAs: [
+      'https://github.com/piyush97',
+      'https://linkedin.com/in/piyushmehta',
+      'https://twitter.com/piyush_mehta97',
+    ],
+  },
+  url: canonicalUrl,
+  ...(type === 'article' && {
+    datePublished: publishedTime?.toISOString(),
+    dateModified: modifiedTime?.toISOString() || publishedTime?.toISOString(),
+    keywords: tags.join(', '),
+    articleSection: 'Technology',
+    publisher: {
+      '@type': 'Person',
+      name: 'Piyush Mehta',
+      url: 'https://piyushmehta.com',
+    },
+  }),
+};
+
+const schemaData = schema || defaultSchema;
+---
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+<meta name="author" content={author} />
+{canonical && <link rel="canonical" href={canonicalUrl} />}
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta
+  property="og:image"
+  content={new URL(ogImageUrl, Astro.site).toString()}
+/>
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name" content="Piyush Mehta" />
+<meta property="og:locale" content="en_US" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={url} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta
+  property="twitter:image"
+  content={new URL(ogImageUrl, Astro.site).toString()}
+/>
+<meta property="twitter:creator" content="@piyush_mehta97" />
+<meta property="twitter:site" content="@piyush_mehta97" />
+
+<!-- Article specific meta tags -->
+{
+  type === 'article' && publishedTime && (
+    <>
+      <meta
+        property="article:published_time"
+        content={publishedTime.toISOString()}
+      />
+      {modifiedTime && (
+        <meta
+          property="article:modified_time"
+          content={modifiedTime.toISOString()}
+        />
+      )}
+      <meta property="article:author" content={author} />
+      {tags.map((tag) => (
+        <meta property="article:tag" content={tag} />
+      ))}
+      <meta property="article:section" content="Technology" />
+    </>
+  )
+}
+
+<!-- Additional SEO tags -->
+<meta name="theme-color" content="#1a1a2e" />
+<meta name="msapplication-TileColor" content="#1a1a2e" />
+<meta name="format-detection" content="telephone=no" />
+
+<!-- Preconnect to external domains -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify(schemaData)} />
+
+<!-- Additional structured data for articles -->
+{
+  type === 'article' && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://piyushmehta.com',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Blog',
+            item: 'https://piyushmehta.com/blog',
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: title,
+            item: url,
+          },
+        ],
+      })}
+    />
+  )
+}
+
+<!-- Blog/Website structured data -->
+{
+  type === 'website' && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: 'Piyush Mehta',
+        url: 'https://piyushmehta.com',
+        jobTitle: 'Software Engineer',
+        description:
+          'Software Engineer, Tech Speaker, and Open Source Contributor',
+        image: 'https://piyushmehta.com/images/piyush-profile.jpg',
+        sameAs: [
+          'https://github.com/piyush97',
+          'https://linkedin.com/in/piyushmehta',
+          'https://twitter.com/piyush_mehta97',
+        ],
+        worksFor: {
+          '@type': 'Organization',
+          name: 'Tech Industry',
+        },
+        alumniOf: {
+          '@type': 'EducationalOrganization',
+          name: 'Your University',
+        },
+        knowsAbout: [
+          'React',
+          'Node.js',
+          'TypeScript',
+          'DevOps',
+          'Cloud Computing',
+          'Software Architecture',
+          'Web Development',
+        ],
+      })}
+    />
+  )
+}

@@ -1,0 +1,77 @@
+---
+export interface Props {
+  title: string;
+  url?: string;
+}
+
+const { title, url = Astro.url.toString() } = Astro.props;
+
+const breadcrumbItems = [
+  {
+    name: 'Home',
+    url: 'https://piyushmehta.com',
+  },
+  {
+    name: 'Blog',
+    url: 'https://piyushmehta.com/blog',
+  },
+  {
+    name: title,
+    url: url,
+  },
+];
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbItems.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    item: item.url,
+  })),
+};
+---
+
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify(breadcrumbSchema)}
+/>
+
+<nav aria-label="Breadcrumb" class="mb-8">
+  <ol class="flex items-center space-x-2 text-sm text-text-secondary">
+    {
+      breadcrumbItems.map((item, index) => (
+        <li class="flex items-center">
+          {index > 0 && (
+            <svg
+              class="w-4 h-4 mx-2 text-text-tertiary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          )}
+          {index === breadcrumbItems.length - 1 ? (
+            <span class="font-medium text-text-primary" aria-current="page">
+              {item.name}
+            </span>
+          ) : (
+            <a
+              href={item.url}
+              class="hover:text-accent transition-colors duration-200"
+            >
+              {item.name}
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

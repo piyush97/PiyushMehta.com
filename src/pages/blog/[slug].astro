@@ -1,5 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
+import ArticleMeta from '../../components/ArticleMeta.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Layout from '../../layouts/Layout.astro';
 
 export const prerender = true;
@@ -15,13 +17,72 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content, headings } = await render(post);
 
-const { title, description, date, author, tags } = post.data;
+const { title, description, date, author, tags, image, banner } = post.data;
+
+// Calculate reading time (rough estimate)
+const readingTime = Math.ceil(post.body.split(' ').length / 200);
+
+// Generate canonical URL
+const canonicalUrl = new URL(`/blog/${post.slug}`, Astro.site).toString();
+
+// Create structured data for the article
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description:
+    description || `${title} - A blog post by ${author || 'Piyush Mehta'}`,
+  author: {
+    '@type': 'Person',
+    name: author || 'Piyush Mehta',
+    url: 'https://piyushmehta.com',
+  },
+  datePublished: date.toISOString(),
+  dateModified: date.toISOString(),
+  url: canonicalUrl,
+  keywords: tags?.join(', ') || '',
+  wordCount: post.body.split(' ').length,
+  timeRequired: `PT${readingTime}M`,
+  inLanguage: 'en-US',
+  isAccessibleForFree: true,
+  publisher: {
+    '@type': 'Person',
+    name: 'Piyush Mehta',
+    url: 'https://piyushmehta.com',
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonicalUrl,
+  },
+  ...(image && {
+    image: {
+      '@type': 'ImageObject',
+      url: new URL(image.url, Astro.site).toString(),
+      description: image.alt,
+    },
+  }),
+};
 ---
 
-<Layout title={title} description={description}>
+<Layout
+  title={title}
+  description={description ||
+    `${title} - A blog post by ${author || 'Piyush Mehta'}`}
+  type="article"
+  author={author}
+  publishedTime={date}
+  modifiedTime={date}
+  tags={tags}
+  canonical={canonicalUrl}
+  image={image?.url || banner}
+  schema={articleSchema}
+>
   <div class="page-container">
     <div class="max-w-4xl container-base">
-      <article class="prose">
+      <!-- Breadcrumbs -->
+      <Breadcrumbs title={title} url={canonicalUrl} />
+
+      <article class="prose" itemscope itemtype="https://schema.org/Article">
         <!-- Back Link -->
         <div class="mb-8">
           <a
@@ -46,7 +107,10 @@ const { title, description, date, author, tags } = post.data;
 
         <!-- Post Header -->
         <header class="pb-8 mb-12 text-center border-b border-card-border">
-          <h1 class="mb-6 text-4xl font-bold md:text-5xl text-text-primary">
+          <h1
+            class="mb-6 text-4xl font-bold md:text-5xl text-text-primary"
+            itemprop="headline"
+          >
             {title}
           </h1>
 
@@ -67,12 +131,19 @@ const { title, description, date, author, tags } = post.data;
                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 ></path>
               </svg>
-              <time>{date.toLocaleDateString()}</time>
+              <time datetime={date.toISOString()} itemprop="datePublished">
+                {date.toLocaleDateString()}
+              </time>
             </div>
 
             {
               author && (
-                <div class="flex items-center gap-2">
+                <div
+                  class="flex items-center gap-2"
+                  itemprop="author"
+                  itemscope
+                  itemtype="https://schema.org/Person"
+                >
                   <svg
                     class="w-4 h-4"
                     fill="none"
@@ -86,17 +157,36 @@ const { title, description, date, author, tags } = post.data;
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                     />
                   </svg>
-                  <span>by {author}</span>
+                  <span itemprop="name">by {author}</span>
                 </div>
               )
             }
+
+            <div class="flex items-center gap-2">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>{readingTime} min read</span>
+            </div>
           </div>
 
           {
             tags && tags.length > 0 && (
               <div class="flex flex-wrap justify-center gap-2">
                 {tags.map((tag) => (
-                  <span class="px-3 py-1 text-sm font-medium rounded-full bg-light-800 text-light-200">
+                  <span
+                    class="px-3 py-1 text-sm font-medium rounded-full bg-light-800 text-light-200"
+                    itemprop="keywords"
+                  >
                     {tag}
                   </span>
                 ))}
@@ -105,8 +195,17 @@ const { title, description, date, author, tags } = post.data;
           }
         </header>
 
+        <!-- Article Meta with Share Buttons -->
+        <ArticleMeta
+          title={title}
+          readingTime={readingTime}
+          date={date}
+          tags={tags}
+          url={canonicalUrl}
+        />
+
         <!-- Post Content -->
-        <div class="prose prose-lg max-w-none">
+        <div class="prose prose-lg max-w-none" itemprop="articleBody">
           <Content />
         </div>
 
@@ -133,6 +232,7 @@ const { title, description, date, author, tags } = post.data;
             </a>
 
             <div class="text-sm text-light-400">
+              <meta itemprop="dateModified" content={date.toISOString()} />
               Last updated: {date.toLocaleDateString()}
             </div>
           </div>

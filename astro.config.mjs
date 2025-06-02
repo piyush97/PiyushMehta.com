@@ -9,7 +9,27 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://piyushmehta.com',
   output: 'server',
-  integrations: [mdx(), sitemap(), tailwind(), react()],
+  integrations: [
+    mdx(),
+    sitemap({
+      changefreq: 'weekly',
+      priority: 0.7,
+      lastmod: new Date(),
+      entryLimit: 10000,
+      customPages: [
+        'https://piyushmehta.com/',
+        'https://piyushmehta.com/blog/',
+        'https://piyushmehta.com/projects/',
+        'https://piyushmehta.com/about/',
+        'https://piyushmehta.com/contact-me/',
+        'https://piyushmehta.com/uses/',
+        'https://piyushmehta.com/videos/',
+        'https://piyushmehta.com/workshops/',
+      ],
+    }),
+    tailwind(),
+    react(),
+  ],
   markdown: {
     shikiConfig: {
       theme: 'github-dark-dimmed',
