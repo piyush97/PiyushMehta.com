@@ -119,13 +119,13 @@ export default function NewsletterSubscription({
       className={`newsletter-subscription relative ${getVariantStyles()} ${className}`}
     >
       {/* Confetti Container */}
-      <div className="newsletter-confetti absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none newsletter-confetti">
         {showConfetti && (
           <div className="confetti-pieces">
             {Array.from({ length: 20 }, (_, i) => (
               <div
                 key={i}
-                className="confetti-piece absolute w-2 h-2 bg-accent rounded-full animate-bounce"
+                className="absolute w-2 h-2 rounded-full confetti-piece bg-accent animate-bounce"
                 style={{
                   left: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 2}s`,
@@ -160,10 +160,10 @@ export default function NewsletterSubscription({
 
         {/* Success Message */}
         {submitStatus === 'success' && (
-          <div className="mb-6 p-4 bg-green-100 border border-green-300 text-green-700 rounded-lg animate-fadeIn">
+          <div className="p-4 mb-6 text-green-700 bg-green-100 border border-green-300 rounded-lg animate-fadeIn">
             <div className="flex items-center">
               <svg
-                className="w-5 h-5 mr-2 flex-shrink-0"
+                className="flex-shrink-0 w-5 h-5 mr-2"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -175,7 +175,7 @@ export default function NewsletterSubscription({
               </svg>
               <div>
                 <p className="font-medium">Successfully subscribed! 🎉</p>
-                <p className="text-sm mt-1">
+                <p className="mt-1 text-sm">
                   You'll receive an email confirmation shortly.
                 </p>
               </div>
@@ -203,7 +203,7 @@ export default function NewsletterSubscription({
                   disabled={isSubmitting}
                 />
                 {email && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="absolute transform -translate-y-1/2 right-3 top-1/2">
                     {validateEmail(email) ? (
                       <svg
                         className="w-5 h-5 text-green-500"
@@ -249,7 +249,7 @@ export default function NewsletterSubscription({
               {isSubmitting ? (
                 <span className="flex items-center">
                   <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    className="w-4 h-4 mr-2 -ml-1 text-white animate-spin"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -278,10 +278,10 @@ export default function NewsletterSubscription({
 
           {/* Error Message */}
           {submitStatus === 'error' && (
-            <div className="mt-3 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg text-sm">
+            <div className="p-3 mt-3 text-sm text-red-700 bg-red-100 border border-red-300 rounded-lg">
               <div className="flex items-center">
                 <svg
-                  className="w-4 h-4 mr-2 flex-shrink-0"
+                  className="flex-shrink-0 w-4 h-4 mr-2"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -306,14 +306,14 @@ export default function NewsletterSubscription({
 
         {/* Features */}
         {variant === 'modal' && (
-          <div className="mt-8 pt-6 border-t border-card-border">
-            <h5 className="text-sm font-medium text-text-primary mb-3">
+          <div className="pt-6 mt-8 border-t border-card-border">
+            <h5 className="mb-3 text-sm font-medium text-text-primary">
               What you'll get:
             </h5>
             <ul className="space-y-2 text-sm text-text-secondary">
               <li className="flex items-center">
                 <svg
-                  className="w-4 h-4 mr-2 text-accent flex-shrink-0"
+                  className="flex-shrink-0 w-4 h-4 mr-2 text-accent"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -327,7 +327,7 @@ export default function NewsletterSubscription({
               </li>
               <li className="flex items-center">
                 <svg
-                  className="w-4 h-4 mr-2 text-accent flex-shrink-0"
+                  className="flex-shrink-0 w-4 h-4 mr-2 text-accent"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -341,7 +341,7 @@ export default function NewsletterSubscription({
               </li>
               <li className="flex items-center">
                 <svg
-                  className="w-4 h-4 mr-2 text-accent flex-shrink-0"
+                  className="flex-shrink-0 w-4 h-4 mr-2 text-accent"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >

@@ -1,5 +1,5 @@
-import type { APIRoute } from 'astro';
 import { ImageResponse } from '@vercel/og';
+import type { APIRoute } from 'astro';
 import React from 'react';
 
 export const prerender = false;
@@ -27,7 +27,8 @@ export const GET: APIRoute = async ({ url }) => {
             justifyContent: 'center',
             letterSpacing: '-.02em',
             fontWeight: 700,
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+            background:
+              'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
             position: 'relative',
           },
         },
@@ -99,7 +100,8 @@ export const GET: APIRoute = async ({ url }) => {
                   style: {
                     fontSize: title.length > 40 ? '48px' : '64px',
                     fontWeight: 'bold',
-                    background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)',
+                    background:
+                      'linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)',
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     color: 'transparent',
@@ -112,54 +114,60 @@ export const GET: APIRoute = async ({ url }) => {
               ),
 
               // Description
-              description ? React.createElement(
-                'div',
-                {
-                  key: 'description',
-                  style: {
-                    fontSize: '28px',
-                    color: '#e2e8f0',
-                    marginBottom: '20px',
-                    lineHeight: 1.4,
-                    maxWidth: '800px',
-                  },
-                },
-                description.length > 120
-                  ? description.substring(0, 120) + '...'
-                  : description
-              ) : null,
+              description
+                ? React.createElement(
+                    'div',
+                    {
+                      key: 'description',
+                      style: {
+                        fontSize: '28px',
+                        color: '#e2e8f0',
+                        marginBottom: '20px',
+                        lineHeight: 1.4,
+                        maxWidth: '800px',
+                      },
+                    },
+                    description.length > 120
+                      ? description.substring(0, 120) + '...'
+                      : description
+                  )
+                : null,
 
               // Blog post metadata
-              type === 'article' && date ? React.createElement(
-                'div',
-                {
-                  key: 'date',
-                  style: {
-                    fontSize: '20px',
-                    color: '#94a3b8',
-                    marginBottom: '15px',
-                  },
-                },
-                `Published ${new Date(date).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}`
-              ) : null,
+              type === 'article' && date
+                ? React.createElement(
+                    'div',
+                    {
+                      key: 'date',
+                      style: {
+                        fontSize: '20px',
+                        color: '#94a3b8',
+                        marginBottom: '15px',
+                      },
+                    },
+                    `Published ${new Date(date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}`
+                  )
+                : null,
 
               // Tags
-              tags ? React.createElement(
-                'div',
-                {
-                  key: 'tags',
-                  style: {
-                    fontSize: '18px',
-                    color: '#64748b',
-                    marginBottom: '30px',
-                  },
-                },
-                tags.split(',').slice(0, 3).join(' • ')
-              ) : null,
+              tags
+                ? React.createElement(
+                    'div',
+                    {
+                      key: 'tags',
+                      style: {
+                        fontSize: '18px',
+                        color: '#64748b',
+                        marginBottom: '30px',
+                      },
+                    },
+                    tags.split(',').slice(0, 3).join(' • ')
+                  )
+                : null,
 
               // Author signature
               React.createElement(
@@ -170,7 +178,8 @@ export const GET: APIRoute = async ({ url }) => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    background: 'linear-gradient(135deg, #e94560 0%, #f39c12 100%)',
+                    background:
+                      'linear-gradient(135deg, #e94560 0%, #f39c12 100%)',
                     borderRadius: '40px',
                     padding: '25px 60px',
                     marginTop: '20px',
@@ -254,7 +263,7 @@ export const GET: APIRoute = async ({ url }) => {
     });
   } catch (error) {
     console.error('Error generating OG image:', error);
-    
+
     // Fallback to a simple text response if image generation fails
     return new Response('Error generating image', {
       status: 500,
