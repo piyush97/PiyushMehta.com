@@ -93,9 +93,9 @@ package-lock.json
 .eslintcache
 .pnpm-store
 
-# Lock files (use yarn.lock only)
+# Lock files (use bun.lock only)
 package-lock.json
-bun.lock
+yarn.lock
 
 # Database data
 postgres-data/
