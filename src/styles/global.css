@@ -474,8 +474,28 @@
   }
 }
 
-/* Utilities */
+/* Custom utility classes */
 @layer utilities {
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .text-muted {
+    color: var(--color-text-secondary);
+  }
+
+  .bg-card {
+    background-color: var(--color-light-900);
+  }
+
+  .border-border {
+    border-color: var(--color-card-border);
+  }
+
+  .bg-background {
+    background-color: var(--color-bg);
+  }
+
   .text-gradient {
     background: linear-gradient(
       135deg,
