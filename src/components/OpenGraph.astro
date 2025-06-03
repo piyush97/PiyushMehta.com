@@ -14,8 +14,8 @@ const {
   url = Astro.url.href,
   type = 'website',
 } = Astro.props;
-
-const siteUrl = import.meta.env.SITE_URL || 'https://piyushmehta.com';
+// take the current url and use it as the default url if not provided
+const siteUrl = Astro.url.href || 'https://piyushmehta.com';
 const ogImageUrl =
   image ||
   `${siteUrl}/api/og/${Astro.url.pathname.split('/').filter(Boolean).join('-') || 'home'}.png`;
