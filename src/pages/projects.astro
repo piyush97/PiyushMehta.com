@@ -1,5 +1,5 @@
 ---
-import ProjectShowcaseIsland from '../components/ProjectShowcaseIsland.astro';
+import GitHubProjectShowcaseIsland from '../components/GitHubProjectShowcaseIsland.astro';
 import Layout from '../layouts/Layout.astro';
 import { fetchGitHubRepos } from '../utils/github';
 
@@ -353,7 +353,7 @@ const projectsForShowcase = combinedProjects.map((project, index) => {
       </section>
 
       <!-- Interactive Projects Showcase -->
-      <ProjectShowcaseIsland projects={projectsForShowcase} />
+      <GitHubProjectShowcaseIsland projects={projectsForShowcase} />
 
       <!-- Call to Action -->
       <section class="py-16 space-y-8 text-center">
