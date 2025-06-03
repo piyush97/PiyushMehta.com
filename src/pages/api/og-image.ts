@@ -149,6 +149,7 @@ export const GET: APIRoute = async ({ url }) => {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',
+                      timeZone: 'America/Toronto',
                     })}`
                   )
                 : null,

@@ -10,11 +10,12 @@ export interface Props {
 
 const { title, description, date, slug, tags = [], readingTime } = Astro.props;
 
-// Format date
+// Format date with Eastern Time
 const formattedDate = new Date(date).toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
+  timeZone: 'America/Toronto',
 });
 ---
 

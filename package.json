@@ -16,6 +16,7 @@
     "@astrojs/sitemap": "^3.4.0",
     "@astrojs/tailwind": "^6.0.2",
     "@astrojs/vercel": "^8.1.4",
+    "@resvg/resvg-js": "^2.6.2",
     "@types/pg": "^8.15.4",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
@@ -24,7 +25,7 @@
     "pg": "^8.16.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "satori": "^0.13.1",
+    "satori": "^0.13.2",
     "sharp": "^0.34.2",
     "tailwindcss": "^3.4.14"
   },

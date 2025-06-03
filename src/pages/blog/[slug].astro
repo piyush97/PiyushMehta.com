@@ -132,7 +132,11 @@ const articleSchema = {
                 ></path>
               </svg>
               <time datetime={date.toISOString()} itemprop="datePublished">
-                {date.toLocaleDateString()}
+                {
+                  date.toLocaleDateString('en-US', {
+                    timeZone: 'America/Toronto',
+                  })
+                }
               </time>
             </div>
 
@@ -233,7 +237,11 @@ const articleSchema = {
 
             <div class="text-sm text-light-400">
               <meta itemprop="dateModified" content={date.toISOString()} />
-              Last updated: {date.toLocaleDateString()}
+              Last updated: {
+                date.toLocaleDateString('en-US', {
+                  timeZone: 'America/Toronto',
+                })
+              } Eastern Time
             </div>
           </div>
         </footer>
