@@ -32,7 +32,17 @@ You can get a site up and running on your local dev environment in 5 minutes wit
    gatsby develop
    ```
 
-3. **Open the source code and start editing!**
+3. **Set up environment variables (optional).**
+
+   To enable GitHub integration for the projects page, create a `.env` file based on `.env.example`:
+
+   ```shell
+   cp .env.example .env
+   ```
+
+   Then add your GitHub token to the `.env` file. See [GITHUB_SETUP.md](GITHUB_SETUP.md) for details.
+
+4. **Open the source code and start editing!**
 
    Your site is now running at `http://localhost:8000`. Open the `PiyushMehta.com` directory in your code editor of choice and edit `src/pages/index.js`. Save your changes, and the browser will update in real time!
 
