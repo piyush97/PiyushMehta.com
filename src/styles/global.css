@@ -48,6 +48,14 @@ html {
 }
 
 /* Disable transitions during theme initialization to prevent flash */
+
+/* Fallback image styles for GitHub projects */
+.fallback-image {
+  object-fit: contain !important;
+  padding: 0.5rem;
+  background-color: var(--color-light-900);
+}
+
 .no-transition,
 .no-transition *,
 .no-transition *:before,
