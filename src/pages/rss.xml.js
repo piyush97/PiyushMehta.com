@@ -35,7 +35,7 @@ export async function GET(context) {
       }),
       customData: `
         <language>en-us</language>
-        <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+        <lastBuildDate>${new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' })} Eastern Time</lastBuildDate>
         <generator>Astro v${process.env.npm_package_dependencies__astrojs_core || '4.0.0'}</generator>
         <webMaster>hello@piyushmehta.com (Piyush Mehta)</webMaster>
         <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>

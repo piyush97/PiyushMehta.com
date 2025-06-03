@@ -2,6 +2,7 @@
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import SEO from '../components/SEO.astro';
+import OpenGraph from '../components/OpenGraph.astro';
 import '../styles/global.css';
 
 export interface Props {
@@ -61,6 +62,10 @@ const {
       noindex={noindex}
       schema={schema}
     />
+
+    <!-- Include the OpenGraph component -->
+    <OpenGraph title={title} description={description} image={image} />
+
     <script>
       // Theme detection and setting
       const getThemePreference = () => {
