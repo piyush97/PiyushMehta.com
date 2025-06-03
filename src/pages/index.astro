@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import BlogCard from '../components/BlogCard.astro';
 import Hero from '../components/Hero.astro';
-import NewsletterSubscriptionReact from '../components/NewsletterSubscriptionReact';
 import Layout from '../layouts/Layout.astro';
 
 // Get all blog posts
@@ -162,20 +161,6 @@ const latestPosts = allPosts
             d="M9 5l7 7-7 7"></path>
         </svg>
       </a>
-    </div>
-  </section>
-
-  <!-- Newsletter Subscription Section -->
-  <section class="py-16 container-base">
-    <div class="max-w-4xl mx-auto">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold md:text-4xl mb-4">Stay Updated</h2>
-        <p class="text-xl text-light-300 max-w-2xl mx-auto">
-          Get the latest articles, tech insights, and project updates delivered
-          directly to your inbox.
-        </p>
-      </div>
-      <NewsletterSubscriptionReact client:load variant="default" />
     </div>
   </section>
 
