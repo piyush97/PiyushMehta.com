@@ -601,10 +601,27 @@ const categories = ['all', ...Array.from(new Set(allCategories))];
 3. **Reduced JavaScript**: Client-side code is minimal and focused
 4. **Progressive Enhancement**: Works without JavaScript, enhances with it
 5. **Developer Experience**: Clearer separation of concerns
-   <Hero />
+
+## Advanced Optimization Techniques
+
+### **1. Critical Path Optimization**
+
+```astro
+---
+// Above-the-fold critical rendering
+import Hero from '../components/Hero.astro';
+import CriticalCSS from '../styles/critical.css?inline';
+---
+
+<html>
+<head>
+  <style>{CriticalCSS}</style>
+  <link rel="preload" href="/fonts/inter.woff2" as="font" crossorigin>
+</head>
+<body>
+  <Hero />
 
   <!-- Deferred non-critical content -->
-
   <script>
     // Lazy load below-the-fold content
     const observer = new IntersectionObserver((entries) => {
@@ -615,7 +632,6 @@ const categories = ['all', ...Array.from(new Set(allCategories))];
       });
     });
   </script>
-
 </body>
 </html>
 ```
