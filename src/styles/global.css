@@ -36,6 +36,15 @@
   --shadow-glow: var(--color-shadow) 0 0 0 0.25rem;
 }
 
+/* Disable transitions during theme initialization to prevent flash */
+.no-transition,
+.no-transition *,
+.no-transition *:before,
+.no-transition *:after {
+  transition: none !important;
+  animation: none !important;
+}
+
 /* Light Mode */
 :root.light {
   --color-lighter: #100f4d;
@@ -214,7 +223,11 @@
       var(--color-card-gradient-light) 0%,
       var(--color-card-gradient-dark) 100%
     );
-    @apply border border-card-border rounded-lg p-6 shadow-card transition-all duration-base;
+    @apply border border-card-border rounded-lg p-6 shadow-card;
+    transition:
+      border-color 200ms ease-in-out,
+      box-shadow 200ms ease-in-out,
+      background-image 200ms ease-in-out;
   }
 
   .card:hover {
@@ -269,7 +282,10 @@
     border: 1px solid var(--color-card-border);
     border-radius: 0.5rem;
     padding: 1.5rem;
-    transition: all 200ms ease-in-out;
+    transition:
+      transform 200ms ease-in-out,
+      box-shadow 200ms ease-in-out,
+      border-color 200ms ease-in-out;
   }
 
   .card-hover:hover {
@@ -281,7 +297,10 @@
     background: var(--color-light-800);
     border: 1px solid var(--color-card-border);
     border-radius: 0.5rem;
-    transition: all 200ms ease-in-out;
+    transition:
+      transform 200ms ease-in-out,
+      box-shadow 200ms ease-in-out,
+      border-color 200ms ease-in-out;
     overflow: hidden;
   }
 
@@ -295,7 +314,10 @@
     border: 1px solid var(--color-card-border);
     border-radius: 0.5rem;
     padding: 1.5rem;
-    transition: all 200ms ease-in-out;
+    transition:
+      transform 200ms ease-in-out,
+      box-shadow 200ms ease-in-out,
+      border-color 200ms ease-in-out;
     overflow: hidden;
   }
 
@@ -310,7 +332,10 @@
     border-radius: 0.75rem;
     padding: 2rem;
     text-align: center;
-    transition: all 200ms ease-in-out;
+    transition:
+      transform 200ms ease-in-out,
+      box-shadow 200ms ease-in-out,
+      border-color 200ms ease-in-out;
   }
 
   .contact-card:hover {
@@ -329,7 +354,9 @@
   .navbar-link {
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
-    transition: all 200ms ease-in-out;
+    transition:
+      background-color 200ms ease-in-out,
+      color 200ms ease-in-out;
   }
 
   .navbar-link:hover {
@@ -364,7 +391,10 @@
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
     font-weight: 500;
-    transition: all 200ms ease-in-out;
+    transition:
+      background-color 200ms ease-in-out,
+      color 200ms ease-in-out,
+      border-color 200ms ease-in-out;
   }
 
   .btn-primary {
@@ -375,7 +405,9 @@
     color: var(--color-darker);
     font-weight: 500;
     border-radius: 0.5rem;
-    transition: all 200ms ease-in-out;
+    transition:
+      background-color 200ms ease-in-out,
+      color 200ms ease-in-out;
   }
 
   .btn-primary:hover {
@@ -391,7 +423,10 @@
     border: 1px solid var(--color-card-border);
     font-weight: 500;
     border-radius: 0.5rem;
-    transition: all 200ms ease-in-out;
+    transition:
+      background-color 200ms ease-in-out,
+      color 200ms ease-in-out,
+      border-color 200ms ease-in-out;
   }
 
   .btn-secondary:hover {
@@ -404,7 +439,9 @@
     padding: 0.5rem 1rem;
     color: var(--color-light-300);
     border-radius: 0.5rem;
-    transition: all 200ms ease-in-out;
+    transition:
+      background-color 200ms ease-in-out,
+      color 200ms ease-in-out;
   }
 
   .btn-ghost:hover {
@@ -423,7 +460,9 @@
     background: rgba(255, 204, 104, 0.1);
     color: var(--color-accent);
     border: 1px solid rgba(255, 204, 104, 0.2);
-    transition: all 200ms ease-in-out;
+    transition:
+      background-color 200ms ease-in-out,
+      border-color 200ms ease-in-out;
   }
 
   .tag:hover {
@@ -440,7 +479,9 @@
     background: var(--color-light-700);
     color: var(--color-light-300);
     border: 1px solid var(--color-card-border);
-    transition: all 200ms ease-in-out;
+    transition:
+      background-color 200ms ease-in-out,
+      border-color 200ms ease-in-out;
   }
 
   .tag-secondary:hover {

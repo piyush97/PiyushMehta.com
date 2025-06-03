@@ -24,7 +24,6 @@ export default defineConfig({
         'https://piyushmehta.com/contact-me/',
         'https://piyushmehta.com/uses/',
         'https://piyushmehta.com/videos/',
-        'https://piyushmehta.com/workshops/',
       ],
     }),
     tailwind(),

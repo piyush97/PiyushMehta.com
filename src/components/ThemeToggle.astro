@@ -73,6 +73,9 @@
     }
 
     setTheme(theme) {
+      // Disable transitions during theme change
+      document.documentElement.classList.add('no-transition');
+
       document.documentElement.classList.remove('light', 'dark');
       document.documentElement.classList.add(theme);
       localStorage.setItem('theme', theme);
@@ -83,6 +86,13 @@
       } else {
         document.documentElement.style.setProperty('--color-mode', 'dark');
       }
+
+      // Re-enable transitions after a brief delay
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.documentElement.classList.remove('no-transition');
+        });
+      });
     }
 
     toggleTheme() {
