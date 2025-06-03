@@ -1,8 +1,15 @@
 ---
-import ProjectShowcase from '../components/ProjectShowcase';
+import ProjectShowcaseIsland from '../components/ProjectShowcaseIsland.astro';
 import Layout from '../layouts/Layout.astro';
+import { fetchGitHubRepos } from '../utils/github';
 
-const projects = [
+// Fetch GitHub repositories
+const githubUsername = 'piyush97';
+const githubToken = import.meta.env.GITHUB_TOKEN;
+const githubRepos = await fetchGitHubRepos(githubUsername, githubToken);
+
+// Define fallback/additional projects in case GitHub API fails or to highlight specific projects
+const fallbackProjects = [
   {
     title: 'PiyushMehta.com',
     label: 'Personal Developer Portfolio',
@@ -222,18 +229,59 @@ const projects = [
 ];
 
 // Transform projects for ProjectShowcase component
-const projectsForShowcase = projects.map((project, index) => ({
-  id: project.title.toLowerCase().replace(/\s+/g, '-'),
-  title: project.title,
-  description: project.description,
-  technologies: project.tags,
-  githubUrl: project.github,
-  liveUrl: project.url,
-  imageUrl: project.logo,
-  category: project.label || 'Web Application',
-  featured: index < 3, // First 3 projects are featured
-  year: 2024 - index, // Mock years
-}));
+// Combine GitHub repositories with fallback projects
+// Use GitHub repos first, then add any fallback projects that don't exist in GitHub repos
+const combinedProjects = [
+  ...githubRepos,
+  ...fallbackProjects.filter(
+    (fallback) =>
+      !githubRepos.some(
+        (repo) => repo.title.toLowerCase() === fallback.title.toLowerCase()
+      )
+  ),
+];
+
+// Make sure each project has a unique ID
+const projectsForShowcase = combinedProjects.map((project, index) => {
+  // Generate a unique ID based on available properties
+  let uniqueId: string;
+
+  // Check if this is a GitHub repo or a fallback project
+  if ('technologies' in project && 'id' in project) {
+    // It's a GitHub repo (FormattedRepo)
+    uniqueId = project.id.toString();
+    return {
+      id: uniqueId,
+      title: project.title,
+      description: project.description,
+      technologies: project.technologies,
+      githubUrl: project.githubUrl,
+      liveUrl: project.liveUrl,
+      imageUrl: project.imageUrl,
+      category: project.category,
+      featured: project.featured,
+      year: project.year,
+    };
+  } else {
+    // It's a fallback project - create an ID from the title or index
+    uniqueId = project.title
+      ? project.title.toLowerCase().replace(/\s+/g, '-')
+      : `project-${index}`;
+
+    return {
+      id: uniqueId,
+      title: project.title,
+      description: project.description,
+      technologies: project.tags,
+      githubUrl: project.github,
+      liveUrl: project.url,
+      imageUrl: project.logo,
+      category: project.label || 'Web Application',
+      featured: index < 3, // First 3 fallback projects are featured
+      year: 2024 - index, // Mock years for fallback projects
+    };
+  }
+});
 ---
 
 <Layout
@@ -305,7 +353,7 @@ const projectsForShowcase = projects.map((project, index) => ({
       </section>
 
       <!-- Interactive Projects Showcase -->
-      <ProjectShowcase client:load projects={projectsForShowcase} />
+      <ProjectShowcaseIsland projects={projectsForShowcase} />
 
       <!-- Call to Action -->
       <section class="py-16 space-y-8 text-center">

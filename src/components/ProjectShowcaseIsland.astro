@@ -1,0 +1,731 @@
+---
+// ProjectShowcaseIsland.astro
+import { ViewTransitions } from 'astro:transitions';
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  technologies: string[];
+  githubUrl?: string;
+  liveUrl?: string;
+  imageUrl?: string;
+  category: string;
+  featured: boolean;
+  year: number;
+}
+
+interface Props {
+  projects: Project[];
+  className?: string;
+}
+
+const { projects, className = '' } = Astro.props;
+
+// Data processing functions
+const getCategories = () => {
+  const cats = Array.from(new Set(projects.map((p) => p.category || 'uncategorized')));
+  return ['all', ...cats];
+};
+
+const getTechnologies = () => {
+  // First flatten all technologies and remove empty values
+  const techs = projects.flatMap((p) => p.technologies || [])
+    .filter(Boolean)
+    .map(tech => tech.toString().trim()) // Ensure all tech items are strings and trimmed
+    .filter(tech => tech !== ''); // Remove empty strings
+    
+  // Then create a Set to get unique values
+  return ['all', ...Array.from(new Set(techs)).sort()];
+};
+
+// Helper function to generate a fallback image URL
+const getDefaultImageUrl = (project: Project) => {
+  // Create a color based on the project title
+  const stringToColor = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let color = '#';
+    for (let i = 0; i < 3; i++) {
+      const value = (hash >> (i * 8)) & 0xFF;
+      color += ('00' + value.toString(16)).slice(-2);
+    }
+    return color;
+  };
+
+  // Get contrasting text color (black or white)
+  const getContrastColor = (hexColor: string) => {
+    // Remove the # if it exists
+    const hex = hexColor.replace('#', '');
+    
+    // Convert to RGB
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Return black for bright colors, white for dark colors
+    return luminance > 0.5 ? '000000' : 'ffffff';
+  };
+
+  const bgColor = stringToColor(project.title);
+  const textColor = getContrastColor(bgColor);
+  const firstLetter = project.title.charAt(0).toUpperCase();
+  
+  return `https://via.placeholder.com/300x150/${bgColor.replace('#', '')}/${textColor}?text=${firstLetter}`;
+};
+
+// Pre-process data
+const categories = getCategories();
+const technologies = getTechnologies();
+---
+
+<div class={className}>
+  <!-- Filter Controls -->
+  <div class="mb-10 space-y-6">
+    <div class="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:justify-between">
+      <!-- Title and Reset Button -->
+      <div>
+        <h2 class="mb-1 text-3xl font-bold text-text-primary">Projects</h2>
+        <p class="text-text-secondary">Explore my recent work and contributions</p>
+      </div>
+      
+      <button id="clearFilters" class="px-6 py-2 font-medium transition-colors duration-200 border rounded-lg border-card-border text-text-secondary hover:text-text-primary">
+        Clear Filters
+      </button>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <!-- Category Filter -->
+      <div>
+        <label for="category" class="block mb-2 text-sm font-medium text-text-primary">
+          Category
+        </label>
+        <div class="relative">
+          <select
+            id="category"
+            class="w-full px-4 py-2 pr-10 transition-all duration-200 border rounded-lg appearance-none cursor-pointer bg-surface-primary border-card-border text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent hover:border-accent/50"
+          >
+            {categories.map((category) => (
+              <option
+                value={category}
+                class="bg-surface-primary text-text-primary"
+              >
+                {category === 'all' ? 'All Categories' : category}
+              </option>
+            ))}
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg
+              class="w-4 h-4 text-text-secondary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Technology Filter -->
+      <div>
+        <label for="technology" class="block mb-2 text-sm font-medium text-text-primary">
+          Technology
+        </label>
+        <div class="relative">
+          <select
+            id="technology"
+            class="w-full px-4 py-2 pr-10 transition-all duration-200 border rounded-lg appearance-none cursor-pointer bg-surface-primary border-card-border text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent hover:border-accent/50"
+          >
+            {technologies.map((tech) => (
+              <option
+                value={tech}
+                class="bg-surface-primary text-text-primary"
+              >
+                {tech === 'all' ? 'All Technologies' : tech}
+              </option>
+            ))}
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg
+              class="w-4 h-4 text-text-secondary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sort By -->
+      <div>
+        <label
+          for="sortBy"
+          class="block mb-2 text-sm font-medium text-text-primary"
+        >
+          Sort By
+        </label>
+        <div class="relative">
+          <select
+            id="sortBy"
+            class="w-full px-4 py-2 pr-10 transition-all duration-200 border rounded-lg appearance-none cursor-pointer bg-surface-primary border-card-border text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent hover:border-accent/50"
+          >
+            <option
+              value="year"
+              class="bg-surface-primary text-text-primary"
+            >
+              Year
+            </option>
+            <option
+              value="title"
+              class="bg-surface-primary text-text-primary"
+            >
+              Title
+            </option>
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg
+              class="w-4 h-4 text-text-secondary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- View Mode and Featured Toggle -->
+      <div class="space-y-4">
+        <!-- Featured Projects Toggle -->
+        <div class="flex items-center">
+          <input
+            type="checkbox"
+            id="featuredOnly"
+            class="w-4 h-4 transition-colors duration-200 rounded text-accent focus:ring-accent focus:ring-opacity-50"
+          />
+          <label
+            for="featuredOnly"
+            class="block ml-2 text-sm font-medium text-text-primary"
+          >
+            Featured Projects Only
+          </label>
+        </div>
+
+        <!-- View Mode Toggle -->
+        <div class="flex items-center space-x-2">
+          <span class="text-sm font-medium text-text-primary">View:</span>
+          <div class="flex overflow-hidden border rounded-lg border-card-border">
+            <button
+              id="gridView"
+              class="grid-view-active px-3 py-1 border-r border-card-border"
+              aria-label="Grid View"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                />
+              </svg>
+            </button>
+            <button
+              id="listView"
+              class="list-view px-3 py-1"
+              aria-label="List View"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Grid -->
+  <div id="projectsContainer" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    {projects.map((project) => (
+      <div class="group bg-surface-secondary rounded-lg border border-card-border hover:border-accent/50 transition-all duration-300 overflow-hidden hover:shadow-lg hover:transform hover:scale-[1.02]">
+        <div class="w-full overflow-hidden aspect-video">
+          <img
+            src={project.imageUrl || getDefaultImageUrl(project)}
+            alt={project.title}
+            class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
+            onerror={`
+              console.log('Image failed to load, using fallback for: ${project.title}');
+              if (this.src !== '${getDefaultImageUrl(project)}') {
+                this.src = '${getDefaultImageUrl(project)}';
+                this.classList.add('fallback-image');
+              }
+            `}
+          />
+        </div>
+
+        <div class="p-6">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <h3 class="text-xl font-semibold transition-colors duration-200 text-text-primary group-hover:text-accent">
+                {project.title}
+              </h3>
+              <div class="flex items-center mt-1 text-sm text-text-secondary">
+                {project.year && <span>{project.year}</span>}
+                {project.year && project.category && <span class="mx-2">•</span>}
+                {project.category && <span class="capitalize">{project.category}</span>}
+                {project.featured && (
+                  <>
+                    <span class="mx-2">•</span>
+                    <span class="px-2 py-0.5 bg-accent/20 text-accent rounded-full text-xs font-medium">
+                      Featured
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <p class="mb-4 text-text-secondary line-clamp-3">
+            {project.description}
+          </p>
+
+          <!-- Technologies -->
+          <div class="flex flex-wrap gap-2 mb-4">
+            {project.technologies && project.technologies.map((tech) => (
+              <span
+                class="px-2 py-1 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent tech-tag"
+                data-tech={tech}
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex space-x-3">
+            {project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex-1 px-4 py-2 font-medium text-center text-white transition-colors duration-200 rounded-lg bg-accent hover:bg-accent/90"
+              >
+                <span class="flex items-center justify-center">
+                  <svg
+                    class="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                  Live Demo
+                </span>
+              </a>
+            )}
+
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex-1 px-4 py-2 font-medium text-center transition-colors duration-200 border rounded-lg border-card-border text-text-primary hover:bg-surface-primary"
+              >
+                <span class="flex items-center justify-center">
+                  <svg
+                    class="w-4 h-4 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  GitHub
+                </span>
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Project List Template (hidden by default) -->
+  <template id="listViewTemplate">
+    {projects.map((project) => (
+      <div class="flex items-center p-6 transition-all duration-200 border rounded-lg bg-surface-secondary border-card-border hover:border-accent/50">
+        <div class="flex-shrink-0 w-20 h-20 mr-6 overflow-hidden rounded-lg">
+          <img
+            src={project.imageUrl || getDefaultImageUrl(project)}
+            alt={project.title}
+            class="object-cover w-full h-full"
+            loading="lazy"
+            onerror={`
+              console.log('List view image failed to load, using fallback for: ${project.title}');
+              if (this.src !== '${getDefaultImageUrl(project)}') {
+                this.src = '${getDefaultImageUrl(project)}';
+                this.classList.add('fallback-image');
+              }
+            `}
+          />
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between">
+            <div class="flex-1 min-w-0 mr-4">
+              <h3 class="text-lg font-semibold truncate transition-colors duration-200 text-text-primary hover:text-accent">
+                {project.title}
+              </h3>
+              <p class="mt-1 text-text-secondary line-clamp-2">
+                {project.description}
+              </p>
+              <div class="flex items-center mt-2 text-sm text-text-secondary">
+                {project.year && <span>{project.year}</span>}
+                {project.year && project.category && <span class="mx-2">•</span>}
+                {project.category && <span class="capitalize">{project.category}</span>}
+                {project.featured && (
+                  <>
+                    <span class="mx-2">•</span>
+                    <span class="px-2 py-0.5 bg-accent/20 text-accent rounded-full text-xs font-medium">
+                      Featured
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div class="flex space-x-2">
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="p-2 text-text-secondary hover:text-accent"
+                  aria-label="Live Demo"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                </a>
+              )}
+
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="p-2 text-text-secondary hover:text-accent"
+                  aria-label="GitHub Repository"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mt-2">
+            {project.technologies && project.technologies.map((tech) => (
+              <span
+                class="px-2 py-0.5 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent tech-tag"
+                data-tech={tech}
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    ))}
+  </template>
+</div>
+
+<script>
+  // Client-side JavaScript to handle filtering, sorting, and view mode
+  document.addEventListener('DOMContentLoaded', () => {
+    // Elements
+    const categorySelect = document.getElementById('category') as HTMLSelectElement;
+    const technologySelect = document.getElementById('technology') as HTMLSelectElement;
+    const sortBySelect = document.getElementById('sortBy') as HTMLSelectElement;
+    const featuredOnlyCheckbox = document.getElementById('featuredOnly') as HTMLInputElement;
+    const clearFiltersButton = document.getElementById('clearFilters') as HTMLButtonElement;
+    const gridViewButton = document.getElementById('gridView') as HTMLButtonElement;
+    const listViewButton = document.getElementById('listView') as HTMLButtonElement;
+    const projectsContainer = document.getElementById('projectsContainer') as HTMLDivElement;
+    const listViewTemplate = document.getElementById('listViewTemplate') as HTMLTemplateElement;
+    
+    // Check if all elements exist
+    if (!categorySelect || !technologySelect || !sortBySelect || !featuredOnlyCheckbox || 
+        !clearFiltersButton || !gridViewButton || !listViewButton || !projectsContainer || !listViewTemplate) {
+      console.error('Some UI elements were not found');
+      return;
+    }
+    
+    // Store all projects
+    const projects = Array.from(projectsContainer.children) as HTMLElement[];
+    
+    // Tech tags click handling
+    document.querySelectorAll('.tech-tag').forEach(tag => {
+      tag.addEventListener('click', () => {
+        const tech = tag.getAttribute('data-tech');
+        if (tech) {
+          technologySelect.value = tech;
+          filterProjects();
+        }
+      });
+    });
+    
+    // Clear filters
+    clearFiltersButton.addEventListener('click', () => {
+      categorySelect.value = 'all';
+      technologySelect.value = 'all';
+      sortBySelect.value = 'year';
+      featuredOnlyCheckbox.checked = false;
+      filterProjects();
+    });
+    
+    // View mode switching
+    gridViewButton.addEventListener('click', () => {
+      setViewMode('grid');
+    });
+    
+    listViewButton.addEventListener('click', () => {
+      setViewMode('list');
+    });
+    
+    // Filter change events
+    categorySelect.addEventListener('change', filterProjects);
+    technologySelect.addEventListener('change', filterProjects);
+    sortBySelect.addEventListener('change', filterProjects);
+    featuredOnlyCheckbox.addEventListener('change', filterProjects);
+    
+    function filterProjects() {
+      const selectedCategory = categorySelect.value;
+      const selectedTech = technologySelect.value;
+      const sortBy = sortBySelect.value;
+      const showFeaturedOnly = featuredOnlyCheckbox.checked;
+      
+      // Get all projects as array of DOM elements
+      let filteredProjects = projects.filter(project => {
+        // Get project data from data attributes
+        const categoryEl = project.querySelector('h3 + div .capitalize');
+        const category = categoryEl ? categoryEl.textContent?.trim() || '' : '';
+        const isFeatured = project.querySelector('.bg-accent\\/20') !== null;
+        const techTags = Array.from(project.querySelectorAll('.tech-tag')).map(
+          tag => tag.textContent?.trim() || ''
+        );
+        
+        // Apply filters
+        const matchesCategory = selectedCategory === 'all' || category.toLowerCase() === selectedCategory.toLowerCase();
+        const matchesTech = selectedTech === 'all' || techTags.includes(selectedTech);
+        const matchesFeatured = !showFeaturedOnly || isFeatured;
+        
+        return matchesCategory && matchesTech && matchesFeatured;
+      });
+      
+      // Sort projects
+      filteredProjects.sort((a, b) => {
+        if (sortBy === 'title') {
+          const titleElA = a.querySelector('h3');
+          const titleElB = b.querySelector('h3');
+          const titleA = titleElA ? titleElA.textContent?.trim() || '' : '';
+          const titleB = titleElB ? titleElB.textContent?.trim() || '' : '';
+          return titleA.localeCompare(titleB);
+        } else {
+          // Sort by year
+          const yearElA = a.querySelector('h3 + div span');
+          const yearElB = b.querySelector('h3 + div span');
+          const yearA = yearElA ? parseInt(yearElA.textContent || '0') : 0;
+          const yearB = yearElB ? parseInt(yearElB.textContent || '0') : 0;
+          return yearB - yearA; // Descending order (most recent first)
+        }
+      });
+      
+      // Update display
+      projectsContainer.innerHTML = '';
+      if (filteredProjects.length === 0) {
+        const noResults = document.createElement('div');
+        noResults.className = 'col-span-full text-center py-10';
+        noResults.innerHTML = `
+          <svg class="mx-auto h-12 w-12 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 class="mt-2 text-lg font-medium text-text-primary">No matching projects</h3>
+          <p class="mt-1 text-text-secondary">Try changing your filters or clearing them.</p>
+        `;
+        projectsContainer.appendChild(noResults);
+      } else {
+        filteredProjects.forEach(project => {
+          projectsContainer.appendChild(project.cloneNode(true));
+        });
+        
+        // Reattach event listeners to tech tags
+        projectsContainer.querySelectorAll('.tech-tag').forEach(tag => {
+          tag.addEventListener('click', () => {
+            const tech = tag.getAttribute('data-tech');
+            if (tech) {
+              technologySelect.value = tech;
+              filterProjects();
+            }
+          });
+        });
+      }
+    }
+    
+    function setViewMode(mode: 'grid' | 'list') {
+      if (mode === 'grid') {
+        // Switch to grid view
+        projectsContainer.className = 'grid gap-8 md:grid-cols-2 lg:grid-cols-3';
+        gridViewButton.classList.add('grid-view-active');
+        gridViewButton.classList.add('text-accent');
+        listViewButton.classList.remove('list-view-active');
+        listViewButton.classList.remove('text-accent');
+        
+        // Restore grid view
+        filterProjects();
+      } else {
+        // Switch to list view
+        projectsContainer.className = 'space-y-6';
+        listViewButton.classList.add('list-view-active');
+        listViewButton.classList.add('text-accent');
+        gridViewButton.classList.remove('grid-view-active');
+        gridViewButton.classList.remove('text-accent');
+        
+        // Use list template content
+        if (listViewTemplate.content) {
+          // filterProjects(); 
+          
+          // Modify container to list style
+          const gridItems = Array.from(projectsContainer.children);
+          projectsContainer.innerHTML = '';
+          
+          // Get projects from the template
+          const listItems = Array.from(listViewTemplate.content.children);
+          
+          // Filter and display only the projects that should be visible
+          gridItems.forEach((_, index) => {
+            if (index < listItems.length) {
+              const listItem = listItems[index].cloneNode(true) as HTMLElement;
+              projectsContainer.appendChild(listItem);
+            }
+          });
+          
+          // Reattach event listeners to tech tags
+          projectsContainer.querySelectorAll('.tech-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+              const tech = tag.getAttribute('data-tech');
+              if (tech) {
+                technologySelect.value = tech;
+                filterProjects();
+              }
+            });
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<style>
+  /* Active state for view buttons */
+  .grid-view-active,
+  .list-view-active {
+    @apply bg-surface-primary text-accent;
+  }
+
+  /* Animation for project cards */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #projectsContainer > div {
+    animation: fadeInUp 0.3s ease-out forwards;
+  }
+
+  /* Staggered animation for cards */
+  #projectsContainer > div:nth-child(1) { animation-delay: 0.05s; }
+  #projectsContainer > div:nth-child(2) { animation-delay: 0.1s; }
+  #projectsContainer > div:nth-child(3) { animation-delay: 0.15s; }
+  #projectsContainer > div:nth-child(4) { animation-delay: 0.2s; }
+  #projectsContainer > div:nth-child(5) { animation-delay: 0.25s; }
+  #projectsContainer > div:nth-child(6) { animation-delay: 0.3s; }
+  #projectsContainer > div:nth-child(7) { animation-delay: 0.35s; }
+  #projectsContainer > div:nth-child(8) { animation-delay: 0.4s; }
+  #projectsContainer > div:nth-child(9) { animation-delay: 0.45s; }
+  
+  /* Styles for fallback images */
+  .fallback-image {
+    object-fit: contain !important;
+    padding: 0.5rem;
+    background-color: var(--surface-primary);
+  }
+</style>

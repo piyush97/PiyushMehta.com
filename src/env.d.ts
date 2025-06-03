@@ -28,5 +28,14 @@ declare namespace NodeJS {
     RESEND_AUDIENCE_ID?: string;
 
     GITHUB_API_TOKEN?: string;
+    GITHUB_TOKEN?: string;
   }
+}
+
+interface ImportMetaEnv {
+  readonly GITHUB_TOKEN?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
 }
