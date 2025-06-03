@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Smooth scrolling for the entire page - optimized for 60Hz+ displays */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* Theme Variables */
 :root {
   /* Default (Dark) Theme */
