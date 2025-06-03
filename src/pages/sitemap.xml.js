@@ -15,7 +15,6 @@ export async function GET(context) {
       '/projects/',
       '/contact-me/',
       '/videos/',
-      '/workshops/',
       '/uses/',
     ];
 
