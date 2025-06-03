@@ -164,9 +164,6 @@ function formatRepo(repo: GitHubRepo): FormattedRepo {
     // Format: https://opengraph.githubassets.com/1/username/repo
     imageUrl = `https://opengraph.githubassets.com/1/${repo.full_name}`;
 
-    // For debugging purposes
-    console.log(`Generated OpenGraph image URL for ${repo.name}: ${imageUrl}`);
-
     // For empty repositories or those with minimal information, we might want a fallback
     // But we'll still try the OpenGraph URL first and let the error handler in the component work
   } catch (error) {
