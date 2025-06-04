@@ -1,0 +1,31 @@
+name = "piyushmehta-com"
+main = "./dist/_worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[site]
+bucket = "./dist"
+
+[[routes]]
+pattern = "piyushmehta.com/*"
+custom_domain = true
+
+[[routes]]
+pattern = "www.piyushmehta.com/*"
+custom_domain = true
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+
+# Cache rules for static assets
+[[rules]]
+action = "rewrite"
+targets = ["*.js", "*.css", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.ico", "*.svg", "*.webp", "*.avif"]
+
+# Security headers
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[env.preview]
+vars = { ENVIRONMENT = "preview" }

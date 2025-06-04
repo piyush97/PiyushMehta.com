@@ -7,27 +7,28 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "wrangler pages deploy dist",
+    "cf:dev": "wrangler pages dev dist --compatibility-date=2024-09-23"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.5.3",
     "@astrojs/mdx": "^4.3.0",
     "@astrojs/react": "^4.3.0",
     "@astrojs/rss": "^4.0.11",
     "@astrojs/sitemap": "^3.4.0",
     "@astrojs/tailwind": "^6.0.2",
-    "@astrojs/vercel": "^8.1.4",
-    "@resvg/resvg-js": "^2.6.2",
+    "@cloudflare/kv-asset-handler": "^0.4.0",
+    "@cloudflare/workers-types": "^4.20250603.0",
     "@types/pg": "^8.15.4",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "@vercel/og": "^0.6.8",
     "astro": "^5.8.1",
     "pg": "^8.16.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "satori": "^0.13.2",
-    "sharp": "^0.34.2",
-    "tailwindcss": "^3.4.14"
+    "tailwindcss": "^3.4.14",
+    "wrangler": "^4.19.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",

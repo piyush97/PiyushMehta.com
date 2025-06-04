@@ -1,0 +1,61 @@
+---
+/**
+ * Example Astro component showing how to use enhanced OG images
+ * This can be used as a template for updating existing pages
+ */
+
+import Layout from '../layouts/Layout.astro';
+import { getOGMetaTags, getPageOGConfig } from '../utils/og-utils';
+
+// Get OG configuration for this page
+const ogConfig = getPageOGConfig('about'); // Change to match your page
+
+// Generate meta tags
+const metaTags = getOGMetaTags({
+  ...ogConfig,
+  url: Astro.url.href,
+  siteName: 'Piyush Mehta'
+});
+
+// For blog posts, you might do something like:
+// const blogPost = {
+//   title: 'My Amazing Blog Post',
+//   description: 'This is a great article about web development',
+//   type: 'article' as const,
+//   date: '2024-06-04T00:00:00Z',
+//   tags: ['React', 'TypeScript', 'Web Development'],
+//   author: 'Piyush Mehta',
+//   readTime: '5 min read'
+// };
+// const metaTags = getOGMetaTags(blogPost, Astro.url.href);
+---
+
+<Layout title={ogConfig.title}>
+  <!-- Add OG meta tags to head -->
+  <Fragment slot="head">
+    {Object.entries(metaTags).map(([property, content]) => (
+      <meta property={property} content={Array.isArray(content) ? content.join(', ') : content} />
+    ))}
+  </Fragment>
+  
+  <main>
+    <h1>{ogConfig.title}</h1>
+    <p>{ogConfig.description}</p>
+    
+    <!-- Your page content here -->
+    
+    <!-- Preview the OG image (for development) -->
+    <div class="mt-8 p-4 border rounded-lg">
+      <h3 class="text-lg font-semibold mb-2">OG Image Preview:</h3>
+      <img 
+        src={`/api/og/${ogConfig.slug}`} 
+        alt="Open Graph preview" 
+        class="max-w-md border rounded shadow"
+      />
+    </div>
+  </main>
+</Layout>
+
+<style>
+  /* Your styles here */
+</style>

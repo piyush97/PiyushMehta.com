@@ -1,14 +1,19 @@
+import cloudflare from '@astrojs/cloudflare';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
-import vercel from '@astrojs/vercel';
 import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://piyushmehta.com',
   output: 'server',
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/compile'
+    }
+  },
   integrations: [
     mdx(),
     sitemap({
@@ -36,14 +41,14 @@ export default defineConfig({
     },
   },
 
-  adapter: vercel({
-    webAnalytics: {
+  adapter: cloudflare({
+    platformProxy: {
       enabled: true,
     },
-    imageService: true,
-    isr: {
-      // caches all pages on first request and saves for 1 day
-      expiration: 60 * 60 * 24,
-    },
   }),
+  vite: {
+    ssr: {
+      external: ['pg', 'fs', 'path', 'net', 'tls', 'crypto', 'events', 'util'],
+    },
+  },
 });

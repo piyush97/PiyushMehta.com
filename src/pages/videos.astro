@@ -1,5 +1,4 @@
 ---
-import SEO from '../components/SEO.astro';
 import Layout from '../layouts/Layout.astro';
 
 const title = 'Videos - Piyush Mehta';
@@ -7,9 +6,7 @@ const description =
   'Watch my latest videos on React, JavaScript, UI/UX, and software development. Learn through practical tutorials and insights.';
 ---
 
-<Layout title={title} description={description}>
-  <SEO title={title} description={description} type="website" />
-
+<Layout title={title} description={description} pageType="video">
   <!-- Enhanced Hero Section -->
   <section class="videos-hero-section">
     <!-- Animated background elements -->
