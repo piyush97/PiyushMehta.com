@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "node migrate-images-to-public.mjs && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "migrate:images": "node migrate-images-to-public.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",

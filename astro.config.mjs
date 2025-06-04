@@ -11,7 +11,7 @@ export default defineConfig({
   output: 'server',
   integrations: [
     mdx(),
-    sitemap({
+    sitemap({w
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),
@@ -35,7 +35,9 @@ export default defineConfig({
       wrap: true,
     },
   },
-
+  vite: {
+    assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp'],
+  },
   adapter: vercel({
     webAnalytics: {
       enabled: true,

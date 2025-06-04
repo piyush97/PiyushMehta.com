@@ -1,0 +1,42 @@
+---
+export interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+
+const { src, alt, width, height, loading = 'lazy', class: className } = Astro.props;
+
+// Handle relative paths for content images
+let imageSrc = src;
+if (src.startsWith('./') || src.startsWith('../')) {
+  // Convert relative paths to absolute paths
+  // This assumes images are in the content folder structure
+  const currentPath = Astro.url.pathname;
+  const blogSlug = currentPath.split('/blog/')[1]?.replace('/', '');
+  if (blogSlug && src.startsWith('./')) {
+    imageSrc = `/blog/${blogSlug}/${src.slice(2)}`;
+  }
+}
+
+// Ensure all blog images are served from public folder
+if (!imageSrc.startsWith('http') && !imageSrc.startsWith('/')) {
+  imageSrc = `/${imageSrc}`;
+}
+---
+
+<img
+  src={imageSrc}
+  alt={alt}
+  width={width}
+  height={height}
+  loading={loading}
+  decoding="async"
+  class:list={[
+    'rounded-lg shadow-sm max-w-full h-auto',
+    className
+  ]}
+/>
