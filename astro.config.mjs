@@ -11,7 +11,7 @@ export default defineConfig({
   output: 'server',
   integrations: [
     mdx(),
-    sitemap({w
+    sitemap({
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),
