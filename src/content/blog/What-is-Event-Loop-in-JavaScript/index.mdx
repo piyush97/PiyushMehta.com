@@ -9,7 +9,7 @@ tags:
   - "event loop"
   - "programming"
 image:
-  url: "./images/images/cover.png"
+  url: "/blog/What-is-Event-Loop-in-JavaScript/images/cover.png"
   alt: "What is Event Loop in JavaScript"
 ---
 
@@ -50,13 +50,13 @@ sayHello();
 
 From the illustration below, you can see once the function sayHello() is invoked, it is added to the call stack.
 
-![image 1](./images/1.png)
+![image 1](/blog/What-is-Event-Loop-in-JavaScript/images/1.png)
 
 ## Step 2 & 3 - Function returns a value & gets popped from the Call Stack
 
 Once the function returns a value, the output ‘Hello from Skay’ gets displayed on the console. As soon as the function returns, almost immediately, the function is also popped off from the call stack.
 
-![image 2](./images/2.png)
+![image 2](/blog/What-is-Event-Loop-in-JavaScript/images/2.png)
 
 Now, let’s look at the below code example, with two functions and understand how the JavaScript Engine executes it.
 
@@ -77,7 +77,7 @@ timeoutFunction();
 
 As discussed previously, the two functions are added to the Call Stack as shown below. And the function sayHello() is popped off the stack once the function execution completes.
 
-![image 3](./images/3.png)
+![image 3](/blog/What-is-Event-Loop-in-JavaScript/images/3.png)
 
 However, as for the second function ‘timeoutFunction’, it returns a setTimeout function which is a part of the Web API. Let us look at what Web API is first.
 
@@ -89,7 +89,7 @@ So, coming back to our code example, when the function ‘timeoutFunction’ is 
 
 Since the ‘setTimeout’ function is part of the Web API, it gets moved to the Web API as shown below. Along with that, the timer function in Web API is set to 1 second (1000 ms) based on the argument we had passed to the ‘setTimeout’ function as shown in the illustration below.
 
-![image 4](./images/4.png)
+![image 4](/blog/What-is-Event-Loop-in-JavaScript/images/4.png)
 
 So, what happens after one second? Ideally, you would have anticipated that the function is returned back to the Call Stack for execution. However, instead, it adds it to the Event Queue.
 
@@ -99,13 +99,13 @@ Event Queue is a data structure similar to Stack, which holds the data temporari
 
 So after one second, the ‘setTimeout’ function from Web API is added to the Queue as shown below.
 
-![image 5](./images/5.png)
+![image 5](/blog/What-is-Event-Loop-in-JavaScript/images/5.png)
 
 ## Event Loop
 
 Finally, the ‘Event Loop’ we’ve been waiting for. The function of Event Loop can simply be explained as connecting the Event Queue to the Call Stack.
 
-![image 6](./images/6.png)
+![image 6](/blog/What-is-Event-Loop-in-JavaScript/images/6.png)
 
 Event Loop does the following:
 
@@ -115,7 +115,7 @@ Once the Call Stack is empty, it moves the first item from the Event Queue to th
 
 When the setTimeout function gets added to the Call Stack, the function simply returns the output ‘Hello from Timeout Function’ on the console and is popped out of the Stack.
 
-![image 7](./images/7.png)
+![image 7](/blog/What-is-Event-Loop-in-JavaScript/images/7.png)
 
 That’s all there is to know about Event Loop. Hope the explanation with illustrations provided a way to understand Event Loop in a simple manner.
 
