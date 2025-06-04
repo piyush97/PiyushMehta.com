@@ -125,9 +125,5 @@ examples/**/env.d.ts
 # https://github.com/withastro/astro/pull/11759#discussion_r1721444711)
 *.code-workspace
 
-# Migration scripts (temporary)
-migrate-*.mjs
-fix-*.mjs
-
 # Legacy files
 gatsby-*.js
