@@ -1,0 +1,49 @@
+---
+// GitHubProjectShowcaseIsland.astro
+import GitHubProjectIsland from './GitHubProjectIsland';
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  technologies: string[];
+  githubUrl?: string;
+  liveUrl?: string;
+  imageUrl?: string;
+  category: string;
+  featured: boolean;
+  year: number;
+}
+
+interface Props {
+  projects: Project[];
+  className?: string;
+}
+
+const { projects, className = '' } = Astro.props;
+---
+
+<div class={className}>
+  <GitHubProjectIsland client:load projects={projects} />
+</div>
+
+<style>
+  /* Fallback image styles */
+  :global(.fallback-image) {
+    object-fit: contain !important;
+    padding: 0.5rem;
+    background-color: var(--surface-primary);
+  }
+
+  /* Animation for project cards */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

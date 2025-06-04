@@ -1,0 +1,113 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  date: string;
+  slug: string;
+  tags?: string[];
+  readingTime?: string;
+}
+
+const { title, description, date, slug, tags = [], readingTime } = Astro.props;
+
+// Format date with Eastern Time
+const formattedDate = new Date(date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'America/Toronto',
+});
+---
+
+<article class="blog-card">
+  <div class="blog-card-content">
+    <div class="blog-card-meta">
+      <time class="blog-date" datetime={date}>{formattedDate}</time>
+      {readingTime && <span class="reading-time">{readingTime}</span>}
+    </div>
+
+    <h2 class="blog-title">
+      <a href={`/blog/${slug}`} class="blog-link">
+        {title}
+      </a>
+    </h2>
+
+    <p class="blog-description">{description}</p>
+
+    {
+      tags.length > 0 && (
+        <div class="blog-tags">
+          {tags.map((tag) => (
+            <span class="blog-tag">#{tag}</span>
+          ))}
+        </div>
+      )
+    }
+
+    <a href={`/blog/${slug}`} class="read-more"> Read more → </a>
+  </div>
+</article>
+
+<style>
+  .blog-card {
+    @apply border border-card-border rounded-lg transition-all duration-base;
+    background: linear-gradient(
+      340deg,
+      var(--color-card-gradient-light) 0%,
+      var(--color-card-gradient-dark) 100%
+    );
+    overflow: hidden;
+  }
+
+  .blog-card:hover {
+    @apply border-card-border-hover transform -translate-y-1 shadow-lg;
+  }
+
+  .blog-card-content {
+    @apply p-6;
+  }
+
+  .blog-card-meta {
+    @apply flex items-center gap-3 mb-3 text-sm text-light-400;
+  }
+
+  .blog-date {
+    @apply font-mono;
+  }
+
+  .reading-time {
+    @apply px-2 py-1 bg-light-800 rounded text-xs;
+  }
+
+  .blog-title {
+    @apply text-xl font-bold mb-3 leading-tight;
+  }
+
+  .blog-link {
+    @apply text-light-100 transition-colors duration-base;
+  }
+
+  .blog-link:hover {
+    @apply text-accent;
+  }
+
+  .blog-description {
+    @apply text-light-300 mb-4 leading-relaxed;
+  }
+
+  .blog-tags {
+    @apply flex flex-wrap gap-2 mb-4;
+  }
+
+  .blog-tag {
+    @apply text-xs text-accent font-mono;
+  }
+
+  .read-more {
+    @apply text-accent font-medium transition-colors duration-base;
+  }
+
+  .read-more:hover {
+    @apply opacity-80;
+  }
+</style>

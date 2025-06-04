@@ -1,0 +1,1347 @@
+---
+import SEO from '../components/SEO.astro';
+import Layout from '../layouts/Layout.astro';
+
+const title = 'Videos - Piyush Mehta';
+const description =
+  'Watch my latest videos on React, JavaScript, UI/UX, and software development. Learn through practical tutorials and insights.';
+---
+
+<Layout title={title} description={description}>
+  <SEO title={title} description={description} type="website" />
+
+  <!-- Enhanced Hero Section -->
+  <section class="videos-hero-section">
+    <!-- Animated background elements -->
+    <div class="videos-hero-bg-pattern"></div>
+    <div class="videos-hero-bg-gradient"></div>
+    <div class="videos-hero-particle-field">
+      <div class="particle particle-1"></div>
+      <div class="particle particle-2"></div>
+      <div class="particle particle-3"></div>
+      <div class="particle particle-4"></div>
+    </div>
+    <div class="videos-hero-floating-elements">
+      <div class="videos-floating-element videos-element-1">
+        <div class="floating-icon">🎥</div>
+        <div class="floating-pulse"></div>
+      </div>
+      <div class="videos-floating-element videos-element-2">
+        <div class="floating-icon">📹</div>
+        <div class="floating-pulse"></div>
+      </div>
+      <div class="videos-floating-element videos-element-3">
+        <div class="floating-icon">🎬</div>
+        <div class="floating-pulse"></div>
+      </div>
+    </div>
+
+    <!-- Content container -->
+    <div class="relative z-10 container-base">
+      <div class="py-16 text-center md:py-24">
+        <div class="hero-content-wrapper">
+          <p class="videos-hero-intro">
+            <span class="intro-icon">📺</span>
+            <span class="intro-text">Watch & Learn</span>
+          </p>
+          <h1 class="videos-hero-title">
+            <span class="title-primary">Video</span>
+            <strong class="title-accent">Tutorials</strong>
+            <div class="title-underline"></div>
+          </h1>
+          <p class="videos-hero-teaser">
+            Learn <span class="highlight">React</span>, <span class="highlight"
+              >JavaScript</span
+            >, <span class="highlight">UI/UX</span>, and software development
+            through practical tutorials and insights. Subscribe for the latest
+            content!
+          </p>
+          <div class="videos-hero-meta">
+            <div class="meta-item">
+              <span class="meta-icon">🎯</span>
+              <span class="meta-text">Practical Tutorials</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">📚</span>
+              <span class="meta-text">Learn by Doing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="page-container">
+    <div class="max-w-6xl container-base">
+      <!-- Featured Videos -->
+      <section class="mb-16">
+        <h2
+          class="mb-8 text-3xl font-bold text-center md:text-4xl text-text-primary"
+        >
+          <span class="title-icon">⭐</span>
+          Featured Videos
+        </h2>
+
+        <div class="featured-videos-grid">
+          <!-- Featured Video 1 -->
+          <div class="video-card featured-video">
+            <div class="video-thumbnail">
+              <a
+                href="https://www.youtube.com/watch?v=gPk-K1mIfm4"
+                target="_blank"
+                rel="noopener"
+              >
+                <img
+                  src="https://img.youtube.com/vi/gPk-K1mIfm4/maxresdefault.jpg"
+                  alt="Best way to start with Backend Development • Super fast CRUD Api using NestJS"
+                  class="thumbnail-image"
+                />
+                <div class="video-overlay">
+                  <div class="play-button">
+                    <svg
+                      class="w-12 h-12"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="video-duration">19:00</div>
+              </a>
+            </div>
+            <div class="video-content">
+              <h3 class="video-title">
+                Best way to start with Backend Development • Super fast CRUD Api
+                using NestJS
+              </h3>
+              <p class="video-description">
+                Learn how to build a super fast CRUD API using NestJS. Perfect
+                starting point for backend development with modern TypeScript
+                framework.
+              </p>
+              <div class="video-meta">
+                <span class="video-date">3 years ago</span>
+                <span class="video-views">426 views</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Video 2 -->
+          <div class="video-card featured-video">
+            <div class="video-thumbnail">
+              <a
+                href="https://www.youtube.com/watch?v=UUYPYPLYkWI"
+                target="_blank"
+                rel="noopener"
+              >
+                <img
+                  src="https://img.youtube.com/vi/UUYPYPLYkWI/maxresdefault.jpg"
+                  alt="Learn Typescript in a Single Video | The ultimate free Typescript Crash Course"
+                  class="thumbnail-image"
+                />
+                <div class="video-overlay">
+                  <div class="play-button">
+                    <svg
+                      class="w-12 h-12"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="video-duration">33:00</div>
+              </a>
+            </div>
+            <div class="video-content">
+              <h3 class="video-title">
+                Learn Typescript in a Single Video | The ultimate free
+                Typescript Crash Course
+              </h3>
+              <p class="video-description">
+                Complete TypeScript crash course covering all essential
+                concepts. Perfect for developers wanting to learn TypeScript
+                quickly and effectively.
+              </p>
+              <div class="video-meta">
+                <span class="video-date">3 years ago</span>
+                <span class="video-views">122 views</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Latest Videos -->
+      <section class="mb-16">
+        <h2
+          class="mb-8 text-3xl font-bold text-center md:text-4xl text-text-primary"
+        >
+          <span class="title-icon">🔥</span>
+          Latest Videos
+        </h2>
+
+        <div class="videos-grid">
+          <!-- Video 1 -->
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <a
+                href="https://www.youtube.com/watch?v=Tbvt2UMxdiE"
+                target="_blank"
+                rel="noopener"
+              >
+                <img
+                  src="https://img.youtube.com/vi/Tbvt2UMxdiE/maxresdefault.jpg"
+                  alt="Develop and Deploy Portfolio for free • The only way to showcase your dev skills in Interview!"
+                  class="thumbnail-image"
+                />
+                <div class="video-overlay">
+                  <div class="play-button">
+                    <svg
+                      class="w-8 h-8"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="video-duration">6:10</div>
+              </a>
+            </div>
+            <div class="video-content">
+              <h3 class="video-title">
+                Develop and Deploy Portfolio for free • The only way to showcase
+                your dev skills in Interview!
+              </h3>
+              <p class="video-description">
+                Learn how to develop and deploy a portfolio for free - the
+                essential way to showcase your development skills in interviews.
+              </p>
+              <div class="video-meta">
+                <span class="video-date">3 years ago</span>
+                <span class="video-views">917 views</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video 2 -->
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <a
+                href="https://www.youtube.com/watch?v=MqlliYknQM0"
+                target="_blank"
+                rel="noopener"
+              >
+                <img
+                  src="https://img.youtube.com/vi/MqlliYknQM0/maxresdefault.jpg"
+                  alt="Unit testing in React Fully Explained in 1 Video | Watch Till End what happens!"
+                  class="thumbnail-image"
+                />
+                <div class="video-overlay">
+                  <div class="play-button">
+                    <svg
+                      class="w-8 h-8"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="video-duration">28:00</div>
+              </a>
+            </div>
+            <div class="video-content">
+              <h3 class="video-title">
+                Unit testing in React Fully Explained in 1 Video
+              </h3>
+              <p class="video-description">
+                Complete guide to unit testing in React. Learn everything you
+                need to know about testing React applications in one
+                comprehensive video.
+              </p>
+              <div class="video-meta">
+                <span class="video-date">3 years ago</span>
+                <span class="video-views">108 views</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video 3 -->
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <a
+                href="https://www.youtube.com/watch?v=eVrXFitvegs"
+                target="_blank"
+                rel="noopener"
+              >
+                <img
+                  src="https://img.youtube.com/vi/eVrXFitvegs/maxresdefault.jpg"
+                  alt="The one with OpenGraph Protocol and React Helmet | Part Infinity of series"
+                  class="thumbnail-image"
+                />
+                <div class="video-overlay">
+                  <div class="play-button">
+                    <svg
+                      class="w-8 h-8"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="video-duration">9:32</div>
+              </a>
+            </div>
+            <div class="video-content">
+              <h3 class="video-title">
+                The one with OpenGraph Protocol and React Helmet
+              </h3>
+              <p class="video-description">
+                Learn about OpenGraph Protocol and React Helmet for better
+                social media sharing and SEO optimization in React applications.
+              </p>
+              <div class="video-meta">
+                <span class="video-date">3 years ago</span>
+                <span class="video-views">1.9K views</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video 4 -->
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <a
+                href="https://www.youtube.com/watch?v=v862HChL4gE"
+                target="_blank"
+                rel="noopener"
+              >
+                <img
+                  src="https://img.youtube.com/vi/v862HChL4gE/maxresdefault.jpg"
+                  alt="Free Firebase Unlimited!!! | Supabase for ReactJS Auth | Part 8 of series"
+                  class="thumbnail-image"
+                />
+                <div class="video-overlay">
+                  <div class="play-button">
+                    <svg
+                      class="w-8 h-8"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="video-duration">25:00</div>
+              </a>
+            </div>
+            <div class="video-content">
+              <h3 class="video-title">
+                Free Firebase Unlimited!!! | Supabase for ReactJS Auth
+              </h3>
+              <p class="video-description">
+                Learn how to use Supabase as a free Firebase alternative for
+                ReactJS authentication. Complete tutorial with practical
+                examples.
+              </p>
+              <div class="video-meta">
+                <span class="video-date">3 years ago</span>
+                <span class="video-views">745 views</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video 5 -->
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <a
+                href="https://www.youtube.com/watch?v=82hBce77RDE"
+                target="_blank"
+                rel="noopener"
+              >
+                <img
+                  src="https://img.youtube.com/vi/82hBce77RDE/maxresdefault.jpg"
+                  alt="Easiest Way to make a Dashboard in ReactJS! | Part 11 of series"
+                  class="thumbnail-image"
+                />
+                <div class="video-overlay">
+                  <div class="play-button">
+                    <svg
+                      class="w-8 h-8"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="video-duration">17:00</div>
+              </a>
+            </div>
+            <div class="video-content">
+              <h3 class="video-title">
+                Easiest Way to make a Dashboard in ReactJS!
+              </h3>
+              <p class="video-description">
+                Learn the easiest way to create a beautiful and functional
+                dashboard in ReactJS. Step-by-step tutorial with practical
+                examples.
+              </p>
+              <div class="video-meta">
+                <span class="video-date">3 years ago</span>
+                <span class="video-views">461 views</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video 6 -->
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <a
+                href="https://www.youtube.com/watch?v=cnmPhFof23Y"
+                target="_blank"
+                rel="noopener"
+              >
+                <img
+                  src="https://img.youtube.com/vi/cnmPhFof23Y/maxresdefault.jpg"
+                  alt="Why developers are crazy for this one!! |React Query, does all for me!"
+                  class="thumbnail-image"
+                />
+                <div class="video-overlay">
+                  <div class="play-button">
+                    <svg
+                      class="w-8 h-8"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="video-duration">21:00</div>
+              </a>
+            </div>
+            <div class="video-content">
+              <h3 class="video-title">
+                Why developers are crazy for this one!! |React Query, does all
+                for me!
+              </h3>
+              <p class="video-description">
+                Discover why developers love React Query and how it can simplify
+                your data fetching and state management in React applications.
+              </p>
+              <div class="video-meta">
+                <span class="video-date">3 years ago</span>
+                <span class="video-views">133 views</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- YouTube Channel CTA -->
+      <section class="youtube-cta">
+        <div class="content-card text-center">
+          <h2 class="mb-6 text-3xl font-bold md:text-4xl text-text-primary">
+            <span class="title-icon">📺</span>
+            Subscribe for More Content
+          </h2>
+          <p class="cta-description">
+            Join thousands of developers learning through practical tutorials.
+            New videos uploaded weekly covering the latest in web development!
+          </p>
+          <div class="cta-stats">
+            <div class="stat-item">
+              <div class="stat-number">290+</div>
+              <div class="stat-label">Subscribers</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">15K+</div>
+              <div class="stat-label">Views</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">48+</div>
+              <div class="stat-label">Videos</div>
+            </div>
+          </div>
+          <a
+            href="https://youtube.com/@CoderWhoKnows"
+            target="_blank"
+            rel="noopener"
+            class="btn-primary btn-enhanced"
+          >
+            <span class="btn-content">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                ></path>
+              </svg>
+              Subscribe on YouTube
+              <svg
+                class="w-4 h-4 ml-2 transition-transform btn-arrow"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                ></path>
+              </svg>
+            </span>
+            <div class="btn-bg-effect"></div>
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /* Enhanced Videos Hero Section */
+  .videos-hero-section {
+    min-height: 80vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(
+      135deg,
+      var(--color-bg) 0%,
+      var(--color-light-950) 50%,
+      var(--color-bg) 100%
+    );
+  }
+
+  /* Animated background elements */
+  .videos-hero-bg-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      radial-gradient(
+        circle at 25% 25%,
+        var(--color-accent) 2px,
+        transparent 2px
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        var(--color-accent) 1px,
+        transparent 1px
+      );
+    background-size:
+      50px 50px,
+      30px 30px;
+    background-position:
+      0 0,
+      15px 15px;
+    opacity: 0.06;
+    animation: patternMove 20s linear infinite;
+  }
+
+  .videos-hero-bg-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+      radial-gradient(
+        ellipse at 20% 30%,
+        var(--color-accent) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse at 80% 70%,
+        var(--color-accent) 0%,
+        transparent 50%
+      );
+    opacity: 0.04;
+    animation: gradientPulse 10s ease-in-out infinite;
+  }
+
+  .videos-hero-particle-field {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    background: var(--color-accent);
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+
+  .particle-1 {
+    width: 3px;
+    height: 3px;
+    top: 20%;
+    left: 15%;
+    animation: particleFloat1 6s ease-in-out infinite;
+  }
+
+  .particle-2 {
+    width: 2px;
+    height: 2px;
+    top: 40%;
+    right: 20%;
+    animation: particleFloat2 8s ease-in-out infinite;
+  }
+
+  .particle-3 {
+    width: 4px;
+    height: 4px;
+    bottom: 30%;
+    left: 25%;
+    animation: particleFloat3 7s ease-in-out infinite;
+  }
+
+  .particle-4 {
+    width: 3px;
+    height: 3px;
+    top: 70%;
+    right: 30%;
+    animation: particleFloat4 9s ease-in-out infinite;
+  }
+
+  .videos-hero-floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .videos-floating-element {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .floating-icon {
+    font-size: 2rem;
+    opacity: 0.6;
+    animation: iconFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(var(--color-accent-rgb), 0.2));
+  }
+
+  .floating-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--color-accent);
+    border-radius: 50%;
+    opacity: 0.2;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .videos-element-1 {
+    width: 70px;
+    height: 70px;
+    top: 20%;
+    left: 10%;
+    animation: elementFloat1 8s ease-in-out infinite;
+  }
+
+  .videos-element-2 {
+    width: 60px;
+    height: 60px;
+    top: 60%;
+    right: 15%;
+    animation: elementFloat2 10s ease-in-out infinite;
+  }
+
+  .videos-element-3 {
+    width: 80px;
+    height: 80px;
+    bottom: 25%;
+    left: 20%;
+    animation: elementFloat3 7s ease-in-out infinite;
+  }
+
+  /* Hero Content Styling */
+  .hero-content-wrapper {
+    position: relative;
+    z-index: 10;
+  }
+
+  .videos-hero-intro {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--color-accent);
+    margin: 0 0 1.5rem 0;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.2s forwards;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .intro-icon {
+    font-size: 1.5rem;
+    animation: wave 2s ease-in-out infinite;
+  }
+
+  .intro-text {
+    position: relative;
+  }
+
+  .intro-text::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 2px;
+    background: var(--color-accent);
+    animation: lineExpand 0.8s ease-out 0.6s forwards;
+    transform-origin: left;
+    scale: 0 1;
+  }
+
+  .videos-hero-title {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 700;
+    margin: 0 0 2rem 0;
+    line-height: 0.9;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.4s forwards;
+    position: relative;
+  }
+
+  .title-primary {
+    display: block;
+    background: linear-gradient(
+      135deg,
+      var(--color-text-primary) 0%,
+      var(--color-accent) 50%,
+      var(--color-text-primary) 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 100%;
+    animation: gradientShift 4s ease-in-out infinite;
+  }
+
+  .title-accent {
+    display: block;
+    background: linear-gradient(
+      135deg,
+      var(--color-accent) 0%,
+      var(--color-text-primary) 50%,
+      var(--color-accent) 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 100%;
+    animation: gradientShift 3s ease-in-out infinite reverse;
+  }
+
+  .title-underline {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-accent),
+      transparent
+    );
+    border-radius: 2px;
+    animation: underlineExpand 1s ease-out 1s forwards;
+    width: 0;
+  }
+
+  .videos-hero-teaser {
+    font-size: 1.25rem;
+    max-width: 650px;
+    margin: 0 auto 2rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.6s forwards;
+  }
+
+  .highlight {
+    color: var(--color-accent);
+    font-weight: 600;
+    position: relative;
+    display: inline-block;
+  }
+
+  .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-accent),
+      transparent
+    );
+    transform: scaleX(0);
+    animation: highlightExpand 0.6s ease-out 1.5s forwards;
+  }
+
+  .videos-hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out 0.8s forwards;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+  }
+
+  .meta-icon {
+    font-size: 1rem;
+  }
+
+  /* Main Content Styling */
+  .page-container {
+    padding: 4rem 2rem;
+  }
+
+  .content-card {
+    background: rgba(var(--color-accent-rgb), 0.02);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.1);
+    border-radius: 20px;
+    padding: 3rem;
+    transition: all 0.3s ease;
+  }
+
+  .content-card:hover {
+    background: rgba(var(--color-accent-rgb), 0.05);
+    border-color: rgba(var(--color-accent-rgb), 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(var(--color-accent-rgb), 0.1);
+  }
+
+  .title-icon {
+    font-size: 1.5rem;
+    opacity: 0.8;
+    margin-right: 0.75rem;
+  }
+
+  /* Video Cards */
+  .featured-videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .video-card {
+    background: rgba(var(--color-accent-rgb), 0.02);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .video-card:hover {
+    background: rgba(var(--color-accent-rgb), 0.05);
+    border-color: rgba(var(--color-accent-rgb), 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(var(--color-accent-rgb), 0.1);
+  }
+
+  .video-thumbnail {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+  }
+
+  .thumbnail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .video-card:hover .thumbnail-image {
+    transform: scale(1.05);
+  }
+
+  .video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .video-card:hover .video-overlay {
+    opacity: 1;
+  }
+
+  .play-button {
+    color: white;
+    transition: transform 0.3s ease;
+  }
+
+  .video-card:hover .play-button {
+    transform: scale(1.1);
+  }
+
+  .video-duration {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .video-content {
+    padding: 1.5rem;
+  }
+
+  .video-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+  }
+
+  .video-description {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .video-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+  }
+
+  .featured-video .video-content {
+    padding: 2rem;
+  }
+
+  .featured-video .video-title {
+    font-size: 1.5rem;
+  }
+
+  .featured-video .video-description {
+    font-size: 1rem;
+  }
+
+  /* YouTube CTA Section */
+  .youtube-cta {
+    margin-top: 4rem;
+  }
+
+  .cta-description {
+    font-size: 1.125rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .cta-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin: 2rem 0 3rem 0;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  /* Button Styling */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--color-accent);
+    color: var(--color-bg);
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-enhanced {
+    box-shadow: 0 8px 25px rgba(var(--color-accent-rgb), 0.3);
+  }
+
+  .btn-enhanced:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(var(--color-accent-rgb), 0.4);
+  }
+
+  .btn-content {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .btn-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .btn-enhanced:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+
+  .btn-bg-effect {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
+
+  .btn-enhanced:hover .btn-bg-effect {
+    left: 100%;
+  }
+
+  /* Animation Keyframes */
+  @keyframes patternMove {
+    0% {
+      background-position:
+        0 0,
+        15px 15px;
+    }
+    100% {
+      background-position:
+        50px 50px,
+        65px 65px;
+    }
+  }
+
+  @keyframes gradientPulse {
+    0%,
+    100% {
+      opacity: 0.04;
+    }
+    50% {
+      opacity: 0.08;
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes wave {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(20deg);
+    }
+    75% {
+      transform: rotate(-20deg);
+    }
+  }
+
+  @keyframes lineExpand {
+    to {
+      scale: 1 1;
+    }
+  }
+
+  @keyframes gradientShift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes underlineExpand {
+    to {
+      width: 200px;
+    }
+  }
+
+  @keyframes highlightExpand {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes iconFloat {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(5deg);
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 0.2;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes particleFloat1 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-15px) translateX(10px);
+    }
+  }
+
+  @keyframes particleFloat2 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-20px) translateX(-8px);
+    }
+  }
+
+  @keyframes particleFloat3 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-18px) translateX(12px);
+    }
+  }
+
+  @keyframes particleFloat4 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-12px) translateX(-6px);
+    }
+  }
+
+  @keyframes elementFloat1 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-15px) translateX(8px) rotate(180deg);
+    }
+  }
+
+  @keyframes elementFloat2 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) translateX(-10px) rotate(180deg);
+    }
+  }
+
+  @keyframes elementFloat3 {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-18px) translateX(15px) rotate(180deg);
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .videos-hero-section {
+      min-height: 70vh;
+    }
+
+    .page-container {
+      padding: 2rem 1rem;
+    }
+
+    .content-card {
+      padding: 2rem;
+    }
+
+    .videos-hero-title {
+      font-size: 2.5rem;
+    }
+
+    .videos-hero-teaser {
+      font-size: 1.125rem;
+    }
+
+    .videos-hero-meta {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .videos-floating-element {
+      opacity: 0.4;
+    }
+
+    .floating-icon {
+      font-size: 1.5rem;
+    }
+
+    .particle {
+      opacity: 0.3;
+    }
+
+    .featured-videos-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .videos-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-stats {
+      gap: 2rem;
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* Light mode adjustments */
+  :root.light .videos-hero-section {
+    background: linear-gradient(
+      135deg,
+      var(--color-bg) 0%,
+      var(--color-light-700) 50%,
+      var(--color-bg) 100%
+    );
+  }
+
+  :root.light .videos-hero-bg-pattern {
+    opacity: 0.03;
+  }
+
+  :root.light .videos-hero-bg-gradient {
+    opacity: 0.02;
+  }
+
+  :root.light .videos-floating-element {
+    opacity: 0.3;
+  }
+
+  :root.light .particle {
+    opacity: 0.2;
+  }
+
+  :root.light .content-card {
+    background: rgba(var(--color-accent-rgb), 0.01);
+    border-color: rgba(var(--color-accent-rgb), 0.08);
+  }
+
+  :root.light .content-card:hover {
+    background: rgba(var(--color-accent-rgb), 0.03);
+    border-color: rgba(var(--color-accent-rgb), 0.12);
+  }
+
+  :root.light .video-card {
+    background: rgba(var(--color-accent-rgb), 0.01);
+    border-color: rgba(var(--color-accent-rgb), 0.08);
+  }
+
+  :root.light .video-card:hover {
+    background: rgba(var(--color-accent-rgb), 0.03);
+    border-color: rgba(var(--color-accent-rgb), 0.12);
+  }
+</style>
