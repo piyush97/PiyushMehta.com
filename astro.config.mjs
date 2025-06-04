@@ -8,7 +8,7 @@ import { defineConfig } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://piyushmehta.com',
-  output: 'server',
+  output: 'hybrid',
   image: {
     service: {
       entrypoint: 'astro/assets/services/compile'
@@ -45,6 +45,7 @@ export default defineConfig({
     platformProxy: {
       enabled: true,
     },
+    imageService: 'compile',
   }),
   vite: {
     ssr: {
