@@ -17,6 +17,7 @@ export interface Props {
   canonical?: string;
   noindex?: boolean;
   schema?: any;
+  pageType?: 'website' | 'article' | 'blog' | 'project' | 'video' | 'about' | 'contact' | 'uses' | 'resume';
 }
 
 const {
@@ -31,6 +32,7 @@ const {
   canonical,
   noindex,
   schema,
+  pageType,
 } = Astro.props;
 ---
 
@@ -64,7 +66,16 @@ const {
     />
 
     <!-- Include the OpenGraph component -->
-    <OpenGraph title={title} description={description} image={image} />
+    <OpenGraph 
+      title={title} 
+      description={description} 
+      image={image} 
+      type={type}
+      author={author}
+      date={publishedTime}
+      tags={tags}
+      pageType={pageType}
+    />
 
     <script>
       // Theme detection and setting

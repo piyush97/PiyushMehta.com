@@ -1,5 +1,4 @@
 ---
-import SEO from '../components/SEO.astro';
 import Layout from '../layouts/Layout.astro';
 
 const title = 'Uses - My Development Setup';
@@ -7,9 +6,7 @@ const description =
   'A comprehensive list of the tools, software, hardware, and services I use for development, content creation, and daily productivity.';
 ---
 
-<Layout title={title} description={description}>
-  <SEO title={title} description={description} type="website" />
-
+<Layout title={title} description={description} pageType="uses">
   <!-- Enhanced Hero Section -->
   <section class="uses-hero-section">
     <!-- Animated background elements -->

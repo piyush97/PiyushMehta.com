@@ -1,0 +1,27 @@
+name = "piyushmehta"
+main = "./dist/_worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[site]
+bucket = "./dist"
+
+# Custom domains (no wildcards or paths allowed)
+[[routes]]
+pattern = "piyushmehta.com"
+custom_domain = true
+
+[[routes]]
+pattern = "www.piyushmehta.com"
+custom_domain = true
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+
+# Security headers
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[env.preview]
+vars = { ENVIRONMENT = "preview" }

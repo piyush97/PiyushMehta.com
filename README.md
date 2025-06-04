@@ -18,7 +18,7 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 - **Language**: [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
 - **Content**: Markdown/MDX for blog posts and content
-- **Deployment**: Vercel/Netlify compatible
+- **Deployment**: Cloudflare Pages compatible
 - **SEO**: Custom SEO component with structured data
 
 ## 📦 Installation

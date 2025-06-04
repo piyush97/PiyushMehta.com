@@ -1,10 +1,16 @@
 ---
+import { getOGImageUrl } from '../utils/og-utils';
+
 export interface Props {
   title?: string;
   description?: string;
   image?: string;
   url?: string;
   type?: string;
+  author?: string;
+  date?: Date;
+  tags?: string[];
+  pageType?: 'website' | 'article' | 'blog' | 'project' | 'video' | 'about' | 'contact' | 'uses' | 'resume';
 }
 
 const {
@@ -13,15 +19,25 @@ const {
   image,
   url = Astro.url.href,
   type = 'website',
+  author,
+  date,
+  tags,
+  pageType,
 } = Astro.props;
-// take the current url and use it as the default url if not provided
-const siteUrl = Astro.url.href || 'https://piyushmehta.com';
-const ogImageUrl =
-  image ||
-  `${siteUrl}/api/og/${Astro.url.pathname.split('/').filter(Boolean).join('-') || 'home'}.png`;
+
 const pageTitle = title || 'Piyush Mehta';
 const pageDescription =
   description || 'Software Engineer, Speaker, and Open Source Enthusiast';
+
+// Generate dynamic OG image if no custom image is provided
+const ogImageUrl = image || getOGImageUrl({
+  title: pageTitle,
+  description: pageDescription,
+  type: pageType || (type === 'article' ? 'article' : 'website'),
+  date: date?.toISOString(),
+  tags: tags,
+  author: author,
+});
 ---
 
 <!-- Open Graph / Facebook -->

@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getOGImageUrl, pageConfigs } from '../utils/og-utils';
+---
+
+<Layout title="OG Images Test">
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Open Graph Images Test</h1>
+    
+    <div class="grid gap-8">
+      {Object.entries(pageConfigs).map(([key, config]) => (
+        <div class="border rounded-lg p-6">
+          <h2 class="text-xl font-semibold mb-2">{config.title}</h2>
+          <p class="text-gray-600 mb-4">{config.description}</p>
+          <p class="text-sm text-gray-500 mb-4">Type: {config.type} | Slug: {config.slug}</p>
+          
+          <div class="bg-gray-100 p-4 rounded">
+            <p class="text-sm font-medium mb-2">OG Image URL:</p>
+            <code class="text-xs bg-white p-2 rounded block mb-4">/api/og/{config.slug}</code>
+            
+            <img 
+              src={`/api/og/${config.slug}`}
+              alt={`OG image for ${config.title}`}
+              class="max-w-full h-auto border rounded shadow"
+              style="max-width: 600px;"
+            />
+          </div>
+        </div>
+      ))}
+      
+      <!-- Test custom parameters -->
+      <div class="border rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-2">Custom Blog Post Example</h2>
+        <p class="text-gray-600 mb-4">Example with custom parameters</p>
+        
+        <div class="bg-gray-100 p-4 rounded">
+          <img 
+            src={getOGImageUrl({
+              title: 'Building Modern Web Applications with React and TypeScript',
+              description: 'Learn how to create scalable and maintainable web applications using the latest React patterns and TypeScript best practices',
+              type: 'article',
+              date: '2024-06-04T00:00:00Z',
+              tags: ['React', 'TypeScript', 'Web Development', 'JavaScript'],
+              readTime: '8 min read'
+            })}
+            alt="Custom blog post OG image"
+            class="max-w-full h-auto border rounded shadow"
+            style="max-width: 600px;"
+          />
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: 1200px;
+  }
+</style>
