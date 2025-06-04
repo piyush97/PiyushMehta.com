@@ -199,6 +199,26 @@ const articleSchema = {
           }
         </header>
 
+        <!-- Featured Image -->
+        {
+          image && image.url && (
+            <div class="mb-8">
+              <img
+                src={image.url}
+                alt={image.alt || title}
+                class="w-full h-auto rounded-lg shadow-lg"
+                loading="lazy"
+                decoding="async"
+              />
+              {image.alt && (
+                <p class="mt-2 text-sm text-center text-gray-600 italic">
+                  {image.alt}
+                </p>
+              )}
+            </div>
+          )
+        }
+
         <!-- Article Meta with Share Buttons -->
         <ArticleMeta
           title={title}
