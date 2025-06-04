@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import BlogFilter from '../components/BlogFilter';
+import Layout from '../layouts/Layout.astro';
+
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Prepare posts data for the BlogFilter component
+const postsForFilter = publishedPosts.map((post) => ({
+  id: post.slug,
+  title: post.data.title,
+  excerpt: post.data.description,
+  date: post.data.date.toISOString(),
+  slug: post.slug,
+  categories: post.data.tags || [],
+  readingTime: Math.ceil((post.data.description?.length || 0) / 200) || 5,
+}));
+---
+
+<Layout
+  title="Blog - Piyush Mehta"
+  description="Articles about software engineering, web development, and technology"
+>
+  <div class="page-container">
+    <div class="container-base">
+      <!-- Header -->
+      <header class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">
+          <span class="text-gradient">Blog</span>
+        </h1>
+        <p class="text-xl text-light-300 max-w-2xl mx-auto">
+          Thoughts on software development, technology, and the art of building
+          great products.
+        </p>
+      </header>
+
+      <!-- Interactive Blog Filter -->
+      <BlogFilter client:load posts={postsForFilter} />
+    </div>
+  </div>
+</Layout>

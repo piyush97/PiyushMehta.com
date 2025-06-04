@@ -1,0 +1,426 @@
+---
+const pathname = Astro.url.pathname;
+---
+
+<nav class="fixed top-0 left-0 right-0 z-50 navbar backdrop-blur-navbar">
+  <div class="flex items-center justify-between py-4 container-base">
+    <!-- Logo/Brand -->
+    <a
+      href="/"
+      class="text-xl font-bold transition-opacity text-accent hover:opacity-80 duration-base"
+    >
+      Piyush Mehta
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="items-center hidden space-x-6 md:flex">
+      <ul class="flex space-x-1">
+        <li>
+          <a href="/" class={`navbar-link ${pathname === '/' ? 'active' : ''}`}>
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="/about/"
+            class={`navbar-link ${pathname === '/about/' ? 'active' : ''}`}
+          >
+            About
+          </a>
+        </li>
+        <li>
+          <a
+            href="/blog/"
+            class={`navbar-link ${pathname === '/blog/' ? 'active' : ''}`}
+          >
+            Blog
+          </a>
+        </li>
+        <li>
+          <a
+            href="/projects/"
+            class={`navbar-link ${pathname === '/projects/' ? 'active' : ''}`}
+          >
+            Projects
+          </a>
+        </li>
+        <li>
+          <a
+            href="/uses/"
+            class={`navbar-link ${pathname === '/uses/' ? 'active' : ''}`}
+          >
+            Uses
+          </a>
+        </li>
+        <li>
+          <a
+            href="/contact-me/"
+            class={`navbar-link ${pathname === '/contact-me/' ? 'active' : ''}`}
+          >
+            Contact
+          </a>
+        </li>
+        <li>
+          <a
+            href="/resume/"
+            class={`navbar-link ${pathname === '/resume/' ? 'active' : ''}`}
+          >
+            Resume
+          </a>
+        </li>
+      </ul>
+
+      <!-- Dark mode toggle -->
+      <button
+        id="theme-toggle"
+        class="p-2 transition-colors rounded-lg dark-mode-toggle hover:bg-surface-100/20 duration-base"
+        aria-label="Toggle dark mode"
+      >
+        <svg
+          id="sun-icon"
+          class="hidden w-5 h-5 text-text-primary"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+            clip-rule="evenodd"
+          >
+          </path>
+        </svg>
+        <svg
+          id="moon-icon"
+          class="w-5 h-5 text-text-primary"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <div class="flex items-center space-x-4 md:hidden">
+      <!-- Dark mode toggle for mobile -->
+      <button
+        id="theme-toggle-mobile"
+        class="p-2 transition-colors rounded-lg dark-mode-toggle hover:bg-surface-100/20 duration-base"
+        aria-label="Toggle dark mode"
+      >
+        <svg
+          id="sun-icon-mobile"
+          class="hidden w-5 h-5 text-text-primary"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+            clip-rule="evenodd"
+          >
+          </path>
+        </svg>
+        <svg
+          id="moon-icon-mobile"
+          class="w-5 h-5 text-text-primary"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
+          ></path>
+        </svg>
+      </button>
+
+      <!-- Hamburger Menu Button -->
+      <button
+        id="mobile-menu-toggle"
+        class="p-2 transition-colors rounded-lg mobile-menu-toggle hover:bg-surface-100/20 duration-base"
+        aria-label="Toggle mobile menu"
+      >
+        <svg
+          id="hamburger-icon"
+          class="w-6 h-6 text-text-primary"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg
+          id="close-icon"
+          class="hidden w-6 h-6 text-text-primary"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Menu -->
+  <div
+    id="mobile-menu"
+    class="fixed left-0 right-0 transition-all duration-300 ease-in-out transform -translate-y-full border-t opacity-0 pointer-events-none mobile-menu md:hidden top-full bg-navbar backdrop-blur-navbar border-card-border"
+  >
+    <div class="py-6 container-base">
+      <ul class="space-y-4">
+        <li>
+          <a
+            href="/"
+            class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/' ? 'active' : ''}`}
+          >
+            <span class="flex items-center">
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M10.707 2.293a1 1 0 00-1.414 0l-9 9a1 1 0 001.414 1.414L2 12.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-4.586l.293.293a1 1 0 001.414-1.414l-9-9z"
+                ></path>
+              </svg>
+              Home
+            </span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="/about/"
+            class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/about/' ? 'active' : ''}`}
+          >
+            <span class="flex items-center">
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              About
+            </span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="/blog/"
+            class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/blog/' ? 'active' : ''}`}
+          >
+            <span class="flex items-center">
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              Blog
+            </span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="/projects/"
+            class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/projects/' ? 'active' : ''}`}
+          >
+            <span class="flex items-center">
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15 13.586V12a1 1 0 011-1z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              Projects
+            </span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="/uses/"
+            class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/uses/' ? 'active' : ''}`}
+          >
+            <span class="flex items-center">
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              Uses
+            </span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="/contact-me/"
+            class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/contact-me/' ? 'active' : ''}`}
+          >
+            <span class="flex items-center">
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+                ></path>
+                <path
+                  d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+                ></path>
+              </svg>
+              Contact
+            </span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="/resume/"
+            class={`mobile-navbar-link block py-3 px-4 rounded-lg transition-colors duration-base ${pathname === '/resume/' ? 'active' : ''}`}
+          >
+            <span class="flex items-center">
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+                ></path>
+                <path
+                  d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+                ></path>
+              </svg>
+              Resume
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<script>
+  // Theme toggle functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    const sunIconMobile = document.getElementById('sun-icon-mobile');
+    const moonIconMobile = document.getElementById('moon-icon-mobile');
+
+    function updateIcons() {
+      const isLight = document.documentElement.classList.contains('light');
+      if (sunIcon && moonIcon) {
+        sunIcon.classList.toggle('hidden', !isLight);
+        moonIcon.classList.toggle('hidden', isLight);
+      }
+      if (sunIconMobile && moonIconMobile) {
+        sunIconMobile.classList.toggle('hidden', !isLight);
+        moonIconMobile.classList.toggle('hidden', isLight);
+      }
+    }
+
+    // Initial icon state
+    updateIcons();
+
+    // Desktop theme toggle
+    themeToggle?.addEventListener('click', () => {
+      if (typeof (window as any).toggleTheme === 'function') {
+        (window as any).toggleTheme();
+        updateIcons();
+      }
+    });
+
+    // Mobile theme toggle
+    themeToggleMobile?.addEventListener('click', () => {
+      if (typeof (window as any).toggleTheme === 'function') {
+        (window as any).toggleTheme();
+        updateIcons();
+      }
+    });
+
+    // Mobile menu functionality
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
+    const mobileNavLinks = document.querySelectorAll('.mobile-navbar-link');
+
+    let isMenuOpen = false;
+
+    function toggleMobileMenu() {
+      isMenuOpen = !isMenuOpen;
+
+      if (isMenuOpen) {
+        // Show menu
+        mobileMenu?.classList.remove(
+          '-translate-y-full',
+          'opacity-0',
+          'pointer-events-none'
+        );
+        mobileMenu?.classList.add(
+          'translate-y-0',
+          'opacity-100',
+          'pointer-events-auto'
+        );
+        hamburgerIcon?.classList.add('hidden');
+        closeIcon?.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevent background scroll
+      } else {
+        // Hide menu
+        mobileMenu?.classList.add(
+          '-translate-y-full',
+          'opacity-0',
+          'pointer-events-none'
+        );
+        mobileMenu?.classList.remove(
+          'translate-y-0',
+          'opacity-100',
+          'pointer-events-auto'
+        );
+        hamburgerIcon?.classList.remove('hidden');
+        closeIcon?.classList.add('hidden');
+        document.body.style.overflow = ''; // Restore scroll
+      }
+    }
+
+    // Toggle menu on button click
+    mobileMenuToggle?.addEventListener('click', toggleMobileMenu);
+
+    // Close menu when clicking on a link
+    mobileNavLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        if (isMenuOpen) {
+          toggleMobileMenu();
+        }
+      });
+    });
+
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isMenuOpen) {
+        toggleMobileMenu();
+      }
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (
+        isMenuOpen &&
+        !mobileMenu?.contains(target) &&
+        !mobileMenuToggle?.contains(target)
+      ) {
+        toggleMobileMenu();
+      }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768 && isMenuOpen) {
+        // Close mobile menu if screen becomes desktop size
+        toggleMobileMenu();
+      }
+    });
+  });
+</script>

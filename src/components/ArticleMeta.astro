@@ -1,0 +1,173 @@
+---
+export interface Props {
+  title: string;
+  readingTime?: number;
+  date?: Date;
+  tags?: string[];
+  url?: string;
+}
+
+const {
+  title,
+  readingTime,
+  date,
+  tags = [],
+  url = Astro.url.toString(),
+} = Astro.props;
+
+const shareLinks = [
+  {
+    name: 'Twitter',
+    url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}&via=piyushmehtas`,
+    icon: '𝕏',
+    color: 'hover:text-blue-400',
+  },
+  {
+    name: 'LinkedIn',
+    url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    icon: '💼',
+    color: 'hover:text-blue-600',
+  },
+  {
+    name: 'Facebook',
+    url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    icon: '📘',
+    color: 'hover:text-blue-500',
+  },
+  {
+    name: 'Copy Link',
+    url: '#',
+    icon: '🔗',
+    color: 'hover:text-green-500',
+    action: 'copy',
+  },
+];
+---
+
+<div class="py-6 my-8 border-t border-b border-card-border">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <!-- Article Meta -->
+    <div class="flex flex-wrap items-center gap-4 text-sm text-text-secondary">
+      {
+        date && (
+          <div class="flex items-center gap-1">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            <time datetime={date.toISOString()}>
+              {date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'America/Toronto',
+              })}
+            </time>
+          </div>
+        )
+      }
+
+      {
+        readingTime && (
+          <div class="flex items-center gap-1">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{readingTime} min read</span>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Share Buttons -->
+    <div class="flex items-center gap-2">
+      <span class="mr-2 text-sm text-text-secondary">Share:</span>
+      {
+        shareLinks.map((link) => (
+          <a
+            href={link.url}
+            class={`p-2 rounded-lg bg-card hover:bg-card-hover transition-all duration-200 ${link.color}`}
+            title={`Share on ${link.name}`}
+            target={link.name !== 'Copy Link' ? '_blank' : undefined}
+            rel={link.name !== 'Copy Link' ? 'noopener noreferrer' : undefined}
+            data-action={link.action}
+          >
+            <span class="text-lg">{link.icon}</span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Tags -->
+  {
+    tags.length > 0 && (
+      <div class="pt-4 mt-4 border-t border-card-border">
+        <div class="flex flex-wrap gap-2">
+          <span class="text-sm text-text-secondary">Tags:</span>
+          {tags.map((tag) => (
+            <a
+              href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+              class="px-3 py-1 text-sm transition-colors duration-200 rounded-full bg-accent/10 text-accent hover:bg-accent/20"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      </div>
+    )
+  }
+</div>
+
+<script>
+  // Copy to clipboard functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const copyButton = document.querySelector('[data-action="copy"]');
+
+    if (copyButton) {
+      copyButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+
+          // Visual feedback
+          const originalIcon = copyButton.innerHTML;
+          copyButton.innerHTML = '<span class="text-lg">✅</span>';
+
+          setTimeout(() => {
+            copyButton.innerHTML = originalIcon;
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = window.location.href;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+        }
+      });
+    }
+  });
+</script>

@@ -1,0 +1,475 @@
+---
+// Interactive search component for blog posts and content
+---
+
+<div class="search-container relative">
+  <div class="search-input-wrapper relative">
+    <input
+      type="text"
+      placeholder="Search blog posts, projects..."
+      class="search-input w-full px-4 py-3 pl-12 pr-4 bg-surface-secondary border border-card-border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200"
+      id="search-input"
+      autocomplete="off"
+    />
+    <svg
+      class="search-icon absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-secondary"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+    </svg>
+    <button
+      class="clear-button absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-text-secondary hover:text-text-primary transition-colors duration-200 hidden"
+      aria-label="Clear search"
+    >
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Search Results Dropdown -->
+  <div
+    class="search-results absolute top-full left-0 right-0 mt-2 bg-surface-primary border border-card-border rounded-lg shadow-lg hidden z-50 max-h-96 overflow-y-auto"
+  >
+    <div class="search-results-header px-4 py-3 border-b border-card-border">
+      <div class="flex items-center justify-between">
+        <span class="results-count text-sm text-text-secondary"
+          >Searching...</span
+        >
+        <button
+          class="close-results text-text-secondary hover:text-text-primary"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="search-results-content">
+      <!-- Results will be populated here -->
+    </div>
+
+    <div
+      class="search-no-results hidden px-4 py-8 text-center text-text-secondary"
+    >
+      <svg
+        class="w-12 h-12 mx-auto mb-4 opacity-50"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+      <p class="mb-2">No results found</p>
+      <p class="text-sm">Try different keywords or check spelling</p>
+    </div>
+  </div>
+
+  <!-- Search Suggestions -->
+  <div class="search-suggestions mt-4 hidden">
+    <h3 class="text-sm font-semibold text-text-secondary mb-2">
+      Popular Searches
+    </h3>
+    <div class="flex flex-wrap gap-2">
+      <button
+        class="suggestion-tag px-3 py-1 bg-surface-secondary hover:bg-accent/20 text-text-secondary hover:text-accent rounded-full text-sm transition-colors duration-200"
+        >React</button
+      >
+      <button
+        class="suggestion-tag px-3 py-1 bg-surface-secondary hover:bg-accent/20 text-text-secondary hover:text-accent rounded-full text-sm transition-colors duration-200"
+        >TypeScript</button
+      >
+      <button
+        class="suggestion-tag px-3 py-1 bg-surface-secondary hover:bg-accent/20 text-text-secondary hover:text-accent rounded-full text-sm transition-colors duration-200"
+        >Astro</button
+      >
+      <button
+        class="suggestion-tag px-3 py-1 bg-surface-secondary hover:bg-accent/20 text-text-secondary hover:text-accent rounded-full text-sm transition-colors duration-200"
+        >Web Development</button
+      >
+      <button
+        class="suggestion-tag px-3 py-1 bg-surface-secondary hover:bg-accent/20 text-text-secondary hover:text-accent rounded-full text-sm transition-colors duration-200"
+        >JavaScript</button
+      >
+    </div>
+  </div>
+</div>
+
+<style>
+  .search-container {
+    max-width: 600px;
+  }
+
+  .search-input:focus {
+    box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.1);
+  }
+
+  .search-results {
+    backdrop-filter: blur(12px);
+    max-height: 400px;
+  }
+
+  .search-result-item {
+    @apply px-4 py-3 hover:bg-surface-secondary cursor-pointer border-b border-card-border last:border-b-0 transition-colors duration-200;
+  }
+
+  .search-result-item.highlighted {
+    @apply bg-accent/10;
+  }
+
+  .search-result-title {
+    @apply font-semibold text-text-primary mb-1;
+  }
+
+  .search-result-excerpt {
+    @apply text-sm text-text-secondary line-clamp-2;
+  }
+
+  .search-result-meta {
+    @apply flex items-center gap-2 mt-2 text-xs text-text-secondary;
+  }
+
+  .search-result-type {
+    @apply px-2 py-1 bg-accent/20 text-accent rounded text-xs;
+  }
+
+  /* Loading animation */
+  .search-loading {
+    @apply animate-pulse;
+  }
+
+  /* Highlight matched text */
+  .search-highlight {
+    @apply bg-accent/30 text-accent;
+  }
+</style>
+
+<script>
+  interface SearchResult {
+    id: string;
+    title: string;
+    excerpt: string;
+    url: string;
+    type: 'blog' | 'project';
+    date?: string;
+    tags?: string[];
+  }
+
+  class SearchComponent extends HTMLElement {
+    private searchInput: HTMLInputElement | null;
+    private clearButton: HTMLButtonElement | null;
+    private searchResults: HTMLElement | null;
+    private searchResultsContent: HTMLElement | null;
+    private noResults: HTMLElement | null;
+    private resultsCount: HTMLElement | null;
+    private closeResults: HTMLElement | null;
+    private suggestions: HTMLElement | null;
+    private suggestionTags: NodeListOf<HTMLButtonElement>;
+
+    private debounceTimer: number | null = null;
+    private currentQuery: string = '';
+    private highlightedIndex: number = -1;
+    private searchData: SearchResult[] = [];
+
+    constructor() {
+      super();
+      this.searchInput = this.querySelector(
+        '#search-input'
+      ) as HTMLInputElement;
+      this.clearButton = this.querySelector(
+        '.clear-button'
+      ) as HTMLButtonElement;
+      this.searchResults = this.querySelector('.search-results') as HTMLElement;
+      this.searchResultsContent = this.querySelector(
+        '.search-results-content'
+      ) as HTMLElement;
+      this.noResults = this.querySelector('.search-no-results') as HTMLElement;
+      this.resultsCount = this.querySelector('.results-count') as HTMLElement;
+      this.closeResults = this.querySelector('.close-results') as HTMLElement;
+      this.suggestions = this.querySelector(
+        '.search-suggestions'
+      ) as HTMLElement;
+      this.suggestionTags = this.querySelectorAll('.suggestion-tag');
+      this.init();
+    }
+
+    async init() {
+      // Load search data
+      await this.loadSearchData();
+
+      // Event listeners
+      this.searchInput?.addEventListener('input', (e) => {
+        this.handleInput((e.target as HTMLInputElement).value);
+      });
+
+      this.searchInput?.addEventListener('keydown', (e) => {
+        this.handleKeyDown(e);
+      });
+
+      this.searchInput?.addEventListener('focus', () => {
+        this.showSuggestions();
+      });
+
+      this.clearButton?.addEventListener('click', () => {
+        this.clearSearch();
+      });
+
+      this.closeResults?.addEventListener('click', () => {
+        this.hideResults();
+      });
+
+      // Suggestion tags
+      this.suggestionTags.forEach((tag) => {
+        tag.addEventListener('click', () => {
+          const query = tag.textContent || '';
+          this.searchInput!.value = query;
+          this.handleInput(query);
+        });
+      });
+
+      // Click outside to close
+      document.addEventListener('click', (e) => {
+        if (!this.contains(e.target as Node)) {
+          this.hideResults();
+          this.hideSuggestions();
+        }
+      });
+    }
+
+    async loadSearchData() {
+      try {
+        // In a real implementation, this would fetch from an API or static JSON
+        // For now, we'll simulate with local data
+        this.searchData = [
+          {
+            id: '1',
+            title: 'Getting Started with React Hooks',
+            excerpt:
+              'Learn about React Hooks and how they can simplify your React components...',
+            url: '/blog/react-hooks/',
+            type: 'blog',
+            date: '2024-01-15',
+            tags: ['React', 'JavaScript', 'Hooks'],
+          },
+          {
+            id: '2',
+            title: 'Building Modern Web Apps with Astro',
+            excerpt:
+              'Explore Astro framework and its island architecture for better performance...',
+            url: '/blog/astro-guide/',
+            type: 'blog',
+            date: '2024-02-01',
+            tags: ['Astro', 'Web Development', 'Performance'],
+          },
+          {
+            id: '3',
+            title: 'Netflix TypeScript Clone',
+            excerpt:
+              'A complete Netflix clone built with TypeScript and modern web technologies...',
+            url: '/projects/netflix-clone/',
+            type: 'project',
+            tags: ['TypeScript', 'React', 'Clone'],
+          },
+          // Add more mock data as needed
+        ];
+      } catch (error) {
+        console.error('Failed to load search data:', error);
+      }
+    }
+
+    handleInput(query: string) {
+      this.currentQuery = query.trim();
+
+      // Show/hide clear button
+      if (this.currentQuery) {
+        this.clearButton?.classList.remove('hidden');
+        this.hideSuggestions();
+      } else {
+        this.clearButton?.classList.add('hidden');
+        this.hideResults();
+        return;
+      }
+
+      // Debounce search
+      if (this.debounceTimer) {
+        clearTimeout(this.debounceTimer);
+      }
+
+      this.debounceTimer = window.setTimeout(() => {
+        this.performSearch();
+      }, 300);
+    }
+
+    handleKeyDown(e: KeyboardEvent) {
+      if (!this.searchResults?.classList.contains('hidden')) {
+        const items = this.searchResultsContent?.querySelectorAll(
+          '.search-result-item'
+        );
+
+        switch (e.key) {
+          case 'ArrowDown':
+            e.preventDefault();
+            this.highlightedIndex = Math.min(
+              this.highlightedIndex + 1,
+              (items?.length || 1) - 1
+            );
+            this.updateHighlight();
+            break;
+          case 'ArrowUp':
+            e.preventDefault();
+            this.highlightedIndex = Math.max(this.highlightedIndex - 1, -1);
+            this.updateHighlight();
+            break;
+          case 'Enter':
+            e.preventDefault();
+            if (this.highlightedIndex >= 0 && items) {
+              const selectedItem = items[this.highlightedIndex] as HTMLElement;
+              selectedItem.click();
+            }
+            break;
+          case 'Escape':
+            this.hideResults();
+            this.searchInput?.blur();
+            break;
+        }
+      }
+    }
+
+    performSearch() {
+      if (!this.currentQuery) return;
+
+      this.showResults();
+      this.highlightedIndex = -1;
+
+      // Filter results
+      const filteredResults = this.searchData.filter((item) => {
+        const searchText =
+          `${item.title} ${item.excerpt} ${item.tags?.join(' ') || ''}`.toLowerCase();
+        return searchText.includes(this.currentQuery.toLowerCase());
+      });
+
+      this.displayResults(filteredResults);
+    }
+
+    displayResults(results: SearchResult[]) {
+      if (!this.searchResultsContent || !this.resultsCount) return;
+
+      if (results.length === 0) {
+        this.showNoResults();
+        return;
+      }
+
+      this.hideNoResults();
+      this.resultsCount.textContent = `${results.length} result${results.length === 1 ? '' : 's'} found`;
+
+      this.searchResultsContent.innerHTML = results
+        .map(
+          (result, index) => `
+        <div class="search-result-item" data-url="${result.url}" data-index="${index}">
+          <div class="search-result-title">${this.highlightMatch(result.title)}</div>
+          <div class="search-result-excerpt">${this.highlightMatch(result.excerpt)}</div>
+          <div class="search-result-meta">
+            <span class="search-result-type">${result.type}</span>
+            ${result.date ? `<span>${new Date(result.date).toLocaleDateString()}</span>` : ''}
+            ${result.tags ? result.tags.map((tag) => `<span class="tag">#${tag}</span>`).join('') : ''}
+          </div>
+        </div>
+      `
+        )
+        .join('');
+
+      // Add click listeners to results
+      const resultItems = this.searchResultsContent.querySelectorAll(
+        '.search-result-item'
+      );
+      resultItems.forEach((item) => {
+        item.addEventListener('click', () => {
+          const url = (item as HTMLElement).dataset.url;
+          if (url) {
+            window.location.href = url;
+          }
+        });
+      });
+    }
+
+    highlightMatch(text: string): string {
+      if (!this.currentQuery) return text;
+
+      const regex = new RegExp(`(${this.currentQuery})`, 'gi');
+      return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+
+    updateHighlight() {
+      const items = this.searchResultsContent?.querySelectorAll(
+        '.search-result-item'
+      );
+      items?.forEach((item, index) => {
+        item.classList.toggle('highlighted', index === this.highlightedIndex);
+      });
+    }
+
+    showResults() {
+      this.searchResults?.classList.remove('hidden');
+    }
+
+    hideResults() {
+      this.searchResults?.classList.add('hidden');
+      this.highlightedIndex = -1;
+    }
+
+    showNoResults() {
+      this.noResults?.classList.remove('hidden');
+      this.searchResultsContent!.innerHTML = '';
+      this.resultsCount!.textContent = 'No results found';
+    }
+
+    hideNoResults() {
+      this.noResults?.classList.add('hidden');
+    }
+
+    showSuggestions() {
+      if (!this.currentQuery) {
+        this.suggestions?.classList.remove('hidden');
+      }
+    }
+
+    hideSuggestions() {
+      this.suggestions?.classList.add('hidden');
+    }
+
+    clearSearch() {
+      this.searchInput!.value = '';
+      this.currentQuery = '';
+      this.clearButton?.classList.add('hidden');
+      this.hideResults();
+      this.searchInput?.focus();
+    }
+  }
+
+  // Register the custom element
+  customElements.define('search-component', SearchComponent);
+</script>

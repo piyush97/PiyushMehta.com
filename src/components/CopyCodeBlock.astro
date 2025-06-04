@@ -1,0 +1,254 @@
+---
+interface Props {
+  code: string;
+  language?: string;
+}
+
+const { code, language = 'text' } = Astro.props;
+---
+
+<div class="code-block-wrapper relative">
+  <div
+    class="code-header flex items-center justify-between px-4 py-2 bg-gray-800 text-gray-300 text-sm"
+  >
+    <span class="language-label font-mono">{language}</span>
+    <button
+      class="copy-button flex items-center gap-2 px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs transition-colors duration-200"
+      data-code={code}
+      aria-label="Copy code to clipboard"
+    >
+      <svg
+        class="copy-icon w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+        ></path>
+      </svg>
+      <svg
+        class="check-icon w-4 h-4 hidden"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 13l4 4L19 7"></path>
+      </svg>
+      <span class="copy-text">Copy</span>
+    </button>
+  </div>
+  <pre class="code-content"><code>{code}</code></pre>
+
+  <!-- Confetti animation container -->
+  <div class="confetti-container absolute top-0 right-0 pointer-events-none">
+  </div>
+</div>
+
+<style>
+  .code-block-wrapper {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--color-card-border);
+    background: var(--color-light-900);
+  }
+
+  .code-content {
+    padding: 1rem;
+    margin: 0;
+    background: var(--color-light-800);
+    color: var(--color-text-primary);
+    font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+
+  .copy-button:focus {
+    outline: none;
+    ring: 2px solid var(--color-accent);
+  }
+
+  .copy-button.copied {
+    background: #10b981;
+    color: white;
+  }
+
+  .confetti-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--color-accent);
+    pointer-events: none;
+    animation: confetti-fall 3s ease-out forwards;
+  }
+
+  @keyframes confetti-fall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(200px) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  .confetti-particle:nth-child(2n) {
+    background: #ff6b6b;
+    animation-delay: 0.1s;
+  }
+
+  .confetti-particle:nth-child(3n) {
+    background: #4ecdc4;
+    animation-delay: 0.2s;
+  }
+
+  .confetti-particle:nth-child(4n) {
+    background: #45b7d1;
+    animation-delay: 0.3s;
+  }
+
+  .confetti-particle:nth-child(5n) {
+    background: #96ceb4;
+    animation-delay: 0.4s;
+  }
+</style>
+
+<script>
+  class CopyCodeBlock extends HTMLElement {
+    private copyButton: HTMLButtonElement | null;
+    private copyIcon: SVGElement | null;
+    private checkIcon: SVGElement | null;
+    private copyText: HTMLElement | null;
+    private confettiContainer: HTMLElement | null;
+
+    constructor() {
+      super();
+      this.copyButton = this.querySelector('.copy-button') as HTMLButtonElement;
+      this.copyIcon = this.querySelector('.copy-icon') as SVGElement;
+      this.checkIcon = this.querySelector('.check-icon') as SVGElement;
+      this.copyText = this.querySelector('.copy-text') as HTMLElement;
+      this.confettiContainer = this.querySelector(
+        '.confetti-container'
+      ) as HTMLElement;
+      this.init();
+    }
+
+    init() {
+      this.copyButton?.addEventListener('click', () => {
+        this.handleCopy();
+      });
+    }
+
+    async handleCopy() {
+      const code = this.copyButton?.dataset.code;
+      if (!code) return;
+
+      try {
+        await navigator.clipboard.writeText(code);
+        this.showCopySuccess();
+        this.createConfetti();
+      } catch (error) {
+        // Fallback for older browsers
+        this.fallbackCopy(code);
+      }
+    }
+
+    fallbackCopy(text: string) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        document.execCommand('copy');
+        this.showCopySuccess();
+        this.createConfetti();
+      } catch (error) {
+        console.error('Failed to copy code:', error);
+        this.showCopyError();
+      } finally {
+        document.body.removeChild(textArea);
+      }
+    }
+
+    showCopySuccess() {
+      // Update button appearance
+      this.copyButton?.classList.add('copied');
+      this.copyIcon?.classList.add('hidden');
+      this.checkIcon?.classList.remove('hidden');
+
+      if (this.copyText) {
+        this.copyText.textContent = 'Copied!';
+      }
+
+      // Reset after 2 seconds
+      setTimeout(() => {
+        this.resetCopyButton();
+      }, 2000);
+    }
+
+    showCopyError() {
+      if (this.copyText) {
+        this.copyText.textContent = 'Failed!';
+      }
+
+      setTimeout(() => {
+        this.resetCopyButton();
+      }, 2000);
+    }
+
+    resetCopyButton() {
+      this.copyButton?.classList.remove('copied');
+      this.copyIcon?.classList.remove('hidden');
+      this.checkIcon?.classList.add('hidden');
+
+      if (this.copyText) {
+        this.copyText.textContent = 'Copy';
+      }
+    }
+
+    createConfetti() {
+      if (!this.confettiContainer) return;
+
+      // Create multiple confetti particles
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'confetti-particle';
+
+        // Random positioning
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 0.5 + 's';
+        particle.style.animationDuration = Math.random() * 2 + 2 + 's';
+
+        // Random rotation
+        const rotation = Math.random() * 360;
+        particle.style.transform = `rotate(${rotation}deg)`;
+
+        this.confettiContainer.appendChild(particle);
+
+        // Remove particle after animation
+        setTimeout(() => {
+          if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+          }
+        }, 3000);
+      }
+    }
+  }
+
+  // Register the custom element
+  customElements.define('copy-code-block', CopyCodeBlock);
+</script>
