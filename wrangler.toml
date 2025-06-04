@@ -18,11 +18,6 @@ custom_domain = true
 [vars]
 ENVIRONMENT = "production"
 
-# Cache rules for static assets
-[[rules]]
-action = "rewrite"
-targets = ["*.js", "*.css", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.ico", "*.svg", "*.webp", "*.avif"]
-
 # Security headers
 [env.production]
 vars = { ENVIRONMENT = "production" }
