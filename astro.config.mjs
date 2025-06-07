@@ -45,6 +45,7 @@ export default defineConfig({
       '**/*.webp',
     ],
   },
+
   adapter: vercel({
     webAnalytics: {
       enabled: true,
