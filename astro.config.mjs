@@ -36,8 +36,16 @@ export default defineConfig({
     },
   },
   vite: {
-    assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp'],
+    assetsInclude: [
+      '**/*.png',
+      '**/*.jpg',
+      '**/*.jpeg',
+      '**/*.gif',
+      '**/*.svg',
+      '**/*.webp',
+    ],
   },
+
   adapter: vercel({
     webAnalytics: {
       enabled: true,
