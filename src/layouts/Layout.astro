@@ -4,6 +4,8 @@ import Footer from '../components/Footer.astro';
 import SEO from '../components/SEO.astro';
 import OpenGraph from '../components/OpenGraph.astro';
 import '../styles/global.css';
+import favicon from "../assets/favicon.svg";
+import SpeedInsights from "@vercel/speed-insights/astro"
 
 export interface Props {
   title: string;
@@ -39,7 +41,7 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={favicon.src} />
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -47,7 +49,7 @@ const {
       href="/rss.xml"
     />
     <meta name="generator" content={Astro.generator} />
-
+    <SpeedInsights/>
     <!-- SEO Component -->
     <SEO
       title={title}
@@ -102,6 +104,7 @@ const {
     </script>
   </head>
   <body class="min-h-screen flex flex-col">
+    
     <Navbar />
     <main class="flex-1 pt-16">
       <slot />

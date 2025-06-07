@@ -1,0 +1,53 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Modern gradient background -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#667eea"/>
+      <stop offset="50%" stop-color="#764ba2"/>
+      <stop offset="100%" stop-color="#f093fb"/>
+    </linearGradient>
+    
+    <!-- Glossy overlay -->
+    <linearGradient id="glossy" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.1"/>
+    </linearGradient>
+    
+    <!-- Text gradient -->
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+    
+    <!-- Code bracket accent -->
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Main background with rounded corners -->
+  <rect width="32" height="32" rx="8" fill="url(#bgGradient)" />
+  <rect width="32" height="32" rx="8" fill="url(#glossy)" />
+  
+  <!-- Code bracket accent (left) -->
+  <path d="M6 10L4 12L4 20L6 22" stroke="url(#accentGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Letter P with better typography -->
+  <g transform="translate(16, 16)">
+    <!-- P letterform as paths for better control -->
+    <path d="M-4 -8L-4 8M-4 -8L2 -8Q6 -8 6 -4Q6 0 2 0L-4 0" 
+          stroke="url(#textGrad)" 
+          stroke-width="2.5" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          fill="none"/>
+  </g>
+  
+  <!-- Code bracket accent (right) -->
+  <path d="M26 10L28 12L28 20L26 22" stroke="url(#accentGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Subtle inner glow -->
+  <rect x="1" y="1" width="30" height="30" rx="7" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+</svg>

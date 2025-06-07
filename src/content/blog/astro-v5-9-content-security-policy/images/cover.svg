@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D1B2A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1B263B;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="astro" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF5D01;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C42;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="shield" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00D9FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#007ACC;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Grid pattern -->
+  <defs>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.3"/>
+  
+  <!-- Astro Logo (simplified) -->
+  <g transform="translate(150, 150)">
+    <path d="M60 0L90 60L30 60Z" fill="url(#astro)"/>
+    <circle cx="60" cy="80" r="15" fill="url(#astro)"/>
+    <path d="M45 95Q60 110 75 95" stroke="url(#astro)" stroke-width="3" fill="none"/>
+  </g>
+  
+  <!-- Security Shield -->
+  <g transform="translate(950, 100)">
+    <path d="M50 20L20 35L20 65Q20 85 50 95Q80 85 80 65L80 35Z" fill="url(#shield)" opacity="0.9"/>
+    <path d="M40 50L47 57L65 40" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Main Title -->
+  <text x="600" y="250" font-family="Inter, -apple-system, sans-serif" font-size="64" font-weight="800" text-anchor="middle" fill="white">
+    Astro 5.9
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="320" font-family="Inter, -apple-system, sans-serif" font-size="36" font-weight="600" text-anchor="middle" fill="#FF8C42">
+    Content Security Policy
+  </text>
+  
+  <!-- Features -->
+  <g transform="translate(300, 380)">
+    <text x="0" y="0" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="500" fill="#00D9FF">
+      🔒 Built-in CSP Support
+    </text>
+    <text x="0" y="40" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="500" fill="#00D9FF">
+      🚀 Universal Compatibility
+    </text>
+    <text x="0" y="80" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="500" fill="#00D9FF">
+      ⚡ Zero Configuration
+    </text>
+  </g>
+  
+  <!-- Version badge -->
+  <g transform="translate(50, 550)">
+    <rect x="0" y="0" width="120" height="40" rx="20" fill="rgba(255,140,66,0.2)" stroke="#FF8C42" stroke-width="2"/>
+    <text x="60" y="26" font-family="Inter, -apple-system, sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="#FF8C42">
+      v5.9.0
+    </text>
+  </g>
+  
+  <!-- Security badge -->
+  <g transform="translate(1030, 550)">
+    <rect x="0" y="0" width="120" height="40" rx="20" fill="rgba(0,217,255,0.2)" stroke="#00D9FF" stroke-width="2"/>
+    <text x="60" y="26" font-family="Inter, -apple-system, sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="#00D9FF">
+      SECURE
+    </text>
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="100" cy="400" r="3" fill="#FF8C42" opacity="0.6"/>
+  <circle cx="1100" cy="300" r="3" fill="#00D9FF" opacity="0.6"/>
+  <circle cx="200" cy="500" r="2" fill="white" opacity="0.4"/>
+  <circle cx="1000" cy="450" r="2" fill="white" opacity="0.4"/>
+</svg>
