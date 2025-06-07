@@ -25,7 +25,6 @@ export default function BlogFilter({
     'date'
   );
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [isLoading, setIsLoading] = useState(false);
 
   // Get all unique categories
   const categories = useMemo(() => {
@@ -35,8 +34,6 @@ export default function BlogFilter({
 
   // Filtered and sorted posts
   const filteredPosts = useMemo(() => {
-    setIsLoading(true);
-
     let filtered = posts.filter((post) => {
       const matchesSearch =
         post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -76,9 +73,6 @@ export default function BlogFilter({
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       }
     });
-
-    // Simulate loading delay for smooth UX
-    setTimeout(() => setIsLoading(false), 150);
 
     return filtered;
   }, [posts, searchTerm, selectedCategory, sortBy, sortOrder]);
@@ -299,13 +293,9 @@ export default function BlogFilter({
       {/* Results Summary */}
       <div className="flex items-center justify-between mb-6">
         <div className="text-text-secondary">
-          {isLoading ? (
-            <span>Filtering posts...</span>
-          ) : (
-            <span>
-              Showing {filteredPosts.length} of {posts.length} posts
-            </span>
-          )}
+          <span>
+            Showing {filteredPosts.length} of {posts.length} posts
+          </span>
         </div>
 
         {(searchTerm || selectedCategory !== 'all') && (
@@ -325,9 +315,7 @@ export default function BlogFilter({
       </div>
 
       {/* Blog Posts Grid */}
-      <div
-        className={`transition-opacity duration-200 ${isLoading ? 'opacity-50' : 'opacity-100'}`}
-      >
+      <div className="transition-opacity duration-200 opacity-100">
         {filteredPosts.length === 0 ? (
           <div className="py-12 text-center">
             <svg
