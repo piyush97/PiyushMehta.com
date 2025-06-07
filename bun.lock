@@ -12,20 +12,21 @@
         "@astrojs/vercel": "^8.1.5",
         "@resvg/resvg-js": "^2.6.2",
         "@types/pg": "^8.15.4",
-        "@types/react": "^18.3.12",
-        "@types/react-dom": "^18.3.1",
+        "@types/react": "^18.3.23",
+        "@types/react-dom": "^18.3.7",
         "@vercel/og": "^0.6.8",
+        "@vercel/speed-insights": "^1.2.0",
         "astro": "^5.9.0",
         "pg": "^8.16.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "satori": "^0.13.2",
         "sharp": "^0.34.2",
-        "tailwindcss": "^3.4.14",
+        "tailwindcss": "^3.4.17",
       },
       "devDependencies": {
         "@astrojs/check": "^0.9.4",
-        "typescript": "^5.7.2",
+        "typescript": "^5.8.3",
       },
     },
   },
@@ -377,6 +378,8 @@
     "@vercel/og": ["@vercel/og@0.6.8", "", { "dependencies": { "@resvg/resvg-wasm": "2.4.0", "satori": "0.12.2", "yoga-wasm-web": "0.3.3" } }, "sha512-e4kQK9mP8ntpo3dACWirGod/hHv4qO5JMj9a/0a2AZto7b4persj5YP7t1Er372gTtYFTYxNhMx34jRvHooglw=="],
 
     "@vercel/routing-utils": ["@vercel/routing-utils@5.0.5", "", { "dependencies": { "path-to-regexp": "6.1.0", "path-to-regexp-updated": "npm:path-to-regexp@6.3.0" }, "optionalDependencies": { "ajv": "^6.12.3" } }, "sha512-TV9bAKHt9qJA/MqnLI10/nHj/EPGbI6CRh8HzKxA9xb1abt2lqvoH7Zi8O7p+VPwk5OD8Ka2j+nB3/5YkZeS/g=="],
+
+    "@vercel/speed-insights": ["@vercel/speed-insights@1.2.0", "", { "peerDependencies": { "@sveltejs/kit": "^1 || ^2", "next": ">= 13", "react": "^18 || ^19 || ^19.0.0-rc", "svelte": ">= 4", "vue": "^3", "vue-router": "^4" }, "optionalPeers": ["@sveltejs/kit", "next", "react", "svelte", "vue", "vue-router"] }, "sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw=="],
 
     "@vitejs/plugin-react": ["@vitejs/plugin-react@4.5.0", "", { "dependencies": { "@babel/core": "^7.26.10", "@babel/plugin-transform-react-jsx-self": "^7.25.9", "@babel/plugin-transform-react-jsx-source": "^7.25.9", "@rolldown/pluginutils": "1.0.0-beta.9", "@types/babel__core": "^7.20.5", "react-refresh": "^0.17.0" }, "peerDependencies": { "vite": "^4.2.0 || ^5.0.0 || ^6.0.0" } }, "sha512-JuLWaEqypaJmOJPLWwO335Ig6jSgC1FTONCWAxnqcQthLTK/Yc9aH6hr9z/87xciejbQcnP3GnA1FWUSWeXaeg=="],
 
