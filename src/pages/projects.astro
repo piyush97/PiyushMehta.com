@@ -262,7 +262,7 @@ const projectsForShowcase = combinedProjects.map((project, index) => {
       featured: project.featured,
       year: project.year,
     };
-  } else {
+  }
     // It's a fallback project - create an ID from the title or index
     uniqueId = project.title
       ? project.title.toLowerCase().replace(/\s+/g, '-')
@@ -280,7 +280,6 @@ const projectsForShowcase = combinedProjects.map((project, index) => {
       featured: index < 3, // First 3 fallback projects are featured
       year: 2024 - index, // Mock years for fallback projects
     };
-  }
 });
 ---
 

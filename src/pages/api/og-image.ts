@@ -110,7 +110,7 @@ export const GET: APIRoute = async ({ url }) => {
                     maxWidth: '900px',
                   },
                 },
-                title.length > 60 ? title.substring(0, 60) + '...' : title
+                title.length > 60 ? `${title.substring(0, 60)}...` : title
               ),
 
               // Description
@@ -128,7 +128,7 @@ export const GET: APIRoute = async ({ url }) => {
                       },
                     },
                     description.length > 120
-                      ? description.substring(0, 120) + '...'
+                      ? `${description.substring(0, 120)}...`
                       : description
                   )
                 : null,
