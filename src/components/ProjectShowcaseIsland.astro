@@ -50,7 +50,7 @@ const getDefaultImageUrl = (project: Project) => {
     let color = '#';
     for (let i = 0; i < 3; i++) {
       const value = (hash >> (i * 8)) & 0xFF;
-      color += ('00' + value.toString(16)).slice(-2);
+      color += (`00${value.toString(16)}`).slice(-2);
     }
     return color;
   };
@@ -61,9 +61,9 @@ const getDefaultImageUrl = (project: Project) => {
     const hex = hexColor.replace('#', '');
     
     // Convert to RGB
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
+    const r = Number.parseInt(hex.substring(0, 2), 16);
+    const g = Number.parseInt(hex.substring(2, 4), 16);
+    const b = Number.parseInt(hex.substring(4, 6), 16);
     
     // Calculate luminance
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
