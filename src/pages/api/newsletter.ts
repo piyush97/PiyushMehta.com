@@ -29,10 +29,10 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Parse JSON
-    let data;
+    let data: { email: string; };
     try {
       data = JSON.parse(bodyText);
-    } catch (parseError) {
+    } catch (_parseError) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -185,7 +185,7 @@ async function storeInDatabase(email: string) {
 // Final fallback: log email for manual processing
 async function logEmailForManualProcessing(email: string) {
   const timestamp = new Date().toISOString();
-  const logEntry = `${timestamp} - MANUAL_PROCESSING_NEEDED: ${email}`;
+  const _logEntry = `${timestamp} - MANUAL_PROCESSING_NEEDED: ${email}`;
 
   // In production, you might want to:
   // 1. Send to a monitoring service like Sentry
@@ -223,7 +223,7 @@ async function subscribeToSubstack(email: string) {
     () => subscribeViaDirectForm(email, baseUrl),
   ];
 
-  let lastError;
+  let lastError: unknown;
 
   for (const method of methods) {
     try {
@@ -233,7 +233,6 @@ async function subscribeToSubstack(email: string) {
     } catch (error) {
       console.warn('Substack method failed:', method.name, error.message);
       lastError = error;
-      continue;
     }
   }
 

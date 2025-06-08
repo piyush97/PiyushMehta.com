@@ -1,7 +1,7 @@
-import { APIRoute } from 'astro';
+import type { APIRoute } from 'astro';
 import { generateOgImage } from '../../../utils/og-generator';
 
-export const get: APIRoute = async ({ params, request }) => {
+export const get: APIRoute = async ({ params }) => {
   const slug = params.slug || 'home';
 
   try {

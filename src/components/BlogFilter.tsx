@@ -34,7 +34,7 @@ export default function BlogFilter({
 
   // Filtered and sorted posts
   const filteredPosts = useMemo(() => {
-    let filtered = posts.filter((post) => {
+    const filtered = posts.filter((post) => {
       const matchesSearch =
         post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
@@ -60,7 +60,6 @@ export default function BlogFilter({
           aValue = a.readingTime;
           bValue = b.readingTime;
           break;
-        case 'date':
         default:
           aValue = new Date(a.date).getTime();
           bValue = new Date(b.date).getTime();
@@ -69,9 +68,8 @@ export default function BlogFilter({
 
       if (sortOrder === 'asc') {
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-      } else {
-        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       }
+      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
     });
 
     return filtered;
@@ -119,6 +117,7 @@ export default function BlogFilter({
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -281,6 +280,7 @@ export default function BlogFilter({
           {/* Clear Filters Button */}
           <div className="flex items-end">
             <button
+              type="button"
               onClick={handleClearFilters}
               className="px-4 py-2 transition-all duration-200 border rounded-lg text-text-secondary hover:text-text-primary border-card-border hover:bg-surface-primary"
             >

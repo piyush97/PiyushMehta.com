@@ -23,6 +23,7 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 - **UI Components**: [React](https://react.dev/) - For interactive components
 - **Content**: [MDX](https://mdxjs.com/) for enhanced blog posts and content
 - **Database**: [PostgreSQL](https://www.postgresql.org/) - For dynamic content and data
+- **Linting & Formatting**: [Biome](https://biomejs.dev/) - Fast formatter and linter for JavaScript, TypeScript, and more
 - **OG Images**: [@vercel/og](https://vercel.com/docs/functions/og-image-generation) - Dynamic Open Graph image generation
 - **Deployment**: [Vercel](https://vercel.com/) - Optimized for Astro with ISR support
 - **SEO**: Custom SEO components with structured data and sitemap generation
@@ -91,6 +92,15 @@ The site will be available at `http://localhost:4321`
 - `bun run build` / `npm run build` - Build for production
 - `bun run preview` / `npm run preview` - Preview production build locally
 - `bun run astro` / `npm run astro` - Run Astro CLI commands
+
+#### Code Quality Scripts
+
+- `bun run lint` - Lint source files with Biome
+- `bun run lint:fix` - Lint and auto-fix source files
+- `bun run format` - Format all files with Biome
+- `bun run check` - Run comprehensive check (lint + format)
+- `bun run check:write` - Check and auto-fix all issues
+- `bun run ci` - CI-friendly check (no auto-fix)
 
 ## 📁 Project Structure
 

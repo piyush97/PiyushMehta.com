@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -104,12 +104,12 @@ async function migrateImages() {
     }
   }
 
-  console.log(`🎉 Migration complete!`);
-  console.log(`📊 Stats:`);
+  console.log('🎉 Migration complete!');
+  console.log('📊 Stats:');
   console.log(`   - ${totalMoved} blog(s) with images processed`);
   console.log(`   - ${totalUpdated} MDX file(s) updated`);
   console.log(
-    `\n💡 Images are now served from the public directory and should load correctly!`
+    '\n💡 Images are now served from the public directory and should load correctly!'
   );
 }
 
