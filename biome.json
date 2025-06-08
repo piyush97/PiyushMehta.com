@@ -1,0 +1,195 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "ignore": [
+      "dist/**",
+      ".astro/**",
+      "node_modules/**",
+      "public/**",
+      "*.config.*",
+      "package-lock.json",
+      "bun.lock",
+      "playwright-report/**",
+      "test-results/**",
+      "test-build/**"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "useEditorconfig": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 100,
+    "attributePosition": "auto",
+    "bracketSpacing": true,
+    "include": [
+      "src/**/*.{js,jsx,ts,tsx,astro,json,jsonc}",
+      "*.{js,jsx,ts,tsx,mjs,cjs}",
+      "**/*.{js,jsx,ts,tsx,astro,json,jsonc}"
+    ],
+    "ignore": [
+      "**/.cache/**",
+      "**/node_modules/**",
+      "**/package.json",
+      "**/package-lock.json",
+      "**/public/**",
+      "**/dist/**",
+      "**/.astro/**"
+    ]
+  },
+  "organizeImports": {
+    "enabled": true,
+    "ignore": ["**/.cache/**", "**/node_modules/**", "**/public/**", "**/dist/**", "**/.astro/**"]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": false,
+      "a11y": {
+        "noBlankTarget": "error",
+        "useAltText": "error",
+        "useButtonType": "warn",
+        "useValidAnchor": "error",
+        "noSvgWithoutTitle": "off",
+        "useGenericFontNames": "off",
+        "useKeyWithClickEvents": "off"
+      },
+      "correctness": {
+        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "warn",
+        "useHookAtTopLevel": "error",
+        "noUnknownFunction": "off"
+      },
+      "style": {
+        "noNegationElse": "off",
+        "useConst": "error",
+        "useTemplate": "warn"
+      },
+      "suspicious": {
+        "noDebugger": "error",
+        "noConsoleLog": "off",
+        "noArrayIndexKey": "warn",
+        "noExplicitAny": "warn",
+        "noImplicitAnyLet": "warn"
+      },
+      "performance": {
+        "noDelete": "error"
+      }
+    },
+    "ignore": [
+      "**/.cache/**",
+      "**/node_modules/**",
+      "**/public/**",
+      "**/dist/**",
+      "**/.astro/**",
+      "**/*.config.*"
+    ]
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "es5",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSameLine": false,
+      "quoteStyle": "single",
+      "attributePosition": "auto",
+      "bracketSpacing": true
+    },
+    "globals": ["console", "process"]
+  },
+  "css": {
+    "linter": {
+      "enabled": true
+    },
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineWidth": 100
+    }
+  },
+  "json": {
+    "parser": {
+      "allowComments": true,
+      "allowTrailingCommas": true
+    },
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineWidth": 100
+    }
+  },
+  "overrides": [
+    {
+      "include": ["**/*.astro"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useConst": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["src/pages/**/*.astro", "src/layouts/**/*.astro"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/*.jsx", "**/*.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useButtonType": "error",
+            "useKeyWithClickEvents": "warn"
+          },
+          "correctness": {
+            "useExhaustiveDependencies": "error"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/*.config.*", "**/astro.config.*"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/*.css"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnknownFunction": "off"
+          },
+          "a11y": {
+            "useGenericFontNames": "off"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { Resvg } from '@resvg/resvg-js';
-import fs from 'fs/promises';
-import path from 'path';
 import satori from 'satori';
 import sharp from 'sharp';
 

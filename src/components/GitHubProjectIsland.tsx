@@ -51,14 +51,14 @@ export default function GitHubProjectIsland({
 
   // Filter and sort projects
   const filteredProjects = useMemo(() => {
-    let filtered = projects.filter((project) => {
+    const filtered = projects.filter((project) => {
       const matchesCategory =
         selectedCategory === 'all' ||
         (project.category &&
           project.category.toLowerCase() === selectedCategory.toLowerCase());
       const matchesTech =
         selectedTech === 'all' ||
-        (project.technologies && project.technologies.includes(selectedTech));
+        (project.technologies?.includes(selectedTech));
       const matchesFeatured = !showFeaturedOnly || project.featured;
 
       return matchesCategory && matchesTech && matchesFeatured;
@@ -68,9 +68,8 @@ export default function GitHubProjectIsland({
     filtered.sort((a, b) => {
       if (sortBy === 'title') {
         return a.title.localeCompare(b.title);
-      } else {
-        return b.year - a.year; // Most recent first
       }
+        return b.year - a.year; // Most recent first
     });
 
     return filtered;
@@ -99,7 +98,7 @@ export default function GitHubProjectIsland({
       let color = '#';
       for (let i = 0; i < 3; i++) {
         const value = (hash >> (i * 8)) & 0xff;
-        color += ('00' + value.toString(16)).slice(-2);
+        color += (`00${value.toString(16)}`).slice(-2);
       }
       return color;
     };
@@ -110,9 +109,9 @@ export default function GitHubProjectIsland({
       const hex = hexColor.replace('#', '');
 
       // Convert to RGB
-      const r = parseInt(hex.substring(0, 2), 16);
-      const g = parseInt(hex.substring(2, 4), 16);
-      const b = parseInt(hex.substring(4, 6), 16);
+      const r = Number.parseInt(hex.substring(0, 2), 16);
+      const g = Number.parseInt(hex.substring(2, 4), 16);
+      const b = Number.parseInt(hex.substring(4, 6), 16);
 
       // Calculate luminance
       const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
@@ -183,8 +182,7 @@ export default function GitHubProjectIsland({
 
         {/* Technologies */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {project.technologies &&
-            project.technologies.map((tech) => (
+          {project.technologies?.map((tech) => (
               <span
                 key={tech}
                 className="px-2 py-1 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent"
@@ -352,8 +350,7 @@ export default function GitHubProjectIsland({
         </div>
 
         <div className="flex flex-wrap gap-2 mt-2">
-          {project.technologies &&
-            project.technologies.map((tech) => (
+          {project.technologies?.map((tech) => (
               <span
                 key={tech}
                 className="px-2 py-0.5 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent"
@@ -385,6 +382,7 @@ export default function GitHubProjectIsland({
           </div>
 
           <button
+            type="button"
             onClick={handleClearFilters}
             className="px-6 py-2 font-medium transition-colors duration-200 border rounded-lg border-card-border text-text-secondary hover:text-text-primary"
           >
@@ -552,6 +550,7 @@ export default function GitHubProjectIsland({
               </span>
               <div className="flex overflow-hidden border rounded-lg border-card-border">
                 <button
+                  type="button"
                   onClick={() => setViewMode('grid')}
                   className={`px-3 py-1 border-r border-card-border ${
                     viewMode === 'grid' ? 'bg-surface-primary text-accent' : ''
@@ -567,6 +566,7 @@ export default function GitHubProjectIsland({
                   </svg>
                 </button>
                 <button
+                  type="button"
                   onClick={() => setViewMode('list')}
                   className={`px-3 py-1 ${
                     viewMode === 'list' ? 'bg-surface-primary text-accent' : ''
@@ -600,9 +600,9 @@ export default function GitHubProjectIsland({
         }
       >
         {filteredProjects.length === 0 ? (
-          <div className="col-span-full text-center py-10">
+          <div className="py-10 text-center col-span-full">
             <svg
-              className="mx-auto h-12 w-12 text-text-secondary"
+              className="w-12 h-12 mx-auto text-text-secondary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 const CONTENT_DIR = path.join(__dirname, 'src', 'content', 'blog');
 
 // Function to fix double images paths in frontmatter
-function fixDoubleImagesPaths(filePath, blogSlug) {
+function fixDoubleImagesPaths(filePath, _blogSlug) {
   const content = fs.readFileSync(filePath, 'utf8');
 
   // Fix frontmatter paths with double "images"
@@ -49,7 +49,7 @@ async function fixImagePaths() {
     }
   }
 
-  console.log(`🎉 Fix complete!`);
+  console.log('🎉 Fix complete!');
   console.log(`📊 Fixed ${totalFixed} file(s) with double images paths`);
 }
 
