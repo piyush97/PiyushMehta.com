@@ -41,6 +41,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@biomejs/biome": "1.9.4",
+    "lefthook": "^1.11.13",
     "typescript": "^5.8.3"
   }
 }
