@@ -1,11 +1,12 @@
 ---
 // Interactive theme toggle component that works on the client
+// Now updated to work with the multi-theme system
 ---
 
 <button
   id="theme-toggle"
   class="p-2 transition-colors rounded-lg dark-mode-toggle hover:bg-surface-100/20 duration-base"
-  aria-label="Toggle dark mode"
+  aria-label="Toggle between light and dark mode"
 >
   <svg
     id="sun-icon"
@@ -46,19 +47,17 @@
     }
 
     init() {
-      // Get initial theme
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)'
-      ).matches;
-      const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-
-      this.setTheme(initialTheme);
+      // Get initial theme and set the appropriate icons
       this.updateIcons();
 
-      // Add click listener
+      // Add click listener to toggle between light and dark
       this.button?.addEventListener('click', () => {
-        this.toggleTheme();
+        this.toggleLightDark();
+      });
+
+      // Listen for theme changes from other components
+      document.addEventListener('themechange', () => {
+        this.updateIcons();
       });
 
       // Listen for system theme changes
@@ -66,41 +65,67 @@
         .matchMedia('(prefers-color-scheme: dark)')
         .addEventListener('change', (e) => {
           if (!localStorage.getItem('theme')) {
-            this.setTheme(e.matches ? 'dark' : 'light');
+            // Only apply system preference if user hasn't set a preference
+            this.setTheme(e.matches ? 'professional-dark' : 'professional-light');
             this.updateIcons();
           }
         });
     }
 
     setTheme(theme) {
+      const root = document.documentElement;
+      
       // Disable transitions during theme change
-      document.documentElement.classList.add('no-transition');
-
-      document.documentElement.classList.remove('light', 'dark');
-      document.documentElement.classList.add(theme);
-      localStorage.setItem('theme', theme);
-
-      // Update CSS custom properties
-      if (theme === 'light') {
-        document.documentElement.style.setProperty('--color-mode', 'light');
-      } else {
-        document.documentElement.style.setProperty('--color-mode', 'dark');
+      root.classList.add('no-transition');
+      
+      // Handle themes with a mapping to ensure backward compatibility
+      const lightThemes = ['professional-light', 'minimalist'];
+      
+      // Remove all theme classes
+      root.classList.remove(
+        'professional-dark',
+        'professional-light',
+        'retro-tech', 
+        'minimalist',
+        'high-contrast',
+        'custom-theme',
+        'light',
+        'dark'
+      );
+      
+      // Add the selected theme class
+      root.classList.add(theme);
+      
+      // For backward compatibility
+      if (lightThemes.includes(theme)) {
+        root.classList.add('light');
       }
-
+      
+      // Store the theme preference
+      localStorage.setItem('theme', theme);
+      
       // Re-enable transitions after a brief delay
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          document.documentElement.classList.remove('no-transition');
+          root.classList.remove('no-transition');
         });
       });
+      
+      // Dispatch theme change event
+      const event = new CustomEvent('themechange', { detail: { theme } });
+      document.dispatchEvent(event);
     }
 
-    toggleTheme() {
-      const currentTheme = document.documentElement.classList.contains('dark')
-        ? 'dark'
-        : 'light';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
+    toggleLightDark() {
+      // Get current theme from document class list
+      const currentTheme = this.getCurrentTheme();
+      
+      // Determine if it's a light theme
+      const isLightTheme = currentTheme.includes('light') || currentTheme === 'minimalist';
+      
+      // Toggle between professional dark and professional light
+      const newTheme = isLightTheme ? 'professional-dark' : 'professional-light';
+      
       this.setTheme(newTheme);
       this.updateIcons();
 
@@ -117,12 +142,55 @@
       }, 150);
     }
 
+    getCurrentTheme() {
+      // Check for themes in this order
+      const root = document.documentElement;
+      const possibleThemes = [
+        'professional-dark',
+        'professional-light',
+        'retro-tech',
+        'minimalist',
+        'high-contrast',
+        'custom-theme'
+      ];
+      
+      // For backwards compatibility
+      if (root.classList.contains('light') && !this.hasAnySpecificTheme()) {
+        return 'professional-light';
+      } else if (!root.classList.contains('light') && !this.hasAnySpecificTheme()) {
+        return 'professional-dark';
+      }
+      
+      for (const theme of possibleThemes) {
+        if (root.classList.contains(theme)) {
+          return theme;
+        }
+      }
+      
+      return 'professional-dark'; // Default
+    }
+    
+    hasAnySpecificTheme() {
+      const root = document.documentElement;
+      const themes = [
+        'professional-dark',
+        'professional-light',
+        'retro-tech',
+        'minimalist',
+        'high-contrast',
+        'custom-theme'
+      ];
+      
+      return themes.some(theme => root.classList.contains(theme));
+    }
+
     updateIcons() {
-      const isLight = document.documentElement.classList.contains('light');
+      const currentTheme = this.getCurrentTheme();
+      const isLightTheme = currentTheme.includes('light') || currentTheme === 'minimalist';
 
       if (this.sunIcon && this.moonIcon) {
-        this.sunIcon.classList.toggle('hidden', !isLight);
-        this.moonIcon.classList.toggle('hidden', isLight);
+        this.sunIcon.classList.toggle('hidden', !isLightTheme);
+        this.moonIcon.classList.toggle('hidden', isLightTheme);
       }
     }
   }
