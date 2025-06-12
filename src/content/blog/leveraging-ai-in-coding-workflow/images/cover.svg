@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#1a1a2e"/>
+  
+  <!-- Grid pattern for tech feel -->
+  <path d="M0 50h1200 M0 100h1200 M0 150h1200 M0 200h1200 M0 250h1200 M0 300h1200 M0 350h1200 M0 400h1200 M0 450h1200 M0 500h1200 M0 550h1200 M0 600h1200" stroke="#16213e" stroke-width="1"/>
+  <path d="M50 0v630 M100 0v630 M150 0v630 M200 0v630 M250 0v630 M300 0v630 M350 0v630 M400 0v630 M450 0v630 M500 0v630 M550 0v630 M600 0v630 M650 0v630 M700 0v630 M750 0v630 M800 0v630 M850 0v630 M900 0v630 M950 0v630 M1000 0v630 M1050 0v630 M1100 0v630 M1150 0v630" stroke="#16213e" stroke-width="1"/>
+  
+  <!-- Decorative elements representing AI and code -->
+  <rect x="150" y="150" width="350" height="350" rx="20" fill="#0f3460" opacity="0.7"/>
+  <rect x="700" y="150" width="350" height="350" rx="20" fill="#0f3460" opacity="0.7"/>
+  
+  <!-- Binary pattern in left rectangle -->
+  <text font-family="monospace" font-size="24" fill="#e94560" opacity="0.8">
+    <tspan x="190" y="200">01001100 01100101 01110110</tspan>
+    <tspan x="190" y="230">01100101 01110010 01100001</tspan>
+    <tspan x="190" y="260">01100111 01101001 01101110</tspan>
+    <tspan x="190" y="290">01100111 00100000 01000001</tspan>
+    <tspan x="190" y="320">01001001 00100000 01100110</tspan>
+    <tspan x="190" y="350">01101111 01110010 00100000</tspan>
+    <tspan x="190" y="380">01000011 01101111 01100100</tspan>
+    <tspan x="190" y="410">01101001 01101110 01100111</tspan>
+  </text>
+  
+  <!-- Code pattern in right rectangle -->
+  <text font-family="monospace" font-size="18" fill="#e94560" opacity="0.9">
+    <tspan x="720" y="200">function optimizeWorkflow() {</tspan>
+    <tspan x="720" y="225">  const ai = new AIAssistant();</tspan>
+    <tspan x="720" y="250">  const codebase = getProject();</tspan>
+    <tspan x="720" y="275">  </tspan>
+    <tspan x="720" y="300">  const suggestions = ai.analyze(</tspan>
+    <tspan x="720" y="325">    codebase.structure</tspan>
+    <tspan x="720" y="350">  );</tspan>
+    <tspan x="720" y="375">  </tspan>
+    <tspan x="720" y="400">  return improveCode(suggestions);</tspan>
+    <tspan x="720" y="425">}</tspan>
+  </text>
+  
+  <!-- Title -->
+  <text x="600" y="550" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">Leveraging AI in Your Coding Workflow</text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="590" font-family="Arial, sans-serif" font-size="28" fill="#e94560" text-anchor="middle">Stay Ahead in the Development Game</text>
+</svg>
