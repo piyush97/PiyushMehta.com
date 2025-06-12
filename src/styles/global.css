@@ -2,6 +2,77 @@
 @tailwind components;
 @tailwind utilities;
 
+/* MDX Content Styling */
+@layer components {
+  /* List styling for MDX content */
+  .mdx-content ul {
+    @apply list-disc pl-8 my-4 space-y-2;
+  }
+
+  .mdx-content ol {
+    @apply list-decimal pl-8 my-4 space-y-2;
+  }
+  
+  .mdx-content ul ul {
+    @apply list-circle my-2;
+  }
+  
+  .mdx-content ul ul ul {
+    @apply list-square my-2;
+  }
+  
+  .mdx-content ol ol {
+    @apply list-[lower-alpha] my-2;
+  }
+  
+  .mdx-content ol ol ol {
+    @apply list-[lower-roman] my-2;
+  }
+
+  .mdx-content li > ul,
+  .mdx-content li > ol {
+    @apply my-2;
+  }
+
+  .mdx-content li {
+    @apply mb-1;
+  }
+
+  .mdx-content li::marker {
+    @apply text-accent;
+  }
+  
+  .mdx-content li p {
+    @apply inline;
+  }
+  
+  /* Additional styling for better MDX content display */
+  .prose.mdx-content {
+    @apply text-text-primary;
+  }
+  
+  .prose.mdx-content h1,
+  .prose.mdx-content h2,
+  .prose.mdx-content h3,
+  .prose.mdx-content h4,
+  .prose.mdx-content h5,
+  .prose.mdx-content h6 {
+    @apply text-text-primary;
+  }
+  
+  .prose.mdx-content a {
+    @apply text-accent transition-colors duration-base;
+  }
+  
+  .prose.mdx-content a:hover {
+    opacity: 0.8;
+  }
+  
+  .prose.mdx-content blockquote {
+    @apply border-l-4 border-accent pl-4 italic;
+  }
+}
+
 /* Smooth scrolling for the entire page - optimized for 60Hz+ displays */
 html {
   scroll-behavior: smooth;
