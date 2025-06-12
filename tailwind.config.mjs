@@ -130,7 +130,63 @@ export default {
       transitionTimingFunction: {
         base: 'ease-in-out',
       },
+      listStyleType: {
+        circle: 'circle',
+        square: 'square',
+        'lower-alpha': 'lower-alpha',
+        'lower-roman': 'lower-roman',
+      },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            color: 'var(--color-text-primary)',
+            a: {
+              color: 'var(--color-accent)',
+              '&:hover': {
+                opacity: 0.8,
+              },
+            },
+            h1: {
+              color: 'var(--color-text-primary)',
+            },
+            h2: {
+              color: 'var(--color-text-primary)',
+            },
+            h3: {
+              color: 'var(--color-text-primary)',
+            },
+            h4: {
+              color: 'var(--color-text-primary)',
+            },
+            strong: {
+              color: 'var(--color-text-primary)',
+            },
+            blockquote: {
+              borderLeftColor: 'var(--color-accent)',
+              color: 'var(--color-text-primary)',
+            },
+            ul: {
+              li: {
+                '&::marker': {
+                  color: 'var(--color-accent)',
+                },
+              },
+            },
+            ol: {
+              li: {
+                '&::marker': {
+                  color: 'var(--color-accent)',
+                },
+              },
+            },
+          },
+        },
+      }),
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography')({
+      className: 'prose',
+    }),
+  ],
 };
