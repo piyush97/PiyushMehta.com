@@ -69,30 +69,78 @@ const {
     <OpenGraph title={title} description={description} image={image} />
 
     <script>
-      // Theme detection and setting
-      const getThemePreference = () => {
+      // Enhanced theme detection and setting for multiple themes
+      const getThemePreference = (): string => {
         if (
           typeof localStorage !== 'undefined' &&
           localStorage.getItem('theme')
         ) {
-          return localStorage.getItem('theme');
+          return localStorage.getItem('theme') || 'professional-dark';
         }
         return window.matchMedia('(prefers-color-scheme: light)').matches
-          ? 'light'
-          : 'dark';
+          ? 'professional-light'
+          : 'professional-dark';
       };
 
       // Disable transitions during theme initialization to prevent flash
       document.documentElement.classList.add('no-transition');
 
-      const isDark = getThemePreference() === 'dark';
-      document.documentElement.classList[isDark ? 'remove' : 'add']('light');
+      // Get the saved theme
+      const savedTheme = getThemePreference();
+      
+      // Clear any existing theme classes
+      document.documentElement.classList.remove(
+        'professional-dark',
+        'professional-light',
+        'retro-tech',
+        'minimalist',
+        'high-contrast',
+        'custom-theme',
+        'light',
+        'dark'
+      );
+      
+      // Set the theme class
+      document.documentElement.classList.add(savedTheme);
+      
+      // For backward compatibility with existing code
+      const lightThemes = ['professional-light', 'minimalist'];
+      if (lightThemes.includes(savedTheme)) {
+        document.documentElement.classList.add('light');
+      }
+      
+      // If there's a custom theme, apply the saved accent color
+      if (savedTheme === 'custom-theme' && localStorage.getItem('custom-accent-color')) {
+        const accentColor = localStorage.getItem('custom-accent-color');
+        if (accentColor) {
+          document.documentElement.style.setProperty('--color-accent', accentColor);
+          
+          // Try to create shadow color from accent
+          try {
+            const hexToRgb = (hex: string) => {
+              const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+              return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+              } : null;
+            };
+            
+            const rgb = hexToRgb(accentColor);
+            if (rgb) {
+              document.documentElement.style.setProperty(
+                '--color-shadow',
+                `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`
+              );
+            }
+          } catch (e) {
+            console.error('Error setting custom theme:', e);
+          }
+        }
+      }
 
       if (typeof localStorage !== 'undefined') {
-        const theme = getThemePreference();
-        if (theme) {
-          localStorage.setItem('theme', theme);
-        }
+        localStorage.setItem('theme', savedTheme);
       }
 
       // Re-enable transitions after a brief delay
@@ -112,17 +160,48 @@ const {
     <Footer />
 
     <script>
-      // Theme toggle functionality
+      // Enhanced theme toggle functionality for multi-theme support
       function toggleTheme() {
         const element = document.documentElement;
-
+        
         // Disable transitions during theme change
         element.classList.add('no-transition');
-
-        element.classList.toggle('light');
-
-        const isDark = !element.classList.contains('light');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
+        // Determine current theme
+        const currentTheme = getCurrentTheme();
+        
+        // Check if it's a light theme
+        const isLightTheme = currentTheme.includes('light') || currentTheme === 'minimalist';
+        
+        // Toggle between professional light and dark themes
+        const newTheme = isLightTheme ? 'professional-dark' : 'professional-light';
+        
+        // Remove all theme classes
+        element.classList.remove(
+          'professional-dark',
+          'professional-light',
+          'retro-tech',
+          'minimalist',
+          'high-contrast',
+          'custom-theme',
+          'light',
+          'dark'
+        );
+        
+        // Add the new theme class
+        element.classList.add(newTheme);
+        
+        // For backward compatibility
+        if (newTheme === 'professional-light') {
+          element.classList.add('light');
+        }
+        
+        // Store the theme preference
+        localStorage.setItem('theme', newTheme);
+        
+        // Dispatch theme change event
+        const event = new CustomEvent('themechange', { detail: { theme: newTheme } });
+        document.dispatchEvent(event);
 
         // Re-enable transitions after a brief delay
         requestAnimationFrame(() => {
@@ -131,9 +210,53 @@ const {
           });
         });
       }
+      
+      // Get the current theme
+      function getCurrentTheme() {
+        const root = document.documentElement;
+        const possibleThemes = [
+          'professional-dark',
+          'professional-light',
+          'retro-tech',
+          'minimalist',
+          'high-contrast',
+          'custom-theme'
+        ];
+        
+        // For backwards compatibility
+        if (root.classList.contains('light') && !hasAnySpecificTheme()) {
+          return 'professional-light';
+        } else if (!root.classList.contains('light') && !hasAnySpecificTheme()) {
+          return 'professional-dark';
+        }
+        
+        for (const theme of possibleThemes) {
+          if (root.classList.contains(theme)) {
+            return theme;
+          }
+        }
+        
+        return 'professional-dark';
+      }
+      
+      // Check if any specific theme is applied
+      function hasAnySpecificTheme() {
+        const root = document.documentElement;
+        const themes = [
+          'professional-dark',
+          'professional-light',
+          'retro-tech',
+          'minimalist',
+          'high-contrast',
+          'custom-theme'
+        ];
+        
+        return themes.some(theme => root.classList.contains(theme));
+      }
 
       // Expose toggle function globally
       (window as any).toggleTheme = toggleTheme;
+      (window as any).getCurrentTheme = getCurrentTheme;
     </script>
   </body>
 </html>

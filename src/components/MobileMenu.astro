@@ -1,4 +1,6 @@
 ---
+import ThemeSelector from './ThemeSelector.astro';
+
 interface Props {
   pathname: string;
 }
@@ -131,6 +133,14 @@ const { pathname } = Astro.props;
         </a>
       </li>
     </ul>
+    
+    <!-- Theme selection in mobile menu -->
+    <div class="mt-6 px-4">
+      <h3 class="text-sm font-medium text-text-secondary mb-2">Theme Options</h3>
+      <div class="mobile-theme-selector">
+        <ThemeSelector />
+      </div>
+    </div>
   </div>
 </div>
 
@@ -176,6 +186,30 @@ const { pathname } = Astro.props;
 
   .mobile-navbar-link:hover::before {
     left: 100%;
+  }
+
+  /* Mobile theme selector styling */
+  .mobile-theme-selector {
+    margin-top: 0.5rem;
+  }
+
+  .mobile-theme-selector :global(.theme-selector-wrapper) {
+    width: 100%;
+  }
+
+  .mobile-theme-selector :global(.theme-selector-toggle) {
+    width: 100%;
+    padding: 0.75rem;
+    justify-content: center;
+    border: 1px solid var(--color-card-border);
+  }
+
+  .mobile-theme-selector :global(.theme-selector-panel) {
+    width: 100%;
+    position: relative;
+    top: 0.5rem;
+    right: 0;
+    left: 0;
   }
 </style>
 
