@@ -12,11 +12,12 @@ export interface Props {
   canonical?: string;
   noindex?: boolean;
   schema?: any;
+  keywords?: string[];
 }
 
 const {
   title,
-  description = 'Piyush Mehta - Senior Software Engineer, Tech Speaker, and Open Source Contributor. Sharing insights on React, Node.js, DevOps, and modern web development.',
+  description = 'Piyush Mehta - Senior Software Engineer, Tech Speaker, and Open Source Contributor. React Developer in Canada specializing in React.js, Node.js, DevOps, and modern web development.',
   type = 'website',
   image,
   url = Astro.url.toString(),
@@ -27,6 +28,7 @@ const {
   canonical,
   noindex = false,
   schema,
+  keywords = ['Piyush Mehta', 'React Developer', 'Software Engineer', 'Software Engineer in Canada', 'Software Consultant in Canada', 'ReactJS', 'ReactJS Developer', 'React Developer', 'Software Engineer', 'Toronto Developer', 'Canadian Software Engineer', 'Tech Speaker', 'Open Source Contributor'],
 } = Astro.props;
 
 // Generate OpenGraph image URL if not provided
@@ -68,6 +70,9 @@ const defaultSchema = {
 };
 
 const schemaData = schema || defaultSchema;
+
+// Combine keywords and tags for SEO
+const allKeywords = [...new Set([...keywords, ...tags])].join(', ');
 ---
 
 <!-- Primary Meta Tags -->
@@ -75,8 +80,10 @@ const schemaData = schema || defaultSchema;
 <meta name="title" content={title} />
 <meta name="description" content={description} />
 <meta name="author" content={author} />
+<meta name="keywords" content={allKeywords} />
 {canonical && <link rel="canonical" href={canonicalUrl} />}
 {noindex && <meta name="robots" content="noindex, nofollow" />}
+{!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={type} />
@@ -131,6 +138,7 @@ const schemaData = schema || defaultSchema;
 <meta name="theme-color" content="#1a1a2e" />
 <meta name="msapplication-TileColor" content="#1a1a2e" />
 <meta name="format-detection" content="telephone=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
 
 <!-- Preconnect to external domains -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -184,7 +192,7 @@ const schemaData = schema || defaultSchema;
         url: 'https://piyushmehta.com',
         jobTitle: 'Software Engineer',
         description:
-          'Software Engineer, Tech Speaker, and Open Source Contributor',
+          'Software Engineer, React Developer, Tech Speaker, and Open Source Contributor based in Canada',
         image: 'https://piyushmehta.com/images/piyush-profile.jpg',
         sameAs: [
           'https://github.com/piyush97',
@@ -207,13 +215,65 @@ const schemaData = schema || defaultSchema;
         },
         knowsAbout: [
           'React',
+          'ReactJS',
+          'React.js',
           'Node.js',
           'TypeScript',
+          'JavaScript',
           'DevOps',
           'Cloud Computing',
           'Software Architecture',
           'Web Development',
+          'Frontend Development',
+          'Software Engineering',
         ],
+      })}
+    />
+  )
+}
+
+<!-- FAQPage Schema for Homepage -->
+{
+  url === 'https://piyushmehta.com/' && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Who is Piyush Mehta?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Piyush Mehta is a Software Engineer based in Canada, specializing in React.js, Node.js, and modern web development. He is also a tech speaker and open source contributor.'
+            }
+          },
+          {
+            '@type': 'Question',
+            name: 'What technologies does Piyush Mehta work with?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Piyush Mehta works with React, Node.js, TypeScript, JavaScript, DevOps, Cloud Computing, and various modern web development technologies.'
+            }
+          },
+          {
+            '@type': 'Question',
+            name: 'Is Piyush Mehta available for software engineering projects in Canada?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes, Piyush Mehta is a Software Engineer based in Canada and may be available for consulting or project work. You can contact him through his website.'
+            }
+          },
+          {
+            '@type': 'Question',
+            name: 'Does Piyush Mehta have experience with React development?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes, Piyush Mehta is an experienced React developer with expertise in building modern web applications using React.js and related technologies.'
+            }
+          }
+        ]
       })}
     />
   )

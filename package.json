@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "node migrate-images-to-public.mjs && astro build",
+    "build": "node migrate-images-to-public.mjs && astro build && node enhance-sitemap.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "migrate:images": "node migrate-images-to-public.mjs",
@@ -15,7 +15,8 @@
     "format:write": "biome format --write .",
     "check": "biome check .",
     "check:write": "biome check --write .",
-    "ci": "biome ci ."
+    "ci": "biome ci .",
+    "enhance-sitemap": "node enhance-sitemap.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",
