@@ -1,11 +1,11 @@
 {
   "name": "piyushmehta.com",
   "type": "module",
-  "version": "2.0.0",
+  "version": "3.0.1",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "node migrate-images-to-public.mjs && astro build && node enhance-sitemap.mjs",
+    "build": "node migrate-images-to-public.mjs && astro build && node generate-enhanced-sitemap.mjs && node generate-static-rss.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "migrate:images": "node migrate-images-to-public.mjs",
@@ -16,7 +16,12 @@
     "check": "biome check .",
     "check:write": "biome check --write .",
     "ci": "biome ci .",
-    "enhance-sitemap": "node enhance-sitemap.mjs"
+    "enhance-sitemap": "node generate-enhanced-sitemap.mjs",
+    "generate-rss": "node generate-static-rss.mjs",
+    "verify-rss": "node scripts/verify-rss.mjs",
+    "test-seo": "node test-seo-files.mjs",
+    "test-rss": "node test-rss-output.mjs",
+    "debug-rss": "node debug-rss-feed.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",
@@ -32,6 +37,7 @@
     "@vercel/og": "^0.6.8",
     "@vercel/speed-insights": "^1.2.0",
     "astro": "^5.9.0",
+    "node-fetch": "^3.3.2",
     "pg": "^8.16.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

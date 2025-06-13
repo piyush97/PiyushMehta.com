@@ -8,17 +8,18 @@ export async function GET(context) {
       .filter((post) => !post.data.draft)
       .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-    const siteUrl = context.site || 'https://piyushmehta.com';
-    const siteUrlString = typeof siteUrl === 'string' ? siteUrl : siteUrl.toString();
+    // Use context.site or fallback to hardcoded URL
+    const site = context.site || new URL('https://piyushmehta.com');
+    const siteUrlString = typeof site === 'string' ? site : site.toString();
     
     // Log how many posts were found (for debugging)
     console.log(`Found ${publishedPosts.length} published blog posts for RSS feed`);
 
+    // Generate the RSS feed
     const rssResponse = await rss({
-      title: 'Piyush Mehta - Blog',
-      description:
-        'Thoughts on software development, technology, and the art of building great products. Articles about React, Node.js, DevOps, and modern web development.',
-      site: siteUrl,
+      title: 'Piyush Mehta - Software Engineer & React Developer',
+      description: 'Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.',
+      site: site,
       items: publishedPosts.map((post) => {
         // Ensure the slug is properly formatted
         const slug = post.slug.replace(/^\/+|\/+$/g, '');
@@ -76,10 +77,12 @@ export async function GET(context) {
       stylesheet: false,
     });
 
-    // Ensure proper content type
+    // Manually set the content type to ensure it's served as XML
     return new Response(rssResponse.body, {
+      status: 200,
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',
+        // Prevent caching issues
         'Cache-Control': 'public, max-age=3600',
       },
     });
@@ -90,7 +93,7 @@ export async function GET(context) {
     return new Response(`<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Piyush Mehta - Blog</title>
+    <title>Piyush Mehta - Software Engineer &amp; React Developer</title>
     <link>https://piyushmehta.com</link>
     <description>Error generating RSS feed</description>
     <language>en-us</language>
