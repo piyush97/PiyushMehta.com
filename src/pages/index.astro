@@ -10,9 +10,33 @@ const latestPosts = allPosts
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3);
+
+// Define SEO keywords specifically for homepage ranking
+const keywords = [
+  'Piyush Mehta', 
+  'Piyush', 
+  'React Developer', 
+  'ReactJS Developer', 
+  'ReactJS', 
+  'Software Engineer', 
+  'Software Engineer in Canada', 
+  'Software Consultant in Canada',
+  'Toronto Developer',
+  'React Development',
+  'Frontend Engineer',
+  'JavaScript Expert',
+  'Web Developer Toronto',
+  'React Specialist',
+  'Tech Speaker',
+  'Open Source Contributor'
+];
 ---
 
-<Layout title="Piyush Mehta - Software Engineer & Tech Speaker">
+<Layout 
+  title="Piyush Mehta - Senior Software Engineer & React Developer in Canada" 
+  description="Piyush Mehta is a Senior Software Engineer and React Developer based in Canada. Expert in React.js, Node.js, and modern web technologies with a passion for building high-performance web applications."
+  keywords={keywords}
+>
   <!-- Hero Section -->
   <Hero>
     <div class="py-16 text-center md:py-24">
@@ -27,11 +51,12 @@ const latestPosts = allPosts
           <div class="title-underline"></div>
         </h1>
         <p class="hero-teaser">
-          <span class="highlight">Software Engineer based in Canada 🇨🇦</span>,
+          <span class="highlight">Senior Software Engineer based in Canada 🇨🇦</span>,
+          <span class="highlight">React Developer</span>, 
           <span class="highlight">Tech Speaker</span>, and
           <span class="highlight">Open Source Enthusiast</span>. I build
-          scalable web applications with modern technologies and love sharing
-          knowledge through talks, writing, and open source contributions.
+          scalable web applications with React.js and modern technologies, specializing in creating
+          high-performance, responsive user interfaces and robust backend systems.
         </p>
 
         <div class="hero-cta">

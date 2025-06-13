@@ -16,6 +16,7 @@ export default defineConfig({
       priority: 0.7,
       lastmod: new Date(),
       entryLimit: 10000,
+      filter: (page) => !page.includes('?'),
       customPages: [
         'https://piyushmehta.com/',
         'https://piyushmehta.com/blog/',
@@ -24,6 +25,8 @@ export default defineConfig({
         'https://piyushmehta.com/contact-me/',
         'https://piyushmehta.com/uses/',
         'https://piyushmehta.com/videos/',
+        'https://piyushmehta.com/resume/',
+        'https://piyushmehta.com/services/',
       ],
     }),
     tailwind(),

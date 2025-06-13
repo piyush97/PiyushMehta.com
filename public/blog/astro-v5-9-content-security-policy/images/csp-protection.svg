@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8FAFC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E2E8F0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="safe" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blocked" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EF4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DC2626;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bg)"/>
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="#1E293B">
+    Content Security Policy in Action
+  </text>
+  
+  <!-- Browser window -->
+  <g transform="translate(50, 70)">
+    <!-- Window frame -->
+    <rect x="0" y="0" width="700" height="400" rx="8" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+    
+    <!-- Browser header -->
+    <rect x="0" y="0" width="700" height="40" rx="8" fill="#F1F5F9"/>
+    <rect x="0" y="32" width="700" height="8" fill="#F1F5F9"/>
+    
+    <!-- Traffic lights -->
+    <circle cx="20" cy="20" r="6" fill="#EF4444"/>
+    <circle cx="40" cy="20" r="6" fill="#F59E0B"/>
+    <circle cx="60" cy="20" r="6" fill="#10B981"/>
+    
+    <!-- URL bar -->
+    <rect x="100" y="12" width="580" height="16" rx="8" fill="white" stroke="#CBD5E1"/>
+    <text x="110" y="23" font-family="monospace" font-size="10" fill="#64748B">https://yoursite.com</text>
+  </g>
+  
+  <!-- CSP Shield -->
+  <g transform="translate(150, 150)">
+    <rect x="0" y="0" width="200" height="120" rx="8" fill="rgba(59, 130, 246, 0.1)" stroke="#3B82F6" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="100" y="30" font-family="Inter, -apple-system, sans-serif" font-size="14" font-weight="600" text-anchor="middle" fill="#1E40AF">
+      CSP Protection
+    </text>
+    
+    <!-- Allowed script -->
+    <g transform="translate(20, 45)">
+      <rect x="0" y="0" width="160" height="25" rx="4" fill="url(#safe)" opacity="0.8"/>
+      <text x="80" y="16" font-family="monospace" font-size="10" text-anchor="middle" fill="white">
+        ✓ Trusted Script Hash
+      </text>
+    </g>
+    
+    <!-- Blocked script -->
+    <g transform="translate(20, 80)">
+      <rect x="0" y="0" width="160" height="25" rx="4" fill="url(#blocked)" opacity="0.8"/>
+      <text x="80" y="16" font-family="monospace" font-size="10" text-anchor="middle" fill="white">
+        ✗ Malicious Script
+      </text>
+    </g>
+  </g>
+  
+  <!-- Legitimate scripts -->
+  <g transform="translate(450, 130)">
+    <text x="0" y="0" font-family="Inter, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#059669">
+      Allowed Resources
+    </text>
+    
+    <!-- Script boxes -->
+    <g transform="translate(0, 20)">
+      <rect x="0" y="0" width="120" height="30" rx="4" fill="#D1FAE5" stroke="#10B981"/>
+      <text x="60" y="20" font-family="monospace" font-size="10" text-anchor="middle" fill="#059669">
+        app.js ✓
+      </text>
+    </g>
+    
+    <g transform="translate(0, 60)">
+      <rect x="0" y="0" width="120" height="30" rx="4" fill="#D1FAE5" stroke="#10B981"/>
+      <text x="60" y="20" font-family="monospace" font-size="10" text-anchor="middle" fill="#059669">
+        styles.css ✓
+      </text>
+    </g>
+    
+    <g transform="translate(0, 100)">
+      <rect x="0" y="0" width="120" height="30" rx="4" fill="#D1FAE5" stroke="#10B981"/>
+      <text x="60" y="20" font-family="monospace" font-size="10" text-anchor="middle" fill="#059669">
+        inline hash ✓
+      </text>
+    </g>
+  </g>
+  
+  <!-- Blocked scripts -->
+  <g transform="translate(450, 300)">
+    <text x="0" y="0" font-family="Inter, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#DC2626">
+      Blocked Threats
+    </text>
+    
+    <!-- Blocked script boxes -->
+    <g transform="translate(0, 20)">
+      <rect x="0" y="0" width="120" height="30" rx="4" fill="#FEE2E2" stroke="#EF4444"/>
+      <text x="60" y="20" font-family="monospace" font-size="10" text-anchor="middle" fill="#DC2626">
+        malware.js ✗
+      </text>
+    </g>
+    
+    <g transform="translate(0, 60)">
+      <rect x="0" y="0" width="120" height="30" rx="4" fill="#FEE2E2" stroke="#EF4444"/>
+      <text x="60" y="20" font-family="monospace" font-size="10" text-anchor="middle" fill="#DC2626">
+        xss-attack ✗
+      </text>
+    </g>
+  </g>
+  
+  <!-- Arrows -->
+  <!-- Safe arrow -->
+  <path d="M370 180 Q400 180 430 160" stroke="#10B981" stroke-width="3" fill="none" marker-end="url(#arrowGreen)"/>
+  
+  <!-- Blocked arrow -->
+  <path d="M370 220 Q400 250 430 320" stroke="#EF4444" stroke-width="3" fill="none" marker-end="url(#arrowRed)" stroke-dasharray="5,5"/>
+  
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#10B981"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#EF4444"/>
+    </marker>
+  </defs>
+  
+  <!-- Footer note -->
+  <text x="400" y="480" font-family="Inter, -apple-system, sans-serif" font-size="12" text-anchor="middle" fill="#64748B">
+    CSP automatically validates all scripts and styles against trusted hashes
+  </text>
+</svg>
