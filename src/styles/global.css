@@ -2,6 +2,77 @@
 @tailwind components;
 @tailwind utilities;
 
+/* MDX Content Styling */
+@layer components {
+  /* List styling for MDX content */
+  .mdx-content ul {
+    @apply list-disc pl-8 my-4 space-y-2;
+  }
+
+  .mdx-content ol {
+    @apply list-decimal pl-8 my-4 space-y-2;
+  }
+  
+  .mdx-content ul ul {
+    @apply list-circle my-2;
+  }
+  
+  .mdx-content ul ul ul {
+    @apply list-square my-2;
+  }
+  
+  .mdx-content ol ol {
+    @apply list-[lower-alpha] my-2;
+  }
+  
+  .mdx-content ol ol ol {
+    @apply list-[lower-roman] my-2;
+  }
+
+  .mdx-content li > ul,
+  .mdx-content li > ol {
+    @apply my-2;
+  }
+
+  .mdx-content li {
+    @apply mb-1;
+  }
+
+  .mdx-content li::marker {
+    @apply text-accent;
+  }
+  
+  .mdx-content li p {
+    @apply inline;
+  }
+  
+  /* Additional styling for better MDX content display */
+  .prose.mdx-content {
+    @apply text-text-primary;
+  }
+  
+  .prose.mdx-content h1,
+  .prose.mdx-content h2,
+  .prose.mdx-content h3,
+  .prose.mdx-content h4,
+  .prose.mdx-content h5,
+  .prose.mdx-content h6 {
+    @apply text-text-primary;
+  }
+  
+  .prose.mdx-content a {
+    @apply text-accent transition-colors duration-base;
+  }
+  
+  .prose.mdx-content a:hover {
+    opacity: 0.8;
+  }
+  
+  .prose.mdx-content blockquote {
+    @apply border-l-4 border-accent pl-4 italic;
+  }
+}
+
 /* Smooth scrolling for the entire page - optimized for 60Hz+ displays */
 html {
   scroll-behavior: smooth;
@@ -11,6 +82,36 @@ html {
   html {
     scroll-behavior: auto;
   }
+}
+
+/* Global custom scrollbar styles */
+:root {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-accent-darker, var(--color-accent));
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--color-bg-secondary);
 }
 
 /* Theme Variables */
@@ -64,7 +165,190 @@ html {
   animation: none !important;
 }
 
-/* Light Mode */
+/* Professional Light Mode (current light theme) */
+:root.professional-light {
+  --color-lighter: #100f4d;
+  --color-light-100: #363b65;
+  --color-light-200: #445b8d;
+  --color-light-300: #535988;
+  --color-light-400: #4b547d;
+  --color-light-500: #d8d8e5;
+  --color-light-600: #e0e0ea;
+  --color-light-700: #e6e8f5;
+  --color-light-800: #f5f5f5;
+  --color-light-900: #efeff5;
+  --color-light-950: #f6f6f6;
+  --color-darker: #fff;
+  --color-accent: #b54909;
+
+  /* Light mode text colors - lighter text on light background */
+  --color-bg: var(--color-light-900);
+  --color-text: var(--color-light-300);
+  --color-text-primary: var(--color-light-100);
+  --color-text-secondary: var(--color-light-400);
+  --color-card-border: var(--color-light-800);
+  --color-card-border-hover: var(--color-light-700);
+  --color-card-gradient-light: var(--color-light-700);
+  --color-card-gradient-dark: var(--color-light-950);
+  --color-navbar-bg: rgba(239, 239, 245, 0.9);
+  --color-shadow: rgba(181, 73, 9, 0.25);
+}
+
+/* Professional Dark Mode (current dark theme) */
+:root.professional-dark {
+  --color-lighter: #fff;
+  --color-light-100: #dcdff7;
+  --color-light-200: #c8cbe8;
+  --color-light-300: #adb2dc;
+  --color-light-400: #6870af;
+  --color-light-500: #343c7a;
+  --color-light-600: #2f3568;
+  --color-light-700: #2e3360;
+  --color-light-800: #282e5e;
+  --color-light-900: #22264a;
+  --color-light-950: #1f2347;
+  --color-darker: #000;
+  --color-accent: #ffcc68;
+
+  /* Semantic colors */
+  --color-bg: var(--color-light-900);
+  --color-text: var(--color-light-300);
+  --color-text-primary: var(--color-light-100);
+  --color-text-secondary: var(--color-light-400);
+  --color-card-border: var(--color-light-800);
+  --color-card-border-hover: var(--color-light-700);
+  --color-card-gradient-light: var(--color-light-700);
+  --color-card-gradient-dark: var(--color-light-950);
+  --color-navbar-bg: rgba(34, 38, 74, 0.9);
+  --color-shadow: rgba(255, 204, 104, 0.25);
+  --color-shadow-dark: rgba(0, 0, 0, 0.25);
+}
+
+/* Retro Tech Theme (90s inspired) */
+:root.retro-tech {
+  /* Base colors - CRT display inspired */
+  --color-lighter: #f0f8ff;
+  --color-light-100: #e0f0ff;
+  --color-light-200: #d0e8ff;
+  --color-light-300: #c0e0ff;
+  --color-light-400: #80a8c0;
+  --color-light-500: #407080;
+  --color-light-600: #305870;
+  --color-light-700: #204060;
+  --color-light-800: #103050;
+  --color-light-900: #001830;
+  --color-light-950: #001020;
+  --color-darker: #000010;
+  --color-accent: #00ff00; /* Classic green terminal text */
+
+  /* Semantic colors */
+  --color-bg: var(--color-light-900);
+  --color-text: var(--color-accent);
+  --color-text-primary: var(--color-light-100);
+  --color-text-secondary: #00cc00;
+  --color-card-border: #003366;
+  --color-card-border-hover: #0066cc;
+  --color-card-gradient-light: #002244;
+  --color-card-gradient-dark: #001122;
+  --color-navbar-bg: rgba(0, 24, 48, 0.9);
+  --color-shadow: rgba(0, 255, 0, 0.25);
+  --color-shadow-dark: rgba(0, 0, 0, 0.5);
+}
+
+/* Minimalist Mode */
+:root.minimalist {
+  /* Base colors - clean, simple, and minimal */
+  --color-lighter: #ffffff;
+  --color-light-100: #f7f7f7;
+  --color-light-200: #eeeeee;
+  --color-light-300: #dddddd;
+  --color-light-400: #bbbbbb;
+  --color-light-500: #999999;
+  --color-light-600: #777777;
+  --color-light-700: #555555;
+  --color-light-800: #333333;
+  --color-light-900: #222222;
+  --color-light-950: #111111;
+  --color-darker: #000000;
+  --color-accent: #555555;
+
+  /* Semantic colors */
+  --color-bg: var(--color-light-100);
+  --color-text: var(--color-light-800);
+  --color-text-primary: var(--color-light-900);
+  --color-text-secondary: var(--color-light-600);
+  --color-card-border: var(--color-light-300);
+  --color-card-border-hover: var(--color-light-400);
+  --color-card-gradient-light: var(--color-light-200);
+  --color-card-gradient-dark: var(--color-light-100);
+  --color-navbar-bg: rgba(255, 255, 255, 0.9);
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-shadow-dark: rgba(0, 0, 0, 0.2);
+}
+
+/* High Contrast Accessibility Mode */
+:root.high-contrast {
+  /* Base colors - maximum contrast for accessibility */
+  --color-lighter: #ffffff;
+  --color-light-100: #ffffff;
+  --color-light-200: #f0f0f0;
+  --color-light-300: #e0e0e0;
+  --color-light-400: #cccccc;
+  --color-light-500: #999999;
+  --color-light-600: #666666;
+  --color-light-700: #333333;
+  --color-light-800: #111111;
+  --color-light-900: #000000;
+  --color-light-950: #000000;
+  --color-darker: #000000;
+  --color-accent: #ffff00; /* High contrast yellow */
+
+  /* Semantic colors */
+  --color-bg: var(--color-light-900);
+  --color-text: var(--color-light-100);
+  --color-text-primary: var(--color-light-100);
+  --color-text-secondary: var(--color-light-200);
+  --color-card-border: var(--color-light-100);
+  --color-card-border-hover: var(--color-accent);
+  --color-card-gradient-light: var(--color-light-800);
+  --color-card-gradient-dark: var(--color-light-900);
+  --color-navbar-bg: rgba(0, 0, 0, 0.95);
+  --color-shadow: rgba(255, 255, 0, 0.5);
+  --color-shadow-dark: rgba(0, 0, 0, 0.8);
+}
+
+/* Custom Theme - Initialized with a blue accent color */
+:root.custom-theme {
+  /* Will be updated via JavaScript when custom colors are selected */
+  --color-lighter: #ffffff;
+  --color-light-100: #f8f9fa;
+  --color-light-200: #e9ecef;
+  --color-light-300: #dee2e6;
+  --color-light-400: #ced4da;
+  --color-light-500: #adb5bd;
+  --color-light-600: #6c757d;
+  --color-light-700: #495057;
+  --color-light-800: #343a40;
+  --color-light-900: #212529;
+  --color-light-950: #161b22;
+  --color-darker: #000000;
+  --color-accent: #3498db; /* Default custom accent color */
+
+  /* Semantic colors */
+  --color-bg: var(--color-light-900);
+  --color-text: var(--color-light-300);
+  --color-text-primary: var(--color-light-100);
+  --color-text-secondary: var(--color-light-400);
+  --color-card-border: var(--color-light-800);
+  --color-card-border-hover: var(--color-light-700);
+  --color-card-gradient-light: var(--color-light-700);
+  --color-card-gradient-dark: var(--color-light-950);
+  --color-navbar-bg: rgba(33, 37, 41, 0.9);
+  --color-shadow: rgba(52, 152, 219, 0.25);
+  --color-shadow-dark: rgba(0, 0, 0, 0.25);
+}
+
+/* Backwards compatibility with existing code that uses .light and .dark classes */
 :root.light {
   --color-lighter: #100f4d;
   --color-light-100: #363b65;

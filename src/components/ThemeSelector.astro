@@ -1,0 +1,777 @@
+---
+// Multi-theme selector component as a functional Astro component
+// Supports Professional Dark/Light, Retro Tech, Minimalist, High Contrast, and Custom Themes
+---
+
+<div class="theme-selector-wrapper">
+  <button
+    id="theme-selector-toggle"
+    class="theme-selector-toggle"
+    aria-label="Open theme selector"
+    aria-expanded="false"
+    aria-controls="theme-selector-panel"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-5 h-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </button>
+
+  <div
+    id="theme-selector-panel"
+    class="theme-selector-panel"
+    aria-hidden="true"
+  >
+    <div class="theme-selector-header">
+      <h3>Choose Theme</h3>
+      <button
+        id="theme-selector-close"
+        class="theme-selector-close"
+        aria-label="Close theme selector"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="theme-options">
+      <button
+        data-theme="professional-dark"
+        class="theme-option"
+        aria-label="Professional Dark Mode"
+      >
+        <div class="theme-preview professional-dark-preview"></div>
+        <span>Professional Dark</span>
+      </button>
+
+      <button
+        data-theme="professional-light"
+        class="theme-option"
+        aria-label="Professional Light Mode"
+      >
+        <div class="theme-preview professional-light-preview"></div>
+        <span>Professional Light</span>
+      </button>
+
+      <button
+        data-theme="retro-tech"
+        class="theme-option"
+        aria-label="Retro Tech Theme"
+      >
+        <div class="theme-preview retro-tech-preview"></div>
+        <span>Retro Tech</span>
+      </button>
+
+      <button
+        data-theme="minimalist"
+        class="theme-option"
+        aria-label="Minimalist Mode"
+      >
+        <div class="theme-preview minimalist-preview"></div>
+        <span>Minimalist</span>
+      </button>
+
+      <button
+        data-theme="high-contrast"
+        class="theme-option"
+        aria-label="High Contrast Mode"
+      >
+        <div class="theme-preview high-contrast-preview"></div>
+        <span>High Contrast</span>
+      </button>
+    </div>
+
+    <div class="custom-theme-section">
+      <h4>Custom Theme</h4>
+      <div class="custom-color-picker">
+        <label for="custom-accent-color">Accent Color</label>
+        <input
+          type="color"
+          id="custom-accent-color"
+          value="#3498db"
+          aria-label="Choose custom accent color"
+        />
+        <button
+          id="apply-custom-theme"
+          class="apply-custom-btn"
+          aria-label="Apply custom theme"
+        >
+          Apply
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Theme Selector Styling */
+  .theme-selector-wrapper {
+    position: relative;
+    z-index: 101;
+  }
+
+  .theme-selector-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--color-light-800);
+    color: var(--color-text-primary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .theme-selector-toggle:hover {
+    background-color: var(--color-light-700);
+    transform: scale(1.05);
+  }
+
+  .theme-selector-toggle:active {
+    transform: scale(0.95);
+  }
+
+  .theme-selector-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    width: 18rem;
+    background-color: var(--color-light-800);
+    border: 1px solid var(--color-card-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    padding: 1rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
+
+  .theme-selector-panel.active {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .theme-selector-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-card-border);
+  }
+
+  .theme-selector-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .theme-selector-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    padding: 0.25rem;
+    color: var(--color-text-secondary);
+    transition: all 0.2s ease;
+  }
+
+  .theme-selector-close:hover {
+    background-color: var(--color-light-700);
+    color: var(--color-text-primary);
+  }
+
+  .theme-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .theme-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  .theme-option:hover {
+    background-color: var(--color-light-700);
+  }
+
+  .theme-option.active {
+    border-color: var(--color-accent);
+  }
+
+  .theme-preview {
+    width: 100%;
+    height: 3.5rem;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .theme-preview::after {
+    content: "";
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: calc(100% - 1rem);
+    height: 0.75rem;
+    border-radius: 0.125rem;
+  }
+
+  .theme-preview::before {
+    content: "";
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    width: 60%;
+    height: 0.75rem;
+    border-radius: 0.125rem;
+  }
+
+  /* Theme Preview Styles */
+  .professional-dark-preview {
+    background-color: #22264a;
+  }
+  .professional-dark-preview::after,
+  .professional-dark-preview::before {
+    background-color: #ffcc68;
+  }
+
+  .professional-light-preview {
+    background-color: #efeff5;
+  }
+  .professional-light-preview::after,
+  .professional-light-preview::before {
+    background-color: #b54909;
+  }
+
+  .retro-tech-preview {
+    background-color: #001830;
+  }
+  .retro-tech-preview::after,
+  .retro-tech-preview::before {
+    background-color: #00ff00;
+  }
+
+  .minimalist-preview {
+    background-color: #f7f7f7;
+  }
+  .minimalist-preview::after,
+  .minimalist-preview::before {
+    background-color: #555555;
+  }
+
+  .high-contrast-preview {
+    background-color: #000000;
+  }
+  .high-contrast-preview::after,
+  .high-contrast-preview::before {
+    background-color: #ffff00;
+  }
+
+  .theme-option span {
+    font-size: 0.85rem;
+    color: var(--color-text-primary);
+  }
+
+  .custom-theme-section {
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .custom-theme-section h4 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin: 0 0 0.75rem 0;
+  }
+
+  .custom-color-picker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .custom-color-picker label {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+  }
+
+  #custom-accent-color {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    background-color: transparent;
+  }
+
+  #custom-accent-color::-webkit-color-swatch {
+    border-radius: 0.25rem;
+    border: 1px solid var(--color-card-border);
+  }
+
+  #custom-accent-color::-moz-color-swatch {
+    border-radius: 0.25rem;
+    border: 1px solid var(--color-card-border);
+  }
+
+  .apply-custom-btn {
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    background-color: var(--color-accent);
+    color: var(--color-darker);
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .apply-custom-btn:hover {
+    opacity: 0.9;
+  }
+
+  /* Custom Scrollbar Styling */
+  .theme-selector-panel {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-accent) var(--color-light-700);
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .theme-selector-panel::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .theme-selector-panel::-webkit-scrollbar-track {
+    background: var(--color-light-700);
+    border-radius: 10px;
+  }
+
+  .theme-selector-panel::-webkit-scrollbar-thumb {
+    background-color: var(--color-accent);
+    border-radius: 10px;
+  }
+
+  .theme-selector-panel::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-accent-darker, var(--color-accent));
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .theme-selector-panel {
+      position: fixed;
+      top: auto;
+      bottom: 1rem;
+      right: 1rem;
+      left: 1rem;
+      width: calc(100% - 2rem);
+      z-index: 1000;
+      max-height: 70vh;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Type definitions for better type safety and code completion
+    type ThemeType = 'professional-dark' | 'professional-light' | 'retro-tech' | 'minimalist' | 'high-contrast' | 'custom-theme';
+    
+    // Define default darker accent colors for built-in themes
+    const themeDarkerAccents = {
+      'professional-dark': '#e0a940', // Darker version of #ffcc68
+      'professional-light': '#933907', // Darker version of #b54909
+      'retro-tech': '#00cc00',        // Darker version of #00ff00
+      'minimalist': '#333333',        // Darker version of #555555
+      'high-contrast': '#cccc00',     // Darker version of #ffff00
+    };
+    
+    // Set the darker accent color based on current theme
+    function setDarkerAccentForTheme(theme: ThemeType): void {
+      if (theme === 'custom-theme') return; // This is handled separately
+      
+      const darkerColor = themeDarkerAccents[theme];
+      if (darkerColor) {
+        document.documentElement.style.setProperty('--color-accent-darker', darkerColor);
+      }
+    }
+    
+    // DOM element references
+    const toggle = document.getElementById('theme-selector-toggle') as HTMLButtonElement | null;
+    const panel = document.getElementById('theme-selector-panel') as HTMLDivElement | null;
+    const closeBtn = document.getElementById('theme-selector-close') as HTMLButtonElement | null;
+    const themeOptions = document.querySelectorAll('.theme-option') as NodeListOf<HTMLButtonElement>;
+    const customAccentColor = document.getElementById('custom-accent-color') as HTMLInputElement | null;
+    const applyCustomBtn = document.getElementById('apply-custom-theme') as HTMLButtonElement | null;
+    
+    // Panel state
+    let isOpen = false;
+    
+    // All possible themes for easy reference
+    const allThemes: ThemeType[] = [
+      'professional-dark',
+      'professional-light',
+      'retro-tech',
+      'minimalist',
+      'high-contrast',
+      'custom-theme'
+    ];
+    
+    // The light themes (for backward compatibility)
+    const lightThemes: ThemeType[] = ['professional-light', 'minimalist'];
+    
+    /**
+     * Gets the current active theme
+     */
+    function getCurrentTheme(): ThemeType {
+      const root = document.documentElement;
+      
+      // For backwards compatibility, map old theme names
+      if (root.classList.contains('light') && !hasAnySpecificTheme()) {
+        return 'professional-light';
+      } else if (!root.classList.contains('light') && !hasAnySpecificTheme()) {
+        return 'professional-dark';
+      }
+
+      // Check for specific themes
+      for (const theme of allThemes) {
+        if (root.classList.contains(theme)) {
+          return theme;
+        }
+      }
+
+      return 'professional-dark'; // Default theme
+    }
+
+    /**
+     * Checks if any specific theme class is present
+     */
+    function hasAnySpecificTheme(): boolean {
+      const root = document.documentElement;
+      return allThemes.some(theme => root.classList.contains(theme));
+    }
+    
+    /**
+     * Toggles the theme selector panel
+     */
+    function togglePanel(e?: Event): void {
+      e?.preventDefault();
+      
+      if (isOpen) {
+        closePanel();
+      } else {
+        openPanel();
+      }
+    }
+
+    /**
+     * Opens the theme selector panel
+     */
+    function openPanel(): void {
+      if (!panel || !toggle) return;
+      
+      isOpen = true;
+      panel.classList.add('active');
+      toggle.setAttribute('aria-expanded', 'true');
+      panel.setAttribute('aria-hidden', 'false');
+    }
+
+    /**
+     * Closes the theme selector panel
+     */
+    function closePanel(): void {
+      if (!panel || !toggle) return;
+      
+      isOpen = false;
+      panel.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+      panel.setAttribute('aria-hidden', 'true');
+    }
+
+    /**
+     * Sets the active theme
+     */
+    function setTheme(theme: ThemeType): void {
+      const root = document.documentElement;
+      
+      // Remove all theme classes
+      root.classList.remove(...allThemes, 'light', 'dark');
+      
+      // Add the selected theme class
+      root.classList.add(theme);
+      
+      // For backwards compatibility with existing code
+      if (lightThemes.includes(theme)) {
+        root.classList.add('light');
+      }
+      
+      // Set the darker accent color for the theme (for scrollbar hover etc.)
+      setDarkerAccentForTheme(theme);
+      
+      // Store the theme preference
+      localStorage.setItem('theme', theme);
+      
+      // Trigger a custom event that other components can listen to
+      const event = new CustomEvent('themechange', { detail: { theme } });
+      document.dispatchEvent(event);
+    }
+
+    /**
+     * Sets a custom theme with specified accent color
+     */
+    function setCustomTheme(accentColor: string): void {
+      const root = document.documentElement;
+      
+      // First apply the custom theme class
+      setTheme('custom-theme');
+      
+      // Then update CSS variable for the accent color
+      root.style.setProperty('--color-accent', accentColor);
+      
+      // Calculate a darker version for shadows and hover states
+      const accentRgb = hexToRgb(accentColor);
+      if (accentRgb) {
+        // Shadow color (25% opacity)
+        root.style.setProperty(
+          '--color-shadow',
+          `rgba(${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}, 0.25)`
+        );
+        
+        // Darker accent color for hover states (15% darker)
+        const darkerAccent = `#${rgbToHex(
+          Math.max(0, accentRgb.r - 38),
+          Math.max(0, accentRgb.g - 38),
+          Math.max(0, accentRgb.b - 38)
+        )}`;
+        root.style.setProperty('--color-accent-darker', darkerAccent);
+      }
+      
+      // Store custom theme preferences
+      localStorage.setItem('custom-accent-color', accentColor);
+      
+      // Highlight the active theme
+      highlightActiveTheme('custom-theme');
+    }
+
+    /**
+     * Converts hex color to RGB values
+     */
+    function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result
+        ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16),
+          }
+        : null;
+    }
+    
+    /**
+     * Converts RGB values to a hex color string
+     */
+    function rgbToHex(r: number, g: number, b: number): string {
+      return componentToHex(r) + componentToHex(g) + componentToHex(b);
+    }
+    
+    /**
+     * Converts a single RGB component to hex
+     */
+    function componentToHex(c: number): string {
+      const hex = c.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    }
+
+    /**
+     * Highlights the active theme in the UI
+     */
+    function highlightActiveTheme(theme: ThemeType): void {
+      themeOptions.forEach((option) => {
+        const optionTheme = option.getAttribute('data-theme') as ThemeType | null;
+        if (optionTheme === theme) {
+          option.classList.add('active');
+        } else {
+          option.classList.remove('active');
+        }
+      });
+      
+      // Update the custom color picker if we have a custom theme
+      if (theme === 'custom-theme' && customAccentColor) {
+        const savedColor = localStorage.getItem('custom-accent-color');
+        if (savedColor) {
+          customAccentColor.value = savedColor;
+        }
+      }
+    }
+    
+    /**
+     * Handles click outside the theme selector
+     */
+    function handleClickOutside(e: MouseEvent): void {
+      if (!isOpen) return;
+      
+      // Check if click is outside the panel and toggle
+      const target = e.target as Node;
+      const isOutside = toggle && panel && 
+                        !toggle.contains(target) && 
+                        !panel.contains(target);
+      
+      if (isOutside) {
+        closePanel();
+      }
+    }
+    
+    /**
+     * Handles keyboard events
+     */
+    function handleKeyDown(e: KeyboardEvent): void {
+      if (isOpen && e.key === 'Escape') {
+        closePanel();
+      } else if (isOpen && e.key === 'Tab') {
+        // This helps with keyboard accessibility
+        // By ensuring focus stays within the panel
+        if (!panel) return;
+        
+        const focusableElements = panel.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        
+        if (focusableElements.length === 0) return;
+        
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+        
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    }
+    
+    /**
+     * Initializes the custom theme from localStorage
+     */
+    function initializeCustomTheme(): void {
+      const savedTheme = localStorage.getItem('theme') as ThemeType | null;
+      const savedCustomColor = localStorage.getItem('custom-accent-color');
+      
+      if (savedTheme === 'custom-theme' && savedCustomColor) {
+        const root = document.documentElement;
+        root.style.setProperty('--color-accent', savedCustomColor);
+        
+        const accentRgb = hexToRgb(savedCustomColor);
+        if (accentRgb) {
+          // Set shadow color
+          root.style.setProperty(
+            '--color-shadow',
+            `rgba(${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}, 0.25)`
+          );
+          
+          // Set darker accent color for hover states
+          const darkerAccent = `#${rgbToHex(
+            Math.max(0, accentRgb.r - 38),
+            Math.max(0, accentRgb.g - 38),
+            Math.max(0, accentRgb.b - 38)
+          )}`;
+          root.style.setProperty('--color-accent-darker', darkerAccent);
+        }
+      }
+    }
+    
+    // Initialize the component
+    function initialize(): void {
+      // Initialize UI state
+      const currentTheme = getCurrentTheme();
+      highlightActiveTheme(currentTheme);
+      
+      // Initialize custom theme if needed
+      if (currentTheme === 'custom-theme') {
+        initializeCustomTheme();
+      } else {
+        // Set darker accent for built-in themes
+        setDarkerAccentForTheme(currentTheme);
+      }
+      
+      // Set up event listeners
+      if (toggle) {
+        toggle.addEventListener('click', togglePanel);
+      }
+      
+      if (closeBtn) {
+        closeBtn.addEventListener('click', closePanel);
+      }
+      
+      // Theme option buttons
+      themeOptions.forEach((option) => {
+        option.addEventListener('click', () => {
+          const theme = option.getAttribute('data-theme') as ThemeType | null;
+          if (theme) {
+            setTheme(theme);
+            highlightActiveTheme(theme);
+          }
+        });
+      });
+      
+      // Custom theme button
+      if (applyCustomBtn && customAccentColor) {
+        applyCustomBtn.addEventListener('click', () => {
+          setCustomTheme(customAccentColor.value);
+        });
+      }
+      
+      // Global event listeners
+      document.addEventListener('click', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    
+    // Start the component
+    initialize();
+  });
+</script>
