@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Piyush Mehta - Software Engineer &amp; React Developer</title>
+    <link>https://piyushmehta.com</link>
+    <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 13 Jun 2025 02:04:27 GMT</lastBuildDate>
+    <generator>Static RSS Generator</generator>
+    <copyright>Copyright 2025 Piyush Mehta. All rights reserved.</copyright>
+    <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
+    <webMaster>hello@piyushmehta.com (Piyush Mehta)</webMaster>
+    <atom:link href="https://piyushmehta.com/rss.xml" rel="self" type="application/rss+xml" />
+    <ttl>60</ttl>
+    <image>
+      <url>https://piyushmehta.com/favicon.svg</url>
+      <title>Piyush Mehta - Blog</title>
+      <link>https://piyushmehta.com</link>
+    </image>
+    
+        <item>
+      <title>Will you be the Kubernetes to My Docker?</title>
+      <link>https://piyushmehta.com/blog/Kubenetes-Docker/</link>
+      <pubDate>Thu, 09 Apr 2020 00:00:00 GMT</pubDate>
+      <description>All about Kubernetes and Docker for a normal Man.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>kubernetes</category>
+      <category>docker</category>
+      <category>Web</category>
+      <category>devops</category>
+    </item>
+        <item>
+      <title>The Silent S in HTTPS</title>
+      <link>https://piyushmehta.com/blog/The-Silent-S-in-HTTPS/</link>
+      <pubDate>Wed, 16 Oct 2019 00:00:00 GMT</pubDate>
+      <description>Why http(s) is not secure?</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>HTTPS</category>
+      <category>web</category>
+      <category>www</category>
+    </item>
+        <item>
+      <title>What is Event Loop in JavaScript</title>
+      <link>https://piyushmehta.com/blog/What-is-Event-Loop-in-JavaScript/</link>
+      <pubDate>Fri, 25 Sep 2020 00:00:00 GMT</pubDate>
+      <description>JavaScript Event Loop is one of the most fundamental concepts that every developer must aspire to understand. It is also one of the most frequently asked interview questions.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>Javascript</category>
+      <category>Js</category>
+      <category>event loop</category>
+      <category>programming</category>
+    </item>
+        <item>
+      <title>Astro 5.9: Revolutionizing Web Security with Built-in Content Security Policy Support</title>
+      <link>https://piyushmehta.com/blog/astro-v5-9-content-security-policy/</link>
+      <pubDate>Sat, 07 Jun 2025 00:00:00 GMT</pubDate>
+      <description>Discover how Astro 5.9 introduces experimental Content Security Policy support, making it easier than ever to secure your websites against XSS attacks while maintaining framework flexibility.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      
+    </item>
+        <item>
+      <title>🔥 A Beginner’s Guide to ChatGPT and Ai based Chat bot solutions for individuals and enterprise</title>
+      <link>https://piyushmehta.com/blog/chat-bot/</link>
+      <pubDate>Wed, 08 Feb 2023 00:00:00 GMT</pubDate>
+      <description>Creating a ChatGPT-like bot using Azure Bot SDK and Typescript can provide many benefits for your business</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>chatbot</category>
+      <category>artificial intelligence</category>
+      <category>ai</category>
+      <category>microsoft azure bot sdk</category>
+      <category>azure bot sdk</category>
+      <category>Piyush97</category>
+    </item>
+        <item>
+      <title>🔥 A Beginner’s Guide to Hacktoberfest &amp; Winning the schwag 👕</title>
+      <link>https://piyushmehta.com/blog/hacktoberfest/</link>
+      <pubDate>Thu, 01 Oct 2020 00:00:00 GMT</pubDate>
+      <description>What exactly is hacktoberfest❓</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>hacktoberfest</category>
+      <category>Piyush97</category>
+    </item>
+        <item>
+      <title>How to make your own blog like this website!</title>
+      <link>https://piyushmehta.com/blog/how-to-make-your-own-blog/</link>
+      <pubDate>Fri, 15 Jan 2021 00:00:00 GMT</pubDate>
+      <description>Ever wanted to make your own blog? Do it now!</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>Javascript</category>
+      <category>Gatsby</category>
+      <category>blog</category>
+      <category>tutorial</category>
+    </item>
+        <item>
+      <title>How to Stay Ahead by Leveraging AI in Your Coding Workflow</title>
+      <link>https://piyushmehta.com/blog/leveraging-ai-in-coding-workflow/</link>
+      <pubDate>Thu, 12 Jun 2025 00:00:00 GMT</pubDate>
+      <description>Discover practical strategies for integrating AI coding assistants into your development process to boost productivity, improve code quality, and accelerate learning while avoiding common pitfalls.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      
+    </item>
+        <item>
+      <title>What the Hell is microfrontend?</title>
+      <link>https://piyushmehta.com/blog/micro-frontends/</link>
+      <pubDate>Sat, 05 Sep 2020 00:00:00 GMT</pubDate>
+      <description>\&quot;Ever heard the word Micro-Frontend and wondered what the hell is that? Today youll know all about it!\&quot;</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>React</category>
+      <category>Microfrontend</category>
+      <category>frontend</category>
+      <category>web development</category>
+      <category>piyush mehta</category>
+    </item>
+        <item>
+      <title>Migrating a 6-Year-Old Codebase to Astro: A Strategic Architecture Journey</title>
+      <link>https://piyushmehta.com/blog/migrating-legacy-codebase-to-astro/</link>
+      <pubDate>Tue, 03 Jun 2025 00:00:00 GMT</pubDate>
+      <description>A comprehensive deep-dive into migrating a legacy portfolio site to modern Astro 4.x, covering architectural decisions, performance optimizations, and lessons learned from a decade of web development.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      
+    </item>
+        <item>
+      <title>How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei</title>
+      <link>https://piyushmehta.com/blog/proto-buf/</link>
+      <pubDate>Mon, 02 Mar 2020 00:00:00 GMT</pubDate>
+      <description>How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei!</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>grpc</category>
+      <category>protobuf</category>
+    </item>
+        <item>
+      <title>Building a Hare-raisingly Good Queue-based Messaging System with NestJS, RabbitMQ, and Azure</title>
+      <link>https://piyushmehta.com/blog/rabbit-mq/</link>
+      <pubDate>Thu, 24 Aug 2023 00:00:00 GMT</pubDate>
+      <description>Embark on a tech adventure like no other with \&quot;Building a Hare-raisingly Good Queue-based Messaging System\&quot;! Join Piyush Mehta, Tech Consultant at BDO Canada LLP, as he crafts a messaging marvel using NestJS, TypeScript, Azure, and RabbitMQ</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>microservice</category>
+      <category>rabbit mq</category>
+      <category>messaging queue</category>
+      <category>microsoft azure sdk</category>
+      <category>Piyush97</category>
+    </item>
+        <item>
+      <title>How Do I Stop Feeling Inferior?</title>
+      <link>https://piyushmehta.com/blog/stop-feeling-inferior/</link>
+      <pubDate>Sat, 11 Jul 2020 00:00:00 GMT</pubDate>
+      <description>How is it that I stop feeling that I’m not good enough? How to stop feeling inferior or inferiority complex? Do you feel like a loser? How to feel confident and not get intimidated by others?</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>self help</category>
+      <category>personality</category>
+      <category>career</category>
+      <category>motivation</category>
+    </item>
+        <item>
+      <title>Monitor Website Uptime using GitHub Actions</title>
+      <link>https://piyushmehta.com/blog/uptime-monitor-ci/</link>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 GMT</pubDate>
+      <description>How to Monitor any website uptime using GitHub Actions for free</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>How to</category>
+      <category>github</category>
+      <category>github actions</category>
+      <category>web dev</category>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,44 @@
+# robots.txt for https://piyushmehta.com
+# Created: June 12, 2025
+
+User-agent: *
+Allow: /
+
+# Allow all bots to access all content
+User-agent: Googlebot
+Allow: /
+User-agent: Googlebot-Image
+Allow: /
+User-agent: Googlebot-Mobile
+Allow: /
+User-agent: Googlebot-News
+Allow: /
+User-agent: Bingbot
+Allow: /
+User-agent: Slurp
+Allow: /
+User-agent: DuckDuckBot
+Allow: /
+User-agent: Baiduspider
+Allow: /
+User-agent: Yandex
+Allow: /
+
+# Disallow admin areas and other non-public routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /wp-admin/
+Disallow: /wp-login.php
+Disallow: /*.json$
+Disallow: /*.js$
+Disallow: /*.css$
+
+# Crawl delay for Bing
+User-agent: Bingbot
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://piyushmehta.com/sitemap.xml
+
+# Host directive to handle any URL canonicalization issues
+Host: piyushmehta.com
