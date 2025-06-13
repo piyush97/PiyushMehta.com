@@ -1,4 +1,4 @@
-// enhance-sitemap.mjs
+// generate-enhanced-sitemap.mjs
 // This script enhances the default Astro sitemap with additional SEO optimizations or generates a new one if needed
 
 import fs from 'fs';
@@ -18,8 +18,10 @@ const possibleSitemapPaths = [
 // The base URL for the site
 const SITE_URL = 'https://piyushmehta.com';
 
-// Wait for the Astro build to complete and create the initial sitemap
-const enhanceSitemap = async () => {
+/**
+ * Main function to enhance the sitemap
+ */
+async function enhanceSitemap() {
   console.log('Enhancing sitemap.xml for SEO optimization...');
   
   // Find the existing sitemap file
@@ -117,16 +119,18 @@ const enhanceSitemap = async () => {
       // Write the enhanced sitemap back to the file
       fs.writeFileSync(sitemapPath, sitemapContent, 'utf8');
       console.log(`Sitemap successfully enhanced at: ${sitemapPath}`);
-      console.log(`Added ${allUrls.length} URLs to the sitemap`);
+      console.log(`Added/updated ${allUrls.length} URLs in the sitemap`);
     } else {
       console.error('Could not find closing </urlset> tag in sitemap.xml');
     }
   } catch (error) {
     console.error('Error enhancing sitemap:', error);
   }
-};
+}
 
-// Generates a basic sitemap XML structure if none exists
+/**
+ * Generates a basic sitemap XML structure if none exists
+ */
 function generateBaseSitemap() {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -136,7 +140,9 @@ function generateBaseSitemap() {
 </urlset>`;
 }
 
-// Get blog posts from content directory
+/**
+ * Get blog posts from content directory
+ */
 async function getBlogPosts() {
   const blogUrls = [];
   const contentDir = path.join(__dirname, 'src', 'content', 'blog');
@@ -167,8 +173,10 @@ async function getBlogPosts() {
   return blogUrls;
 }
 
-// Execute the function
-enhanceSitemap().catch(console.error);
+// Execute the function when run directly
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  enhanceSitemap().catch(console.error);
+}
 
 // Export the function for potential use in other scripts
 export default enhanceSitemap;
