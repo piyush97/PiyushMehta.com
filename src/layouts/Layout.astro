@@ -19,11 +19,12 @@ export interface Props {
   canonical?: string;
   noindex?: boolean;
   schema?: any;
+  keywords?: string[];
 }
 
 const {
   title,
-  description = 'Piyush Mehta - Software Engineer & Tech Speaker',
+  description = 'Piyush Mehta - Senior Software Engineer & React Developer in Canada. Expert in React.js, Node.js, and modern web development technologies.',
   type = 'website',
   image,
   author,
@@ -33,6 +34,7 @@ const {
   canonical,
   noindex,
   schema,
+  keywords,
 } = Astro.props;
 ---
 
@@ -63,6 +65,7 @@ const {
       canonical={canonical}
       noindex={noindex}
       schema={schema}
+      keywords={keywords}
     />
 
     <!-- Include the OpenGraph component -->

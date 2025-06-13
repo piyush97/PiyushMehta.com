@@ -2,24 +2,49 @@
 export interface Props {
   title: string;
   url?: string;
+  segments?: Array<{ name: string; url: string }>;
 }
 
-const { title, url = Astro.url.toString() } = Astro.props;
+const { title, url = Astro.url.toString(), segments } = Astro.props;
 
-const breadcrumbItems = [
+// Get path segments from URL
+const path = Astro.url.pathname;
+const pathSegments = path.split('/').filter((segment) => segment);
+
+// Dynamically build breadcrumb items based on path segments
+let breadcrumbItems = [
   {
     name: 'Home',
     url: 'https://piyushmehta.com',
   },
-  {
-    name: 'Blog',
-    url: 'https://piyushmehta.com/blog',
-  },
-  {
-    name: title,
-    url: url,
-  },
 ];
+
+// If custom segments are provided, use those instead
+if (segments) {
+  breadcrumbItems = [...breadcrumbItems, ...segments];
+} else {
+  // Otherwise dynamically generate from path
+  let currentPath = '';
+  
+  for (let i = 0; i < pathSegments.length; i++) {
+    const segment = pathSegments[i];
+    currentPath += `/${segment}`;
+    
+    // Skip adding the last segment since it will be added with the title
+    if (i < pathSegments.length - 1) {
+      breadcrumbItems.push({
+        name: segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' '),
+        url: `https://piyushmehta.com${currentPath}`,
+      });
+    }
+  }
+}
+
+// Add the current page as the last item
+breadcrumbItems.push({
+  name: title,
+  url: url,
+});
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
