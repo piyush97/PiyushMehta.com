@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="500" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.2" />
+    </filter>
+  </defs>
+  
+  <!-- Main background -->
+  <rect width="1000" height="500" fill="url(#bg-gradient)" />
+  
+  <!-- Title -->
+  <text x="500" y="50" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#1e3a8a" font-weight="bold">Configuration Flexibility Comparison</text>
+  
+  <!-- Nginx Proxy Manager Side -->
+  <g transform="translate(250, 140)">
+    <rect x="-200" y="-40" width="400" height="300" rx="15" fill="#ffffff" stroke="#9F6000" stroke-width="2" filter="id(shadow)" />
+    <text x="0" y="-15" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" fill="#9F6000" font-weight="bold">Nginx Proxy Manager</text>
+    
+    <!-- NPM UI Interface Mockup -->
+    <rect x="-150" y="10" width="300" height="200" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+    
+    <!-- UI Form Elements -->
+    <rect x="-130" y="30" width="260" height="30" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+    <text x="-120" y="50" font-family="Arial, sans-serif" font-size="12" fill="#64748b">Domain: nextcloud.example.com</text>
+    
+    <rect x="-130" y="70" width="260" height="30" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+    <text x="-120" y="90" font-family="Arial, sans-serif" font-size="12" fill="#64748b">Forward to: http://nextcloud:80</text>
+    
+    <rect x="-130" y="110" width="260" height="30" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+    <text x="-120" y="130" font-family="Arial, sans-serif" font-size="12" fill="#64748b">SSL: Enabled with Let's Encrypt</text>
+    
+    <rect x="-130" y="150" width="120" height="30" rx="3" fill="#0ea5e9" />
+    <text x="-70" y="170" font-family="Arial, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle">Save</text>
+    
+    <!-- Rating -->
+    <g transform="translate(0, 230)">
+      <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#334155" font-weight="bold">Configuration Flexibility</text>
+      <rect x="-100" y="10" width="200" height="15" rx="7.5" fill="#e2e8f0" />
+      <rect x="-100" y="10" width="80" height="15" rx="7.5" fill="#9F6000" />
+    </g>
+  </g>
+  
+  <!-- SWAG Side -->
+  <g transform="translate(750, 140)">
+    <rect x="-200" y="-40" width="400" height="300" rx="15" fill="#ffffff" stroke="#0369a1" stroke-width="2" filter="id(shadow)" />
+    <text x="0" y="-15" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" fill="#0369a1" font-weight="bold">SWAG</text>
+    
+    <!-- SWAG Config File Mockup -->
+    <rect x="-150" y="10" width="300" height="200" rx="5" fill="#1e293b" />
+    
+    <!-- Code Text -->
+    <text x="-145" y="30" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">server {</text>
+    <text x="-140" y="45" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">    listen 443 ssl;</text>
+    <text x="-140" y="60" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">    listen [::]:443 ssl;</text>
+    <text x="-140" y="75" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">    server_name nextcloud.*;</text>
+    <text x="-140" y="90" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">    include /config/nginx/ssl.conf;</text>
+    <text x="-140" y="105" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">    client_max_body_size 0;</text>
+    <text x="-140" y="120" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">    location / {</text>
+    <text x="-135" y="135" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">        include /config/nginx/proxy.conf;</text>
+    <text x="-135" y="150" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">        resolver 127.0.0.11 valid=30s;</text>
+    <text x="-135" y="165" font-family="Courier New, monospace" font-size="10" fill="#38bdf8">        set $upstream_app nextcloud;</text>
+    <text x="-135" y="180" font-family="Courier New, monospace" font-size="10" fill="#38bdf8">        set $upstream_port 80;</text>
+    <text x="-135" y="195" font-family="Courier New, monospace" font-size="10" fill="#38bdf8">        set $upstream_proto http;</text>
+    <text x="-135" y="210" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">    }</text>
+    <text x="-145" y="225" font-family="Courier New, monospace" font-size="10" fill="#f8fafc">}</text>
+    
+    <!-- Rating -->
+    <g transform="translate(0, 230)">
+      <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#334155" font-weight="bold">Configuration Flexibility</text>
+      <rect x="-100" y="10" width="200" height="15" rx="7.5" fill="#e2e8f0" />
+      <rect x="-100" y="10" width="190" height="15" rx="7.5" fill="#0369a1" />
+    </g>
+  </g>
+  
+  <!-- Comparison Arrow -->
+  <g transform="translate(500, 140)">
+    <path d="M-30,0 L30,0 L15,-15 L15,-5 L-15,-5 L-15,5 L-30,0 Z" fill="#64748b" />
+    <path d="M-30,0 L-15,15 L-15,5 L15,5 L15,-5 L30,0 L-30,0 Z" fill="#64748b" />
+  </g>
+  
+  <!-- Configuration Tasks Comparison -->
+  <g transform="translate(500, 400)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#334155" font-weight="bold">Configuration Capabilities</text>
+    
+    <g transform="translate(-200, 30)">
+      <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#9F6000" font-weight="bold">NPM</text>
+      <text x="0" y="20" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">✓ Basic proxy setup</text>
+      <text x="0" y="40" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">✓ SSL management</text>
+      <text x="0" y="60" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">✓ Access lists</text>
+      <text x="0" y="80" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">✗ Advanced rewrites</text>
+      <text x="0" y="100" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">✗ Custom error pages</text>
+    </g>
+    
+    <g transform="translate(200, 30)">
+      <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#0369a1" font-weight="bold">SWAG</text>
+      <text x="0" y="20" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">✓ Everything NPM offers</text>
+      <text x="0" y="40" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">✓ Full Nginx configuration</text>
+      <text x="0" y="60" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">✓ Location-specific rules</text>
+      <text x="0" y="80" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">✓ HTTP/3 & QUIC support</text>
+      <text x="0" y="100" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">✓ GeoIP filtering</text>
+    </g>
+  </g>
+</svg>
