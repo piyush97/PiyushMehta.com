@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.3" />
+    </filter>
+  </defs>
+  
+  <!-- Main background -->
+  <rect width="1200" height="630" fill="url(#bg-gradient)" />
+  
+  <!-- Decorative pattern -->
+  <g opacity="0.1" fill="#ffffff">
+    <circle cx="200" cy="150" r="80" />
+    <circle cx="1000" cy="500" r="100" />
+    <circle cx="100" cy="500" r="50" />
+    <circle cx="1100" cy="150" r="60" />
+  </g>
+  
+  <!-- Center panel -->
+  <rect x="250" y="115" width="700" height="400" rx="15" fill="#ffffff" filter="id(shadow)" />
+  
+  <!-- NPM Logo (left) -->
+  <g transform="translate(300, 210)">
+    <rect x="0" y="0" width="200" height="200" rx="10" fill="#151B26" />
+    <path d="M40,60 h120 v30 h-45 v50 h-30 v-50 h-45 z" fill="#9F6000" />
+    <path d="M40,150 h120 v30 h-120 z" fill="#00A99D" />
+    <text x="100" y="230" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#333333" font-weight="bold">Nginx Proxy Manager</text>
+  </g>
+  
+  <!-- Arrow -->
+  <g transform="translate(550, 265)">
+    <path d="M0,0 h100 l-15,-15 v10 h-70 v10 z" fill="#3B82F6" />
+    <path d="M85,0 l15,15 v-10 h-15 z" fill="#3B82F6" />
+  </g>
+  
+  <!-- SWAG Logo (right) -->
+  <g transform="translate(700, 210)">
+    <rect x="0" y="0" width="200" height="200" rx="10" fill="#083450" />
+    <path d="M50,50 h100 v100 h-100 z" fill="#ffffff" opacity="0.2" />
+    <path d="M70,70 h30 v30 h-30 z M100,100 h30 v30 h-30 z M70,100 h30 v30 h-30 z M100,70 h30 v30 h-30 z" fill="#52b6da" />
+    <text x="100" y="230" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#333333" font-weight="bold">SWAG</text>
+  </g>
+  
+  <!-- Title at the top -->
+  <text x="600" y="90" font-family="Arial, sans-serif" font-size="38" text-anchor="middle" fill="#ffffff" font-weight="bold">From Nginx Proxy Manager to SWAG</text>
+  
+  <!-- Subtitle at the bottom -->
+  <text x="600" y="560" font-family="Arial, sans-serif" font-size="28" text-anchor="middle" fill="#ffffff" font-weight="bold">A Powerful Migration Journey</text>
+</svg>
