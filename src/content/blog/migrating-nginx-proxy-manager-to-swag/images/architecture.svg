@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="600" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.2" />
+    </filter>
+  </defs>
+  
+  <!-- Main background -->
+  <rect width="1000" height="600" fill="url(#bg-gradient)" />
+  
+  <!-- SWAG Container Box -->
+  <rect x="100" y="100" width="800" height="400" rx="15" fill="#ffffff" stroke="#0369a1" stroke-width="2" filter="id(shadow)" />
+  
+  <!-- SWAG Title -->
+  <text x="500" y="140" font-family="Arial, sans-serif" font-size="28" text-anchor="middle" fill="#0369a1" font-weight="bold">SWAG by LinuxServer.io</text>
+  
+  <!-- Components -->
+  <g>
+    <!-- Nginx -->
+    <rect x="150" y="180" width="200" height="100" rx="10" fill="#009639" filter="id(shadow)" />
+    <text x="250" y="235" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#ffffff" font-weight="bold">Nginx</text>
+    <text x="250" y="265" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">Web Server &amp; Reverse Proxy</text>
+    
+    <!-- Certbot -->
+    <rect x="400" y="180" width="200" height="100" rx="10" fill="#2B3AA1" filter="id(shadow)" />
+    <text x="500" y="235" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#ffffff" font-weight="bold">Certbot</text>
+    <text x="500" y="265" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">Let's Encrypt SSL Certificates</text>
+    
+    <!-- Fail2Ban -->
+    <rect x="650" y="180" width="200" height="100" rx="10" fill="#E53935" filter="id(shadow)" />
+    <text x="750" y="235" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#ffffff" font-weight="bold">Fail2Ban</text>
+    <text x="750" y="265" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">Intrusion Prevention</text>
+    
+    <!-- GeoIP2 -->
+    <rect x="150" y="330" width="200" height="100" rx="10" fill="#FFA000" filter="id(shadow)" />
+    <text x="250" y="385" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#ffffff" font-weight="bold">GeoIP2</text>
+    <text x="250" y="415" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">Geographic IP Filtering</text>
+    
+    <!-- PHP -->
+    <rect x="400" y="330" width="200" height="100" rx="10" fill="#8892BF" filter="id(shadow)" />
+    <text x="500" y="385" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#ffffff" font-weight="bold">PHP</text>
+    <text x="500" y="415" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">Web Application Support</text>
+    
+    <!-- Proxy Configs -->
+    <rect x="650" y="330" width="200" height="100" rx="10" fill="#00BCD4" filter="id(shadow)" />
+    <text x="750" y="385" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#ffffff" font-weight="bold">Proxy Configs</text>
+    <text x="750" y="415" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">Application Templates</text>
+  </g>
+  
+  <!-- Internet Access -->
+  <g transform="translate(500, 50)">
+    <path d="M0,0 l-40,40 h80 z" fill="#1e3a8a" filter="id(shadow)" />
+    <text x="0" y="-10" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#1e3a8a" font-weight="bold">Internet</text>
+  </g>
+  
+  <!-- Incoming Connection Line -->
+  <path d="M500,90 v10" stroke="#1e3a8a" stroke-width="3" stroke-dasharray="5,5" />
+  
+  <!-- Self-hosted Services -->
+  <g transform="translate(500, 550)">
+    <rect x="-250" y="-40" width="500" height="80" rx="10" fill="#7e22ce" filter="id(shadow)" />
+    <text x="0" y="15" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#ffffff" font-weight="bold">Self-Hosted Services</text>
+  </g>
+  
+  <!-- Outgoing Connection Line -->
+  <path d="M500,500 v10" stroke="#7e22ce" stroke-width="3" stroke-dasharray="5,5" />
+</svg>

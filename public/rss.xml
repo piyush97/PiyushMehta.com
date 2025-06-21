@@ -5,7 +5,7 @@
     <link>https://piyushmehta.com</link>
     <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 13 Jun 2025 02:04:27 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 21 Jun 2025 16:26:37 GMT</lastBuildDate>
     <generator>Static RSS Generator</generator>
     <copyright>Copyright 2025 Piyush Mehta. All rights reserved.</copyright>
     <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
@@ -118,6 +118,14 @@
       <description>A comprehensive deep-dive into migrating a legacy portfolio site to modern Astro 4.x, covering architectural decisions, performance optimizations, and lessons learned from a decade of web development.</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
       
+    </item>
+        <item>
+      <title>From Nginx Proxy Manager to SWAG: A Powerful Migration Journey</title>
+      <link>https://piyushmehta.com/blog/migrating-nginx-proxy-manager-to-swag/</link>
+      <pubDate>Sat, 21 Jun 2025 00:00:00 GMT</pubDate>
+      <description>Discover why I migrated from Nginx Proxy Manager to SWAG by LinuxServer.io, the challenges faced, and the transformative benefits that made this switch a game-changer for my self-hosted infrastructure.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>hosting</category>
     </item>
         <item>
       <title>How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei</title>
