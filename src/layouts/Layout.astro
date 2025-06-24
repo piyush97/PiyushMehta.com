@@ -1,11 +1,11 @@
 ---
 import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
-import OpenGraph from '../components/OpenGraph.astro';
 import SEO from '../components/SEO.astro';
 import '../styles/global.css';
 import SpeedInsights from "@vercel/speed-insights/astro"
 import favicon from "../assets/favicon.svg";
+import type { JsonLdData } from '../types/schema';
 
 export interface Props {
   title: string;
@@ -18,7 +18,7 @@ export interface Props {
   tags?: string[];
   canonical?: string;
   noindex?: boolean;
-  schema?: any;
+  schema?: JsonLdData;
   keywords?: string[];
 }
 
@@ -52,7 +52,7 @@ const {
     />
     <meta name="generator" content={Astro.generator} />
     <SpeedInsights/>
-    <!-- SEO Component -->
+    <!-- SEO Component (includes OpenGraph functionality) -->
     <SEO
       title={title}
       description={description}
@@ -67,9 +67,6 @@ const {
       schema={schema}
       keywords={keywords}
     />
-
-    <!-- Include the OpenGraph component -->
-    <OpenGraph title={title} description={description} image={image} />
 
     <script>
       // Enhanced theme detection and setting for multiple themes
