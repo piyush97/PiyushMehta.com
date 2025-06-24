@@ -48,7 +48,7 @@ async function testSeoFiles() {
       console.log(`${colors.cyan}Sitemap found: ${sitemapPath}${colors.reset}`);
       console.log(`${colors.cyan}Size: ${(content.length / 1024).toFixed(2)} KB${colors.reset}`);
       console.log(`${colors.cyan}URL count: ${urlCount}${colors.reset}`);
-      console.log(`${colors.cyan}Valid format: ${isValid ? colors.green + '✓' : colors.red + '✗'}${colors.reset}`);
+      console.log(`${colors.cyan}Valid format: ${isValid ? `${colors.green}✓` : `${colors.red}✗`}${colors.reset}`);
       console.log('-'.repeat(80));
     }
   }
@@ -80,8 +80,8 @@ async function testSeoFiles() {
       console.log(`${colors.cyan}RSS found: ${rssPath}${colors.reset}`);
       console.log(`${colors.cyan}Size: ${(content.length / 1024).toFixed(2)} KB${colors.reset}`);
       console.log(`${colors.cyan}Item count: ${itemCount}${colors.reset}`);
-      console.log(`${colors.cyan}Valid format: ${isValid ? colors.green + '✓' : colors.red + '✗'}${colors.reset}`);
-      console.log(`${colors.cyan}Contains HTML (bad): ${hasHTML ? colors.red + '✓' : colors.green + '✗'}${colors.reset}`);
+      console.log(`${colors.cyan}Valid format: ${isValid ? `${colors.green}✓` : `${colors.red}✗`}${colors.reset}`);
+      console.log(`${colors.cyan}Contains HTML (bad): ${hasHTML ? `${colors.red}✓` : `${colors.green}✗`}${colors.reset}`);
       console.log('-'.repeat(80));
     }
   }
@@ -103,8 +103,8 @@ async function testSeoFiles() {
     
     console.log(`${colors.cyan}robots.txt found: ${robotsPath}${colors.reset}`);
     console.log(`${colors.cyan}Size: ${(content.length / 1024).toFixed(2)} KB${colors.reset}`);
-    console.log(`${colors.cyan}Contains Sitemap directive: ${hasSitemap ? colors.green + '✓' : colors.yellow + '✗'}${colors.reset}`);
-    console.log(`${colors.cyan}Contains User-agent directive: ${hasUserAgent ? colors.green + '✓' : colors.yellow + '✗'}${colors.reset}`);
+    console.log(`${colors.cyan}Contains Sitemap directive: ${hasSitemap ? `${colors.green}✓` : `${colors.yellow}✗`}${colors.reset}`);
+    console.log(`${colors.cyan}Contains User-agent directive: ${hasUserAgent ? `${colors.green}✓` : `${colors.yellow}✗`}${colors.reset}`);
     console.log('-'.repeat(80));
   } else {
     console.log(`${colors.red}No robots.txt file found!${colors.reset}`);
@@ -112,9 +112,9 @@ async function testSeoFiles() {
   
   console.log(`\n${colors.bold}${colors.magenta}Summary:${colors.reset}`);
   console.log('-'.repeat(80));
-  console.log(`${colors.cyan}Sitemap found: ${sitemapFound ? colors.green + '✓' : colors.red + '✗'}${colors.reset}`);
-  console.log(`${colors.cyan}RSS feed found: ${rssFound ? colors.green + '✓' : colors.red + '✗'}${colors.reset}`);
-  console.log(`${colors.cyan}robots.txt found: ${fs.existsSync(robotsPath) ? colors.green + '✓' : colors.red + '✗'}${colors.reset}`);
+  console.log(`${colors.cyan}Sitemap found: ${sitemapFound ? `${colors.green}✓` : `${colors.red}✗`}${colors.reset}`);
+  console.log(`${colors.cyan}RSS feed found: ${rssFound ? `${colors.green}✓` : `${colors.red}✗`}${colors.reset}`);
+  console.log(`${colors.cyan}robots.txt found: ${fs.existsSync(robotsPath) ? `${colors.green}✓` : `${colors.red}✗`}${colors.reset}`);
   
   // Return success only if all files were found
   return sitemapFound && rssFound && fs.existsSync(robotsPath);
