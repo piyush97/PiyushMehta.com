@@ -76,7 +76,7 @@ async function checkRemoteRss() {
           
           // Show the beginning of the content
           console.log(`${colors.yellow}Content starts with:${colors.reset}`);
-          console.log(rawData.substring(0, 200) + '...');
+          console.log(`${rawData.substring(0, 200)}...`);
         }
         
         // Check for RSS elements
@@ -175,21 +175,21 @@ async function main() {
     if (SITE_URL !== 'https://piyushmehta.com') {
       const remoteResult = await checkRemoteRss();
       
-      console.log('\n' + '='.repeat(80));
+      console.log(`\n${'='.repeat(80)}`);
       
       // Print summary
       console.log(`${colors.bold}${colors.magenta}Summary:${colors.reset}`);
-      console.log(`${colors.cyan}Local RSS file: ${localResult.exists ? colors.green + '✓ Valid' : colors.red + '✗ Invalid or missing'}${colors.reset}`);
+      console.log(`${colors.cyan}Local RSS file: ${localResult.exists ? `${colors.green}✓ Valid` : `${colors.red}✗ Invalid or missing`}${colors.reset}`);
       if (localResult.exists) {
         console.log(`${colors.cyan}Local RSS items: ${localResult.itemCount}${colors.reset}`);
       }
       
-      console.log(`${colors.cyan}Remote RSS feed: ${remoteResult.isXml && remoteResult.hasRssElements ? colors.green + '✓ Valid' : colors.red + '✗ Invalid'}${colors.reset}`);
-      console.log(`${colors.cyan}Remote content type: ${remoteResult.contentType.includes('html') ? colors.red + '✗ HTML (wrong)' : colors.green + '✓ XML (correct)'}${colors.reset}`);
+      console.log(`${colors.cyan}Remote RSS feed: ${remoteResult.isXml && remoteResult.hasRssElements ? `${colors.green}✓ Valid` : `${colors.red}✗ Invalid`}${colors.reset}`);
+      console.log(`${colors.cyan}Remote content type: ${remoteResult.contentType.includes('html') ? `${colors.red}✗ HTML (wrong)` : `${colors.green}✓ XML (correct)`}${colors.reset}`);
       console.log(`${colors.cyan}Remote RSS items: ${remoteResult.itemCount}${colors.reset}`);
       
       // Provide recommendations
-      console.log('\n' + colors.bold + colors.yellow + 'Recommendations:' + colors.reset);
+      console.log(`\n${colors.bold}${colors.yellow}Recommendations:${colors.reset}`);
       
       if (remoteResult.contentType.includes('html')) {
         console.log(`${colors.yellow}- Your RSS feed is being served as HTML, not XML. Check your Content-Type headers in server config.${colors.reset}`);
@@ -204,7 +204,7 @@ async function main() {
         console.log(`${colors.yellow}- Your local RSS file exists but doesn't contain any items.${colors.reset}`);
       }
     } else {
-      console.log('\n' + colors.yellow + 'To check your live RSS feed, edit the SITE_URL constant in this script.' + colors.reset);
+      console.log(`\n${colors.yellow}To check your live RSS feed, edit the SITE_URL constant in this script.${colors.reset}`);
     }
   } catch (error) {
     console.error(`${colors.red}Error during verification: ${error.message}${colors.reset}`);
