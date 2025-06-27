@@ -1,12 +1,21 @@
 ---
 import type { JsonLdData } from '../types/schema';
-import { generateCanonicalUrl, generateOgImageUrl, generateStructuredData, optimizeKeywords, sanitizeDescription } from '../utils/seo-optimization';
+import { 
+  type ImageMetadata,
+  extractImageMetadata,
+  generateCanonicalUrl, 
+  generateOgImageUrl, 
+  generateStructuredData, 
+  optimizeKeywords, 
+  sanitizeDescription,
+  validateImageForSocialSharing
+} from '../utils/seo-optimization';
 
 export interface Props {
   title: string;
   description?: string;
   type?: 'website' | 'article';
-  image?: string;
+  image?: string | { url: string; alt?: string; width?: number; height?: number; type?: string };
   url?: string;
   author?: string;
   publishedTime?: Date;
@@ -38,19 +47,28 @@ const {
 const optimizedDescription = sanitizeDescription(description);
 const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname);
 
-// Generate OpenGraph image URL if not provided
-let ogImageUrl: string;
+// Handle image metadata with full OG Protocol compliance
+let imageMetadata: ImageMetadata;
+
 if (image) {
-  // Convert relative URLs to absolute URLs
-  ogImageUrl = image.startsWith('http') ? image : new URL(image, Astro.site).toString();
+  // Extract metadata from provided image (article-specific image takes priority)
+  imageMetadata = extractImageMetadata(image, Astro.site?.toString());
 } else {
-  ogImageUrl = generateOgImageUrl({
+  // Fallback to dynamic OG image generation
+  const dynamicImageUrl = generateOgImageUrl({
     title,
     description: optimizedDescription,
     type,
     publishedTime,
     tags,
   });
+  imageMetadata = extractImageMetadata(dynamicImageUrl, Astro.site?.toString());
+}
+
+// Validate image for optimal social sharing
+const imageValidation = validateImageForSocialSharing(imageMetadata);
+if (!imageValidation.isValid && import.meta.env.DEV) {
+  console.warn(`SEO Image Issues for "${title}":`, imageValidation.warnings);
 }
 
 // Generate structured data
@@ -63,7 +81,7 @@ const defaultSchemaData = generateStructuredData({
   publishedTime,
   modifiedTime,
   tags,
-  image: ogImageUrl,
+  image: imageMetadata.url,
 });
 
 const schemaData = schema || defaultSchemaData;
@@ -87,12 +105,14 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta property="og:url" content={url} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={optimizedDescription} />
-<meta
-  property="og:image"
-  content={ogImageUrl}
-/>
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
+<meta property="og:image" content={imageMetadata.url} />
+{imageMetadata.secureUrl && imageMetadata.secureUrl !== imageMetadata.url && (
+  <meta property="og:image:secure_url" content={imageMetadata.secureUrl} />
+)}
+{imageMetadata.type && <meta property="og:image:type" content={imageMetadata.type} />}
+{imageMetadata.width && <meta property="og:image:width" content={imageMetadata.width.toString()} />}
+{imageMetadata.height && <meta property="og:image:height" content={imageMetadata.height.toString()} />}
+{imageMetadata.alt && <meta property="og:image:alt" content={imageMetadata.alt} />}
 <meta property="og:site_name" content="Piyush Mehta" />
 <meta property="og:locale" content="en_US" />
 
@@ -102,8 +122,8 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta name="twitter:creator" content="@piyushmehtas" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={optimizedDescription} />
-<meta name="twitter:image" content={ogImageUrl} />
-<meta name="twitter:image:alt" content={image ? `${title} featured image` : `${title} - Piyush Mehta`} />
+<meta name="twitter:image" content={imageMetadata.url} />
+<meta name="twitter:image:alt" content={imageMetadata.alt || `${title} - Piyush Mehta`} />
 
 <!-- Article specific meta tags -->
 {
