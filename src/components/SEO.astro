@@ -1,7 +1,4 @@
 ---
-import type { JsonLdData } from '../types/schema';
-import { generateCanonicalUrl, generateOgImageUrl, generateStructuredData, optimizeKeywords, sanitizeDescription } from '../utils/seo-optimization';
-
 export interface Props {
   title: string;
   description?: string;
@@ -14,7 +11,7 @@ export interface Props {
   tags?: string[];
   canonical?: string;
   noindex?: boolean;
-  schema?: JsonLdData;
+  schema?: any;
   keywords?: string[];
 }
 
@@ -34,50 +31,56 @@ const {
   keywords = ['Piyush Mehta', 'React Developer', 'Software Engineer', 'Software Engineer in Canada', 'Software Consultant in Canada', 'ReactJS', 'ReactJS Developer', 'React Developer', 'Software Engineer', 'Toronto Developer', 'Canadian Software Engineer', 'Tech Speaker', 'Open Source Contributor'],
 } = Astro.props;
 
-// Optimize and sanitize content
-const optimizedDescription = sanitizeDescription(description);
-const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname);
-
 // Generate OpenGraph image URL if not provided
-let ogImageUrl: string;
-if (image) {
-  // Convert relative URLs to absolute URLs
-  ogImageUrl = image.startsWith('http') ? image : new URL(image, Astro.site).toString();
-} else {
-  ogImageUrl = generateOgImageUrl({
-    title,
-    description: optimizedDescription,
-    type,
-    publishedTime,
-    tags,
-  });
-}
+const ogImageUrl =
+  image ||
+  `/api/og-image?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&type=${type}${publishedTime ? `&date=${publishedTime.toISOString()}` : ''}${tags.length > 0 ? `&tags=${tags.join(',')}` : ''}`;
+
+// Construct canonical URL
+const canonicalUrl = canonical || url;
 
 // Generate structured data
-const defaultSchemaData = generateStructuredData({
-  type,
-  title,
-  description: optimizedDescription,
+const defaultSchema = {
+  '@context': 'https://schema.org',
+  '@type': type === 'article' ? 'Article' : 'WebPage',
+  headline: title,
+  description: description,
+  author: {
+    '@type': 'Person',
+    name: author,
+    url: 'https://piyushmehta.com',
+    sameAs: [
+      'https://github.com/piyush97',
+      'https://linkedin.com/in/piyush24',
+      'https://twitter.com/piyushmehtas',
+    ],
+  },
   url: canonicalUrl,
-  author,
-  publishedTime,
-  modifiedTime,
-  tags,
-  image: ogImageUrl,
-});
+  ...(type === 'article' && {
+    datePublished: publishedTime?.toISOString(),
+    dateModified: modifiedTime?.toISOString() || publishedTime?.toISOString(),
+    keywords: tags.join(', '),
+    articleSection: 'Technology',
+    publisher: {
+      '@type': 'Person',
+      name: 'Piyush Mehta',
+      url: 'https://piyushmehta.com',
+    },
+  }),
+};
 
-const schemaData = schema || defaultSchemaData;
+const schemaData = schema || defaultSchema;
 
-// Optimize keywords
-const optimizedKeywords = optimizeKeywords(keywords, tags);
+// Combine keywords and tags for SEO
+const allKeywords = [...new Set([...keywords, ...tags])].join(', ');
 ---
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>
 <meta name="title" content={title} />
-<meta name="description" content={optimizedDescription} />
+<meta name="description" content={description} />
 <meta name="author" content={author} />
-<meta name="keywords" content={optimizedKeywords} />
+<meta name="keywords" content={allKeywords} />
 {canonical && <link rel="canonical" href={canonicalUrl} />}
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 {!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
@@ -86,10 +89,10 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta property="og:type" content={type} />
 <meta property="og:url" content={url} />
 <meta property="og:title" content={title} />
-<meta property="og:description" content={optimizedDescription} />
+<meta property="og:description" content={description} />
 <meta
   property="og:image"
-  content={ogImageUrl}
+  content={new URL(ogImageUrl, Astro.site).toString()}
 />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
@@ -100,10 +103,10 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={url} />
 <meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={optimizedDescription} />
+<meta property="twitter:description" content={description} />
 <meta
   property="twitter:image"
-  content={ogImageUrl}
+  content={new URL(ogImageUrl, Astro.site).toString()}
 />
 <meta property="twitter:creator" content="@piyushmehtas" />
 <meta property="twitter:site" content="@piyushmehtas" />

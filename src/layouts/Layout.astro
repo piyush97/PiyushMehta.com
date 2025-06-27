@@ -1,12 +1,11 @@
 ---
 import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
+import OpenGraph from '../components/OpenGraph.astro';
 import SEO from '../components/SEO.astro';
-import SearchModal from '../components/SearchModal.astro';
 import '../styles/global.css';
 import SpeedInsights from "@vercel/speed-insights/astro"
 import favicon from "../assets/favicon.svg";
-import type { JsonLdData } from '../types/schema';
 
 export interface Props {
   title: string;
@@ -19,7 +18,7 @@ export interface Props {
   tags?: string[];
   canonical?: string;
   noindex?: boolean;
-  schema?: JsonLdData;
+  schema?: any;
   keywords?: string[];
 }
 
@@ -53,7 +52,7 @@ const {
     />
     <meta name="generator" content={Astro.generator} />
     <SpeedInsights/>
-    <!-- SEO Component (includes OpenGraph functionality) -->
+    <!-- SEO Component -->
     <SEO
       title={title}
       description={description}
@@ -68,6 +67,9 @@ const {
       schema={schema}
       keywords={keywords}
     />
+
+    <!-- Include the OpenGraph component -->
+    <OpenGraph title={title} description={description} image={image} />
 
     <script>
       // Enhanced theme detection and setting for multiple themes
@@ -155,14 +157,11 @@ const {
   <body class="min-h-screen flex flex-col">
     
     <Navbar />
-    <SearchModal />
     <main class="flex-1 pt-16">
       <slot />
     </main>
     <Footer />
 
-    <script src="/src/scripts/enhanced-navbar.js"></script>
-    
     <script>
       // Enhanced theme toggle functionality for multi-theme support
       function toggleTheme() {

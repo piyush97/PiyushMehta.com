@@ -187,15 +187,6 @@ export default function GitHubProjectIsland({
                 key={tech}
                 className="px-2 py-1 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent"
                 onClick={() => setSelectedTech(tech)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setSelectedTech(tech);
-                  }
-                }}
-                tabIndex={0}
-                role="button"
-                aria-label={`Filter projects by ${tech}`}
               >
                 {tech}
               </span>
@@ -364,15 +355,6 @@ export default function GitHubProjectIsland({
                 key={tech}
                 className="px-2 py-0.5 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent"
                 onClick={() => setSelectedTech(tech)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setSelectedTech(tech);
-                  }
-                }}
-                tabIndex={0}
-                role="button"
-                aria-label={`Filter projects by ${tech}`}
               >
                 {tech}
               </span>
