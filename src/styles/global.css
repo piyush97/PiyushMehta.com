@@ -250,7 +250,7 @@ html {
   --color-card-border-hover: #0066cc;
   --color-card-gradient-light: #002244;
   --color-card-gradient-dark: #001122;
-  --color-navbar-bg: rgba(0, 24, 48, 0.9);
+  --color-navbar-bg: rgba(0, 24, 48, 0.95);
   --color-shadow: rgba(0, 255, 0, 0.25);
   --color-shadow-dark: rgba(0, 0, 0, 0.5);
 }
@@ -281,7 +281,7 @@ html {
   --color-card-border-hover: var(--color-light-400);
   --color-card-gradient-light: var(--color-light-200);
   --color-card-gradient-dark: var(--color-light-100);
-  --color-navbar-bg: rgba(255, 255, 255, 0.9);
+  --color-navbar-bg: rgba(247, 247, 247, 0.95);
   --color-shadow: rgba(0, 0, 0, 0.1);
   --color-shadow-dark: rgba(0, 0, 0, 0.2);
 }
@@ -312,7 +312,7 @@ html {
   --color-card-border-hover: var(--color-accent);
   --color-card-gradient-light: var(--color-light-800);
   --color-card-gradient-dark: var(--color-light-900);
-  --color-navbar-bg: rgba(0, 0, 0, 0.95);
+  --color-navbar-bg: rgba(0, 0, 0, 0.98);
   --color-shadow: rgba(255, 255, 0, 0.5);
   --color-shadow-dark: rgba(0, 0, 0, 0.8);
 }
@@ -343,7 +343,7 @@ html {
   --color-card-border-hover: var(--color-light-700);
   --color-card-gradient-light: var(--color-light-700);
   --color-card-gradient-dark: var(--color-light-950);
-  --color-navbar-bg: rgba(33, 37, 41, 0.9);
+  --color-navbar-bg: rgba(33, 37, 41, 0.95);
   --color-shadow: rgba(52, 152, 219, 0.25);
   --color-shadow-dark: rgba(0, 0, 0, 0.25);
 }
@@ -671,16 +671,36 @@ html {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  /* Light theme navbar adjustments */
+  /* Theme-specific navbar adjustments */
   :root.professional-light .navbar-enhanced {
-    background: rgba(239, 239, 245, 0.8);
+    background: var(--color-navbar-bg);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
 
   :root.professional-light .navbar-enhanced.scrolled {
-    background: rgba(239, 239, 245, 0.98);
+    background: var(--color-navbar-bg);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  :root.retro-tech .navbar-enhanced {
+    background: var(--color-navbar-bg);
+    border-bottom: 1px solid var(--color-accent);
+  }
+
+  :root.minimalist .navbar-enhanced {
+    background: var(--color-navbar-bg);
+    border-bottom: 1px solid var(--color-card-border);
+  }
+
+  :root.high-contrast .navbar-enhanced {
+    background: var(--color-navbar-bg);
+    border-bottom: 2px solid var(--color-accent);
+  }
+
+  :root.custom-theme .navbar-enhanced {
+    background: var(--color-navbar-bg);
+    border-bottom: 1px solid var(--color-card-border);
   }
 
 
@@ -794,10 +814,30 @@ html {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  /* Light theme mobile menu */
+  /* Theme-specific mobile menu */
   :root.professional-light .mobile-menu-enhanced {
-    background: linear-gradient(180deg, rgba(239, 239, 245, 0.98) 0%, rgba(239, 239, 245, 0.95) 100%);
+    background: var(--color-bg);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  :root.retro-tech .mobile-menu-enhanced {
+    background: var(--color-bg);
+    box-shadow: 0 8px 32px var(--color-shadow);
+  }
+
+  :root.minimalist .mobile-menu-enhanced {
+    background: var(--color-bg);
+    box-shadow: 0 8px 32px var(--color-shadow);
+  }
+
+  :root.high-contrast .mobile-menu-enhanced {
+    background: var(--color-bg);
+    box-shadow: 0 8px 32px var(--color-shadow);
+  }
+
+  :root.custom-theme .mobile-menu-enhanced {
+    background: var(--color-bg);
+    box-shadow: 0 8px 32px var(--color-shadow);
   }
 
   /* Mobile menu hamburger icon */
