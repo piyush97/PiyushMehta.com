@@ -13,7 +13,7 @@ export interface ImageMetadata {
 }
 
 /**
- * Generate consistent OpenGraph image URLs
+ * Generate consistent OpenGraph image URLs using @vercel/og
  * @param params - Parameters for OG image generation
  * @returns Optimized OG image URL
  */
@@ -208,7 +208,8 @@ export function resolveImageUrl(imageUrl: string, baseUrl: string = 'https://piy
   
   // Convert relative URL to absolute
   const cleanPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
-  return `${baseUrl}${cleanPath}`;
+  const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  return `${cleanBaseUrl}${cleanPath}`;
 }
 
 /**
@@ -234,34 +235,76 @@ export function generateSecureImageUrl(imageUrl: string): string {
 }
 
 /**
- * Extract image metadata for OG Protocol compliance
+ * Extract image metadata for OG Protocol compliance with @vercel/og fallback
  * @param image - Image object from content
  * @param baseUrl - Base URL for the site
+ * @param fallbackParams - Parameters for generating fallback OG image
  * @returns Complete image metadata
  */
 export function extractImageMetadata(
-  image: { url: string; alt?: string; width?: number; height?: number; type?: string } | string,
-  baseUrl: string = 'https://piyushmehta.com'
+  image: { url: string; alt?: string; width?: number; height?: number; type?: string } | string | null,
+  baseUrl: string = 'https://piyushmehta.com',
+  fallbackParams?: {
+    title: string;
+    description?: string;
+    type?: string;
+    publishedTime?: Date;
+    tags?: string[];
+  }
 ): ImageMetadata {
-  if (typeof image === 'string') {
-    const resolvedUrl = resolveImageUrl(image, baseUrl);
+  // If we have a specific image, use it
+  if (image) {
+    if (typeof image === 'string') {
+      const resolvedUrl = resolveImageUrl(image, baseUrl);
+      return {
+        url: resolvedUrl,
+        secureUrl: generateSecureImageUrl(resolvedUrl),
+        type: getImageTypeFromUrl(resolvedUrl),
+        width: getDefaultImageWidth(resolvedUrl),
+        height: getDefaultImageHeight(resolvedUrl),
+      };
+    }
+    
+    const resolvedUrl = resolveImageUrl(image.url, baseUrl);
+    const secureUrl = generateSecureImageUrl(resolvedUrl);
+    
     return {
       url: resolvedUrl,
-      secureUrl: generateSecureImageUrl(resolvedUrl),
-      type: getImageTypeFromUrl(resolvedUrl),
+      secureUrl: secureUrl,
+      alt: image.alt,
+      width: image.width || getDefaultImageWidth(resolvedUrl),
+      height: image.height || getDefaultImageHeight(resolvedUrl),
+      type: image.type || getImageTypeFromUrl(resolvedUrl),
     };
   }
   
-  const resolvedUrl = resolveImageUrl(image.url, baseUrl);
-  const secureUrl = generateSecureImageUrl(resolvedUrl);
+  // Fallback to @vercel/og generated image
+  if (fallbackParams) {
+    const ogImageUrl = generateOgImageUrl(fallbackParams);
+    return {
+      url: ogImageUrl,
+      secureUrl: ogImageUrl, // @vercel/og always serves HTTPS
+      type: 'image/png', // @vercel/og generates PNG images
+      width: 1200, // Standard OG image dimensions
+      height: 630,
+      alt: `${fallbackParams.title} - Piyush Mehta`,
+    };
+  }
+  
+  // Final fallback to a default generated image
+  const defaultOgUrl = generateOgImageUrl({
+    title: 'Piyush Mehta',
+    description: 'Software Engineer & Tech Speaker',
+    type: 'website',
+  });
   
   return {
-    url: resolvedUrl,
-    secureUrl: secureUrl,
-    alt: image.alt,
-    width: image.width || getDefaultImageWidth(resolvedUrl),
-    height: image.height || getDefaultImageHeight(resolvedUrl),
-    type: image.type || getImageTypeFromUrl(resolvedUrl),
+    url: defaultOgUrl,
+    secureUrl: defaultOgUrl,
+    type: 'image/png',
+    width: 1200,
+    height: 630,
+    alt: 'Piyush Mehta - Software Engineer & Tech Speaker',
   };
 }
 

@@ -1,14 +1,14 @@
 ---
 import type { JsonLdData } from '../types/schema';
-import { 
-  type ImageMetadata,
-  extractImageMetadata,
-  generateCanonicalUrl, 
-  generateOgImageUrl, 
-  generateStructuredData, 
-  optimizeKeywords, 
-  sanitizeDescription,
-  validateImageForSocialSharing
+import {
+type ImageMetadata,
+extractImageMetadata,
+generateCanonicalUrl,
+generateOgImageUrl,
+generateStructuredData,
+optimizeKeywords,
+sanitizeDescription,
+validateImageForSocialSharing
 } from '../utils/seo-optimization';
 
 export interface Props {
@@ -47,23 +47,18 @@ const {
 const optimizedDescription = sanitizeDescription(description);
 const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname);
 
-// Handle image metadata with full OG Protocol compliance
-let imageMetadata: ImageMetadata;
-
-if (image) {
-  // Extract metadata from provided image (article-specific image takes priority)
-  imageMetadata = extractImageMetadata(image, Astro.site?.toString());
-} else {
-  // Fallback to dynamic OG image generation
-  const dynamicImageUrl = generateOgImageUrl({
+// Handle image metadata with full OG Protocol compliance and @vercel/og fallback
+const imageMetadata: ImageMetadata = extractImageMetadata(
+  image,
+  Astro.site?.toString(),
+  {
     title,
     description: optimizedDescription,
     type,
     publishedTime,
     tags,
-  });
-  imageMetadata = extractImageMetadata(dynamicImageUrl, Astro.site?.toString());
-}
+  }
+);
 
 // Validate image for optimal social sharing
 const imageValidation = validateImageForSocialSharing(imageMetadata);
@@ -100,9 +95,9 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 {!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content={type} />
+<!-- Facebook Meta Tags -->
 <meta property="og:url" content={url} />
+<meta property="og:type" content={type} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={optimizedDescription} />
 <meta property="og:image" content={imageMetadata.url} />
@@ -116,14 +111,15 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta property="og:site_name" content="Piyush Mehta" />
 <meta property="og:locale" content="en_US" />
 
-<!-- Twitter Cards -->
+<!-- Twitter Meta Tags -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:site" content="@piyushmehtas" />
-<meta name="twitter:creator" content="@piyushmehtas" />
+<meta property="twitter:domain" content="piyushmehta.com" />
+<meta property="twitter:url" content={url} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={optimizedDescription} />
 <meta name="twitter:image" content={imageMetadata.url} />
-<meta name="twitter:image:alt" content={imageMetadata.alt || `${title} - Piyush Mehta`} />
+<meta name="twitter:site" content="@piyushmehtas" />
+<meta name="twitter:creator" content="@piyushmehtas" />
 
 <!-- Article specific meta tags -->
 {
