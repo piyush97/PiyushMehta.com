@@ -11,30 +11,52 @@ const latestPosts = allPosts
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3);
 
-// Define SEO keywords specifically for homepage ranking
+// Advanced SEO keywords for maximum search visibility and ranking dominance
 const keywords = [
-  'Piyush Mehta', 
-  'Piyush', 
-  'React Developer', 
-  'ReactJS Developer', 
-  'ReactJS', 
-  'Software Engineer', 
-  'Software Engineer in Canada', 
-  'Software Consultant in Canada',
-  'Toronto Developer',
-  'React Development',
-  'Frontend Engineer',
-  'JavaScript Expert',
-  'Web Developer Toronto',
-  'React Specialist',
-  'Tech Speaker',
-  'Open Source Contributor'
+  // Primary Identity & Name
+  'Piyush Mehta', 'Piyush Mehta Software Engineer', 'Piyush Mehta Developer', 'Piyush Mehta Canada',
+  
+  // Core Job Titles & Variations
+  'Software Engineer', 'Senior Software Engineer', 'Full Stack Developer', 'Full Stack Engineer',
+  'Software Developer', 'Web Developer', 'Frontend Engineer', 'Backend Engineer',
+  'JavaScript Developer', 'TypeScript Developer', 'React Developer', 'Node.js Developer',
+  
+  // Location-Based SEO (Canada Focus)
+  'Software Engineer Canada', 'Software Developer Canada', 'Full Stack Developer Canada',
+  'Software Engineer Toronto', 'Software Engineer Vancouver', 'Software Engineer Montreal',
+  'Software Engineer Ottawa', 'Software Engineer Calgary', 'Tech Consultant Canada',
+  'Canadian Software Engineer', 'Canada Tech Expert', 'Remote Software Engineer Canada',
+  
+  // Technology Expertise
+  'React.js Expert', 'JavaScript Expert', 'TypeScript Specialist', 'Node.js Developer',
+  'Next.js Developer', 'React Native Developer', 'GraphQL Developer', 'API Developer',
+  'Cloud Developer', 'AWS Developer', 'Azure Developer', 'DevOps Engineer',
+  
+  // Service-Based Keywords
+  'Custom Software Development', 'Web Application Development', 'Enterprise Software Solutions',
+  'Startup MVP Development', 'Software Consulting', 'Technical Architecture',
+  'Code Review Services', 'Performance Optimization', 'Database Design',
+  
+  // Industry & Experience
+  'Senior Developer 8+ Years', 'Enterprise Software Engineer', 'Startup CTO',
+  'Technical Lead', 'Software Architect', 'System Design Expert',
+  'Scalable Applications', 'High Performance Software', 'Modern Web Development',
+  
+  // Competitive SEO
+  'Best Software Engineer Canada', 'Top Developer Canada', 'Expert Software Consultant',
+  'Professional Software Development', 'Reliable Software Engineer', 'Experienced Developer',
+  
+  // Long-tail Keywords
+  'hire software engineer canada', 'freelance software developer canada',
+  'custom web application development', 'react developer for hire',
+  'full stack developer portfolio', 'software engineer portfolio canada',
+  'technical consultant canada', 'enterprise software development services'
 ];
 ---
 
 <Layout 
-  title="Piyush Mehta - Senior Software Engineer & React Developer in Canada" 
-  description="Piyush Mehta is a Senior Software Engineer and React Developer based in Canada. Expert in React.js, Node.js, and modern web technologies with a passion for building high-performance web applications."
+  title="Piyush Mehta - Senior Software Engineer & Full Stack Developer in Canada | 8+ Years Experience" 
+  description="Piyush Mehta is a Senior Software Engineer and Full Stack Developer in Canada with 8+ years of experience. Expert in React.js, Node.js, TypeScript, and cloud technologies. Specializing in enterprise software development, startup MVPs, and scalable web applications. Available for software consulting and technical architecture projects across Canada and globally."
   keywords={keywords}
 >
   <!-- Hero Section -->
@@ -51,13 +73,14 @@ const keywords = [
           <div class="title-underline"></div>
         </h1>
         <p class="hero-teaser">
-          <span class="highlight">Senior Software Engineer based in Canada 🇨🇦</span>,
+          <span class="highlight">Senior Software Engineer with 8+ years experience in Canada 🇨🇦</span>,
           <span class="highlight">Full Stack Developer</span>, 
+          <span class="highlight">React.js & Node.js Expert</span>, 
           <span class="highlight">Tech Speaker</span>, and
-          <span class="highlight">Open Source Enthusiast</span>. I architect and build
-          scalable web applications using cutting-edge technologies, from enterprise systems 
-          to innovative startups. Expert in modern JavaScript/TypeScript, cloud platforms, 
-          and creating high-performance solutions that drive business growth.
+          <span class="highlight">Open Source Contributor</span>. I architect and build
+          scalable web applications using cutting-edge technologies like <strong>React.js</strong>, <strong>Node.js</strong>, <strong>TypeScript</strong>, and <strong>cloud platforms</strong>. 
+          Specializing in enterprise systems, startup MVPs, and high-performance solutions that drive measurable business growth. 
+          Available for software consulting and technical architecture projects across <strong>Canada</strong> and globally.
         </p>
 
         <div class="hero-cta">
@@ -187,6 +210,137 @@ const keywords = [
             d="M9 5l7 7-7 7"></path>
         </svg>
       </a>
+    </div>
+  </section>
+
+  <!-- SEO-Optimized Content Section -->
+  <section class="seo-content-section py-16 container-base" itemscope itemtype="https://schema.org/Person">
+    <div class="max-w-4xl mx-auto">
+      <header class="mb-12 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">
+          About <span class="text-accent" itemprop="name">Piyush Mehta</span> - Senior Software Engineer in Canada
+        </h2>
+        <p class="text-lg text-text-secondary" itemprop="description">
+          Professional software engineering services specializing in React.js, Node.js, and modern web development technologies
+        </p>
+      </header>
+
+      <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <article class="seo-card p-6 rounded-lg bg-surface-100/10">
+          <h3 class="text-xl font-bold mb-4 text-accent">Software Engineering Expertise</h3>
+          <p class="text-text-secondary leading-relaxed mb-4">
+            As a <strong>Senior Software Engineer</strong> with <span itemprop="experienceYears">8+ years of experience</span>, 
+            I specialize in building scalable web applications using modern technologies. My expertise includes 
+            <strong>React.js development</strong>, <strong>Node.js backend solutions</strong>, <strong>TypeScript</strong>, 
+            and <strong>cloud computing platforms</strong> like AWS and Azure.
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-sm text-text-secondary">
+            <li itemprop="knowsAbout">React.js & Next.js Development</li>
+            <li itemprop="knowsAbout">Node.js & Express.js Backend</li>
+            <li itemprop="knowsAbout">TypeScript & JavaScript ES6+</li>
+            <li itemprop="knowsAbout">Database Design (PostgreSQL, MongoDB)</li>
+          </ul>
+        </article>
+
+        <article class="seo-card p-6 rounded-lg bg-surface-100/10">
+          <h3 class="text-xl font-bold mb-4 text-accent">Services & Consulting</h3>
+          <p class="text-text-secondary leading-relaxed mb-4">
+            I provide comprehensive <strong>software consulting services</strong> for businesses across 
+            <span itemprop="workLocation">Canada</span> and internationally. From <strong>enterprise web application development</strong> 
+            to <strong>startup MVP creation</strong>, I help organizations build robust, scalable software solutions.
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-sm text-text-secondary">
+            <li>Enterprise Software Development</li>
+            <li>Startup MVP Development</li>
+            <li>Technical Architecture & Consulting</li>
+            <li>Performance Optimization & Code Review</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="mb-12">
+        <h3 class="text-2xl font-bold mb-6 text-center">Technology Stack & Skills</h3>
+        <div class="skills-grid grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
+            <h4 class="font-bold text-accent" itemprop="knowsAbout">React.js</h4>
+            <p class="text-sm text-text-secondary">Expert Level</p>
+          </div>
+          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
+            <h4 class="font-bold text-accent" itemprop="knowsAbout">Node.js</h4>
+            <p class="text-sm text-text-secondary">Expert Level</p>
+          </div>
+          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
+            <h4 class="font-bold text-accent" itemprop="knowsAbout">TypeScript</h4>
+            <p class="text-sm text-text-secondary">Advanced</p>
+          </div>
+          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
+            <h4 class="font-bold text-accent" itemprop="knowsAbout">Cloud Computing</h4>
+            <p class="text-sm text-text-secondary">Advanced</p>
+          </div>
+          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
+            <h4 class="font-bold text-accent" itemprop="knowsAbout">Python</h4>
+            <p class="text-sm text-text-secondary">Intermediate</p>
+          </div>
+          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
+            <h4 class="font-bold text-accent" itemprop="knowsAbout">DevOps</h4>
+            <p class="text-sm text-text-secondary">Intermediate</p>
+          </div>
+          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
+            <h4 class="font-bold text-accent" itemprop="knowsAbout">GraphQL</h4>
+            <p class="text-sm text-text-secondary">Advanced</p>
+          </div>
+          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
+            <h4 class="font-bold text-accent" itemprop="knowsAbout">System Design</h4>
+            <p class="text-sm text-text-secondary">Expert Level</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <h3 class="text-2xl font-bold mb-4">Hire a Senior Software Engineer in Canada</h3>
+        <p class="text-lg text-text-secondary mb-6 max-w-2xl mx-auto">
+          Looking for an experienced <strong>software engineer in Canada</strong>? I'm available for consulting projects, 
+          technical architecture reviews, and full-stack development work. Let's discuss how I can help bring your software ideas to life.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/services/" class="btn-secondary inline-flex items-center gap-2">
+            View Services
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+          <a href="/contact-me/" class="btn-secondary inline-flex items-center gap-2">
+            Get In Touch
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden SEO Content for Search Engines -->
+    <div class="sr-only">
+      <h2>Piyush Mehta - Software Engineer Portfolio Canada</h2>
+      <p>
+        Piyush Mehta is a senior software engineer and full stack developer based in Canada with extensive experience 
+        in React.js, Node.js, TypeScript, and cloud technologies. Specializing in enterprise software development, 
+        startup MVP creation, technical consulting, and software architecture. Available for hire across Canada 
+        including Toronto, Vancouver, Montreal, Calgary, Ottawa, and Edmonton. Expert in modern web development, 
+        scalable applications, performance optimization, and technical leadership.
+      </p>
+      <ul>
+        <li>Senior Software Engineer Canada</li>
+        <li>Full Stack Developer Toronto</li>
+        <li>React.js Developer Vancouver</li>
+        <li>Node.js Developer Montreal</li>
+        <li>Software Consultant Calgary</li>
+        <li>Technical Architect Ottawa</li>
+        <li>Startup CTO Services Canada</li>
+        <li>Enterprise Software Development</li>
+        <li>Custom Web Application Development</li>
+        <li>Software Engineering Consulting</li>
+      </ul>
     </div>
   </section>
 
