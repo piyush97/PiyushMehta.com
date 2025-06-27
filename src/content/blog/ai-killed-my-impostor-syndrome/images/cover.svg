@@ -1,0 +1,123 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="50%" style="stop-color:#16213e"/>
+      <stop offset="100%" style="stop-color:#0f3460"/>
+    </linearGradient>
+    <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ff88"/>
+      <stop offset="100%" style="stop-color:#00cc6a"/>
+    </linearGradient>
+    <linearGradient id="humanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b"/>
+      <stop offset="100%" style="stop-color:#ee5a52"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Grid Pattern -->
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#ffffff" stroke-width="0.5" opacity="0.1"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- AI Brain Circuit (Left Side) -->
+  <g transform="translate(100, 150)">
+    <!-- Circuit nodes -->
+    <circle cx="50" cy="80" r="8" fill="url(#aiGradient)" filter="url(#glow)"/>
+    <circle cx="120" cy="50" r="6" fill="url(#aiGradient)" filter="url(#glow)"/>
+    <circle cx="180" cy="90" r="7" fill="url(#aiGradient)" filter="url(#glow)"/>
+    <circle cx="150" cy="140" r="5" fill="url(#aiGradient)" filter="url(#glow)"/>
+    <circle cx="80" cy="160" r="6" fill="url(#aiGradient)" filter="url(#glow)"/>
+    
+    <!-- Circuit connections -->
+    <path d="M 50 80 L 120 50 L 180 90 L 150 140 L 80 160 L 50 80" 
+          stroke="url(#aiGradient)" stroke-width="2" fill="none" opacity="0.7"/>
+    <path d="M 120 50 L 150 140" stroke="url(#aiGradient)" stroke-width="1.5" fill="none" opacity="0.5"/>
+    <path d="M 180 90 L 80 160" stroke="url(#aiGradient)" stroke-width="1.5" fill="none" opacity="0.5"/>
+    
+    <!-- AI Label -->
+    <text x="115" y="200" fill="url(#aiGradient)" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle">AI</text>
+  </g>
+  
+  <!-- Human Brain (Right Side) -->
+  <g transform="translate(900, 150)">
+    <!-- Organic brain shape -->
+    <path d="M 60 80 Q 30 50 60 30 Q 90 10 120 30 Q 150 20 180 40 Q 200 60 180 90 Q 190 120 160 140 Q 130 160 100 140 Q 70 150 50 120 Q 30 100 60 80" 
+          fill="url(#humanGradient)" opacity="0.3" filter="url(#glow)"/>
+    
+    <!-- Neural pathways -->
+    <path d="M 80 60 Q 100 40 120 60 Q 140 80 160 60" stroke="url(#humanGradient)" stroke-width="2" fill="none" opacity="0.8"/>
+    <path d="M 70 100 Q 110 80 150 100" stroke="url(#humanGradient)" stroke-width="2" fill="none" opacity="0.8"/>
+    <path d="M 90 120 Q 120 100 150 120" stroke="url(#humanGradient)" stroke-width="2" fill="none" opacity="0.8"/>
+    
+    <!-- Synapses -->
+    <circle cx="80" cy="60" r="4" fill="url(#humanGradient)" filter="url(#glow)"/>
+    <circle cx="120" cy="60" r="4" fill="url(#humanGradient)" filter="url(#glow)"/>
+    <circle cx="160" cy="60" r="4" fill="url(#humanGradient)" filter="url(#glow)"/>
+    <circle cx="110" cy="80" r="3" fill="url(#humanGradient)" filter="url(#glow)"/>
+    <circle cx="120" cy="100" r="3" fill="url(#humanGradient)" filter="url(#glow)"/>
+    
+    <!-- Human Label -->
+    <text x="115" y="200" fill="url(#humanGradient)" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle">HUMAN</text>
+  </g>
+  
+  <!-- Central Connection/Handshake -->
+  <g transform="translate(500, 200)">
+    <!-- Connection beam -->
+    <path d="M -200 0 Q -100 -30 0 0 Q 100 30 200 0" 
+          stroke="#ffcc68" stroke-width="3" fill="none" opacity="0.8" filter="url(#glow)"/>
+    
+    <!-- Data particles -->
+    <circle cx="-150" cy="-15" r="2" fill="#ffcc68" opacity="0.9">
+      <animate attributeName="cx" values="-150;150" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="-100" cy="10" r="1.5" fill="#ffcc68" opacity="0.7">
+      <animate attributeName="cx" values="-100;100" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="15" r="2" fill="#ffcc68" opacity="0.8">
+      <animate attributeName="cx" values="150;-150" dur="3.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;0.4;0.8" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Main Title -->
+  <text x="600" y="80" fill="#ffffff" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle">
+    AI Killed My Impostor Syndrome
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="120" fill="#a0a0a0" font-family="Arial, sans-serif" font-size="24" text-anchor="middle">
+    (And It Might Kill Yours Too)
+  </text>
+  
+  <!-- Bottom tagline -->
+  <text x="600" y="570" fill="#ffcc68" font-family="Arial, sans-serif" font-size="18" text-anchor="middle">
+    The unexpected cure for developer self-doubt
+  </text>
+  
+  <!-- Decorative elements -->
+  <g opacity="0.3">
+    <!-- Code brackets -->
+    <text x="50" y="400" fill="#00ff88" font-family="monospace" font-size="72" opacity="0.2">{</text>
+    <text x="1130" y="400" fill="#ff6b6b" font-family="monospace" font-size="72" opacity="0.2">}</text>
+    
+    <!-- Binary pattern -->
+    <text x="100" y="500" fill="#ffffff" font-family="monospace" font-size="12" opacity="0.1">
+      01001001 01001101 01010000 01001111 01010011 01010100 01001111 01010010
+    </text>
+  </g>
+</svg>

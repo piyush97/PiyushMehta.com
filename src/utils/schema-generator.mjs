@@ -8,7 +8,7 @@ export const generatePersonSchema = (additionalData = {}) => {
     url: 'https://piyushmehta.com',
     jobTitle: 'Senior Software Engineer',
     description:
-      'Software Engineer, React Developer, Tech Speaker, and Open Source Contributor based in Canada',
+      'Senior Software Engineer, Full Stack Developer, Tech Speaker, and Open Source Contributor based in Canada',
     image: 'https://piyushmehta.com/images/piyush-profile.jpg',
     sameAs: [
       'https://github.com/piyush97',
