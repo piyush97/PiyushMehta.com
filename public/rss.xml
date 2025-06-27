@@ -5,7 +5,7 @@
     <link>https://piyushmehta.com</link>
     <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 27 Jun 2025 03:02:06 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 27 Jun 2025 03:15:00 GMT</lastBuildDate>
     <generator>Static RSS Generator</generator>
     <copyright>Copyright 2025 Piyush Mehta. All rights reserved.</copyright>
     <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
@@ -49,6 +49,21 @@
       <category>Js</category>
       <category>event loop</category>
       <category>programming</category>
+    </item>
+        <item>
+      <title>AI Killed My Impostor Syndrome (And It Might Kill Yours Too)</title>
+      <link>https://piyushmehta.com/blog/ai-killed-my-impostor-syndrome/</link>
+      <pubDate>Fri, 27 Jun 2025 00:00:00 GMT</pubDate>
+      <description>After 8 years as a developer, AI coding assistants did something unexpected - they made me realize I was actually good at my job. Here is the uncomfortable truth about impostor syndrome and why AI might be the cure we never saw coming.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>AI</category>
+      <category>Impostor Syndrome</category>
+      <category>Career Growth</category>
+      <category>GitHub Copilot</category>
+      <category>Developer Psychology</category>
+      <category>Productivity</category>
+      <category>Tech Industry</category>
+      <category>Self-Improvement</category>
     </item>
         <item>
       <title>Astro 5.9: Revolutionizing Web Security with Built-in Content Security Policy Support</title>
