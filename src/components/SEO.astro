@@ -39,13 +39,19 @@ const optimizedDescription = sanitizeDescription(description);
 const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname);
 
 // Generate OpenGraph image URL if not provided
-const ogImageUrl = image || generateOgImageUrl({
-  title,
-  description: optimizedDescription,
-  type,
-  publishedTime,
-  tags,
-});
+let ogImageUrl: string;
+if (image) {
+  // Convert relative URLs to absolute URLs
+  ogImageUrl = image.startsWith('http') ? image : new URL(image, Astro.site).toString();
+} else {
+  ogImageUrl = generateOgImageUrl({
+    title,
+    description: optimizedDescription,
+    type,
+    publishedTime,
+    tags,
+  });
+}
 
 // Generate structured data
 const defaultSchemaData = generateStructuredData({
@@ -83,7 +89,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta property="og:description" content={optimizedDescription} />
 <meta
   property="og:image"
-  content={new URL(ogImageUrl, Astro.site).toString()}
+  content={ogImageUrl}
 />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
@@ -97,7 +103,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta property="twitter:description" content={optimizedDescription} />
 <meta
   property="twitter:image"
-  content={new URL(ogImageUrl, Astro.site).toString()}
+  content={ogImageUrl}
 />
 <meta property="twitter:creator" content="@piyushmehtas" />
 <meta property="twitter:site" content="@piyushmehtas" />
