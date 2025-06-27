@@ -124,7 +124,7 @@ export default function NewsletterSubscription({
           <div className="confetti-pieces">
             {Array.from({ length: 20 }, (_, i) => (
               <div
-                key={i}
+                key={`confetti-${i}-${Date.now()}`}
                 className="absolute w-2 h-2 rounded-full confetti-piece bg-accent animate-bounce"
                 style={{
                   left: `${Math.random() * 100}%`,
