@@ -7,13 +7,15 @@
   <button
     id="theme-selector-toggle"
     class="theme-selector-toggle"
-    aria-label="Open theme selector"
+    aria-label="Toggle theme"
     aria-expanded="false"
     aria-controls="theme-selector-panel"
   >
+    <!-- Sun icon (shown in dark mode) -->
     <svg
+      id="sun-icon"
       xmlns="http://www.w3.org/2000/svg"
-      class="w-5 h-5"
+      class="w-5 h-5 theme-icon"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -30,6 +32,21 @@
       <line x1="21" y1="12" x2="23" y2="12"></line>
       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+    
+    <!-- Moon icon (shown in light mode) -->
+    <svg
+      id="moon-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-5 h-5 theme-icon hidden"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
     </svg>
   </button>
 
@@ -136,6 +153,12 @@
     position: relative;
     z-index: 101;
   }
+  
+  @media (max-width: 1023px) {
+    .theme-selector-wrapper {
+      z-index: 1001; /* Higher z-index on mobile */
+    }
+  }
 
   .theme-selector-toggle {
     display: flex;
@@ -156,6 +179,10 @@
 
   .theme-selector-toggle:active {
     transform: scale(0.95);
+  }
+
+  .theme-icon {
+    transition: all 0.3s ease;
   }
 
   .theme-selector-panel {
@@ -402,16 +429,33 @@
   }
 
   /* Mobile responsiveness */
-  @media (max-width: 640px) {
+  @media (max-width: 1023px) {
     .theme-selector-panel {
-      position: fixed;
-      top: auto;
-      bottom: 1rem;
-      right: 1rem;
-      left: 1rem;
-      width: calc(100% - 2rem);
-      z-index: 1000;
-      max-height: 70vh;
+      display: none; /* Hide theme panel on mobile */
+    }
+    
+    .theme-selector-toggle {
+      padding: 0.75rem;
+      min-width: 44px;
+      min-height: 44px;
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    
+    .theme-selector-toggle:hover {
+      transform: none; /* Disable hover transform on mobile */
+    }
+    
+    .theme-selector-toggle:active {
+      transform: scale(0.95);
+      background-color: var(--color-light-700);
+    }
+    
+    .theme-selector-toggle:focus {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
     }
   }
 </style>
@@ -496,10 +540,26 @@
     }
     
     /**
-     * Toggles the theme selector panel
+     * Toggles the theme selector panel (desktop) or switches themes (mobile)
      */
     function togglePanel(e?: Event): void {
       e?.preventDefault();
+      e?.stopPropagation();
+      
+      // On mobile, just toggle between light and dark modes
+      if (window.innerWidth < 1024) {
+        const currentTheme = getCurrentTheme();
+        const newTheme = (currentTheme === 'professional-light' || lightThemes.includes(currentTheme)) 
+          ? 'professional-dark' 
+          : 'professional-light';
+        
+        setTheme(newTheme);
+        highlightActiveTheme(newTheme);
+        return;
+      }
+      
+      // Desktop behavior - show/hide panel
+      console.log('Theme selector toggle clicked, current state:', isOpen);
       
       if (isOpen) {
         closePanel();
@@ -514,6 +574,7 @@
     function openPanel(): void {
       if (!panel || !toggle) return;
       
+      console.log('Opening theme selector panel');
       isOpen = true;
       panel.classList.add('active');
       toggle.setAttribute('aria-expanded', 'true');
@@ -526,6 +587,7 @@
     function closePanel(): void {
       if (!panel || !toggle) return;
       
+      console.log('Closing theme selector panel');
       isOpen = false;
       panel.classList.remove('active');
       toggle.setAttribute('aria-expanded', 'false');
@@ -627,6 +689,28 @@
     }
 
     /**
+     * Updates the theme toggle icon based on current theme
+     */
+    function updateThemeIcon(theme: ThemeType): void {
+      const sunIcon = document.getElementById('sun-icon');
+      const moonIcon = document.getElementById('moon-icon');
+      
+      if (!sunIcon || !moonIcon) return;
+      
+      const isLightMode = lightThemes.includes(theme);
+      
+      if (isLightMode) {
+        // Light mode: show moon icon (to switch to dark)
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      } else {
+        // Dark mode: show sun icon (to switch to light)
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      }
+    }
+
+    /**
      * Highlights the active theme in the UI
      */
     function highlightActiveTheme(theme: ThemeType): void {
@@ -646,6 +730,9 @@
           customAccentColor.value = savedColor;
         }
       }
+      
+      // Update theme icon
+      updateThemeIcon(theme);
     }
     
     /**
@@ -741,14 +828,17 @@
       
       // Set up event listeners
       if (toggle) {
+        console.log('Setting up theme selector toggle event listeners');
         toggle.addEventListener('click', togglePanel);
+      } else {
+        console.error('Theme selector toggle button not found!');
       }
       
       if (closeBtn) {
         closeBtn.addEventListener('click', closePanel);
       }
       
-      // Theme option buttons
+      // Theme option buttons (desktop only)
       themeOptions.forEach((option) => {
         option.addEventListener('click', () => {
           const theme = option.getAttribute('data-theme') as ThemeType | null;
@@ -759,7 +849,7 @@
         });
       });
       
-      // Custom theme button
+      // Custom theme button (desktop only)
       if (applyCustomBtn && customAccentColor) {
         applyCustomBtn.addEventListener('click', () => {
           setCustomTheme(customAccentColor.value);
