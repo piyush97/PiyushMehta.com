@@ -13,6 +13,11 @@ export const GET: APIRoute = async ({ url }) => {
   const date = searchParams.get('date');
   const tags = searchParams.get('tags');
 
+  // Enhanced styling based on content type
+  const isArticle = type === 'article';
+  const titleFontSize = title.length > 50 ? '42px' : title.length > 30 ? '52px' : '64px';
+  const descriptionFontSize = isArticle ? '24px' : '28px';
+
   // Create the image using Vercel's ImageResponse
   try {
     const image = new ImageResponse(
@@ -98,7 +103,7 @@ export const GET: APIRoute = async ({ url }) => {
                 {
                   key: 'title',
                   style: {
-                    fontSize: title.length > 40 ? '48px' : '64px',
+                    fontSize: titleFontSize,
                     fontWeight: 'bold',
                     background:
                       'linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)',
@@ -110,7 +115,7 @@ export const GET: APIRoute = async ({ url }) => {
                     maxWidth: '900px',
                   },
                 },
-                title.length > 60 ? `${title.substring(0, 60)}...` : title
+                title.length > 80 ? `${title.substring(0, 80)}...` : title
               ),
 
               // Description
@@ -120,7 +125,7 @@ export const GET: APIRoute = async ({ url }) => {
                     {
                       key: 'description',
                       style: {
-                        fontSize: '28px',
+                        fontSize: descriptionFontSize,
                         color: '#e2e8f0',
                         marginBottom: '20px',
                         lineHeight: 1.4,
@@ -259,7 +264,9 @@ export const GET: APIRoute = async ({ url }) => {
     return new Response(await image.arrayBuffer(), {
       headers: {
         'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=86400, s-maxage=86400',
+        'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
+        'CDN-Cache-Control': 'max-age=31536000',
+        'Vercel-CDN-Cache-Control': 'max-age=31536000',
       },
     });
   } catch (error) {
