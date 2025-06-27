@@ -96,17 +96,14 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta property="og:site_name" content="Piyush Mehta" />
 <meta property="og:locale" content="en_US" />
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={url} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={optimizedDescription} />
-<meta
-  property="twitter:image"
-  content={ogImageUrl}
-/>
-<meta property="twitter:creator" content="@piyushmehtas" />
-<meta property="twitter:site" content="@piyushmehtas" />
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@piyushmehtas" />
+<meta name="twitter:creator" content="@piyushmehtas" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={optimizedDescription} />
+<meta name="twitter:image" content={ogImageUrl} />
+<meta name="twitter:image:alt" content={image ? `${title} featured image` : `${title} - Piyush Mehta`} />
 
 <!-- Article specific meta tags -->
 {
