@@ -1,44 +1,112 @@
-# robots.txt for https://piyushmehta.com
-# Created: June 12, 2025
+# Robots.txt for piyushmehta.com - Optimized for SEO
+# Piyush Mehta - Senior Software Engineer & Full Stack Developer in Canada
+# Last Updated: June 27, 2025
 
 User-agent: *
 Allow: /
 
-# Allow all bots to access all content
+# Priority pages for maximum SEO visibility
+Allow: /
+Allow: /about/
+Allow: /services/
+Allow: /blog/
+Allow: /projects/
+Allow: /contact-me/
+Allow: /resume/
+Allow: /uses/
+
+# Allow all images and static assets for rich snippets
+Allow: /images/
+Allow: /assets/
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.gif$
+Allow: /*.webp$
+Allow: /*.svg$
+
+# Allow CSS and JS for proper rendering (important for SEO)
+Allow: /*.css$
+Allow: /*.js$
+
+# Allow sitemap and feeds
+Allow: /sitemap.xml
+Allow: /sitemap_index.xml
+Allow: /rss.xml
+Allow: /feed.xml
+
+# Specific bot optimizations
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
+
 User-agent: Googlebot-Image
 Allow: /
+
 User-agent: Googlebot-Mobile
 Allow: /
+
 User-agent: Googlebot-News
 Allow: /
+
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
+
 User-agent: Slurp
 Allow: /
+Crawl-delay: 1
+
 User-agent: DuckDuckBot
 Allow: /
+
 User-agent: Baiduspider
 Allow: /
-User-agent: Yandex
+
+User-agent: YandexBot
 Allow: /
 
-# Disallow admin areas and other non-public routes
+# Disallow admin areas and non-public routes
 Disallow: /admin/
 Disallow: /api/
 Disallow: /wp-admin/
 Disallow: /wp-login.php
+Disallow: /private/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /src/
+Disallow: /.env
+Disallow: /.htaccess
+
+# Prevent indexing of duplicate content and parameters
+Disallow: /*?*
+Disallow: /*/*?*
+
+# Disallow certain file types
 Disallow: /*.json$
-Disallow: /*.js$
-Disallow: /*.css$
+Disallow: /*.xml$ 
+Disallow: /*.txt$
 
-# Crawl delay for Bing
-User-agent: Bingbot
-Crawl-delay: 1
+# Exception: Allow important XML files
+Allow: /sitemap.xml
+Allow: /sitemap_index.xml
+Allow: /feed.xml
+Allow: /rss.xml
 
-# Sitemap location
+# Sitemaps location (critical for SEO)
 Sitemap: https://piyushmehta.com/sitemap.xml
+Sitemap: https://piyushmehta.com/sitemap_index.xml
+Sitemap: https://piyushmehta.com/rss.xml
 
-# Host directive to handle any URL canonicalization issues
+# Host directive for canonicalization
 Host: piyushmehta.com
+
+# SEO Keywords for context:
+# Senior Software Engineer Canada
+# Full Stack Developer Canada  
+# React.js Developer Canada
+# Node.js Developer Canada
+# Software Consulting Canada
+# Technical Architecture Services
+# Enterprise Software Development
+# Startup MVP Development
