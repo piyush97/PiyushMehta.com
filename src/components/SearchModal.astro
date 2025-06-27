@@ -1,0 +1,403 @@
+---
+import { getCollection } from 'astro:content';
+
+// Get all blog posts for search
+const allPosts = await getCollection('blog');
+const posts = allPosts
+  .filter((post: any) => !post.data.draft)
+  .sort((a: any, b: any) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map((post: any) => ({
+    slug: post.slug,
+    title: post.data.title,
+    description: post.data.description || '',
+    tags: post.data.tags || [],
+    date: post.data.date,
+    url: `/blog/${post.slug}/`
+  }));
+
+// Static pages to include in search
+const staticPages = [
+  {
+    title: 'About',
+    description: 'Learn about Piyush Mehta - Software Engineer, Tech Speaker, and Open Source Contributor',
+    url: '/about/',
+    tags: ['about', 'profile', 'bio']
+  },
+  {
+    title: 'Projects', 
+    description: 'Showcase of my work, open source projects, and technical contributions',
+    url: '/projects/',
+    tags: ['projects', 'work', 'portfolio', 'github']
+  },
+  {
+    title: 'Uses',
+    description: 'Tools, software, and setup I use for development and productivity',
+    url: '/uses/',
+    tags: ['tools', 'setup', 'development', 'productivity']
+  },
+  {
+    title: 'Contact',
+    description: 'Get in touch for collaborations, consulting, or just to say hi',
+    url: '/contact-me/',
+    tags: ['contact', 'email', 'collaboration', 'consulting']
+  },
+  {
+    title: 'Resume',
+    description: 'Professional experience, skills, and background',
+    url: '/resume/',
+    tags: ['resume', 'cv', 'experience', 'skills', 'background']
+  },
+  {
+    title: 'Services',
+    description: 'Technical consulting and development services offered',
+    url: '/services/',
+    tags: ['services', 'consulting', 'development', 'technical']
+  }
+];
+
+// Add some test data to ensure search works
+const testData = [
+  {
+    title: 'Test Post',
+    description: 'This is a test post for debugging search',
+    url: '/test/',
+    tags: ['test', 'debug']
+  }
+];
+
+const searchData = [...posts, ...staticPages, ...testData];
+---
+
+<!-- Search Modal -->
+<div 
+  id="search-modal" 
+  class="fixed inset-0 z-50 flex items-start justify-center pt-16 transition-all duration-300 opacity-0 invisible bg-darker/80 backdrop-blur-lg"
+  aria-hidden="true"
+  role="dialog"
+  aria-labelledby="search-title"
+  aria-describedby="search-description"
+>
+  <div class="relative w-full max-w-2xl mx-4 bg-gradient-to-br from-light-800 to-light-900 rounded-2xl shadow-2xl border border-card-border overflow-hidden">
+    <!-- Search Header -->
+    <div class="flex items-center p-4 border-b border-card-border">
+      <div class="flex items-center flex-1 space-x-3">
+        <svg class="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Search blog posts, pages..."
+          class="flex-1 bg-transparent text-text-primary placeholder-text-secondary focus:outline-none text-lg"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+      <button
+        id="search-close"
+        class="p-2 rounded-lg hover:bg-surface-100/20 transition-colors text-text-secondary hover:text-text-primary"
+        aria-label="Close search"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Search Results -->
+    <div id="search-results" class="max-h-96 overflow-y-auto scrollbar-hidden">
+      <!-- Default state -->
+      <div id="search-default" class="p-8 text-center">
+        <svg class="w-12 h-12 mx-auto mb-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <p class="text-text-secondary mb-2">Search through blog posts and pages</p>
+        <p class="text-sm text-text-secondary">
+          <kbd class="px-2 py-1 text-xs font-mono bg-surface-100/20 rounded border border-card-border">Ctrl</kbd>
+          +
+          <kbd class="px-2 py-1 text-xs font-mono bg-surface-100/20 rounded border border-card-border">K</kbd>
+          to open search
+        </p>
+      </div>
+
+      <!-- No results state -->
+      <div id="search-no-results" class="hidden p-8 text-center">
+        <svg class="w-12 h-12 mx-auto mb-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 16.318A4.486 4.486 0 0012.016 15a4.486 4.486 0 00-3.198 1.318M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"></path>
+        </svg>
+        <p class="text-text-secondary">No results found</p>
+        <p class="text-sm text-text-secondary mt-1">Try a different search term</p>
+      </div>
+
+      <!-- Results container -->
+      <div id="search-results-list" class="hidden">
+        <!-- Results will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Search Footer -->
+    <div class="flex items-center justify-between p-4 text-xs text-text-secondary border-t border-card-border bg-surface-100/20">
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-1">
+          <kbd class="px-2 py-1 font-mono bg-surface-100/30 rounded border border-card-border">↑</kbd>
+          <kbd class="px-2 py-1 font-mono bg-surface-100/30 rounded border border-card-border">↓</kbd>
+          <span>navigate</span>
+        </div>
+        <div class="flex items-center space-x-1">
+          <kbd class="px-2 py-1 font-mono bg-surface-100/30 rounded border border-card-border">Enter</kbd>
+          <span>select</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-1">
+        <kbd class="px-2 py-1 font-mono bg-surface-100/30 rounded border border-card-border">Esc</kbd>
+        <span>close</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ searchData }}>
+  class SearchModal {
+    constructor() {
+      this.modal = document.getElementById('search-modal');
+      this.input = document.getElementById('search-input');
+      this.closeBtn = document.getElementById('search-close');
+      this.defaultView = document.getElementById('search-default');
+      this.noResultsView = document.getElementById('search-no-results');
+      this.resultsList = document.getElementById('search-results-list');
+      
+      this.searchData = searchData || [];
+      this.selectedIndex = -1;
+      this.isOpen = false;
+      
+      console.log('SearchModal initialized with data:', this.searchData);
+      
+      this.init();
+    }
+
+    init() {
+      this.bindEvents();
+    }
+
+    bindEvents() {
+      // Close button
+      this.closeBtn?.addEventListener('click', () => this.close());
+      
+      // Escape key and backdrop click
+      this.modal?.addEventListener('click', (e) => {
+        if (e.target === this.modal) this.close();
+      });
+      
+      // Search input
+      this.input?.addEventListener('input', (e) => this.handleSearch(e.target.value));
+      
+      // Keyboard navigation
+      this.input?.addEventListener('keydown', (e) => this.handleKeydown(e));
+      
+      // Global keyboard shortcut (Ctrl+K or Cmd+K)
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          this.open();
+        }
+        if (e.key === 'Escape' && this.isOpen) {
+          this.close();
+        }
+      });
+    }
+
+    open() {
+      this.isOpen = true;
+      this.modal.classList.remove('opacity-0', 'invisible');
+      this.modal.classList.add('opacity-100', 'visible');
+      this.modal.setAttribute('aria-hidden', 'false');
+      
+      // Focus the input
+      setTimeout(() => {
+        this.input?.focus();
+      }, 100);
+      
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+    }
+
+    close() {
+      this.isOpen = false;
+      this.modal.classList.add('opacity-0', 'invisible');
+      this.modal.classList.remove('opacity-100', 'visible');
+      this.modal.setAttribute('aria-hidden', 'true');
+      
+      // Clear search
+      this.input.value = '';
+      this.showDefaultView();
+      this.selectedIndex = -1;
+      
+      // Restore body scroll
+      document.body.style.overflow = '';
+    }
+
+    handleSearch(query) {
+      const trimmedQuery = query.trim().toLowerCase();
+      
+      console.log('Search query:', trimmedQuery);
+      console.log('Search data:', this.searchData);
+      
+      if (trimmedQuery.length === 0) {
+        this.showDefaultView();
+        return;
+      }
+
+      const results = this.searchData.filter(item => {
+        const titleMatch = item.title && item.title.toLowerCase().includes(trimmedQuery);
+        const descriptionMatch = item.description && item.description.toLowerCase().includes(trimmedQuery);
+        const tagMatch = item.tags && item.tags.some(tag => tag.toLowerCase().includes(trimmedQuery));
+        
+        return titleMatch || descriptionMatch || tagMatch;
+      });
+
+      console.log('Search results:', results);
+
+      if (results.length === 0) {
+        this.showNoResults();
+      } else {
+        this.showResults(results, trimmedQuery);
+      }
+      
+      this.selectedIndex = -1;
+    }
+
+    showDefaultView() {
+      this.defaultView.classList.remove('hidden');
+      this.noResultsView.classList.add('hidden');
+      this.resultsList.classList.add('hidden');
+    }
+
+    showNoResults() {
+      this.defaultView.classList.add('hidden');
+      this.noResultsView.classList.remove('hidden');
+      this.resultsList.classList.add('hidden');
+    }
+
+    showResults(results, query) {
+      console.log('Showing results:', results);
+      this.defaultView.classList.add('hidden');
+      this.noResultsView.classList.add('hidden');
+      this.resultsList.classList.remove('hidden');
+      
+      const html = results.map((item, index) => {
+        const isPost = item.slug;
+        const formattedDate = isPost ? new Date(item.date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }) : '';
+        
+        return `
+          <a 
+            href="${item.url}" 
+            class="search-result-item block p-4 hover:bg-surface-100/10 transition-colors border-b border-card-border/50 last:border-b-0 focus:outline-none focus:bg-surface-100/10"
+            data-index="${index}"
+          >
+            <div class="flex items-start justify-between">
+              <div class="flex-1 min-w-0">
+                <h3 class="font-medium text-text-primary truncate">${this.highlightMatch(item.title, query)}</h3>
+                <p class="text-sm text-text-secondary mt-1 line-clamp-2">${this.highlightMatch(item.description, query)}</p>
+                ${item.tags?.length ? `
+                  <div class="flex items-center space-x-2 mt-2">
+                    ${item.tags.slice(0, 3).map(tag => `
+                      <span class="px-2 py-1 text-xs rounded-full bg-accent/10 text-accent">${tag}</span>
+                    `).join('')}
+                  </div>
+                ` : ''}
+              </div>
+              <div class="flex items-center space-x-2 ml-4">
+                ${formattedDate ? `<span class="text-xs text-text-secondary">${formattedDate}</span>` : ''}
+                <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+                </svg>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+      
+      console.log('Generated HTML:', html);
+      this.resultsList.innerHTML = html;
+      
+      // Add click handlers
+      this.resultsList.querySelectorAll('.search-result-item').forEach((item, index) => {
+        item.addEventListener('click', () => {
+          this.close();
+          // Navigation will happen automatically via href
+        });
+      });
+    }
+
+    highlightMatch(text, query) {
+      if (!query) return text;
+      
+      const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return text.replace(regex, '<mark class="bg-accent/20 text-accent rounded px-1">$1</mark>');
+    }
+
+    handleKeydown(e) {
+      const results = this.resultsList.querySelectorAll('.search-result-item');
+      
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        this.selectedIndex = Math.min(this.selectedIndex + 1, results.length - 1);
+        this.updateSelection(results);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+        this.updateSelection(results);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (this.selectedIndex >= 0 && results[this.selectedIndex]) {
+          const href = results[this.selectedIndex].getAttribute('href');
+          this.close();
+          window.location.href = href;
+        }
+      }
+    }
+
+    updateSelection(results) {
+      results.forEach((item, index) => {
+        if (index === this.selectedIndex) {
+          item.classList.add('bg-surface-100/10');
+          item.scrollIntoView({ block: 'nearest' });
+        } else {
+          item.classList.remove('bg-surface-100/10');
+        }
+      });
+    }
+  }
+
+  // Initialize search modal
+  const searchModal = new SearchModal();
+  
+  // Export for navbar integration
+  window.searchModal = searchModal;
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  mark {
+    background: var(--color-accent);
+    color: var(--color-darker);
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+  }
+  
+  :root.professional-light mark {
+    background: var(--color-accent);
+    color: var(--color-lighter);
+  }
+</style>

@@ -2,6 +2,7 @@
 import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
 import SEO from '../components/SEO.astro';
+import SearchModal from '../components/SearchModal.astro';
 import '../styles/global.css';
 import SpeedInsights from "@vercel/speed-insights/astro"
 import favicon from "../assets/favicon.svg";
@@ -154,11 +155,14 @@ const {
   <body class="min-h-screen flex flex-col">
     
     <Navbar />
+    <SearchModal />
     <main class="flex-1 pt-16">
       <slot />
     </main>
     <Footer />
 
+    <script src="/src/scripts/enhanced-navbar.js"></script>
+    
     <script>
       // Enhanced theme toggle functionality for multi-theme support
       function toggleTheme() {
