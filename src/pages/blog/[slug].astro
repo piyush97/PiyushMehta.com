@@ -59,6 +59,8 @@ const articleSchema = {
       '@type': 'ImageObject',
       url: new URL(image.url, Astro.site).toString(),
       description: image.alt,
+      ...(image.width && { width: image.width }),
+      ...(image.height && { height: image.height }),
     },
   }),
 };
@@ -74,7 +76,7 @@ const articleSchema = {
   modifiedTime={date}
   tags={tags}
   canonical={canonicalUrl}
-  image={image?.url || banner}
+  image={image || banner}
   schema={articleSchema}
 >
   <div class="page-container">
