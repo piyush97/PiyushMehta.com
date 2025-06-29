@@ -140,6 +140,15 @@
               class="flex-1 px-4 py-2 transition-colors border rounded-lg newsletter-input bg-light-800 border-card-border text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
               required
             />
+            <!-- Honeypot field for bot protection (hidden) -->
+            <input
+              type="text"
+              name="website"
+              class="honeypot-field"
+              style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;"
+              tabindex="-1"
+              autocomplete="off"
+            />
             <button
               type="submit"
               class="px-6 py-2 btn-primary whitespace-nowrap"
@@ -274,16 +283,49 @@
         button.textContent = 'Subscribing...';
         button.disabled = true;
 
-        // Simulate subscription process
-        setTimeout(() => {
-          button.textContent = 'Subscribed!';
-          email.value = '';
+        // Get honeypot field value
+        const honeypot = (e.target as HTMLFormElement).querySelector(
+          '.honeypot-field'
+        ) as HTMLInputElement;
 
-          setTimeout(() => {
-            button.textContent = originalText;
-            button.disabled = false;
-          }, 2000);
-        }, 1000);
+        // Call actual newsletter API with security data
+        fetch('/api/newsletter', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            email: email.value,
+            honeypot: honeypot?.value || '',
+            timestamp: Date.now(),
+            referrer: document.referrer
+          }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              button.textContent = 'Subscribed!';
+              email.value = '';
+              
+              setTimeout(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+              }, 2000);
+            } else {
+              throw new Error(data.message || 'Subscription failed');
+            }
+          })
+          .catch(error => {
+            console.error('Subscription error:', error);
+            button.textContent = 'Try Again';
+            button.style.backgroundColor = '#ef4444';
+            
+            setTimeout(() => {
+              button.textContent = originalText;
+              button.disabled = false;
+              button.style.backgroundColor = '';
+            }, 3000);
+          });
       }
     });
   });
