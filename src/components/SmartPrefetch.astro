@@ -1,0 +1,250 @@
+---
+// Smart prefetching component that respects user preferences
+---
+
+<script>
+  interface PrefetchOptions {
+    strategy?: 'viewport' | 'hover' | 'tap' | 'load';
+    ignoreSlowConnection?: boolean;
+    priority?: 'high' | 'low';
+  }
+
+  class SmartPrefetcher {
+    private prefetchedUrls = new Set<string>();
+    private observer?: IntersectionObserver;
+    private isSlowConnection = false;
+    private respectsReducedData = false;
+
+    constructor() {
+      this.detectConnectionSpeed();
+      this.setupIntersectionObserver();
+      this.prefetchCriticalPages();
+    }
+
+    private detectConnectionSpeed() {
+      // @ts-ignore - navigator.connection is not fully standardized
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      
+      if (connection) {
+        this.isSlowConnection = connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g';
+        this.respectsReducedData = connection.saveData === true;
+      }
+
+      // Also check for reduced motion preference
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        this.respectsReducedData = true;
+      }
+    }
+
+    private setupIntersectionObserver() {
+      if (!('IntersectionObserver' in window)) return;
+
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const link = entry.target as HTMLAnchorElement;
+              const href = link.href;
+              const strategy = link.dataset.astroPrefetch || 'viewport';
+              
+              if (strategy === 'viewport') {
+                this.prefetchUrl(href, { strategy: 'viewport' });
+              }
+            }
+          });
+        },
+        {
+          rootMargin: '100px', // Start prefetching 100px before entering viewport
+        }
+      );
+    }
+
+    private prefetchCriticalPages() {
+      // Prefetch important pages immediately
+      const criticalPages = ['/blog', '/projects', '/about'];
+      
+      criticalPages.forEach(page => {
+        this.prefetchUrl(page, { 
+          strategy: 'load', 
+          priority: 'high',
+          ignoreSlowConnection: false 
+        });
+      });
+    }
+
+    public prefetchUrl(url: string, options: PrefetchOptions = {}) {
+      // Skip if already prefetched
+      if (this.prefetchedUrls.has(url)) return;
+
+      // Respect user's data preferences
+      if (this.respectsReducedData && !options.ignoreSlowConnection) {
+        console.log('Skipping prefetch due to data saver mode:', url);
+        return;
+      }
+
+      // Skip slow connections unless explicitly overridden
+      if (this.isSlowConnection && !options.ignoreSlowConnection) {
+        console.log('Skipping prefetch due to slow connection:', url);
+        return;
+      }
+
+      // Skip external URLs
+      if (!url.startsWith('/') && !url.startsWith(window.location.origin)) {
+        return;
+      }
+
+      // Use Astro's built-in prefetch function if available
+      if ('prefetch' in window && typeof (window as any).prefetch === 'function') {
+        try {
+          (window as any).prefetch(url, {
+            strategy: options.strategy || 'viewport',
+            priority: options.priority || 'low'
+          });
+          this.prefetchedUrls.add(url);
+          console.log('Prefetched via Astro:', url);
+        } catch (error) {
+          console.warn('Astro prefetch failed, falling back to manual:', error);
+          this.manualPrefetch(url, options);
+        }
+      } else {
+        this.manualPrefetch(url, options);
+      }
+    }
+
+    private manualPrefetch(url: string, options: PrefetchOptions) {
+      // Create link element for prefetching
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = url;
+      
+      if (options.priority === 'high') {
+        link.rel = 'preload';
+        link.as = 'document';
+      }
+
+      // Add to head
+      document.head.appendChild(link);
+      this.prefetchedUrls.add(url);
+      
+      console.log('Manual prefetch:', url);
+
+      // Remove after a delay to clean up
+      setTimeout(() => {
+        if (link.parentNode) {
+          link.parentNode.removeChild(link);
+        }
+      }, 10000);
+    }
+
+    public observeLink(link: HTMLAnchorElement) {
+      if (!this.observer) return;
+      
+      const strategy = link.dataset.astroPrefetch;
+      
+      if (strategy === 'viewport') {
+        this.observer.observe(link);
+      } else if (strategy === 'hover') {
+        this.setupHoverPrefetch(link);
+      } else if (strategy === 'tap') {
+        this.setupTapPrefetch(link);
+      }
+    }
+
+    private setupHoverPrefetch(link: HTMLAnchorElement) {
+      let timeoutId: number;
+      
+      const handleMouseEnter = () => {
+        timeoutId = window.setTimeout(() => {
+          this.prefetchUrl(link.href, { strategy: 'hover' });
+        }, 100); // Small delay to avoid excessive prefetching
+      };
+
+      const handleMouseLeave = () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      };
+
+      link.addEventListener('mouseenter', handleMouseEnter);
+      link.addEventListener('mouseleave', handleMouseLeave);
+      link.addEventListener('focus', handleMouseEnter);
+      link.addEventListener('blur', handleMouseLeave);
+    }
+
+    private setupTapPrefetch(link: HTMLAnchorElement) {
+      const handleTouchStart = (e: TouchEvent) => {
+        // Only prefetch on touch start, not on click
+        if (e.touches.length === 1) {
+          this.prefetchUrl(link.href, { strategy: 'tap' });
+        }
+      };
+
+      link.addEventListener('touchstart', handleTouchStart, { passive: true });
+    }
+
+    public destroy() {
+      if (this.observer) {
+        this.observer.disconnect();
+      }
+    }
+  }
+
+  // Initialize smart prefetcher
+  let smartPrefetcher: SmartPrefetcher | undefined;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    smartPrefetcher = new SmartPrefetcher();
+
+    // Observe all links with prefetch attributes
+    document.querySelectorAll('a[data-astro-prefetch]').forEach((link) => {
+      smartPrefetcher?.observeLink(link as HTMLAnchorElement);
+    });
+
+    // Also observe navigation links
+    document.querySelectorAll('nav a, .blog-link, .read-more').forEach((link) => {
+      const anchor = link as HTMLAnchorElement;
+      if (anchor.href && anchor.href.startsWith(window.location.origin)) {
+        // Set default prefetch strategy if not already set
+        if (!anchor.dataset.astroPrefetch) {
+          anchor.dataset.astroPrefetch = 'viewport';
+        }
+        smartPrefetcher?.observeLink(anchor);
+      }
+    });
+  });
+
+  // Expose for manual usage
+  (window as any).smartPrefetcher = smartPrefetcher;
+
+  // Clean up on page unload
+  window.addEventListener('beforeunload', () => {
+    if (smartPrefetcher) {
+      smartPrefetcher.destroy();
+    }
+  });
+</script>
+
+<style>
+  /* Indicate prefetched links with subtle styling */
+  a[data-prefetched="true"] {
+    position: relative;
+  }
+
+  a[data-prefetched="true"]::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--color-accent);
+    opacity: 0.3;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  a[data-prefetched="true"]:hover::after {
+    transform: scaleX(1);
+  }
+</style>

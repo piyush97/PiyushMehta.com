@@ -32,7 +32,7 @@ const keywords = [
   keywords={keywords}
 >
   <!-- Hero Section -->
-  <section class="hero-section relative overflow-hidden py-20 md:py-32">
+  <section class="hero-section relative overflow-hidden py-20 md:py-32" data-pagefind-body>
     <div class="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent/10"></div>
     <div class="container relative mx-auto px-4 text-center">
       <div class="mx-auto max-w-4xl">
@@ -43,7 +43,12 @@ const keywords = [
           Trusted by 50+ Companies • 8+ Years Experience
         </div>
         
-        <h1 class="hero-title text-5xl md:text-7xl font-bold mb-8 leading-tight">
+        <!-- Hidden metadata for Pagefind -->
+        <div data-pagefind-meta="title" class="hidden">Software Engineering Services</div>
+        <div data-pagefind-meta="type" class="hidden">page</div>
+        <div data-pagefind-meta="description" class="hidden">Professional software development services including custom web applications, enterprise solutions, technical consulting, code reviews, and architecture design.</div>
+        
+        <h1 class="hero-title text-5xl md:text-7xl font-bold mb-8 leading-tight" data-pagefind-meta="title">
           <span class="text-gradient bg-gradient-to-r from-text-primary via-accent to-text-primary bg-clip-text text-transparent">
             Transform Your Vision
           </span>

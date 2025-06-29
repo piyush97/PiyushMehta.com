@@ -1,0 +1,146 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout 
+  title="Offline - Piyush Mehta"
+  description="You're currently offline. Some cached content may still be available."
+  noindex={true}
+>
+  <section class="min-h-screen flex items-center justify-center px-4">
+    <div class="text-center max-w-md mx-auto">
+      <div class="mb-8">
+        <svg 
+          class="w-24 h-24 mx-auto text-light-400 mb-4"
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
+          />
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+        <h1 class="text-3xl font-bold text-light-100 mb-4">
+          You're Offline
+        </h1>
+        <p class="text-light-300 mb-6">
+          It looks like you're not connected to the internet. Don't worry - some content may still be available from your cache.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <button 
+          id="retry-button"
+          class="btn-primary w-full py-3 px-6 rounded-lg font-semibold transition-all duration-300"
+        >
+          Try Again
+        </button>
+        
+        <div class="text-sm text-light-400">
+          <p>You can try:</p>
+          <ul class="mt-2 space-y-1">
+            <li>• Checking your internet connection</li>
+            <li>• Refreshing the page</li>
+            <li>• Browsing cached pages</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-8 p-4 bg-light-900 rounded-lg">
+        <h3 class="font-semibold text-light-200 mb-2">Available Offline</h3>
+        <div class="grid grid-cols-2 gap-2 text-sm">
+          <a href="/" class="text-accent hover:underline">Home</a>
+          <a href="/blog" class="text-accent hover:underline">Blog</a>
+          <a href="/projects" class="text-accent hover:underline">Projects</a>
+          <a href="/about" class="text-accent hover:underline">About</a>
+        </div>
+      </div>
+
+      <div id="connection-status" class="mt-6 hidden">
+        <div class="inline-flex items-center space-x-2 text-sm">
+          <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span class="text-green-400">Back online!</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-accent), #ffed4e);
+    color: var(--color-background);
+    border: none;
+    cursor: pointer;
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  section > div {
+    animation: fadeInUp 0.6s ease-out;
+  }
+</style>
+
+<script>
+  // Handle retry button
+  const retryButton = document.getElementById('retry-button');
+  const connectionStatus = document.getElementById('connection-status');
+
+  retryButton?.addEventListener('click', () => {
+    // Try to reload the previous page or go to home
+    const referrer = document.referrer;
+    if (referrer && referrer.includes(window.location.hostname)) {
+      window.location.href = referrer;
+    } else {
+      window.location.href = '/';
+    }
+  });
+
+  // Monitor connection status
+  function updateConnectionStatus() {
+    if (navigator.onLine) {
+      connectionStatus?.classList.remove('hidden');
+      retryButton?.focus();
+    }
+  }
+
+  window.addEventListener('online', updateConnectionStatus);
+  window.addEventListener('load', updateConnectionStatus);
+
+  // Auto-retry when back online
+  window.addEventListener('online', () => {
+    setTimeout(() => {
+      const lastVisited = sessionStorage.getItem('lastVisitedPage') || '/';
+      window.location.href = lastVisited;
+    }, 1000);
+  });
+</script>
