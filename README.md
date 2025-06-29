@@ -5,6 +5,10 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 ## 🚀 Features
 
 - **Lightning Fast**: Built with Astro 5.x for optimal performance with server-side rendering
+- **PWA Ready**: Full-featured Progressive Web App with offline support and app-like features
+- **Full-Text Search**: Fast, client-side search powered by Pagefind
+- **Smart Prefetching**: Near-instant navigation with intelligent prefetching
+- **Optimized Images**: Responsive, modern image formats (WebP, AVIF) with lazy loading
 - **SEO Optimized**: Comprehensive meta tags, Open Graph, Twitter Cards, and structured data
 - **Dynamic OG Images**: Automatically generated Open Graph images using @vercel/og
 - **Responsive Design**: Mobile-first design that looks great on all devices
@@ -22,6 +26,7 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 - **Language**: [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
 - **UI Components**: [React](https://react.dev/) - For interactive components
 - **Content**: [MDX](https://mdxjs.com/) for enhanced blog posts and content
+- **Search**: [Pagefind](https://pagefind.app/) - Fully static search library
 - **Database**: [PostgreSQL](https://www.postgresql.org/) - For dynamic content and data
 - **Linting & Formatting**: [Biome](https://biomejs.dev/) - Fast formatter and linter for JavaScript, TypeScript, and more
 - **OG Images**: [@vercel/og](https://vercel.com/docs/functions/og-image-generation) - Dynamic Open Graph image generation
@@ -89,7 +94,7 @@ The site will be available at `http://localhost:4321`
 ### Available Scripts
 
 - `bun run dev` / `npm run dev` - Start development server
-- `bun run build` / `npm run build` - Build for production
+- `bun run build` / `npm run build` - Build for production, including search indexing
 - `bun run preview` / `npm run preview` - Preview production build locally
 - `bun run astro` / `npm run astro` - Run Astro CLI commands
 
@@ -106,37 +111,61 @@ The site will be available at `http://localhost:4321`
 
 ```
 /
-├── public/                 # Static assets and generated files
+├── public/                 # Static assets, service worker, manifest.json
 ├── src/
 │   ├── app/               # Application logic and utilities
 │   ├── assets/            # Static assets (images, fonts, etc.)
-│   ├── components/        # Reusable UI components
-│   ├── config/            # Configuration files
+│   ├── components/        # Reusable UI components (Astro & React)
 │   ├── content/           # Content collections (blog posts, etc.)
-│   ├── i18n/              # Internationalization files
-│   ├── images/            # Image assets
 │   ├── layouts/           # Page layouts
-│   ├── lib/               # Utility libraries and helpers
 │   ├── pages/             # File-based routing
-│   │   ├── api/           # API routes (OG image generation, etc.)
-│   │   ├── blog/          # Blog posts and blog-related pages
-│   │   └── index.astro    # Homepage
-│   ├── styles/            # Global styles and CSS
+│   │   ├── api/           # API routes
+│   │   ├── blog/          # Blog pages
+│   │   └── offline.astro  # Offline fallback page
+│   ├── styles/            # Global styles
 │   ├── types/             # TypeScript type definitions
 │   └── utils/             # Utility functions
 ├── astro.config.mjs       # Astro configuration
 ├── tailwind.config.mjs    # Tailwind configuration
 ├── bun.lock               # Bun lockfile
-├── package-lock.json      # npm lockfile
 └── package.json           # Dependencies and scripts
 ```
 
-## 🎨 Key Components
+## 🎨 Key Features & Components
+
+### Progressive Web App (PWA)
+
+The website is a fully-featured PWA with:
+- **Service Worker**: For offline caching, background sync, and push notifications.
+- **Web App Manifest**: Allows users to install the site on their devices.
+- **Offline Support**: A dedicated offline page ensures a good user experience without a connection.
+- **App-like Experience**: Includes app shortcuts, standalone display mode, and seamless updates.
+
+### Full-Text Search
+
+Client-side search powered by **Pagefind**:
+- **Instant Results**: Real-time search with debouncing for a smooth experience.
+- **Keyboard Navigation**: Fully accessible with arrow keys, enter, and escape.
+- **Result Highlighting**: Search terms are highlighted in the results.
+- **Global Shortcut**: Access search from anywhere with `Ctrl+K` or `Cmd+K`.
+
+### Smart Prefetching
+
+Near-instant navigation using an intelligent prefetching strategy:
+- **Connection-Aware**: Respects user's data saver settings.
+- **Multiple Strategies**: Prefetches on viewport entry, hover, or tap.
+- **Critical Pages**: Prioritizes prefetching of key pages like blog, projects, and about.
+
+### Image Optimization
+
+Advanced image optimization with the `OptimizedImage.astro` component:
+- **Modern Formats**: Serves WebP and AVIF with fallbacks for older browsers.
+- **Responsive `srcset`**: Delivers the right image size for every screen.
+- **Lazy Loading**: Images are loaded progressively as they enter the viewport.
 
 ### SEO Component
 
 The SEO components provide comprehensive SEO features:
-
 - Meta tags for search engines
 - Open Graph tags for social media
 - Twitter Card support
@@ -147,7 +176,6 @@ The SEO components provide comprehensive SEO features:
 ### Open Graph Images
 
 Dynamic OG image generation using Vercel's OG image service with customizable:
-
 - Title and description
 - Article type and date
 - Tags and categories
@@ -156,7 +184,6 @@ Dynamic OG image generation using Vercel's OG image service with customizable:
 ### Server-Side Rendering
 
 The site uses Astro's SSR capabilities with:
-
 - Dynamic content rendering
 - Database integration
 - API routes for dynamic functionality
@@ -183,7 +210,6 @@ Your content here with MDX support for React components...
 ### Content Collections
 
 The site uses Astro's content collections for type-safe content management:
-
 - Blog posts with frontmatter validation
 - Automatic type generation
 - Built-in content querying and filtering
@@ -193,12 +219,12 @@ The site uses Astro's content collections for type-safe content management:
 ### Astro Config
 
 Key configurations in `astro.config.mjs`:
-
 - **Server Output**: Configured for server-side rendering
 - **Site URL**: Set for canonical links and sitemap generation
 - **Integrations**: MDX, React, Sitemap, Tailwind CSS
 - **Vercel Adapter**: With Web Analytics, Image Service, and ISR enabled
-- **Markdown**: Configured with GitHub Dark Dimmed theme for syntax highlighting
+- **Image Optimization**: Domains and formats configured for `astro:assets`.
+- **Prefetching**: Global prefetch configuration enabled.
 
 ### SEO Defaults
 
@@ -213,7 +239,6 @@ PostgreSQL integration for dynamic content and data storage. Configure your data
 ### Vercel (Recommended)
 
 This site is optimized for Vercel deployment with:
-
 1. **Automatic Deployment**: Connect your GitHub repository to Vercel
 2. **Environment Variables**: Set required environment variables in Vercel dashboard
 3. **ISR Support**: Incremental Static Regeneration for optimal performance
@@ -221,6 +246,8 @@ This site is optimized for Vercel deployment with:
 5. **Image Optimization**: Automatic image optimization and serving
 
 ### Manual Build
+
+The build process is now a multi-step process that includes search indexing and sitemap generation.
 
 ```bash
 # Using Bun (recommended)
@@ -231,6 +258,9 @@ bun run preview  # Preview the build locally
 npm run build
 npm run preview  # Preview the build locally
 ```
+
+The `build` script now runs the following commands:
+`node migrate-images-to-public.mjs && astro build && npx pagefind --site dist && node generate-enhanced-sitemap.mjs && node generate-static-rss.mjs`
 
 ### Environment Variables for Production
 
@@ -253,6 +283,9 @@ DATABASE_URL=your_postgresql_connection_string
 ## 📊 Performance & Features
 
 - **Lighthouse Score**: 100/100 across all metrics
+- **PWA-Ready**: Installable, offline-capable, and app-like.
+- **Full-Text Search**: Fast, client-side search.
+- **Smart Prefetching**: Near-instant page loads.
 - **Server-Side Rendering**: Fast initial page loads with SSR
 - **Incremental Static Regeneration**: Optimal performance with fresh content
 - **Image Optimization**: Automatic image optimization with Vercel's Image Service
