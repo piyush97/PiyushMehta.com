@@ -1,5 +1,7 @@
 # Piyush Mehta - Personal Website
 
+![Screenshot of the application](/.github/hero.jpg)
+
 A modern, fast, and SEO-optimized personal website built with Astro, showcasing my work as a Senior Software Engineer, Tech Speaker, and Open Source Contributor.
 
 ## 🚀 Features
@@ -17,6 +19,7 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 - **Modern Stack**: Astro 5.x, TypeScript, Tailwind CSS, React, MDX
 - **ISR Support**: Incremental Static Regeneration for optimal performance
 - **Database Integration**: PostgreSQL integration for dynamic content
+- **Newsletter Security**: Enterprise-grade newsletter subscription with Redis-based rate limiting
 - **Web Analytics**: Built-in Vercel Web Analytics support
 
 ## 🛠️ Tech Stack
@@ -30,6 +33,7 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 - **Database**: [PostgreSQL](https://www.postgresql.org/) - For dynamic content and data
 - **Linting & Formatting**: [Biome](https://biomejs.dev/) - Fast formatter and linter for JavaScript, TypeScript, and more
 - **OG Images**: [@vercel/og](https://vercel.com/docs/functions/og-image-generation) - Dynamic Open Graph image generation
+- **Redis**: [Upstash Redis](https://upstash.com/) - Serverless Redis for rate limiting and caching
 - **Deployment**: [Vercel](https://vercel.com/) - Optimized for Astro with ISR support
 - **SEO**: Custom SEO components with structured data and sitemap generation
 
@@ -69,6 +73,10 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
    ```env
    SITE_URL=https://piyushmehta.com
    DATABASE_URL=your_postgresql_connection_string
+   
+   # Newsletter Security (optional)
+   UPSTASH_REDIS_REST_URL=your_upstash_redis_url
+   UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
    ```
 
 ## 🚀 Development
@@ -181,6 +189,19 @@ Dynamic OG image generation using Vercel's OG image service with customizable:
 - Tags and categories
 - Custom branding and styling
 
+### Newsletter Subscription Security
+
+Enterprise-grade newsletter subscription with comprehensive security:
+- **Redis Rate Limiting**: Persistent rate limiting with Upstash Redis support
+- **Bot Protection**: Honeypot fields, User-Agent validation, and browser signature verification
+- **Email Security**: Disposable email domain blocking and email sanitization
+- **CAPTCHA Integration**: Optional Google reCAPTCHA v3 support
+- **IP Allowlisting**: CIDR range support for trusted sources
+- **Security Monitoring**: Real-time alerting and comprehensive analytics
+- **Failed Attempt Blocking**: Progressive blocking with exponential backoff
+
+See `NEWSLETTER_SECURITY.md` for detailed setup and configuration.
+
 ### Server-Side Rendering
 
 The site uses Astro's SSR capabilities with:
@@ -267,6 +288,11 @@ The `build` script now runs the following commands:
 ```env
 SITE_URL=https://your-domain.com
 DATABASE_URL=your_postgresql_connection_string
+
+# Newsletter Security (optional)
+UPSTASH_REDIS_REST_URL=your_upstash_redis_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
+NEWSLETTER_ADMIN_TOKEN=your_secure_admin_token
 ```
 
 ## 🔍 SEO Features
@@ -306,7 +332,8 @@ The project includes several utility scripts for content migration and maintenan
 ### Additional Setup Guides
 
 - `GITHUB_SETUP.md` - GitHub integration and CI/CD setup guide
-- `NEWSLETTER_SETUP.md` - Newsletter integration setup instructions
+- `NEWSLETTER_SECURITY.md` - Comprehensive newsletter security setup and configuration
+- `.env.newsletter.example` - Newsletter security environment configuration template
 
 ## 🤝 Contributing
 
