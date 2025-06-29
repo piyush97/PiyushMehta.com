@@ -84,7 +84,7 @@ const articleSchema = {
       <!-- Breadcrumbs -->
       <Breadcrumbs title={title} url={canonicalUrl} />
 
-      <article class="prose" itemscope itemtype="https://schema.org/Article">
+      <article class="prose" itemscope itemtype="https://schema.org/Article" data-pagefind-body>
         <!-- Back Link -->
         <div class="mb-8">
           <a
@@ -112,9 +112,17 @@ const articleSchema = {
           <h1
             class="mb-6 text-4xl font-bold md:text-5xl text-text-primary"
             itemprop="headline"
+            data-pagefind-meta="title"
           >
             {title}
           </h1>
+          
+          <!-- Hidden metadata for Pagefind -->
+          <div data-pagefind-meta="description" class="hidden">{description}</div>
+          <div data-pagefind-meta="author" class="hidden">{author || 'Piyush Mehta'}</div>
+          <div data-pagefind-meta="date" class="hidden">{date.toISOString()}</div>
+          <div data-pagefind-meta="type" class="hidden">blog</div>
+          {tags && tags.map(tag => <div data-pagefind-meta="tag" class="hidden">{tag}</div>)}
 
           <div
             class="flex flex-wrap items-center justify-center gap-6 mb-6 text-light-400"
