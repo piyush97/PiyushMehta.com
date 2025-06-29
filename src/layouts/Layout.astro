@@ -3,6 +3,8 @@ import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
 import SEO from '../components/SEO.astro';
 import SearchModal from '../components/SearchModal.astro';
+import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration.astro';
+import SmartPrefetch from '../components/SmartPrefetch.astro';
 import '../styles/global.css';
 import SpeedInsights from "@vercel/speed-insights/astro"
 import favicon from "../assets/favicon.svg";
@@ -51,8 +53,9 @@ const {
       title="Piyush Mehta - Blog RSS Feed"
       href="/rss.xml"
     />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="generator" content={Astro.generator} />
-    <SpeedInsights/>
+    <SpeedInsights />
     <!-- SEO Component (includes OpenGraph functionality) -->
     <SEO
       title={title}
@@ -156,7 +159,9 @@ const {
     
     <Navbar />
     <SearchModal />
-    <main class="flex-1 pt-16">
+    <SmartPrefetch />
+    <ServiceWorkerRegistration />
+    <main class="flex-1 pt-16" data-pagefind-body>
       <slot />
     </main>
     <Footer />

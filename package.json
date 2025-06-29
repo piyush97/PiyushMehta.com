@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "node migrate-images-to-public.mjs && astro build && node generate-enhanced-sitemap.mjs && node generate-static-rss.mjs",
+    "build": "node migrate-images-to-public.mjs && astro build && npx pagefind --site dist && node generate-enhanced-sitemap.mjs && node generate-static-rss.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "migrate:images": "node migrate-images-to-public.mjs",
@@ -50,6 +50,7 @@
     "@biomejs/biome": "1.9.4",
     "@tailwindcss/typography": "^0.5.16",
     "lefthook": "^1.11.13",
+    "pagefind": "^1.3.0",
     "typescript": "^5.8.3"
   }
 }

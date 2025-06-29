@@ -9,6 +9,10 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://piyushmehta.com',
   output: 'server',
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'viewport'
+  },
   integrations: [
     mdx(),
     sitemap({
@@ -48,12 +52,31 @@ export default defineConfig({
       '**/*.webp',
     ],
   },
+  image: {
+    domains: 'piyushmehta.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.githubusercontent.com'
+      }
+    ]
+  },
+
+  build: {
+    concurrency: 2,
+    assetsInlineLimit: 1024,
+  },
 
   adapter: vercel({
     webAnalytics: {
       enabled: true,
     },
     imageService: true,
+    imagesConfig: {
+      sizes: [320, 640, 768, 1024, 1280, 1536],
+      formats: ['image/webp', 'image/avif'],
+      minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    },
     isr: {
       // caches all pages on first request and saves for 1 day
       expiration: 60 * 60 * 24,
