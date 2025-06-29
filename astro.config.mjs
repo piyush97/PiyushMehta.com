@@ -53,7 +53,7 @@ export default defineConfig({
     ],
   },
   image: {
-    domains: 'piyushmehta.com',
+    domains: ['piyushmehta.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -76,6 +76,13 @@ export default defineConfig({
       sizes: [320, 640, 768, 1024, 1280, 1536],
       formats: ['image/webp', 'image/avif'],
       minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+      domains: ['piyushmehta.com'],
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: '**.githubusercontent.com',
+        },
+      ],
     },
     isr: {
       // caches all pages on first request and saves for 1 day
