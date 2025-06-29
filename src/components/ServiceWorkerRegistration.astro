@@ -1,0 +1,344 @@
+---
+// Service Worker Registration Component
+---
+
+<script>
+  interface ServiceWorkerManager {
+    register(): Promise<void>;
+    updateAvailable: boolean;
+    installPrompt: any;
+  }
+
+  class ServiceWorkerManager implements ServiceWorkerManager {
+    public updateAvailable = false;
+    public installPrompt: any = null;
+    private registration: ServiceWorkerRegistration | null = null;
+
+    constructor() {
+      this.setupInstallPrompt();
+    }
+
+    private setupInstallPrompt() {
+      // Listen for the beforeinstallprompt event
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing on mobile
+        e.preventDefault();
+        // Store the event for later use
+        this.installPrompt = e;
+        
+        // Show install button if needed
+        this.showInstallButton();
+      });
+
+      // Listen for app installation
+      window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        this.hideInstallButton();
+        this.installPrompt = null;
+      });
+    }
+
+    public async register(): Promise<void> {
+      if (!('serviceWorker' in navigator)) {
+        console.log('Service Worker not supported');
+        return;
+      }
+
+      try {
+        this.registration = await navigator.serviceWorker.register('/sw.js', {
+          scope: '/'
+        });
+
+        console.log('Service Worker registered successfully');
+
+        // Handle updates
+        this.registration.addEventListener('updatefound', () => {
+          const newWorker = this.registration!.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // New update available
+                this.updateAvailable = true;
+                this.showUpdatePrompt();
+              }
+            });
+          }
+        });
+
+        // Handle controller change (when new SW takes control)
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          // Refresh the page to load new content
+          window.location.reload();
+        });
+
+        // Check for existing update
+        if (this.registration.waiting) {
+          this.updateAvailable = true;
+          this.showUpdatePrompt();
+        }
+
+      } catch (error) {
+        console.error('Service Worker registration failed:', error);
+      }
+    }
+
+    public async updateServiceWorker(): Promise<void> {
+      if (!this.registration || !this.registration.waiting) {
+        return;
+      }
+
+      // Tell the waiting SW to skip waiting and take control
+      this.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+    }
+
+    public async installApp(): Promise<void> {
+      if (!this.installPrompt) {
+        console.log('Install prompt not available');
+        return;
+      }
+
+      // Show the install prompt
+      this.installPrompt.prompt();
+      
+      // Wait for the user's response
+      const { outcome } = await this.installPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+      
+      // Clear the prompt
+      this.installPrompt = null;
+      this.hideInstallButton();
+    }
+
+    private showUpdatePrompt(): void {
+      // Create update notification
+      const updateBanner = document.createElement('div');
+      updateBanner.id = 'update-banner';
+      updateBanner.innerHTML = `
+        <div style="
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          background: var(--color-accent);
+          color: var(--color-background);
+          padding: 1rem;
+          text-align: center;
+          z-index: 10000;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+          transform: translateY(-100%);
+          transition: transform 0.3s ease;
+        ">
+          <span>A new version is available!</span>
+          <button 
+            id="update-button"
+            style="
+              margin-left: 1rem;
+              padding: 0.5rem 1rem;
+              background: var(--color-background);
+              color: var(--color-accent);
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+              font-weight: bold;
+            "
+          >
+            Update Now
+          </button>
+          <button 
+            id="dismiss-update"
+            style="
+              margin-left: 0.5rem;
+              padding: 0.5rem;
+              background: transparent;
+              color: var(--color-background);
+              border: 1px solid currentColor;
+              border-radius: 4px;
+              cursor: pointer;
+            "
+          >
+            ✕
+          </button>
+        </div>
+      `;
+
+      document.body.appendChild(updateBanner);
+
+      // Animate in
+      setTimeout(() => {
+        updateBanner.style.transform = 'translateY(0)';
+      }, 100);
+
+      // Handle update button click
+      const updateButton = updateBanner.querySelector('#update-button');
+      updateButton?.addEventListener('click', () => {
+        this.updateServiceWorker();
+        updateBanner.remove();
+      });
+
+      // Handle dismiss button click
+      const dismissButton = updateBanner.querySelector('#dismiss-update');
+      dismissButton?.addEventListener('click', () => {
+        updateBanner.style.transform = 'translateY(-100%)';
+        setTimeout(() => updateBanner.remove(), 300);
+      });
+
+      // Auto-dismiss after 10 seconds
+      setTimeout(() => {
+        if (updateBanner.parentNode) {
+          updateBanner.style.transform = 'translateY(-100%)';
+          setTimeout(() => updateBanner.remove(), 300);
+        }
+      }, 10000);
+    }
+
+    private showInstallButton(): void {
+      // Check if install button already exists
+      if (document.getElementById('pwa-install-button')) {
+        return;
+      }
+
+      // Create install button
+      const installButton = document.createElement('button');
+      installButton.id = 'pwa-install-button';
+      installButton.innerHTML = '📱 Install App';
+      installButton.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--color-accent);
+        color: var(--color-background);
+        border: none;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 9999;
+        transform: translateY(100px);
+        transition: all 0.3s ease;
+      `;
+
+      document.body.appendChild(installButton);
+
+      // Animate in
+      setTimeout(() => {
+        installButton.style.transform = 'translateY(0)';
+      }, 100);
+
+      // Handle click
+      installButton.addEventListener('click', () => {
+        this.installApp();
+      });
+
+      // Auto-hide after 10 seconds
+      setTimeout(() => {
+        this.hideInstallButton();
+      }, 15000);
+    }
+
+    private hideInstallButton(): void {
+      const installButton = document.getElementById('pwa-install-button');
+      if (installButton) {
+        installButton.style.transform = 'translateY(100px)';
+        setTimeout(() => installButton.remove(), 300);
+      }
+    }
+
+    public checkConnection(): void {
+      // Monitor online/offline status
+      window.addEventListener('online', () => {
+        console.log('Back online');
+        this.showConnectionStatus('Online', 'success');
+      });
+
+      window.addEventListener('offline', () => {
+        console.log('Gone offline');
+        this.showConnectionStatus('Offline - Some features may be limited', 'warning');
+      });
+    }
+
+    private showConnectionStatus(message: string, type: 'success' | 'warning'): void {
+      const statusBanner = document.createElement('div');
+      statusBanner.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : '#f59e0b'};
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+      `;
+      statusBanner.textContent = message;
+
+      document.body.appendChild(statusBanner);
+
+      // Animate in
+      setTimeout(() => {
+        statusBanner.style.transform = 'translateX(0)';
+      }, 100);
+
+      // Auto-remove
+      setTimeout(() => {
+        statusBanner.style.transform = 'translateX(100%)';
+        setTimeout(() => statusBanner.remove(), 300);
+      }, 3000);
+    }
+  }
+
+  // Initialize Service Worker Manager
+  const swManager = new ServiceWorkerManager();
+
+  // Register service worker when page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    swManager.register();
+    swManager.checkConnection();
+  });
+
+  // Expose for debugging
+  (window as any).swManager = swManager;
+</script>
+
+<style>
+  /* PWA Install Button Hover Effects */
+  #pwa-install-button:hover {
+    transform: translateY(0) scale(1.05) !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.4) !important;
+  }
+
+  /* Update Banner Styles */
+  #update-banner button:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+
+  /* Connection Status Animation */
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+</style>

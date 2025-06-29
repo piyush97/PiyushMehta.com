@@ -1,0 +1,174 @@
+---
+import { getImage } from "astro:assets";
+import type { ImageMetadata } from 'astro';
+
+export interface Props {
+  src: ImageMetadata | string;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  sizes?: string;
+  quality?: number;
+  formats?: string[];
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  class: className = '',
+  loading = 'lazy',
+  priority = false,
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
+  quality = 80,
+  formats = ['webp', 'avif']
+} = Astro.props;
+
+// Generate responsive image variants
+const generateResponsiveImages = async (imageSrc: ImageMetadata | string) => {
+  if (typeof imageSrc === 'string') {
+    return { src: imageSrc, srcset: '', sources: [] };
+  }
+
+  const baseWidth = width || imageSrc.width;
+  const baseHeight = height || imageSrc.height;
+  const aspectRatio = baseWidth / baseHeight;
+
+  // Generate different sizes for responsive design
+  const widths = [320, 640, 768, 1024, 1280, 1536].filter(w => w <= baseWidth);
+  
+  const variants = await Promise.all(
+    widths.map(async (w) => {
+      const h = Math.round(w / aspectRatio);
+      const image = await getImage({
+        src: imageSrc,
+        width: w,
+        height: h,
+        quality,
+        format: 'webp'
+      });
+      return `${image.src} ${w}w`;
+    })
+  );
+
+  // Generate format-specific sources
+  const sources = await Promise.all(
+    formats.map(async (format) => {
+      const formatVariants = await Promise.all(
+        widths.map(async (w) => {
+          const h = Math.round(w / aspectRatio);
+          const image = await getImage({
+            src: imageSrc,
+            width: w,
+            height: h,
+            quality,
+            format: format as 'webp' | 'avif' | 'png' | 'jpg'
+          });
+          return `${image.src} ${w}w`;
+        })
+      );
+      return {
+        format,
+        srcset: formatVariants.join(', '),
+        type: format === 'avif' ? 'image/avif' : 'image/webp'
+      };
+    })
+  );
+
+  // Fallback image
+  const fallbackImage = await getImage({
+    src: imageSrc,
+    width: baseWidth,
+    height: baseHeight,
+    quality,
+    format: 'jpg'
+  });
+
+  return {
+    src: fallbackImage.src,
+    srcset: variants.join(', '),
+    sources,
+    width: baseWidth,
+    height: baseHeight
+  };
+};
+
+const imageData = await generateResponsiveImages(src);
+---
+
+<picture class={className}>
+  {imageData.sources.map((source: { srcset: string; type: string; format: string }) => (
+    <source
+      srcset={source.srcset}
+      type={source.type}
+      sizes={sizes}
+    />
+  ))}
+  <img
+    src={imageData.src}
+    srcset={imageData.srcset}
+    alt={alt}
+    width={imageData.width}
+    height={imageData.height}
+    loading={priority ? 'eager' : loading}
+    decoding={priority ? 'sync' : 'async'}
+    fetchpriority={priority ? 'high' : 'auto'}
+    sizes={sizes}
+    class="optimized-image"
+  />
+</picture>
+
+<style>
+  .optimized-image {
+    @apply w-full h-auto object-cover transition-opacity duration-300;
+  }
+
+  .optimized-image[loading="lazy"] {
+    @apply opacity-0;
+  }
+
+  .optimized-image.loaded {
+    @apply opacity-100;
+  }
+</style>
+
+<script>
+  // Progressive image loading with intersection observer
+  if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const img = entry.target as HTMLImageElement;
+          
+          // Add loading class for animation
+          img.classList.add('loading');
+          
+          // Handle load event
+          img.addEventListener('load', () => {
+            img.classList.add('loaded');
+            img.classList.remove('loading');
+          });
+
+          // Handle error event
+          img.addEventListener('error', () => {
+            img.classList.remove('loading');
+            console.warn('Failed to load image:', img.src);
+          });
+
+          imageObserver.unobserve(img);
+        }
+      });
+    }, {
+      rootMargin: '50px'
+    });
+
+    // Observe all lazy-loaded images
+    document.querySelectorAll('img[loading="lazy"]').forEach((img) => {
+      imageObserver.observe(img);
+    });
+  }
+</script>
