@@ -45,8 +45,8 @@ export function generateOgImageUrl(params: {
   if (tags && tags.length > 0) {
     searchParams.set('tags', tags.join(','));
   }
-  
-  return `${baseUrl}/api/og-image?${searchParams.toString()}`;
+
+  return new URL(`/api/og-image?${searchParams.toString()}`, baseUrl).toString();
 }
 
 /**
@@ -280,7 +280,7 @@ export function extractImageMetadata(
   
   // Fallback to @vercel/og generated image
   if (fallbackParams) {
-    const ogImageUrl = generateOgImageUrl(fallbackParams);
+    const ogImageUrl = generateOgImageUrl({ ...fallbackParams, baseUrl });
     return {
       url: ogImageUrl,
       secureUrl: ogImageUrl, // @vercel/og always serves HTTPS
@@ -290,18 +290,14 @@ export function extractImageMetadata(
       alt: `${fallbackParams.title} - Piyush Mehta`,
     };
   }
-  
-  // Final fallback to a default generated image
-  const defaultOgUrl = generateOgImageUrl({
-    title: 'Piyush Mehta',
-    description: 'Software Engineer & Tech Speaker',
-    type: 'website',
-  });
-  
+
+  // Final fallback to a default static image
+  const fallbackImageUrl = new URL('/images/social.jpg', baseUrl).toString();
+
   return {
-    url: defaultOgUrl,
-    secureUrl: defaultOgUrl,
-    type: 'image/png',
+    url: fallbackImageUrl,
+    secureUrl: fallbackImageUrl,
+    type: 'image/jpeg',
     width: 1200,
     height: 630,
     alt: 'Piyush Mehta - Software Engineer & Tech Speaker',
