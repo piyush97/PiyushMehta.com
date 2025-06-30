@@ -66,11 +66,19 @@ export async function fetchGitHubRepos(
       }
     }
 
-    // Fetch repositories
+    // Fetch repositories with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
     const response = await fetch(
       `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
-      { headers }
+      { 
+        headers,
+        signal: controller.signal
+      }
     );
+    
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`GitHub API error: ${response.status}`);
