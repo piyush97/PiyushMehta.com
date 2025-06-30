@@ -1,0 +1,429 @@
+---
+// Giscus Comments Component for GitHub-powered discussions
+export interface Props {
+  repo: string;
+  repoId: string;
+  category: string;
+  categoryId: string;
+  mapping?: 'pathname' | 'url' | 'title' | 'og:title' | 'specific' | 'number';
+  strict?: boolean;
+  reactionsEnabled?: boolean;
+  emitMetadata?: boolean;
+  inputPosition?: 'top' | 'bottom';
+  theme?: 'light' | 'dark' | 'preferred_color_scheme' | 'transparent_dark' | 'dark_dimmed';
+  lang?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const {
+  repo = 'piyush97/piyushmehta.com',
+  repoId = 'MDEwOlJlcG9zaXRvcnkxMDY5NDE1NDk=',
+  category = 'General',
+  categoryId = 'DIC_kwDOBl_Mbc4CsSDf',
+  mapping = 'pathname',
+  strict = true,
+  reactionsEnabled = true,
+  emitMetadata = false,
+  inputPosition = 'bottom',
+  theme = 'preferred_color_scheme',
+  lang = 'en',
+  loading = 'lazy',
+} = Astro.props;
+
+// Generate unique ID for this comment section
+const commentId = `giscus-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<!-- Giscus Comments Section -->
+<section 
+  class="giscus-comments-section mt-16 pt-8 border-t border-card-border"
+  aria-labelledby="comments-heading"
+>
+  <div class="max-w-4xl mx-auto">
+    <!-- Comments Heading -->
+    <h2 
+      id="comments-heading"
+      class="text-2xl font-bold text-text-primary mb-6 flex items-center space-x-3"
+    >
+      <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+      </svg>
+      <span>Discussion</span>
+    </h2>
+
+    <!-- Loading Message -->
+    <div id={`${commentId}-loading`} class="loading-message text-center py-8">
+      <div class="inline-flex items-center space-x-2 text-light-400">
+        <svg class="animate-spin w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>Loading comments...</span>
+      </div>
+    </div>
+
+    <!-- Giscus Container -->
+    <div 
+      id={commentId}
+      class="giscus-container"
+      data-repo={repo}
+      data-repo-id={repoId}
+      data-category={category}
+      data-category-id={categoryId}
+      data-mapping={mapping}
+      data-strict={strict ? "1" : "0"}
+      data-reactions-enabled={reactionsEnabled ? "1" : "0"}
+      data-emit-metadata={emitMetadata ? "1" : "0"}
+      data-input-position={inputPosition}
+      data-theme={theme}
+      data-lang={lang}
+      data-loading={loading}
+      data-comment-id={commentId}
+    >
+    </div>
+
+    <!-- Fallback Message -->
+    <div id={`${commentId}-fallback`} class="fallback-message hidden text-center py-8">
+      <div class="bg-surface-100 rounded-lg p-6 border border-card-border">
+        <svg class="w-12 h-12 text-light-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <h3 class="text-lg font-semibold text-text-primary mb-2">Comments Unavailable</h3>
+        <p class="text-light-300 mb-4">
+          Comments are powered by GitHub Discussions. You can view and participate in the discussion on GitHub.
+        </p>
+        <a 
+          href={`https://github.com/${repo}/discussions`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center space-x-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent/50"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          <span>View on GitHub</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Giscus Comments Manager
+  class GiscusManager {
+    private commentId: string;
+    private config: any;
+    private loadingElement: HTMLElement | null;
+    private fallbackElement: HTMLElement | null;
+    private container: HTMLElement | null;
+    private isLoaded = false;
+    private retryCount = 0;
+    private maxRetries = 3;
+
+    constructor(commentId: string) {
+      this.commentId = commentId;
+      this.container = document.getElementById(commentId);
+      this.loadingElement = document.getElementById(`${commentId}-loading`);
+      this.fallbackElement = document.getElementById(`${commentId}-fallback`);
+      
+      if (this.container) {
+        this.config = this.extractConfig();
+        this.init();
+      }
+    }
+
+    private extractConfig() {
+      if (!this.container) return {};
+      
+      return {
+        repo: this.container.dataset.repo,
+        repoId: this.container.dataset.repoId,
+        category: this.container.dataset.category,
+        categoryId: this.container.dataset.categoryId,
+        mapping: this.container.dataset.mapping || 'pathname',
+        strict: this.container.dataset.strict === '1',
+        reactionsEnabled: this.container.dataset.reactionsEnabled === '1',
+        emitMetadata: this.container.dataset.emitMetadata === '1',
+        inputPosition: this.container.dataset.inputPosition || 'bottom',
+        theme: this.container.dataset.theme || 'preferred_color_scheme',
+        lang: this.container.dataset.lang || 'en',
+        loading: this.container.dataset.loading || 'lazy'
+      };
+    }
+
+    private async init() {
+      // Check if we should load immediately or wait for intersection
+      if (this.config.loading === 'eager') {
+        await this.loadGiscus();
+      } else {
+        this.setupIntersectionObserver();
+      }
+
+      // Listen for theme changes
+      this.setupThemeListener();
+    }
+
+    private setupIntersectionObserver() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(async (entry) => {
+            if (entry.isIntersecting && !this.isLoaded) {
+              observer.disconnect();
+              await this.loadGiscus();
+            }
+          });
+        },
+        { 
+          rootMargin: '100px 0px',
+          threshold: 0.1 
+        }
+      );
+
+      if (this.container) {
+        observer.observe(this.container);
+      }
+    }
+
+    private async loadGiscus() {
+      if (this.isLoaded || !this.container) return;
+
+      try {
+        // Validate required config
+        if (!this.config.repo || !this.config.repoId || !this.config.categoryId) {
+          throw new Error('Missing required Giscus configuration');
+        }
+
+        // Determine theme based on current site theme
+        const currentTheme = this.getCurrentTheme();
+        
+        // Load Giscus script
+        await this.loadGiscusScript();
+        
+        // Configure Giscus
+        const giscusAttributes = {
+          'data-repo': this.config.repo,
+          'data-repo-id': this.config.repoId,
+          'data-category': this.config.category,
+          'data-category-id': this.config.categoryId,
+          'data-mapping': this.config.mapping,
+          'data-strict': this.config.strict ? '1' : '0',
+          'data-reactions-enabled': this.config.reactionsEnabled ? '1' : '0',
+          'data-emit-metadata': this.config.emitMetadata ? '1' : '0',
+          'data-input-position': this.config.inputPosition,
+          'data-theme': currentTheme,
+          'data-lang': this.config.lang,
+        };
+
+        // Create Giscus element
+        const giscusEl = document.createElement('script');
+        giscusEl.src = 'https://giscus.app/client.js';
+        giscusEl.setAttribute('crossorigin', 'anonymous');
+        giscusEl.setAttribute('async', '');
+        
+        Object.entries(giscusAttributes).forEach(([key, value]) => {
+          giscusEl.setAttribute(key, value);
+        });
+
+        // Clear container and add Giscus
+        this.container.innerHTML = '';
+        this.container.appendChild(giscusEl);
+
+        // Hide loading message
+        if (this.loadingElement) {
+          this.loadingElement.style.display = 'none';
+        }
+
+        this.isLoaded = true;
+        
+        // Track successful load
+        this.trackEvent('giscus_loaded', {
+          repo: this.config.repo,
+          theme: currentTheme
+        });
+
+      } catch (error) {
+        console.error('Failed to load Giscus:', error);
+        this.handleLoadError();
+      }
+    }
+
+    private loadGiscusScript(): Promise<void> {
+      return new Promise((resolve, reject) => {
+        // Check if Giscus script is already loaded
+        if (document.querySelector('script[src="https://giscus.app/client.js"]')) {
+          resolve();
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://giscus.app/client.js';
+        script.async = true;
+        script.crossOrigin = 'anonymous';
+        
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Failed to load Giscus script'));
+        
+        document.head.appendChild(script);
+        
+        // Fallback timeout
+        setTimeout(() => reject(new Error('Giscus script load timeout')), 10000);
+      });
+    }
+
+    private getCurrentTheme(): string {
+      // Map site themes to Giscus themes
+      const themeMap: Record<string, string> = {
+        'professional-light': 'light',
+        'professional-dark': 'dark',
+        'minimalist': 'light',
+        'retro-tech': 'dark_dimmed',
+        'high-contrast': 'dark',
+        'custom-theme': 'preferred_color_scheme'
+      };
+
+      const root = document.documentElement;
+      const currentSiteTheme = Object.keys(themeMap).find(theme => 
+        root.classList.contains(theme)
+      );
+
+      return currentSiteTheme ? themeMap[currentSiteTheme] : 'preferred_color_scheme';
+    }
+
+    private setupThemeListener() {
+      document.addEventListener('themechange', (event: any) => {
+        if (this.isLoaded && this.container) {
+          const newTheme = this.getCurrentTheme();
+          
+          // Send theme change message to Giscus iframe
+          const iframe = this.container.querySelector('iframe');
+          if (iframe) {
+            iframe.contentWindow?.postMessage(
+              { giscus: { setConfig: { theme: newTheme } } },
+              'https://giscus.app'
+            );
+          }
+        }
+      });
+    }
+
+    private handleLoadError() {
+      this.retryCount++;
+      
+      if (this.retryCount <= this.maxRetries) {
+        // Retry after delay
+        setTimeout(() => {
+          this.isLoaded = false;
+          this.loadGiscus();
+        }, 2000 * this.retryCount);
+        return;
+      }
+
+      // Show fallback after max retries
+      if (this.loadingElement) {
+        this.loadingElement.style.display = 'none';
+      }
+      
+      if (this.fallbackElement) {
+        this.fallbackElement.classList.remove('hidden');
+      }
+
+      this.trackEvent('giscus_load_failed', {
+        repo: this.config.repo,
+        retries: this.retryCount
+      });
+    }
+
+    private trackEvent(eventName: string, properties: any = {}) {
+      // Track analytics event
+      if (typeof gtag !== 'undefined') {
+        gtag('event', eventName, properties);
+      }
+
+      // Console log for development
+      if (window.location.hostname === 'localhost') {
+        console.log('Giscus Event:', eventName, properties);
+      }
+    }
+  }
+
+  // Initialize Giscus when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const giscusContainers = document.querySelectorAll('[data-comment-id]');
+    
+    giscusContainers.forEach(container => {
+      const commentId = container.getAttribute('data-comment-id');
+      if (commentId) {
+        new GiscusManager(commentId);
+      }
+    });
+  });
+</script>
+
+<style>
+  .giscus-comments-section {
+    /* Comments section specific styles */
+  }
+
+  .loading-message {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .giscus-container {
+    min-height: 200px;
+  }
+
+  /* Giscus iframe styling */
+  .giscus-container iframe {
+    width: 100%;
+    border: none;
+    border-radius: 0.5rem;
+  }
+
+  /* Theme-specific adjustments */
+  .professional-light .giscus-container {
+    --giscus-bg: #ffffff;
+  }
+
+  .professional-dark .giscus-container {
+    --giscus-bg: #1a1b26;
+  }
+
+  .retro-tech .giscus-container {
+    --giscus-bg: #0a0a0a;
+  }
+
+  .minimalist .giscus-container {
+    --giscus-bg: #fafafa;
+  }
+
+  .high-contrast .giscus-container {
+    --giscus-bg: #000000;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .giscus-comments-section {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+    }
+
+    .giscus-container {
+      min-height: 150px;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .loading-message svg {
+      animation: none;
+    }
+  }
+
+  /* Focus styles for accessibility */
+  .fallback-message a:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>

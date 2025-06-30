@@ -2,6 +2,9 @@
 import { getCollection, render } from 'astro:content';
 import ArticleMeta from '../../components/ArticleMeta.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import GiscusComments from '../../components/GiscusComments.astro';
+import PostReactions from '../../components/PostReactions.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
 import Layout from '../../layouts/Layout.astro';
 
 export const prerender = true;
@@ -276,6 +279,36 @@ const articleSchema = {
           </div>
         </footer>
       </article>
+
+      <!-- Post Reactions -->
+      <PostReactions 
+        postId={post.slug}
+        title="Was this post helpful?"
+        showCount={true}
+        size="md"
+        orientation="horizontal"
+      />
+
+      <!-- Related Posts -->
+      <RelatedPosts 
+        currentSlug={post.slug}
+        currentTags={tags}
+        maxPosts={3}
+      />
+
+      <!-- Comments Section -->
+      <GiscusComments
+        repo="piyushmehta/piyushmehta.com"
+        repoId="R_kgDOL1234567890"
+        category="Blog Comments"
+        categoryId="DIC_kwDOL1234567890"
+        mapping="pathname"
+        reactionsEnabled={true}
+        inputPosition="bottom"
+        theme="preferred_color_scheme"
+        lang="en"
+        loading="lazy"
+      />
     </div>
   </div>
 </Layout>
