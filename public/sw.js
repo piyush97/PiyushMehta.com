@@ -34,7 +34,7 @@ const ROUTE_STRATEGIES = [
     maxAge: 5 * 60 * 1000, // 5 minutes
   },
   {
-    pattern: /\/(blog|projects|about|uses|services)/,
+    pattern: /^\/(blog|projects|about|uses|services|contact-me|resume|videos|privacy-policy|terms-of-service|react-developer)($|\/)/,
     strategy: CACHE_STRATEGIES.STALE_WHILE_REVALIDATE,
     cache: DYNAMIC_CACHE,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
@@ -129,10 +129,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
+  // Skip requests from different origins (except same-origin)
+  if (url.origin !== location.origin) {
+    return;
+  }
+  
   // Find matching strategy
-  const routeConfig = ROUTE_STRATEGIES.find(route => 
-    route.pattern.test(url.pathname + url.search)
-  );
+  const routeConfig = ROUTE_STRATEGIES.find(route => {
+    const testString = url.pathname === '/' ? '/' : url.pathname + url.search;
+    return route.pattern.test(testString);
+  });
   
   if (routeConfig) {
     event.respondWith(handleRequest(request, routeConfig));
