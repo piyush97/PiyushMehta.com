@@ -44,12 +44,19 @@
         return;
       }
 
+      // Edge-specific check and registration
+      const isEdge = navigator.userAgent.includes('Edg') || navigator.userAgent.includes('Edge');
+      
       try {
-        this.registration = await navigator.serviceWorker.register('/sw.js', {
-          scope: '/'
-        });
+        // For Edge, use more conservative registration options
+        const registrationOptions = {
+          scope: '/',
+          updateViaCache: isEdge ? 'all' : 'imports'
+        };
 
-        console.log('Service Worker registered successfully');
+        this.registration = await navigator.serviceWorker.register('/sw.js', registrationOptions);
+
+        console.log('Service Worker registered successfully', { isEdge, scope: this.registration.scope });
 
         // Handle updates
         this.registration.addEventListener('updatefound', () => {

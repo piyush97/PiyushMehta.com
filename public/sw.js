@@ -107,7 +107,10 @@ self.addEventListener('activate', (event) => {
       }),
       
       // Take control of all pages
-      self.clients.claim()
+      self.clients.claim(),
+      
+      // Cleanup expired cache entries
+      cleanupExpiredCache()
     ]).then(() => {
       console.log('Service Worker activation complete');
     })
@@ -129,8 +132,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Skip requests from different origins (except same-origin)
-  if (url.origin !== location.origin) {
+  // Skip requests from different origins (except same-origin and fonts)
+  if (url.origin !== location.origin && !url.origin.includes('fonts.googleapis.com') && !url.origin.includes('fonts.gstatic.com')) {
     return;
   }
   
@@ -383,8 +386,8 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// Cleanup old caches periodically
-setInterval(async () => {
+// Cleanup expired cache entries
+async function cleanupExpiredCache() {
   try {
     const cacheNames = await caches.keys();
     for (const cacheName of cacheNames) {
@@ -401,4 +404,4 @@ setInterval(async () => {
   } catch (error) {
     console.error('Cache cleanup failed:', error);
   }
-}, 24 * 60 * 60 * 1000); // Run daily
+}
