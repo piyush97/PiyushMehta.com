@@ -8,8 +8,15 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 
 - **Lightning Fast**: Built with Astro 5.x for optimal performance with server-side rendering
 - **PWA Ready**: Full-featured Progressive Web App with offline support and app-like features
+- **Interactive Components**: Glass morphism UI with hover effects and smooth animations
+- **Command Palette**: Global search and navigation with ⌘+K keyboard shortcuts
 - **Full-Text Search**: Fast, client-side search powered by Pagefind
 - **Smart Prefetching**: Near-instant navigation with intelligent prefetching
+- **Enhanced Code Blocks**: Syntax highlighting with copy-to-clipboard functionality
+- **Reading Progress**: Visual progress indicators and reading time estimates
+- **Post Reactions**: Interactive engagement with glass morphism design
+- **Related Posts**: Intelligent post recommendations based on content similarity
+- **GitHub Comments**: Integrated Giscus comment system powered by GitHub Discussions
 - **Optimized Images**: Responsive, modern image formats (WebP, AVIF) with lazy loading
 - **SEO Optimized**: Comprehensive meta tags, Open Graph, Twitter Cards, and structured data
 - **Dynamic OG Images**: Automatically generated Open Graph images using @vercel/og
@@ -21,6 +28,7 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 - **Database Integration**: PostgreSQL integration for dynamic content
 - **Newsletter Security**: Enterprise-grade newsletter subscription with Redis-based rate limiting
 - **Web Analytics**: Built-in Vercel Web Analytics support
+- **Comprehensive Testing**: E2E tests with Playwright for all interactive components
 
 ## 🛠️ Tech Stack
 
@@ -114,6 +122,7 @@ The site will be available at `http://localhost:4321`
 - `bun run check` - Run comprehensive check (lint + format)
 - `bun run check:write` - Check and auto-fix all issues
 - `bun run ci` - CI-friendly check (no auto-fix)
+- `bun run test` - Run Playwright E2E tests for all components
 
 ## 📁 Project Structure
 
@@ -140,6 +149,54 @@ The site will be available at `http://localhost:4321`
 ```
 
 ## 🎨 Key Features & Components
+
+### Interactive UI Components
+
+#### Command Palette
+Global search and navigation interface accessible via ⌘+K:
+- **Universal Search**: Search through all content, pages, and actions
+- **Keyboard Navigation**: Full keyboard support with arrow keys and shortcuts
+- **Action Commands**: Quick access to theme switching, navigation, and utilities
+- **Fuzzy Search**: Intelligent search with typo tolerance
+- **Accessibility**: WCAG 2.1 AA compliant with screen reader support
+
+#### Post Reactions
+Interactive engagement system with glass morphism design:
+- **Glass Morphism**: Modern UI with backdrop blur and transparency effects
+- **Hover Animations**: Smooth glow effects and elevation changes
+- **Local Storage**: Persistent reactions across sessions
+- **Reaction Types**: Like, Helpful, Insightful, Bookmark, and Share
+- **Analytics Tracking**: Event tracking for user engagement metrics
+
+#### Enhanced Code Blocks
+Professional code presentation with interactive features:
+- **Syntax Highlighting**: Accurate language detection and highlighting
+- **Copy to Clipboard**: One-click code copying with visual feedback
+- **Language Labels**: Clear language identification for each block
+- **Accessibility**: Keyboard navigation and screen reader support
+- **Theme Aware**: Adapts to site theme preferences
+
+#### Reading Progress
+Visual progress tracking for blog posts:
+- **Progress Bar**: Smooth progress indication as users scroll
+- **Reading Time**: Accurate time estimates based on content length
+- **Smooth Animations**: Fluid progress updates with optimized performance
+- **Mobile Optimized**: Responsive design for all screen sizes
+
+#### Related Posts
+Intelligent content discovery based on similarity:
+- **Tag-Based Matching**: Content recommendations using shared tags
+- **Visual Cards**: Rich previews with images and metadata
+- **Navigation**: Seamless transitions between related content
+- **Accessibility**: Full keyboard navigation and ARIA labels
+
+#### GitHub Comments (Giscus)
+Integrated comment system powered by GitHub Discussions:
+- **GitHub Authentication**: Secure login via GitHub accounts
+- **Rich Formatting**: Full markdown support in comments
+- **Moderation**: Built-in moderation through GitHub's systems
+- **Reactions**: GitHub-style emoji reactions on comments
+- **Email Notifications**: Automatic notifications for new comments
 
 ### Progressive Web App (PWA)
 
@@ -310,6 +367,13 @@ NEWSLETTER_ADMIN_TOKEN=your_secure_admin_token
 
 - **Lighthouse Score**: 100/100 across all metrics
 - **PWA-Ready**: Installable, offline-capable, and app-like.
+- **Interactive Components**: Glass morphism UI with smooth animations
+- **Command Palette**: Universal search and navigation with ⌘+K
+- **Enhanced Code Blocks**: Syntax highlighting with copy functionality
+- **Reading Progress**: Visual progress tracking and time estimates
+- **Post Reactions**: Engaging interaction system with analytics
+- **GitHub Comments**: Integrated Giscus comment system
+- **Related Posts**: Intelligent content recommendations
 - **Full-Text Search**: Fast, client-side search.
 - **Smart Prefetching**: Near-instant page loads.
 - **Server-Side Rendering**: Fast initial page loads with SSR
@@ -318,6 +382,7 @@ NEWSLETTER_ADMIN_TOKEN=your_secure_admin_token
 - **Bundle Optimization**: Minimal JavaScript footprint with Astro's islands architecture
 - **Database Integration**: PostgreSQL for dynamic content and analytics
 - **Web Analytics**: Built-in Vercel Web Analytics support
+- **E2E Testing**: Comprehensive Playwright test coverage for all components
 
 ## 🛠️ Development Tools & Scripts
 

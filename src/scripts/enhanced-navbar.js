@@ -105,14 +105,14 @@ class EnhancedNavbar {
   }
 
   handleSearch() {
-    // Open the search modal
-    if (window.searchModal) {
-      window.searchModal.open();
+    // Open the command palette
+    if (window.commandPalette) {
+      window.commandPalette.open();
     } else {
-      // Fallback: wait for search modal to be initialized
+      // Fallback: wait for command palette to be initialized
       setTimeout(() => {
-        if (window.searchModal) {
-          window.searchModal.open();
+        if (window.commandPalette) {
+          window.commandPalette.open();
         }
       }, 100);
     }

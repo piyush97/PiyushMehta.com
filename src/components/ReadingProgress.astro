@@ -1,0 +1,324 @@
+---
+// Reading Progress Bar Component for Blog Posts
+---
+
+<!-- Reading Progress Bar -->
+<div 
+  id="reading-progress-container"
+  class="fixed top-0 left-0 right-0 z-40 bg-transparent pointer-events-none"
+  aria-hidden="true"
+>
+  <div
+    id="reading-progress-bar"
+    class="h-1 bg-gradient-to-r from-accent via-blue-500 to-purple-500 transition-all duration-150 ease-out"
+    style="width: 0%; transform-origin: left center;"
+  ></div>
+</div>
+
+<!-- Reading Time and Progress Info -->
+<div 
+  id="reading-info"
+  class="fixed bottom-6 right-6 bg-light-900/95 backdrop-blur-sm text-light-100 px-4 py-2 rounded-lg shadow-lg border border-card-border opacity-0 invisible transition-all duration-300 z-40 pointer-events-none"
+  aria-live="polite"
+>
+  <div class="flex items-center space-x-3 text-sm">
+    <div class="flex items-center space-x-1">
+      <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span id="reading-time">5 min read</span>
+    </div>
+    <div class="w-px h-4 bg-light-600"></div>
+    <div class="flex items-center space-x-1">
+      <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span id="reading-percentage">0%</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Reading Progress Functionality
+  class ReadingProgress {
+    constructor() {
+      this.progressBar = document.getElementById('reading-progress-bar');
+      this.progressContainer = document.getElementById('reading-progress-container');
+      this.readingInfo = document.getElementById('reading-info');
+      this.readingTimeElement = document.getElementById('reading-time');
+      this.readingPercentageElement = document.getElementById('reading-percentage');
+      
+      this.articleContent = null;
+      this.isVisible = false;
+      this.scrollTimeout = null;
+      
+      this.init();
+    }
+
+    init() {
+      // Only initialize on blog post pages
+      if (!this.isBlogPost()) {
+        return;
+      }
+
+      this.findArticleContent();
+      if (!this.articleContent) {
+        return;
+      }
+
+      this.calculateReadingTime();
+      this.bindEvents();
+      this.updateProgress();
+    }
+
+    isBlogPost() {
+      // Check if we're on a blog post page
+      return window.location.pathname.includes('/blog/') && 
+             window.location.pathname !== '/blog/' &&
+             !window.location.pathname.endsWith('/blog');
+    }
+
+    findArticleContent() {
+      // Try to find the main article content
+      const selectors = [
+        'article',
+        'main article',
+        '[data-pagefind-body]',
+        '.prose',
+        '.blog-content',
+        '.post-content',
+        'main'
+      ];
+
+      for (const selector of selectors) {
+        const element = document.querySelector(selector);
+        if (element && this.hasSubstantialContent(element)) {
+          this.articleContent = element;
+          break;
+        }
+      }
+    }
+
+    hasSubstantialContent(element) {
+      const textContent = element.textContent || '';
+      const wordCount = textContent.trim().split(/\s+/).length;
+      return wordCount > 100; // Must have at least 100 words
+    }
+
+    calculateReadingTime() {
+      if (!this.articleContent) return;
+
+      const text = this.articleContent.textContent || '';
+      const wordCount = text.trim().split(/\s+/).length;
+      const wordsPerMinute = 200; // Average reading speed
+      const readingTimeMinutes = Math.ceil(wordCount / wordsPerMinute);
+      
+      if (this.readingTimeElement) {
+        this.readingTimeElement.textContent = `${readingTimeMinutes} min read`;
+      }
+    }
+
+    bindEvents() {
+      // Throttled scroll handler
+      window.addEventListener('scroll', () => {
+        if (this.scrollTimeout) {
+          clearTimeout(this.scrollTimeout);
+        }
+        
+        this.scrollTimeout = setTimeout(() => {
+          this.updateProgress();
+        }, 16); // ~60fps
+      }, { passive: true });
+
+      // Show/hide reading info on hover
+      if (this.progressContainer) {
+        this.progressContainer.addEventListener('mouseenter', () => {
+          this.showReadingInfo();
+        });
+
+        this.progressContainer.addEventListener('mouseleave', () => {
+          this.hideReadingInfo();
+        });
+      }
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'r' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          this.toggleReadingInfo();
+        }
+      });
+
+      // Touch events for mobile
+      let touchStartY = 0;
+      let touchEndY = 0;
+
+      document.addEventListener('touchstart', (e) => {
+        touchStartY = e.changedTouches[0].screenY;
+      }, { passive: true });
+
+      document.addEventListener('touchend', (e) => {
+        touchEndY = e.changedTouches[0].screenY;
+        const deltaY = touchStartY - touchEndY;
+        
+        // Show reading info on upward swipe
+        if (deltaY > 50) {
+          this.showReadingInfo();
+          setTimeout(() => this.hideReadingInfo(), 3000);
+        }
+      }, { passive: true });
+    }
+
+    updateProgress() {
+      if (!this.articleContent || !this.progressBar) return;
+
+      const articleRect = this.articleContent.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      // Calculate progress based on article content
+      const articleTop = scrollTop + articleRect.top;
+      const articleHeight = articleRect.height;
+      const articleBottom = articleTop + articleHeight;
+
+      let progress = 0;
+
+      if (scrollTop >= articleTop) {
+        if (scrollTop >= articleBottom - windowHeight) {
+          progress = 100;
+        } else {
+          const articleScrolled = scrollTop - articleTop + windowHeight;
+          const articleTotal = articleHeight;
+          progress = Math.min(100, Math.max(0, (articleScrolled / articleTotal) * 100));
+        }
+      }
+
+      // Update progress bar
+      this.progressBar.style.width = `${progress}%`;
+      
+      // Update percentage display
+      if (this.readingPercentageElement) {
+        this.readingPercentageElement.textContent = `${Math.round(progress)}%`;
+      }
+
+      // Show/hide progress bar based on scroll position
+      const shouldShow = scrollTop > 100 && progress < 100;
+      
+      if (shouldShow && !this.progressContainer.classList.contains('visible')) {
+        this.progressContainer.classList.add('visible');
+        this.progressContainer.style.opacity = '1';
+      } else if (!shouldShow && this.progressContainer.classList.contains('visible')) {
+        this.progressContainer.classList.remove('visible');
+        this.progressContainer.style.opacity = '0';
+      }
+
+      // Auto-hide reading info when scrolling
+      if (this.isVisible && progress > 0) {
+        setTimeout(() => {
+          if (!this.progressContainer.matches(':hover')) {
+            this.hideReadingInfo();
+          }
+        }, 2000);
+      }
+    }
+
+    showReadingInfo() {
+      if (!this.readingInfo) return;
+      
+      this.isVisible = true;
+      this.readingInfo.classList.remove('opacity-0', 'invisible');
+      this.readingInfo.classList.add('opacity-100', 'visible');
+    }
+
+    hideReadingInfo() {
+      if (!this.readingInfo) return;
+      
+      this.isVisible = false;
+      this.readingInfo.classList.add('opacity-0', 'invisible');
+      this.readingInfo.classList.remove('opacity-100', 'visible');
+    }
+
+    toggleReadingInfo() {
+      if (this.isVisible) {
+        this.hideReadingInfo();
+      } else {
+        this.showReadingInfo();
+        setTimeout(() => this.hideReadingInfo(), 5000);
+      }
+    }
+  }
+
+  // Initialize reading progress
+  document.addEventListener('DOMContentLoaded', () => {
+    new ReadingProgress();
+  });
+
+  // Re-initialize on navigation (for SPAs)
+  window.addEventListener('popstate', () => {
+    setTimeout(() => {
+      new ReadingProgress();
+    }, 100);
+  });
+</script>
+
+<style>
+  #reading-progress-container {
+    transition: opacity 0.3s ease;
+  }
+
+  #reading-progress-bar {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  }
+
+  #reading-info {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Hover effects */
+  #reading-progress-container:hover #reading-progress-bar {
+    height: 2px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    #reading-info {
+      bottom: 1rem;
+      right: 1rem;
+      left: 1rem;
+      width: auto;
+    }
+    
+    #reading-progress-bar {
+      height: 2px;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    #reading-progress-bar,
+    #reading-info {
+      transition: none;
+    }
+  }
+
+  /* Dark mode adjustments */
+  .professional-light #reading-info {
+    background: rgba(255, 255, 255, 0.95);
+    color: #1f2937;
+    border-color: #e5e7eb;
+  }
+
+  /* High contrast mode */
+  .high-contrast #reading-progress-bar {
+    background: #ffff00 !important;
+  }
+
+  .high-contrast #reading-info {
+    background: #000000 !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+  }
+</style>

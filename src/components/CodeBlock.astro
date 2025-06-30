@@ -1,0 +1,479 @@
+---
+// Enhanced Code Block with Copy Button and Syntax Highlighting
+export interface Props {
+  code?: string;
+  language?: string;
+  title?: string;
+  filename?: string;
+  showLineNumbers?: boolean;
+  highlight?: string;
+}
+
+const { 
+  code = '', 
+  language = 'text', 
+  title, 
+  filename, 
+  showLineNumbers = false,
+  highlight 
+} = Astro.props;
+---
+
+<!-- Enhanced Code Block Component -->
+<div class="code-block-container relative my-6 overflow-hidden rounded-lg border border-card-border bg-code-bg">
+  <!-- Code Header -->
+  {(title || filename || language) && (
+    <div class="flex items-center justify-between px-4 py-3 bg-code-header border-b border-card-border">
+      <div class="flex items-center space-x-3">
+        {filename && (
+          <div class="flex items-center space-x-2">
+            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span class="text-sm font-medium text-light-200">{filename}</span>
+          </div>
+        )}
+        
+        {title && !filename && (
+          <span class="text-sm font-medium text-light-200">{title}</span>
+        )}
+        
+        {language && (
+          <div class="flex items-center space-x-1">
+            <div class="w-2 h-2 rounded-full bg-green-400"></div>
+            <span class="text-xs text-light-400 uppercase font-mono">{language}</span>
+          </div>
+        )}
+      </div>
+      
+      <!-- Copy Button -->
+      <button
+        class="copy-code-btn flex items-center space-x-2 px-3 py-1.5 text-xs font-medium text-light-300 bg-light-800 hover:bg-light-700 hover:text-light-100 transition-all duration-200 rounded-md border border-light-600 hover:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/30"
+        data-code={code}
+        aria-label="Copy code to clipboard"
+        title="Copy to clipboard"
+      >
+        <svg class="copy-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+        <svg class="check-icon w-4 h-4 hidden text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M5 13l4 4L19 7" />
+        </svg>
+        <span class="copy-text">Copy</span>
+      </button>
+    </div>
+  )}
+  
+  <!-- Code Content -->
+  <div class="relative">
+    <pre 
+      class={`
+        code-content overflow-x-auto p-4 text-sm leading-relaxed
+        ${showLineNumbers ? 'code-with-line-numbers' : ''}
+      `}
+      data-language={language}
+    ><code class={`language-${language}`} set:html={code}></code></pre>
+    
+    <!-- Copy button for headerless code blocks -->
+    {!(title || filename || language) && (
+      <button
+        class="copy-code-btn absolute top-3 right-3 flex items-center space-x-1 px-2 py-1 text-xs font-medium text-light-400 bg-light-800/80 hover:bg-light-700 hover:text-light-100 transition-all duration-200 rounded border border-light-600 hover:border-accent/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-accent/30"
+        data-code={code}
+        aria-label="Copy code to clipboard"
+        title="Copy to clipboard"
+      >
+        <svg class="copy-icon w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+        <svg class="check-icon w-3 h-3 hidden text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M5 13l4 4L19 7" />
+        </svg>
+      </button>
+    )}
+  </div>
+</div>
+
+<script>
+  // Enhanced Code Block Functionality
+  class CodeBlockEnhancer {
+    constructor() {
+      this.initializeCopyButtons();
+      this.enhanceCodeBlocks();
+    }
+
+    initializeCopyButtons() {
+      // Handle copy buttons
+      document.addEventListener('click', (e) => {
+        const copyBtn = e.target.closest('.copy-code-btn');
+        if (copyBtn) {
+          this.copyCode(copyBtn);
+        }
+      });
+    }
+
+    async copyCode(button) {
+      const code = button.dataset.code || button.closest('.code-block-container')?.querySelector('code')?.textContent || '';
+      
+      if (!code.trim()) {
+        this.showFeedback(button, 'No code to copy', 'error');
+        return;
+      }
+
+      try {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(code);
+          this.showFeedback(button, 'Copied!', 'success');
+        } else {
+          this.fallbackCopy(code);
+          this.showFeedback(button, 'Copied!', 'success');
+        }
+      } catch (err) {
+        console.error('Failed to copy code:', err);
+        this.showFeedback(button, 'Copy failed', 'error');
+      }
+    }
+
+    fallbackCopy(text) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+      } finally {
+        document.body.removeChild(textArea);
+      }
+    }
+
+    showFeedback(button, message, type) {
+      const copyIcon = button.querySelector('.copy-icon');
+      const checkIcon = button.querySelector('.check-icon');
+      const copyText = button.querySelector('.copy-text');
+      
+      if (type === 'success') {
+        copyIcon?.classList.add('hidden');
+        checkIcon?.classList.remove('hidden');
+        if (copyText) copyText.textContent = message;
+        
+        setTimeout(() => {
+          copyIcon?.classList.remove('hidden');
+          checkIcon?.classList.add('hidden');
+          if (copyText) copyText.textContent = 'Copy';
+        }, 2000);
+      } else {
+        // Error feedback
+        button.classList.add('shake');
+        if (copyText) {
+          const originalText = copyText.textContent;
+          copyText.textContent = message;
+          setTimeout(() => {
+            copyText.textContent = originalText;
+            button.classList.remove('shake');
+          }, 2000);
+        }
+      }
+    }
+
+    enhanceCodeBlocks() {
+      // Add group class for hover effects
+      const codeContainers = document.querySelectorAll('.code-block-container');
+      codeContainers.forEach(container => {
+        container.classList.add('group');
+        
+        // Add language-specific styling
+        const pre = container.querySelector('pre');
+        const language = pre?.dataset.language;
+        
+        if (language) {
+          pre.classList.add(`language-${language}`);
+        }
+        
+        // Enhance accessibility
+        const code = container.querySelector('code');
+        if (code) {
+          code.setAttribute('tabindex', '0');
+          code.setAttribute('role', 'textbox');
+          code.setAttribute('aria-label', `Code snippet${language ? ` in ${language}` : ''}`);
+          code.setAttribute('aria-readonly', 'true');
+        }
+      });
+
+      // Add line numbers if requested
+      this.addLineNumbers();
+      
+      // Add syntax highlighting enhancement
+      this.enhanceSyntaxHighlighting();
+    }
+
+    addLineNumbers() {
+      const codeBlocksWithLineNumbers = document.querySelectorAll('.code-with-line-numbers pre');
+      
+      codeBlocksWithLineNumbers.forEach(pre => {
+        const code = pre.querySelector('code');
+        if (!code) return;
+        
+        const lines = code.textContent.split('\n');
+        const lineNumbersDiv = document.createElement('div');
+        lineNumbersDiv.className = 'line-numbers absolute left-0 top-0 bottom-0 w-12 bg-code-header border-r border-card-border flex flex-col text-xs text-light-500 select-none';
+        
+        lines.forEach((_, index) => {
+          if (index === lines.length - 1 && lines[index] === '') return; // Skip last empty line
+          
+          const lineNumber = document.createElement('div');
+          lineNumber.className = 'flex items-center justify-end px-2 h-6 leading-6';
+          lineNumber.textContent = (index + 1).toString();
+          lineNumbersDiv.appendChild(lineNumber);
+        });
+        
+        pre.style.paddingLeft = '3.5rem';
+        pre.parentElement.style.position = 'relative';
+        pre.parentElement.insertBefore(lineNumbersDiv, pre);
+      });
+    }
+
+    enhanceSyntaxHighlighting() {
+      // Add basic syntax highlighting for common patterns
+      const codeBlocks = document.querySelectorAll('code[class*="language-"]');
+      
+      codeBlocks.forEach(code => {
+        const language = code.className.match(/language-(\w+)/)?.[1];
+        
+        if (!language || code.querySelector('.token')) return; // Skip if already highlighted
+        
+        // Basic highlighting for common languages
+        this.applyBasicHighlighting(code, language);
+      });
+    }
+
+    applyBasicHighlighting(code, language) {
+      let content = code.innerHTML;
+      
+      // Common patterns
+      const patterns = {
+        // Comments
+        comment: {
+          regex: /(\/\/.*$|\/\*[\s\S]*?\*\/|#.*$|<!--[\s\S]*?-->)/gm,
+          className: 'token comment'
+        },
+        // Strings
+        string: {
+          regex: /(['"`])((?:(?!\1)[^\\]|\\.)*)(\1)/g,
+          className: 'token string'
+        },
+        // Numbers
+        number: {
+          regex: /\b\d+(\.\d+)?\b/g,
+          className: 'token number'
+        },
+        // Keywords (basic set)
+        keyword: {
+          regex: /\b(function|const|let|var|if|else|for|while|return|import|export|class|extends|async|await|try|catch|throw|new|this|super|static|public|private|protected)\b/g,
+          className: 'token keyword'
+        }
+      };
+      
+      // Apply patterns in order
+      Object.entries(patterns).forEach(([type, pattern]) => {
+        content = content.replace(pattern.regex, (match, ...groups) => {
+          if (type === 'string') {
+            return `<span class="${pattern.className}">${match}</span>`;
+          }
+          return `<span class="${pattern.className}">${match}</span>`;
+        });
+      });
+      
+      code.innerHTML = content;
+    }
+  }
+
+  // Initialize code block enhancer
+  document.addEventListener('DOMContentLoaded', () => {
+    new CodeBlockEnhancer();
+  });
+
+  // Re-initialize on dynamic content
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.addedNodes.length > 0) {
+        const hasCodeBlocks = Array.from(mutation.addedNodes).some(node => 
+          node.nodeType === 1 && (
+            node.matches?.('.code-block-container') || 
+            node.querySelector?.('.code-block-container')
+          )
+        );
+        
+        if (hasCodeBlocks) {
+          new CodeBlockEnhancer();
+        }
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+</script>
+
+<style>
+  .code-block-container {
+    --code-bg: #1a1b26;
+    --code-header: #24283b;
+    --code-text: #a9b1d6;
+    --code-comment: #565f89;
+    --code-string: #9ece6a;
+    --code-number: #ff9e64;
+    --code-keyword: #7aa2f7;
+  }
+
+  /* Theme adjustments */
+  .professional-light .code-block-container {
+    --code-bg: #f8fafc;
+    --code-header: #f1f5f9;
+    --code-text: #334155;
+    --code-comment: #64748b;
+    --code-string: #059669;
+    --code-number: #dc2626;
+    --code-keyword: #3b82f6;
+  }
+
+  .code-block-container {
+    background-color: var(--code-bg);
+  }
+
+  .bg-code-bg {
+    background-color: var(--code-bg);
+  }
+
+  .bg-code-header {
+    background-color: var(--code-header);
+  }
+
+  .code-content {
+    color: var(--code-text);
+    font-family: 'SF Mono', Monaco, 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .code-content code {
+    font-family: inherit;
+    font-size: inherit;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  /* Syntax highlighting */
+  .token.comment {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .token.string {
+    color: var(--code-string);
+  }
+
+  .token.number {
+    color: var(--code-number);
+  }
+
+  .token.keyword {
+    color: var(--code-keyword);
+    font-weight: 600;
+  }
+
+  /* Copy button animations */
+  .copy-code-btn {
+    transition: all 0.2s ease;
+  }
+
+  .copy-code-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .copy-code-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Shake animation for errors */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+  }
+
+  .shake {
+    animation: shake 0.3s ease-in-out;
+  }
+
+  /* Line numbers */
+  .line-numbers {
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* Scrollbar styling */
+  .code-content::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .code-content::-webkit-scrollbar-track {
+    background: var(--code-header);
+    border-radius: 4px;
+  }
+
+  .code-content::-webkit-scrollbar-thumb {
+    background: #4a5568;
+    border-radius: 4px;
+  }
+
+  .code-content::-webkit-scrollbar-thumb:hover {
+    background: #718096;
+  }
+
+  /* High contrast mode */
+  .high-contrast .code-block-container {
+    --code-bg: #000000;
+    --code-header: #1a1a1a;
+    --code-text: #ffffff;
+    --code-comment: #888888;
+    --code-string: #00ff00;
+    --code-number: #ffff00;
+    --code-keyword: #00ffff;
+  }
+
+  /* Focus styles for accessibility */
+  .code-content code:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .code-content {
+      font-size: 0.8rem;
+      padding: 1rem;
+    }
+    
+    .copy-code-btn {
+      font-size: 0.75rem;
+      padding: 0.375rem 0.75rem;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .copy-code-btn,
+    .shake {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>
