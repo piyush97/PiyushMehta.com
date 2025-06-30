@@ -3,10 +3,17 @@ import GitHubProjectShowcaseIsland from '../components/GitHubProjectShowcaseIsla
 import Layout from '../layouts/Layout.astro';
 import { fetchGitHubRepos } from '../utils/github';
 
-// Fetch GitHub repositories
+// Fetch GitHub repositories with error handling
 const githubUsername = 'piyush97';
 const githubToken = import.meta.env.GITHUB_TOKEN;
-const githubRepos = await fetchGitHubRepos(githubUsername, githubToken);
+let githubRepos = [];
+try {
+  githubRepos = await fetchGitHubRepos(githubUsername, githubToken);
+  console.log(`Successfully fetched ${githubRepos.length} GitHub repos`);
+} catch (error) {
+  console.error('Failed to fetch GitHub repos:', error);
+  githubRepos = [];
+}
 
 // Define fallback/additional projects in case GitHub API fails or to highlight specific projects
 const fallbackProjects = [
