@@ -1,0 +1,832 @@
+---
+// Enhanced Command Palette - extends search with navigation and actions
+---
+
+<!-- Command Palette Modal -->
+<div 
+  id="command-palette" 
+  class="fixed inset-0 z-50 flex items-start justify-center pt-16 transition-all duration-300 opacity-0 invisible bg-black/50 backdrop-blur-sm"
+  aria-hidden="true"
+  role="dialog"
+>
+  <div class="w-full max-w-2xl bg-light-900 rounded-xl shadow-2xl border border-card-border overflow-hidden mx-4">
+    <!-- Command Input -->
+    <div class="flex items-center p-4 border-b border-card-border">
+      <svg 
+        class="w-5 h-5 text-light-400 mr-3"
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          stroke-width={2} 
+          d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" 
+        />
+      </svg>
+      
+      <input
+        id="command-input"
+        type="text"
+        placeholder="Type a command or search..."
+        class="flex-1 bg-transparent text-light-100 placeholder-light-400 outline-none text-lg"
+      />
+      
+      <button
+        id="command-clear"
+        class="hidden p-1 text-light-400 hover:text-light-200 transition-colors ml-2"
+        aria-label="Clear command"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      
+      <button
+        id="command-close"
+        class="ml-3 p-1 text-light-400 hover:text-light-200 transition-colors"
+        aria-label="Close command palette"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Command Results -->
+    <div id="command-results" class="max-h-96 overflow-y-auto">
+      <!-- Default state -->
+      <div id="command-default" class="p-6">
+        <div class="space-y-6">
+          <!-- Quick Actions -->
+          <div>
+            <h3 class="text-sm font-semibold text-light-300 uppercase tracking-wide mb-3">Quick Actions</h3>
+            <div class="space-y-2">
+              <div class="command-item flex items-center p-3 hover:bg-light-800 rounded-lg transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-accent" data-action="theme">
+                <svg class="w-5 h-5 text-light-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <div class="flex-1">
+                  <div class="text-light-100 font-medium">Change Theme</div>
+                  <div class="text-sm text-light-400">Switch between light and dark themes</div>
+                </div>
+                <kbd class="ml-3 px-2 py-1 bg-light-800 text-light-300 text-xs rounded">⌘ T</kbd>
+              </div>
+              
+              <div class="command-item flex items-center p-3 hover:bg-light-800 rounded-lg transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-accent" data-action="home">
+                <svg class="w-5 h-5 text-light-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <div class="flex-1">
+                  <div class="text-light-100 font-medium">Go Home</div>
+                  <div class="text-sm text-light-400">Navigate to homepage</div>
+                </div>
+                <kbd class="ml-3 px-2 py-1 bg-light-800 text-light-300 text-xs rounded">⌘ H</kbd>
+              </div>
+
+              <div class="command-item flex items-center p-3 hover:bg-light-800 rounded-lg transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-accent" data-action="copy-url">
+                <svg class="w-5 h-5 text-light-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <div class="flex-1">
+                  <div class="text-light-100 font-medium">Copy Current URL</div>
+                  <div class="text-sm text-light-400">Copy page URL to clipboard</div>
+                </div>
+                <kbd class="ml-3 px-2 py-1 bg-light-800 text-light-300 text-xs rounded">⌘ L</kbd>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div>
+            <h3 class="text-sm font-semibold text-light-300 uppercase tracking-wide mb-3">Go to Page</h3>
+            <div class="space-y-2">
+              <div class="command-item flex items-center p-3 hover:bg-light-800 rounded-lg transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-accent" data-action="goto" data-url="/about">
+                <svg class="w-5 h-5 text-light-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <div class="flex-1">
+                  <div class="text-light-100 font-medium">About</div>
+                  <div class="text-sm text-light-400">Learn more about me</div>
+                </div>
+              </div>
+
+              <div class="command-item flex items-center p-3 hover:bg-light-800 rounded-lg transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-accent" data-action="goto" data-url="/projects">
+                <svg class="w-5 h-5 text-light-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                <div class="flex-1">
+                  <div class="text-light-100 font-medium">Projects</div>
+                  <div class="text-sm text-light-400">View my portfolio</div>
+                </div>
+              </div>
+
+              <div class="command-item flex items-center p-3 hover:bg-light-800 rounded-lg transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-accent" data-action="goto" data-url="/blog">
+                <svg class="w-5 h-5 text-light-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <div class="flex-1">
+                  <div class="text-light-100 font-medium">Blog</div>
+                  <div class="text-sm text-light-400">Read my articles</div>
+                </div>
+              </div>
+
+              <div class="command-item flex items-center p-3 hover:bg-light-800 rounded-lg transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-accent" data-action="goto" data-url="/contact-me">
+                <svg class="w-5 h-5 text-light-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <div class="flex-1">
+                  <div class="text-light-100 font-medium">Contact</div>
+                  <div class="text-sm text-light-400">Get in touch</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-card-border">
+          <p class="text-xs text-light-400 text-center">
+            Type to search content, or use commands above
+          </p>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div id="command-loading" class="hidden p-8 text-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
+        <span class="text-light-300">Searching...</span>
+      </div>
+
+      <!-- No results -->
+      <div id="command-no-results" class="hidden p-8 text-center text-light-400">
+        <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.529.901-6.172 2.379l-.344.344A7.953 7.953 0 014 12a8.001 8.001 0 0116 0c0 1.691-.525 3.255-1.421 4.545l-.344-.344z" />
+        </svg>
+        <p>No results found</p>
+        <p class="text-sm mt-2">Try different keywords or use the actions above</p>
+      </div>
+
+      <!-- Search results list -->
+      <div id="command-results-list" class="hidden">
+        <!-- Results will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="command-footer" class="px-4 py-3 bg-light-800 border-t border-card-border">
+      <div class="flex items-center justify-between text-xs text-light-400">
+        <div class="flex items-center space-x-4">
+          <span>↑↓ navigate</span>
+          <span>↵ select</span>
+          <span>esc close</span>
+        </div>
+        <span id="command-count">⌘K to open</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Enhanced Command Palette
+  const commandPalette = {
+    modal: null,
+    input: null,
+    clearBtn: null,
+    closeBtn: null,
+    defaultView: null,
+    loadingView: null,
+    noResultsView: null,
+    resultsList: null,
+    footer: null,
+    countSpan: null,
+    isOpen: false,
+    selectedIndex: -1,
+    searchTimeout: null,
+    currentMode: 'default', // 'default', 'search'
+    
+    // Command definitions
+    commands: [
+      {
+        id: 'theme',
+        title: 'Change Theme',
+        description: 'Switch between light and dark themes',
+        keywords: ['theme', 'dark', 'light', 'toggle', 'appearance'],
+        icon: 'theme',
+        action: () => commandPalette.toggleTheme(),
+        shortcut: '⌘T'
+      },
+      {
+        id: 'home',
+        title: 'Go Home',
+        description: 'Navigate to homepage',
+        keywords: ['home', 'homepage', 'main', 'index'],
+        icon: 'home',
+        action: () => window.location.href = '/',
+        shortcut: '⌘H'
+      },
+      {
+        id: 'copy-url',
+        title: 'Copy Current URL',
+        description: 'Copy page URL to clipboard',
+        keywords: ['copy', 'url', 'link', 'clipboard', 'share'],
+        icon: 'copy',
+        action: () => commandPalette.copyCurrentUrl(),
+        shortcut: '⌘L'
+      },
+      {
+        id: 'about',
+        title: 'About',
+        description: 'Learn more about me',
+        keywords: ['about', 'profile', 'bio', 'information'],
+        icon: 'user',
+        action: () => window.location.href = '/about',
+        url: '/about'
+      },
+      {
+        id: 'projects',
+        title: 'Projects',
+        description: 'View my portfolio',
+        keywords: ['projects', 'portfolio', 'work', 'code', 'github'],
+        icon: 'briefcase',
+        action: () => window.location.href = '/projects',
+        url: '/projects'
+      },
+      {
+        id: 'blog',
+        title: 'Blog',
+        description: 'Read my articles',
+        keywords: ['blog', 'articles', 'posts', 'writing', 'content'],
+        icon: 'book',
+        action: () => window.location.href = '/blog',
+        url: '/blog'
+      },
+      {
+        id: 'contact',
+        title: 'Contact',
+        description: 'Get in touch',
+        keywords: ['contact', 'email', 'reach', 'connect', 'hire'],
+        icon: 'mail',
+        action: () => window.location.href = '/contact-me',
+        url: '/contact-me'
+      },
+      {
+        id: 'resume',
+        title: 'Resume',
+        description: 'View my resume',
+        keywords: ['resume', 'cv', 'experience', 'skills'],
+        icon: 'document',
+        action: () => window.location.href = '/resume',
+        url: '/resume'
+      }
+    ],
+    
+    init() {
+      this.modal = document.getElementById('command-palette');
+      this.input = document.getElementById('command-input');
+      this.clearBtn = document.getElementById('command-clear');
+      this.closeBtn = document.getElementById('command-close');
+      this.defaultView = document.getElementById('command-default');
+      this.loadingView = document.getElementById('command-loading');
+      this.noResultsView = document.getElementById('command-no-results');
+      this.resultsList = document.getElementById('command-results-list');
+      this.footer = document.getElementById('command-footer');
+      this.countSpan = document.getElementById('command-count');
+      
+      this.bindEvents();
+      this.updateSelectedItem();
+    },
+
+    bindEvents() {
+      // Close events
+      this.closeBtn?.addEventListener('click', () => this.close());
+      this.modal?.addEventListener('click', (e) => {
+        if (e.target === this.modal) this.close();
+      });
+
+      // Clear command
+      this.clearBtn?.addEventListener('click', () => this.clearInput());
+
+      // Command input
+      this.input?.addEventListener('input', (e) => this.handleInput(e.target.value));
+      this.input?.addEventListener('keydown', (e) => this.handleKeydown(e));
+
+      // Command item clicks
+      document.addEventListener('click', (e) => {
+        const commandItem = e.target.closest('.command-item');
+        if (commandItem && this.isOpen) {
+          this.executeCommand(commandItem);
+        }
+      });
+
+      // Global shortcuts
+      document.addEventListener('keydown', (e) => {
+        // Main palette toggle
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          this.toggle();
+        }
+        
+        // Quick shortcuts
+        if ((e.ctrlKey || e.metaKey) && e.key === 't' && !this.isOpen) {
+          e.preventDefault();
+          this.toggleTheme();
+        }
+        
+        if ((e.ctrlKey || e.metaKey) && e.key === 'h' && !this.isOpen) {
+          e.preventDefault();
+          window.location.href = '/';
+        }
+        
+        if ((e.ctrlKey || e.metaKey) && e.key === 'l' && !this.isOpen) {
+          e.preventDefault();
+          this.copyCurrentUrl();
+        }
+        
+        if (e.key === 'Escape' && this.isOpen) {
+          this.close();
+        }
+      });
+    },
+
+    toggle() {
+      if (this.isOpen) {
+        this.close();
+      } else {
+        this.open();
+      }
+    },
+
+    open() {
+      this.isOpen = true;
+      this.modal?.classList.remove('opacity-0', 'invisible');
+      this.modal?.classList.add('opacity-100', 'visible');
+      this.modal?.setAttribute('aria-hidden', 'false');
+      
+      setTimeout(() => {
+        this.input?.focus();
+      }, 100);
+      
+      document.body.style.overflow = 'hidden';
+      this.showDefault();
+    },
+
+    close() {
+      this.isOpen = false;
+      this.modal?.classList.add('opacity-0', 'invisible');
+      this.modal?.classList.remove('opacity-100', 'visible');
+      this.modal?.setAttribute('aria-hidden', 'true');
+      
+      this.clearInput();
+      document.body.style.overflow = '';
+    },
+
+    clearInput() {
+      if (this.input) this.input.value = '';
+      this.selectedIndex = -1;
+      this.currentMode = 'default';
+      this.showDefault();
+      this.clearBtn?.classList.add('hidden');
+    },
+
+    handleInput(query) {
+      // Show/hide clear button
+      if (query.trim()) {
+        this.clearBtn?.classList.remove('hidden');
+      } else {
+        this.clearBtn?.classList.add('hidden');
+      }
+
+      // Debounce search
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout);
+      }
+
+      this.searchTimeout = setTimeout(() => {
+        this.performSearch(query.trim());
+      }, 200);
+    },
+
+    async performSearch(query) {
+      if (!query) {
+        this.currentMode = 'default';
+        this.showDefault();
+        return;
+      }
+
+      this.currentMode = 'search';
+      this.showLoading();
+
+      try {
+        // Search commands first
+        const commandResults = this.searchCommands(query);
+        
+        // Then search content if Pagefind is available
+        let contentResults = [];
+        if (window.pagefind) {
+          const search = await window.pagefind.search(query);
+          contentResults = await Promise.all(
+            search.results.slice(0, 6).map(async (result) => {
+              const data = await result.data();
+              return {
+                url: data.url,
+                title: data.meta?.title || data.title || 'Untitled',
+                excerpt: data.excerpt || data.meta?.description || 'No description available',
+                type: 'content',
+                source: 'pagefind'
+              };
+            })
+          );
+        } else {
+          // Fallback content search
+          contentResults = this.fallbackContentSearch(query);
+        }
+
+        const allResults = [...commandResults, ...contentResults];
+        this.showResults(allResults, query);
+        
+      } catch (error) {
+        console.error('Search failed:', error);
+        this.showResults(this.searchCommands(query), query);
+      }
+    },
+
+    searchCommands(query) {
+      const queryLower = query.toLowerCase();
+      return this.commands
+        .filter(cmd => {
+          return cmd.title.toLowerCase().includes(queryLower) ||
+                 cmd.description.toLowerCase().includes(queryLower) ||
+                 cmd.keywords.some(keyword => keyword.toLowerCase().includes(queryLower));
+        })
+        .map(cmd => ({
+          ...cmd,
+          type: 'command',
+          excerpt: cmd.description
+        }))
+        .slice(0, 5);
+    },
+
+    fallbackContentSearch(query) {
+      const searchData = [
+        {
+          url: '/',
+          title: 'Home - Piyush Mehta',
+          excerpt: 'Senior Software Engineer & React Developer in Canada.',
+          type: 'content'
+        },
+        {
+          url: '/about/',
+          title: 'About Piyush Mehta',
+          excerpt: 'Senior Software Engineer with 8+ years of experience.',
+          type: 'content'
+        },
+        {
+          url: '/projects/',
+          title: 'Projects & Portfolio',
+          excerpt: 'Showcase of software engineering projects and technical work.',
+          type: 'content'
+        },
+        {
+          url: '/blog/',
+          title: 'Blog',
+          excerpt: 'Articles about software development and technology.',
+          type: 'content'
+        }
+      ];
+      
+      const queryLower = query.toLowerCase();
+      return searchData.filter(item => {
+        return item.title.toLowerCase().includes(queryLower) ||
+               item.excerpt.toLowerCase().includes(queryLower);
+      }).slice(0, 4);
+    },
+
+    showDefault() {
+      this.hideAllViews();
+      this.defaultView?.classList.remove('hidden');
+      this.selectedIndex = -1;
+      this.updateSelectedItem();
+      
+      if (this.countSpan) {
+        this.countSpan.textContent = '⌘K to open';
+      }
+    },
+
+    showLoading() {
+      this.hideAllViews();
+      this.loadingView?.classList.remove('hidden');
+    },
+
+    showNoResults() {
+      this.hideAllViews();
+      this.noResultsView?.classList.remove('hidden');
+      this.selectedIndex = -1;
+    },
+
+    showResults(results, query) {
+      this.hideAllViews();
+      this.resultsList?.classList.remove('hidden');
+      
+      if (this.countSpan) {
+        this.countSpan.textContent = `${results.length} result${results.length !== 1 ? 's' : ''}`;
+      }
+
+      if (results.length === 0) {
+        this.showNoResults();
+        return;
+      }
+
+      const html = results.map((result, index) => {
+        const icon = this.getResultIcon(result);
+        const badge = result.type === 'command' ? 'CMD' : 'PAGE';
+        const badgeColor = result.type === 'command' ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-400';
+        
+        return `
+          <div 
+            class="command-result flex items-center p-4 hover:bg-light-800 transition-colors cursor-pointer border-l-4 border-l-transparent"
+            data-index="${index}"
+            data-type="${result.type}"
+            data-id="${result.id || ''}"
+            data-url="${result.url || ''}"
+            ${result.action ? 'data-has-action="true"' : ''}
+          >
+            ${icon}
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="font-semibold text-light-100 truncate">${this.highlightText(result.title, query)}</h3>
+                <span class="text-xs font-medium px-2 py-1 rounded ${badgeColor} ml-3 flex-shrink-0">${badge}</span>
+              </div>
+              <p class="text-sm text-light-300 line-clamp-2">${this.highlightText(result.excerpt, query)}</p>
+              ${result.url ? `<span class="text-xs text-accent mt-1 block truncate">${result.url}</span>` : ''}
+              ${result.shortcut ? `<div class="mt-2"><kbd class="px-2 py-1 bg-light-800 text-light-300 text-xs rounded">${result.shortcut}</kbd></div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (this.resultsList) {
+        this.resultsList.innerHTML = html;
+      }
+
+      this.selectedIndex = -1;
+      this.updateSelectedItem();
+    },
+
+    getResultIcon(result) {
+      const iconMap = {
+        theme: `<svg class="w-5 h-5 text-light-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`,
+        home: `<svg class="w-5 h-5 text-light-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>`,
+        copy: `<svg class="w-5 h-5 text-light-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>`,
+        user: `<svg class="w-5 h-5 text-light-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>`,
+        briefcase: `<svg class="w-5 h-5 text-light-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>`,
+        book: `<svg class="w-5 h-5 text-light-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>`,
+        mail: `<svg class="w-5 h-5 text-light-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>`,
+        document: `<svg class="w-5 h-5 text-light-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`
+      };
+      
+      if (result.type === 'command' && result.icon && iconMap[result.icon]) {
+        return iconMap[result.icon];
+      }
+      
+      // Default content icon
+      return `<svg class="w-5 h-5 text-light-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
+    },
+
+    hideAllViews() {
+      this.defaultView?.classList.add('hidden');
+      this.loadingView?.classList.add('hidden');
+      this.noResultsView?.classList.add('hidden');
+      this.resultsList?.classList.add('hidden');
+    },
+
+    highlightText(text, query) {
+      if (!query) return text;
+      const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return text.replace(regex, '<mark class="bg-accent/20 text-accent rounded px-1">$1</mark>');
+    },
+
+    handleKeydown(e) {
+      if (this.currentMode === 'default') {
+        this.handleDefaultKeydown(e);
+      } else {
+        this.handleSearchKeydown(e);
+      }
+    },
+
+    handleDefaultKeydown(e) {
+      const items = document.querySelectorAll('.command-item');
+      
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          this.selectedIndex = Math.min(this.selectedIndex + 1, items.length - 1);
+          this.updateSelectedItem();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+          this.updateSelectedItem();
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (this.selectedIndex >= 0 && items[this.selectedIndex]) {
+            this.executeCommand(items[this.selectedIndex]);
+          }
+          break;
+      }
+    },
+
+    handleSearchKeydown(e) {
+      const results = document.querySelectorAll('.command-result');
+      
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          this.selectedIndex = Math.min(this.selectedIndex + 1, results.length - 1);
+          this.updateSelectedItem();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+          this.updateSelectedItem();
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (this.selectedIndex >= 0 && results[this.selectedIndex]) {
+            this.executeResult(results[this.selectedIndex]);
+          }
+          break;
+      }
+    },
+
+    updateSelectedItem() {
+      if (this.currentMode === 'default') {
+        const items = document.querySelectorAll('.command-item');
+        items.forEach((item, index) => {
+          if (index === this.selectedIndex) {
+            item.classList.add('bg-light-800', 'border-l-accent');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-light-800', 'border-l-accent');
+          }
+        });
+      } else {
+        const results = document.querySelectorAll('.command-result');
+        results.forEach((result, index) => {
+          if (index === this.selectedIndex) {
+            result.classList.add('bg-light-800', 'border-l-accent');
+            result.scrollIntoView({ block: 'nearest' });
+          } else {
+            result.classList.remove('bg-light-800', 'border-l-accent');
+          }
+        });
+      }
+    },
+
+    executeCommand(element) {
+      const action = element.dataset.action;
+      const url = element.dataset.url;
+      
+      if (action === 'goto' && url) {
+        window.location.href = url;
+      } else if (action) {
+        const command = this.commands.find(cmd => cmd.id === action);
+        if (command && command.action) {
+          command.action();
+        }
+      }
+      
+      this.close();
+    },
+
+    executeResult(element) {
+      const type = element.dataset.type;
+      const url = element.dataset.url;
+      const id = element.dataset.id;
+      const hasAction = element.dataset.hasAction === 'true';
+      
+      if (type === 'command' && hasAction) {
+        const command = this.commands.find(cmd => cmd.id === id);
+        if (command && command.action) {
+          command.action();
+        }
+      } else if (url) {
+        window.location.href = url;
+      }
+      
+      this.close();
+    },
+
+    // Action implementations
+    toggleTheme() {
+      // Get current theme from localStorage or default
+      const currentTheme = localStorage.getItem('theme') || 'professional-dark';
+      const newTheme = currentTheme === 'professional-dark' ? 'professional-light' : 'professional-dark';
+      
+      // Update theme
+      localStorage.setItem('theme', newTheme);
+      document.documentElement.className = newTheme;
+      
+      // Show feedback
+      this.showToast(`Switched to ${newTheme.replace('-', ' ')} theme`);
+    },
+
+    copyCurrentUrl() {
+      const url = window.location.href;
+      
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => {
+          this.showToast('URL copied to clipboard');
+        }).catch(() => {
+          this.fallbackCopyUrl(url);
+        });
+      } else {
+        this.fallbackCopyUrl(url);
+      }
+    },
+
+    fallbackCopyUrl(url) {
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      document.body.appendChild(textArea);
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+        this.showToast('URL copied to clipboard');
+      } catch (err) {
+        this.showToast('Failed to copy URL');
+      }
+      
+      document.body.removeChild(textArea);
+    },
+
+    showToast(message) {
+      // Create toast element
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-y-2 opacity-0';
+      toast.textContent = message;
+      
+      document.body.appendChild(toast);
+      
+      // Animate in
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 100);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+  };
+
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    commandPalette.init();
+    
+    // Try to load Pagefind
+    if (!window.pagefind) {
+      const script = document.createElement('script');
+      script.src = '/pagefind/pagefind.js';
+      script.async = true;
+      document.head.appendChild(script);
+    }
+    
+    // Expose globally
+    window.commandPalette = commandPalette;
+    window.openCommandPalette = () => commandPalette.open();
+    window.closeCommandPalette = () => commandPalette.close();
+  });
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  mark {
+    background: rgba(255, 215, 0, 0.2);
+    color: var(--color-accent);
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+  }
+
+  kbd {
+    font-family: 'SF Mono', Monaco, 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace;
+    font-size: 0.75rem;
+  }
+
+  .command-item:hover,
+  .command-result:hover {
+    transform: translateX(2px);
+  }
+</style>
