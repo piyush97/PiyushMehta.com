@@ -1,0 +1,654 @@
+---
+import type { GetStaticPaths } from "astro";
+// Post Reactions Component using localStorage
+export interface Props {
+  postId: string;
+  title?: string;
+  showCount?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  orientation?: 'horizontal' | 'vertical';
+}
+
+const {
+  postId,
+  title = 'How was this post?',
+  showCount = true,
+  size = 'md',
+  orientation = 'horizontal'
+} = Astro.props;
+
+// Generate unique IDs
+const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
+---
+
+<!-- Post Reactions Component -->
+<section 
+  class={`post-reactions mt-8 p-6 bg-surface-100 rounded-lg border border-card-border ${orientation === 'vertical' ? 'text-center' : ''}`}
+  data-post-id={postId}
+  data-component-id={componentId}
+  aria-labelledby={`${componentId}-title`}
+>
+  <!-- Title -->
+  <h3 
+    id={`${componentId}-title`}
+    class={`font-semibold text-text-primary mb-4 ${
+      size === 'sm' ? 'text-sm' : 
+      size === 'lg' ? 'text-xl' : 'text-lg'
+    }`}
+  >
+    {title}
+  </h3>
+
+  <!-- Reactions Container -->
+  <div 
+    class={`reactions-container ${
+      orientation === 'horizontal' 
+        ? 'flex flex-wrap items-center gap-3' 
+        : 'flex flex-col items-center space-y-3'
+    }`}
+    role="group"
+    aria-label="Post reactions"
+  >
+    <!-- Like Reaction -->
+    <button
+      class={`reaction-btn reaction-like ${
+        size === 'sm' ? 'text-sm px-3 py-2' :
+        size === 'lg' ? 'text-lg px-5 py-3' : 'text-base px-4 py-2'
+      } flex items-center space-x-2 bg-white hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/30 group`}
+      data-reaction="like"
+      aria-label="Like this post"
+      title="Like this post"
+    >
+      <span class="reaction-icon text-gray-400 group-hover:text-red-500 transition-colors duration-200">
+        ❤️
+      </span>
+      <span class="reaction-label font-medium text-gray-700 group-hover:text-red-600">Like</span>
+      {showCount && (
+        <span class="reaction-count bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full min-w-[1.5rem] text-center">0</span>
+      )}
+    </button>
+
+    <!-- Helpful Reaction -->
+    <button
+      class={`reaction-btn reaction-helpful ${
+        size === 'sm' ? 'text-sm px-3 py-2' :
+        size === 'lg' ? 'text-lg px-5 py-3' : 'text-base px-4 py-2'
+      } flex items-center space-x-2 bg-white hover:bg-green-50 border border-gray-200 hover:border-green-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/30 group`}
+      data-reaction="helpful"
+      aria-label="Mark as helpful"
+      title="This post was helpful"
+    >
+      <span class="reaction-icon text-gray-400 group-hover:text-green-500 transition-colors duration-200">
+        👍
+      </span>
+      <span class="reaction-label font-medium text-gray-700 group-hover:text-green-600">Helpful</span>
+      {showCount && (
+        <span class="reaction-count bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full min-w-[1.5rem] text-center">0</span>
+      )}
+    </button>
+
+    <!-- Insightful Reaction -->
+    <button
+      class={`reaction-btn reaction-insightful ${
+        size === 'sm' ? 'text-sm px-3 py-2' :
+        size === 'lg' ? 'text-lg px-5 py-3' : 'text-base px-4 py-2'
+      } flex items-center space-x-2 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 group`}
+      data-reaction="insightful"
+      aria-label="Mark as insightful"
+      title="This post was insightful"
+    >
+      <span class="reaction-icon text-gray-400 group-hover:text-blue-500 transition-colors duration-200">
+        💡
+      </span>
+      <span class="reaction-label font-medium text-gray-700 group-hover:text-blue-600">Insightful</span>
+      {showCount && (
+        <span class="reaction-count bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full min-w-[1.5rem] text-center">0</span>
+      )}
+    </button>
+
+    <!-- Bookmark Reaction -->
+    <button
+      class={`reaction-btn reaction-bookmark ${
+        size === 'sm' ? 'text-sm px-3 py-2' :
+        size === 'lg' ? 'text-lg px-5 py-3' : 'text-base px-4 py-2'
+      } flex items-center space-x-2 bg-white hover:bg-yellow-50 border border-gray-200 hover:border-yellow-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 group`}
+      data-reaction="bookmark"
+      aria-label="Bookmark this post"
+      title="Bookmark for later"
+    >
+      <span class="reaction-icon text-gray-400 group-hover:text-yellow-500 transition-colors duration-200">
+        🔖
+      </span>
+      <span class="reaction-label font-medium text-gray-700 group-hover:text-yellow-600">Bookmark</span>
+      {showCount && (
+        <span class="reaction-count bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full min-w-[1.5rem] text-center">0</span>
+      )}
+    </button>
+
+    <!-- Share Button -->
+    <button
+      class={`reaction-btn reaction-share ${
+        size === 'sm' ? 'text-sm px-3 py-2' :
+        size === 'lg' ? 'text-lg px-5 py-3' : 'text-base px-4 py-2'
+      } flex items-center space-x-2 bg-white hover:bg-purple-50 border border-gray-200 hover:border-purple-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/30 group`}
+      data-reaction="share"
+      aria-label="Share this post"
+      title="Share this post"
+    >
+      <span class="reaction-icon text-gray-400 group-hover:text-purple-500 transition-colors duration-200">
+        📤
+      </span>
+      <span class="reaction-label font-medium text-gray-700 group-hover:text-purple-600">Share</span>
+    </button>
+  </div>
+
+  <!-- User Feedback -->
+  <div id={`${componentId}-feedback`} class="feedback-message mt-4 text-sm text-center hidden">
+    <div class="inline-flex items-center space-x-2 text-green-600">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M5 13l4 4L19 7" />
+      </svg>
+      <span>Thanks for your feedback!</span>
+    </div>
+  </div>
+
+  <!-- Analytics Summary (for development) -->
+  <!-- <div id={`${componentId}-analytics`} class="analytics-summary mt-4 p-3 bg-gray-50 rounded text-xs text-gray-500 hidden">
+    <div class="font-semibold mb-1">Reaction Analytics:</div>
+    <div class="analytics-data space-y-1"></div>
+  </div> -->
+</section>
+
+<script>
+  // Post Reactions Manager
+  class PostReactionsManager {
+    private postId: string;
+    private componentId: string;
+    private container: HTMLElement;
+    private userReactions: Set<string> = new Set();
+    private reactionCounts: Map<string, number> = new Map();
+    private feedbackElement: HTMLElement | null;
+    private analyticsElement: HTMLElement | null;
+
+    constructor(container: HTMLElement) {
+      this.container = container;
+      this.postId = container.dataset.postId || '';
+      this.componentId = container.dataset.componentId || '';
+      this.feedbackElement = document.getElementById(`${this.componentId}-feedback`);
+      this.analyticsElement = document.getElementById(`${this.componentId}-analytics`);
+      
+      this.init();
+    }
+
+    private init() {
+      this.loadStoredData();
+      this.updateUI();
+      this.setupEventListeners();
+      this.setupKeyboardNavigation();
+      
+      // Show analytics in development
+      if (window.location.hostname === 'localhost') {
+        this.showAnalytics();
+      }
+    }
+
+    private loadStoredData() {
+      try {
+        // Load user reactions
+        const userKey = `reactions_user_${this.postId}`;
+        const userReactions = localStorage.getItem(userKey);
+        if (userReactions) {
+          this.userReactions = new Set(JSON.parse(userReactions));
+        }
+
+        // Load reaction counts
+        const countsKey = `reactions_counts_${this.postId}`;
+        const counts = localStorage.getItem(countsKey);
+        if (counts) {
+          const parsedCounts = JSON.parse(counts);
+          this.reactionCounts = new Map(Object.entries(parsedCounts));
+        }
+
+        // Initialize counts for reactions that don't exist
+        ['like', 'helpful', 'insightful', 'bookmark'].forEach(reaction => {
+          if (!this.reactionCounts.has(reaction)) {
+            this.reactionCounts.set(reaction, 0);
+          }
+        });
+
+      } catch (error) {
+        console.error('Error loading reaction data:', error);
+      }
+    }
+
+    private saveData() {
+      try {
+        // Save user reactions
+        const userKey = `reactions_user_${this.postId}`;
+        localStorage.setItem(userKey, JSON.stringify([...this.userReactions]));
+
+        // Save reaction counts
+        const countsKey = `reactions_counts_${this.postId}`;
+        const countsObj = Object.fromEntries(this.reactionCounts);
+        localStorage.setItem(countsKey, JSON.stringify(countsObj));
+
+        // Save last interaction timestamp
+        const timestampKey = `reactions_timestamp_${this.postId}`;
+        localStorage.setItem(timestampKey, Date.now().toString());
+
+      } catch (error) {
+        console.error('Error saving reaction data:', error);
+      }
+    }
+
+    private setupEventListeners() {
+      const buttons = this.container.querySelectorAll('.reaction-btn');
+      
+      buttons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          const reaction = (button as HTMLElement).dataset.reaction;
+          if (reaction) {
+            this.handleReaction(reaction);
+          }
+        });
+
+        // Add hover analytics
+        button.addEventListener('mouseenter', () => {
+          const reaction = (button as HTMLElement).dataset.reaction;
+          if (reaction) {
+            this.trackEvent('reaction_hover', { reaction, postId: this.postId });
+          }
+        });
+      });
+    }
+
+    private setupKeyboardNavigation() {
+      const buttons = this.container.querySelectorAll('.reaction-btn');
+      
+      buttons.forEach((button, index) => {
+        button.addEventListener('keydown', (e) => {
+          const key = (e as KeyboardEvent).key;
+          
+          if (key === 'ArrowRight' || key === 'ArrowDown') {
+            e.preventDefault();
+            const nextIndex = (index + 1) % buttons.length;
+            (buttons[nextIndex] as HTMLElement).focus();
+          } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+            e.preventDefault();
+            const prevIndex = (index - 1 + buttons.length) % buttons.length;
+            (buttons[prevIndex] as HTMLElement).focus();
+          }
+        });
+      });
+    }
+
+    private handleReaction(reaction: string) {
+      if (reaction === 'share') {
+        this.handleShare();
+        return;
+      }
+
+      const wasActive = this.userReactions.has(reaction);
+      
+      if (wasActive) {
+        // Remove reaction
+        this.userReactions.delete(reaction);
+        const currentCount = this.reactionCounts.get(reaction) || 0;
+        this.reactionCounts.set(reaction, Math.max(0, currentCount - 1));
+        
+        this.trackEvent('reaction_removed', { 
+          reaction, 
+          postId: this.postId,
+          newCount: this.reactionCounts.get(reaction)
+        });
+      } else {
+        // Add reaction
+        this.userReactions.add(reaction);
+        const currentCount = this.reactionCounts.get(reaction) || 0;
+        this.reactionCounts.set(reaction, currentCount + 1);
+        
+        this.trackEvent('reaction_added', { 
+          reaction, 
+          postId: this.postId,
+          newCount: this.reactionCounts.get(reaction)
+        });
+
+        // Show feedback
+        this.showFeedback();
+      }
+
+      this.saveData();
+      this.updateUI();
+      this.showAnalytics();
+    }
+
+    private handleShare() {
+      const url = window.location.href;
+      const title = document.title;
+      
+      if (navigator.share) {
+        // Use native sharing if available
+        navigator.share({
+          title: title,
+          url: url
+        }).then(() => {
+          this.trackEvent('post_shared', { 
+            method: 'native', 
+            postId: this.postId 
+          });
+          this.showFeedback('Post shared successfully!');
+        }).catch((error) => {
+          console.error('Error sharing:', error);
+          this.fallbackShare(url, title);
+        });
+      } else {
+        this.fallbackShare(url, title);
+      }
+    }
+
+    private fallbackShare(url: string, title: string) {
+      // Copy to clipboard as fallback
+      navigator.clipboard.writeText(url).then(() => {
+        this.trackEvent('post_shared', { 
+          method: 'clipboard', 
+          postId: this.postId 
+        });
+        this.showFeedback('Link copied to clipboard!');
+      }).catch(() => {
+        // Final fallback - show share modal or social links
+        this.showFeedback('Share: ' + url);
+      });
+    }
+
+    private updateUI() {
+      const buttons = this.container.querySelectorAll('.reaction-btn');
+      
+      buttons.forEach(button => {
+        const reaction = (button as HTMLElement).dataset.reaction;
+        if (!reaction || reaction === 'share') return;
+
+        const isActive = this.userReactions.has(reaction);
+        const count = this.reactionCounts.get(reaction) || 0;
+        
+        // Update button state
+        if (isActive) {
+          button.classList.add('active');
+          button.setAttribute('aria-pressed', 'true');
+        } else {
+          button.classList.remove('active');
+          button.setAttribute('aria-pressed', 'false');
+        }
+
+        // Update count
+        const countElement = button.querySelector('.reaction-count');
+        if (countElement) {
+          countElement.textContent = count.toString();
+          
+          // Animate count change
+          if (count > 0) {
+            countElement.classList.add('animate-pulse');
+            setTimeout(() => {
+              countElement.classList.remove('animate-pulse');
+            }, 500);
+          }
+        }
+
+        // Update icon animation
+        const iconElement = button.querySelector('.reaction-icon');
+        if (iconElement && isActive) {
+          iconElement.classList.add('animate-bounce');
+          setTimeout(() => {
+            iconElement.classList.remove('animate-bounce');
+          }, 600);
+        }
+      });
+    }
+
+    private showFeedback(message?: string) {
+      if (!this.feedbackElement) return;
+
+      const feedbackText = this.feedbackElement.querySelector('span');
+      if (feedbackText && message) {
+        feedbackText.textContent = message;
+      }
+
+      this.feedbackElement.classList.remove('hidden');
+      
+      setTimeout(() => {
+        if (this.feedbackElement) {
+          this.feedbackElement.classList.add('hidden');
+        }
+      }, 3000);
+    }
+
+    private showAnalytics() {
+      if (!this.analyticsElement || window.location.hostname !== 'localhost') return;
+
+      const analyticsData = this.analyticsElement.querySelector('.analytics-data');
+      if (!analyticsData) return;
+
+      const totalReactions = Array.from(this.reactionCounts.values()).reduce((sum, count) => sum + count, 0);
+      const userReactionCount = this.userReactions.size;
+      
+      analyticsData.innerHTML = `
+        <div>Total reactions: ${totalReactions}</div>
+        <div>User reactions: ${userReactionCount}</div>
+        <div>Like: ${this.reactionCounts.get('like') || 0}</div>
+        <div>Helpful: ${this.reactionCounts.get('helpful') || 0}</div>
+        <div>Insightful: ${this.reactionCounts.get('insightful') || 0}</div>
+        <div>Bookmarked: ${this.reactionCounts.get('bookmark') || 0}</div>
+      `;
+
+      this.analyticsElement.classList.remove('hidden');
+    }
+
+    private trackEvent(eventName: string, properties: any = {}) {
+      // Track analytics event
+      if (typeof gtag !== 'undefined') {
+        gtag('event', eventName, {
+          event_category: 'Post Reactions',
+          ...properties
+        });
+      }
+
+      // Console log for development
+      if (window.location.hostname === 'localhost') {
+        console.log('Reaction Event:', eventName, properties);
+      }
+    }
+  }
+
+  // Initialize reactions when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const reactionContainers = document.querySelectorAll('.post-reactions');
+    
+    reactionContainers.forEach(container => {
+      new PostReactionsManager(container as HTMLElement);
+    });
+  });
+
+  // Export for testing
+  if (typeof window !== 'undefined') {
+    (window as any).PostReactionsManager = PostReactionsManager;
+  }
+</script>
+
+<style>
+  /* Post Reactions Styles */
+  .post-reactions {
+    /* background: linear-gradient(135deg, var(--color-surface-100) 0%, rgba(255, 255, 255, 0.8) 100%); */
+  }
+
+  .reaction-btn {
+    background: rgba(var(--color-accent-rgb), 0.05);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    overflow: hidden;
+  }
+
+  .reaction-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(var(--color-accent-rgb), 0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .reaction-btn:hover::before {
+    transform: translateX(100%);
+  }
+
+  .reaction-btn:hover {
+    transform: translateY(-3px);
+    background: rgba(var(--color-accent-rgb), 0.15);
+    border-color: rgba(var(--color-accent-rgb), 0.3);
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.15),
+      0 0 30px rgba(var(--color-accent-rgb), 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .reaction-btn:active {
+    transform: translateY(0);
+  }
+
+  .reaction-btn.active {
+    border-width: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .reaction-btn.active.reaction-like {
+    background-color: rgb(254 242 242);
+    border-color: rgb(252 165 165);
+    color: rgb(220 38 38);
+  }
+
+  .reaction-btn.active.reaction-helpful {
+    background-color: rgb(240 253 244);
+    border-color: rgb(134 239 172);
+    color: rgb(22 163 74);
+  }
+
+  .reaction-btn.active.reaction-insightful {
+    background-color: rgb(239 246 255);
+    border-color: rgb(147 197 253);
+    color: rgb(29 78 216);
+  }
+
+  .reaction-btn.active.reaction-bookmark {
+    background-color: rgb(254 249 195);
+    border-color: rgb(253 224 71);
+    color: rgb(161 98 7);
+  }
+
+  /* Icon animations */
+  .reaction-icon {
+    font-size: 1.25em;
+    transition: transform 0.2s ease;
+  }
+
+  .reaction-btn:hover .reaction-icon {
+    transform: scale(1.1);
+  }
+
+  .reaction-btn.active .reaction-icon {
+    transform: scale(1.15);
+  }
+
+  /* Count badge */
+  .reaction-count {
+    transition: all 0.2s ease;
+    font-weight: 600;
+  }
+
+  .reaction-btn.active .reaction-count {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: inherit;
+    border: 1px solid currentColor;
+  }
+
+  /* Feedback message */
+  .feedback-message {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Theme-specific adjustments */
+  .professional-dark .post-reactions {
+    background: linear-gradient(135deg, var(--color-surface-100) 0%, rgba(26, 27, 38, 0.9) 100%);
+  }
+
+  .professional-dark .reaction-btn {
+    background-color: var(--color-surface-200);
+    border-color: var(--color-card-border);
+    color: var(--color-text-primary);
+  }
+
+  .high-contrast .reaction-btn {
+    border-width: 2px;
+    font-weight: bold;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .post-reactions {
+      padding: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .reactions-container {
+      gap: 0.5rem;
+    }
+
+    .reaction-btn {
+      font-size: 0.875rem;
+      padding: 0.5rem 0.75rem;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .reaction-btn,
+    .reaction-icon,
+    .reaction-count,
+    .feedback-message {
+      transition: none;
+      animation: none;
+    }
+
+    .reaction-btn:hover {
+      transform: none;
+    }
+  }
+
+  /* Focus styles for accessibility */
+  .reaction-btn:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Loading state */
+  .post-reactions.loading .reaction-btn {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+</style>
