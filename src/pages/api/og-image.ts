@@ -18,8 +18,14 @@ export const GET: APIRoute = async ({ url }) => {
   const titleFontSize = title.length > 50 ? '42px' : title.length > 30 ? '52px' : '64px';
   const descriptionFontSize = isArticle ? '24px' : '28px';
 
-  // Create the image using Vercel's ImageResponse
   try {
+    const interRegular = await fetch(
+      'https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap'
+    ).then((res) => res.arrayBuffer());
+    const interBold = await fetch(
+      'https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap'
+    ).then((res) => res.arrayBuffer());
+
     const image = new ImageResponse(
       React.createElement(
         'div',
@@ -258,6 +264,20 @@ export const GET: APIRoute = async ({ url }) => {
       {
         width: 1200,
         height: 630,
+        fonts: [
+          {
+            name: 'Inter',
+            data: interRegular,
+            weight: 400,
+            style: 'normal',
+          },
+          {
+            name: 'Inter',
+            data: interBold,
+            weight: 700,
+            style: 'normal',
+          },
+        ],
       }
     );
 
