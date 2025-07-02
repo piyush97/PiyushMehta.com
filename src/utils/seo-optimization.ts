@@ -13,7 +13,7 @@ export interface ImageMetadata {
 }
 
 /**
- * Generate consistent OpenGraph image URLs using @vercel/og
+ * Generate consistent OpenGraph image URLs
  * @param params - Parameters for OG image generation
  * @returns Optimized OG image URL
  */
@@ -46,7 +46,8 @@ export function generateOgImageUrl(params: {
     searchParams.set('tags', tags.join(','));
   }
 
-  return new URL(`/api/og-image?${searchParams.toString()}`, baseUrl).toString();
+  // Use a simpler URL structure
+  return `${baseUrl}/api/og-image?${searchParams.toString()}`;
 }
 
 /**
