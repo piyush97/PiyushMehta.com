@@ -5,7 +5,7 @@
     <link>https://piyushmehta.com</link>
     <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 01 Jul 2025 02:32:08 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 02 Jul 2025 23:55:45 GMT</lastBuildDate>
     <generator>Static RSS Generator</generator>
     <copyright>Copyright 2025 Piyush Mehta. All rights reserved.</copyright>
     <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
@@ -70,6 +70,14 @@
       <link>https://piyushmehta.com/blog/astro-v5-9-content-security-policy/</link>
       <pubDate>Sat, 07 Jun 2025 00:00:00 GMT</pubDate>
       <description>Discover how Astro 5.9 introduces experimental Content Security Policy support, making it easier than ever to secure your websites against XSS attacks while maintaining framework flexibility.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      
+    </item>
+        <item>
+      <title>The 30-Year-Old &apos;Impossible&apos; Algorithm That Makes Netflix Instant (And Why Your Computer Still Sucks)</title>
+      <link>https://piyushmehta.com/blog/bloom-filters/</link>
+      <pubDate>Wed, 02 Jul 2025 00:00:00 GMT</pubDate>
+      <description>How Bloom Filters power Google, Netflix, and Instagram with 99.9% accuracy while using almost zero memory - and the shocking reason they can lie to you</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
       
     </item>

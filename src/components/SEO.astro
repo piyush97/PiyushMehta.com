@@ -25,6 +25,8 @@ export interface Props {
   noindex?: boolean;
   schema?: JsonLdData;
   keywords?: string[];
+  ogTemplate?: 'default' | 'minimal' | 'tech' | 'blog';
+  ogTheme?: 'dark' | 'light' | 'retro';
 }
 
 const {
@@ -41,6 +43,8 @@ const {
   noindex = false,
   schema,
   keywords = ['Piyush Mehta', 'React Developer', 'Software Engineer', 'Software Engineer in Canada', 'Software Consultant in Canada', 'ReactJS', 'ReactJS Developer', 'React Developer', 'Software Engineer', 'Toronto Developer', 'Canadian Software Engineer', 'Tech Speaker', 'Open Source Contributor'],
+  ogTemplate = 'default',
+  ogTheme = 'dark',
 } = Astro.props;
 
 // Optimize and sanitize content
@@ -57,6 +61,8 @@ const imageMetadata: ImageMetadata = extractImageMetadata(
     type,
     publishedTime,
     tags,
+    template: ogTemplate,
+    theme: ogTheme,
   }
 );
 
