@@ -5,6 +5,7 @@ import type { APIRoute } from 'astro';
 import React from 'react';
 import satori from 'satori';
 import sharp from 'sharp';
+import { SITE } from "../../config";
 
 export const prerender = false;
 
@@ -274,7 +275,7 @@ export const GET: APIRoute = async ({ url }) => {
                 fontWeight: '500',
               },
             },
-            'piyushmehta.com'
+            SITE.website.replace("https://www.", "")
           ),
         ]
       );
@@ -338,7 +339,7 @@ export const GET: APIRoute = async ({ url }) => {
                 textAlign: 'center',
               },
             },
-            'Piyush Mehta • piyushmehta.com'
+            `Piyush Mehta • ${SITE.website.replace("https://www.", "")}`
           ),
         ].filter(Boolean)
       );
@@ -456,7 +457,7 @@ export const GET: APIRoute = async ({ url }) => {
               color: '#718096',
               fontSize: '16px',
             },
-          }, 'piyushmehta.com'),
+          }, SITE.website.replace("https://www.", "")),
         ]
       );
     };
