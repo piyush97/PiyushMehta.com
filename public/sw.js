@@ -2,6 +2,7 @@
 // public/sw.js
 
 // Import Workbox from CDN
+importScripts('/scripts/indexeddb.js');
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js');
 
 if (workbox) {
@@ -343,17 +344,6 @@ if (workbox) {
     } catch (error) {
       console.error('Background sync failed:', error);
     }
-  }
-
-  async function getQueuedRequests() {
-    // Simple implementation - in production, use IndexedDB
-    return JSON.parse(localStorage.getItem('sw-queue') || '[]');
-  }
-
-  async function removeFromQueue(id) {
-    const queue = await getQueuedRequests();
-    const updatedQueue = queue.filter(item => item.id !== id);
-    localStorage.setItem('sw-queue', JSON.stringify(updatedQueue));
   }
 
   console.log('Enhanced Workbox service worker configured successfully');
