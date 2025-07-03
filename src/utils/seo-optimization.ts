@@ -13,7 +13,7 @@ export interface ImageMetadata {
 }
 
 /**
- * Generate consistent OpenGraph image URLs using @vercel/og
+ * Generate consistent OpenGraph image URLs
  * @param params - Parameters for OG image generation
  * @returns Optimized OG image URL
  */
@@ -23,9 +23,20 @@ export function generateOgImageUrl(params: {
   type?: string;
   publishedTime?: Date;
   tags?: string[];
+  template?: 'default' | 'minimal' | 'tech' | 'blog';
+  theme?: 'dark' | 'light' | 'retro';
   baseUrl?: string;
 }): string {
-  const { title, description, type, publishedTime, tags, baseUrl = 'https://piyushmehta.com' } = params;
+  const { 
+    title, 
+    description, 
+    type, 
+    publishedTime, 
+    tags, 
+    template = 'default',
+    theme = 'dark',
+    baseUrl = 'https://piyushmehta.com' 
+  } = params;
   
   const searchParams = new URLSearchParams();
   searchParams.set('title', title);
@@ -46,7 +57,17 @@ export function generateOgImageUrl(params: {
     searchParams.set('tags', tags.join(','));
   }
 
-  return new URL(`/api/og-image?${searchParams.toString()}`, baseUrl).toString();
+  // Add template and theme support
+  if (template !== 'default') {
+    searchParams.set('template', template);
+  }
+  
+  if (theme !== 'dark') {
+    searchParams.set('theme', theme);
+  }
+
+  // Use a simpler URL structure
+  return `${baseUrl}/api/og-image?${searchParams.toString()}`;
 }
 
 /**
@@ -250,6 +271,8 @@ export function extractImageMetadata(
     type?: string;
     publishedTime?: Date;
     tags?: string[];
+    template?: 'default' | 'minimal' | 'tech' | 'blog';
+    theme?: 'dark' | 'light' | 'retro';
   }
 ): ImageMetadata {
   // If we have a specific image, use it

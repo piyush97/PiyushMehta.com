@@ -1,0 +1,71 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f2937;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#111827;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="filterGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="600" y="100" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="48" font-weight="bold">
+    The "Impossible" Algorithm
+  </text>
+  <text x="600" y="150" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="24">
+    How Bloom Filters Power Netflix, Google &amp; Instagram
+  </text>
+  
+  <!-- Bloom Filter Visualization -->
+  <g transform="translate(200, 220)">
+    <!-- Bit Array -->
+    <rect x="0" y="0" width="800" height="80" fill="url(#filterGradient)" rx="10"/>
+    
+    <!-- Individual bits -->
+    <circle cx="50" cy="40" r="20" fill="#10b981" opacity="0.9"/>
+    <circle cx="150" cy="40" r="20" fill="#374151" opacity="0.5"/>
+    <circle cx="250" cy="40" r="20" fill="#10b981" opacity="0.9"/>
+    <circle cx="350" cy="40" r="20" fill="#10b981" opacity="0.9"/>
+    <circle cx="450" cy="40" r="20" fill="#374151" opacity="0.5"/>
+    <circle cx="550" cy="40" r="20" fill="#10b981" opacity="0.9"/>
+    <circle cx="650" cy="40" r="20" fill="#374151" opacity="0.5"/>
+    <circle cx="750" cy="40" r="20" fill="#10b981" opacity="0.9"/>
+    
+    <!-- Bit labels -->
+    <text x="50" y="48" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">1</text>
+    <text x="150" y="48" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">0</text>
+    <text x="250" y="48" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">1</text>
+    <text x="350" y="48" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">1</text>
+    <text x="450" y="48" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">0</text>
+    <text x="550" y="48" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">1</text>
+    <text x="650" y="48" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">0</text>
+    <text x="750" y="48" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">1</text>
+  </g>
+  
+  <!-- Hash Functions Visualization -->
+  <g transform="translate(400, 350)">
+    <text x="0" y="20" fill="#fbbf24" font-family="Arial, sans-serif" font-size="18" font-weight="bold">Hash1("netflix") → 0, 2, 5</text>
+    <text x="0" y="50" fill="#34d399" font-family="Arial, sans-serif" font-size="18" font-weight="bold">Hash2("google") → 0, 3, 7</text>
+    <text x="0" y="80" fill="#a78bfa" font-family="Arial, sans-serif" font-size="18" font-weight="bold">Hash3("instagram") → 2, 3, 5</text>
+  </g>
+  
+  <!-- Stats -->
+  <g transform="translate(50, 480)">
+    <rect x="0" y="0" width="300" height="120" fill="#065f46" opacity="0.8" rx="10"/>
+    <text x="150" y="30" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">99.9% Accurate</text>
+    <text x="150" y="55" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">24x Less Memory</text>
+    <text x="150" y="80" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">1000x Faster</text>
+  </g>
+  
+  <g transform="translate(850, 480)">
+    <rect x="0" y="0" width="300" height="120" fill="#991b1b" opacity="0.8" rx="10"/>
+    <text x="150" y="30" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">⚠️ Can Lie to You</text>
+    <text x="150" y="55" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="14">(False Positives Only)</text>
+    <text x="150" y="80" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="14">Never Wrong About "NO"</text>
+  </g>
+</svg>
