@@ -611,6 +611,7 @@ export const GET: APIRoute = async ({ url }) => {
         'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
         'CDN-Cache-Control': 'max-age=31536000',
         'Vercel-CDN-Cache-Control': 'max-age=31536000',
+        'Content-Length': pngBuffer.length.toString(),
       },
     });
   } catch (error) {
