@@ -1,5 +1,3 @@
-import { SITE } from "../config";
-
 // SEO utility functions for performance optimization and consistency
 
 /**
@@ -37,7 +35,7 @@ export function generateOgImageUrl(params: {
     tags, 
     template = 'default',
     theme = 'dark',
-    baseUrl = SITE.website 
+    baseUrl = 'https://www.piyushmehta.com' 
   } = params;
   
   const searchParams = new URLSearchParams();
@@ -107,7 +105,7 @@ export function generateStructuredData(params: {
     author: {
       '@type': 'Person',
       name: author,
-      url: SITE.website,
+      url: 'https://www.piyushmehta.com',
       sameAs: [
         'https://github.com/piyush97',
         'https://linkedin.com/in/piyush24',
@@ -129,7 +127,7 @@ export function generateStructuredData(params: {
       publisher: {
         '@type': 'Person',
         name: author,
-        url: SITE.website,
+        url: 'https://www.piyushmehta.com',
       },
       ...(image && { image: image }),
     };
@@ -175,7 +173,7 @@ export function optimizeKeywords(keywords: string[], tags: string[] = []): strin
  * @param baseUrl - Base URL (default: https://piyushmehta.com)
  * @returns Canonical URL
  */
-export function generateCanonicalUrl(path: string = '', baseUrl: string = SITE.website): string {
+export function generateCanonicalUrl(path: string = '', baseUrl: string = 'https://www.piyushmehta.com'): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${baseUrl}${cleanPath}`;
   
@@ -221,7 +219,7 @@ export function sanitizeDescription(description: string, maxLength: number = 160
  * @param baseUrl - Base URL for the site
  * @returns Absolute image URL
  */
-export function resolveImageUrl(imageUrl: string, baseUrl: string = SITE.website): string {
+export function resolveImageUrl(imageUrl: string, baseUrl: string = 'https://www.piyushmehta.com'): string {
   if (!imageUrl) return '';
   
   // Already absolute URL
@@ -254,7 +252,7 @@ export function generateSecureImageUrl(imageUrl: string): string {
   }
   
   // Relative URL - resolve to HTTPS
-  return resolveImageUrl(imageUrl, SITE.website);
+  return resolveImageUrl(imageUrl, 'https://www.piyushmehta.com');
 }
 
 /**
@@ -266,7 +264,7 @@ export function generateSecureImageUrl(imageUrl: string): string {
  */
 export function extractImageMetadata(
   image: { url: string; alt?: string; width?: number; height?: number; type?: string } | string | null,
-  baseUrl: string = SITE.website,
+  baseUrl: string = 'https://www.piyushmehta.com',
   fallbackParams?: {
     title: string;
     description?: string;
@@ -309,7 +307,7 @@ export function extractImageMetadata(
     return {
       url: ogImageUrl,
       secureUrl: ogImageUrl, // @vercel/og always serves HTTPS
-      type: 'image/jpeg', // @vercel/og generates JPG images
+      type: 'image/png', // @vercel/og generates PNG images
       width: 1200, // Standard OG image dimensions
       height: 630,
       alt: `${fallbackParams.title} - Piyush Mehta`,
