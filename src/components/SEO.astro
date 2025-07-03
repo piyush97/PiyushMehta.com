@@ -5,6 +5,7 @@ type ImageMetadata,
 extractImageMetadata,
 generateCanonicalUrl,
 generateStructuredData,
+generateTwitterImageUrl,
 optimizeKeywords,
 sanitizeDescription,
 validateImageForSocialSharing
@@ -50,7 +51,7 @@ const {
 const optimizedDescription = sanitizeDescription(description);
 const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname);
 
-// Handle image metadata with full OG Protocol compliance and @vercel/og fallback
+// Handle image metadata with full OG Protocol compliance and generated image fallback
 const imageMetadata: ImageMetadata = extractImageMetadata(
   image,
   Astro.site?.toString(),
@@ -64,6 +65,18 @@ const imageMetadata: ImageMetadata = extractImageMetadata(
     theme: ogTheme,
   }
 );
+
+// Generate Twitter-optimized image URL
+const twitterImageUrl = generateTwitterImageUrl({
+  title,
+  description: optimizedDescription,
+  type,
+  publishedTime,
+  tags,
+  template: ogTemplate === 'tech' ? 'tech' : 'twitter', // Use tech template or default Twitter template
+  theme: ogTheme === 'retro' ? 'dark' : ogTheme, // Twitter only supports dark/light
+  baseUrl: Astro.site?.toString(),
+});
 
 // Validate image for optimal social sharing
 const imageValidation = validateImageForSocialSharing(imageMetadata);
@@ -122,7 +135,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta property="twitter:url" content={url} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={optimizedDescription} />
-<meta name="twitter:image" content={imageMetadata.url} />
+<meta name="twitter:image" content={twitterImageUrl} />
 <meta name="twitter:site" content="@piyushmehtas" />
 <meta name="twitter:creator" content="@piyushmehtas" />
 

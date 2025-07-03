@@ -1,10 +1,10 @@
 import fs from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { Resvg } from '@resvg/resvg-js';
 import type { APIRoute } from 'astro';
 import React from 'react';
 import satori from 'satori';
-import sharp from 'sharp';
 
 export const prerender = false;
 
@@ -60,11 +60,10 @@ export const GET: APIRoute = async ({ url }) => {
 
     const currentTheme = themes[theme as keyof typeof themes] || themes.dark;
 
-    // Load fonts
-    const fontPath = join(process.cwd(), 'src', 'assets', 'fonts');
-    
-    const interRegular = fs.readFileSync(join(fontPath, 'Inter-Regular.ttf'));
-    const interBold = fs.readFileSync(join(fontPath, 'Inter-Bold.ttf'));
+    // Load fonts from local files
+    const fontPath = join(process.cwd(), 'InterVariable.ttf');
+    const interRegular = fs.readFileSync(fontPath);
+    const interBold = interRegular; // Use same font for bold
 
     // Default template (enhanced) using React.createElement
     const getDefaultTemplate = () => {
@@ -595,12 +594,18 @@ export const GET: APIRoute = async ({ url }) => {
       ],
     });
 
-    // Convert SVG to PNG with Sharp
-    const png = await sharp(Buffer.from(svg))
-      .png()
-      .toBuffer();
+    // Convert SVG to PNG with resvg-js
+    const resvg = new Resvg(svg, {
+      fitTo: {
+        mode: 'width',
+        value: 1200,
+      },
+    });
+    
+    const pngData = resvg.render();
+    const pngBuffer = pngData.asPng();
 
-    return new Response(png, {
+    return new Response(pngBuffer, {
       headers: {
         'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
