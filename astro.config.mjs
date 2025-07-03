@@ -4,10 +4,12 @@ import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import vercel from '@astrojs/vercel';
 import { defineConfig } from 'astro/config';
+import { fileURLToPath } from 'url';
+import { SITE } from './src/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://piyushmehta.com',
+  site: SITE.website,
   output: 'server',
   prefetch: {
     prefetchAll: true,
@@ -22,15 +24,15 @@ export default defineConfig({
       entryLimit: 10000,
       filter: (page) => !page.includes('?'),
       customPages: [
-        'https://piyushmehta.com/',
-        'https://piyushmehta.com/blog/',
-        'https://piyushmehta.com/projects/',
-        'https://piyushmehta.com/about/',
-        'https://piyushmehta.com/contact-me/',
-        'https://piyushmehta.com/uses/',
-        'https://piyushmehta.com/videos/',
-        'https://piyushmehta.com/resume/',
-        'https://piyushmehta.com/services/',
+        `${SITE.website}/`,
+        `${SITE.website}/blog/`,
+        `${SITE.website}/projects/`,
+        `${SITE.website}/about/`,
+        `${SITE.website}/contact-me/`,
+        `${SITE.website}/uses/`,
+        `${SITE.website}/videos/`,
+        `${SITE.website}/resume/`,
+        `${SITE.website}/services/`,
       ],
     }),
     tailwind(),
@@ -51,9 +53,14 @@ export default defineConfig({
       '**/*.svg',
       '**/*.webp',
     ],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url))
+      }
+    }
   },
   image: {
-    domains: ['piyushmehta.com'],
+    domains: [SITE.website],
     remotePatterns: [
       {
         protocol: 'https',
@@ -76,7 +83,7 @@ export default defineConfig({
       sizes: [320, 640, 768, 1024, 1280, 1536],
       formats: ['image/webp', 'image/avif'],
       minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-      domains: ['piyushmehta.com'],
+      domains: [SITE.website],
       remotePatterns: [
         {
           protocol: 'https',

@@ -1,3 +1,5 @@
+import { SITE } from "../config";
+
 // SEO utility functions for performance optimization and consistency
 
 /**
@@ -35,7 +37,7 @@ export function generateOgImageUrl(params: {
     tags, 
     template = 'default',
     theme = 'dark',
-    baseUrl = 'https://www.piyushmehta.com' 
+    baseUrl = SITE.website 
   } = params;
   
   const searchParams = new URLSearchParams();
@@ -105,7 +107,7 @@ export function generateStructuredData(params: {
     author: {
       '@type': 'Person',
       name: author,
-      url: 'https://www.piyushmehta.com',
+      url: SITE.website,
       sameAs: [
         'https://github.com/piyush97',
         'https://linkedin.com/in/piyush24',
@@ -127,7 +129,7 @@ export function generateStructuredData(params: {
       publisher: {
         '@type': 'Person',
         name: author,
-        url: 'https://www.piyushmehta.com',
+        url: SITE.website,
       },
       ...(image && { image: image }),
     };
@@ -173,7 +175,7 @@ export function optimizeKeywords(keywords: string[], tags: string[] = []): strin
  * @param baseUrl - Base URL (default: https://piyushmehta.com)
  * @returns Canonical URL
  */
-export function generateCanonicalUrl(path: string = '', baseUrl: string = 'https://www.piyushmehta.com'): string {
+export function generateCanonicalUrl(path: string = '', baseUrl: string = SITE.website): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${baseUrl}${cleanPath}`;
   
@@ -219,7 +221,7 @@ export function sanitizeDescription(description: string, maxLength: number = 160
  * @param baseUrl - Base URL for the site
  * @returns Absolute image URL
  */
-export function resolveImageUrl(imageUrl: string, baseUrl: string = 'https://www.piyushmehta.com'): string {
+export function resolveImageUrl(imageUrl: string, baseUrl: string = SITE.website): string {
   if (!imageUrl) return '';
   
   // Already absolute URL
@@ -252,7 +254,7 @@ export function generateSecureImageUrl(imageUrl: string): string {
   }
   
   // Relative URL - resolve to HTTPS
-  return resolveImageUrl(imageUrl, 'https://www.piyushmehta.com');
+  return resolveImageUrl(imageUrl, SITE.website);
 }
 
 /**
@@ -264,7 +266,7 @@ export function generateSecureImageUrl(imageUrl: string): string {
  */
 export function extractImageMetadata(
   image: { url: string; alt?: string; width?: number; height?: number; type?: string } | string | null,
-  baseUrl: string = 'https://www.piyushmehta.com',
+  baseUrl: string = SITE.website,
   fallbackParams?: {
     title: string;
     description?: string;
