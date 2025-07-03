@@ -13,7 +13,7 @@ export interface ImageMetadata {
 }
 
 /**
- * Generate consistent OpenGraph image URLs
+ * Generate consistent OpenGraph image URLs using the new opengraph-image route
  * @param params - Parameters for OG image generation
  * @returns Optimized OG image URL
  */
@@ -66,8 +66,66 @@ export function generateOgImageUrl(params: {
     searchParams.set('theme', theme);
   }
 
-  // Use a simpler URL structure
-  return `${baseUrl}/api/og-image?${searchParams.toString()}`;
+  // Use the new opengraph-image route
+  return `${baseUrl}/opengraph-image?${searchParams.toString()}`;
+}
+
+/**
+ * Generate Twitter-optimized image URLs using the new twitter-image route
+ * @param params - Parameters for Twitter image generation
+ * @returns Optimized Twitter image URL
+ */
+export function generateTwitterImageUrl(params: {
+  title: string;
+  description?: string;
+  type?: string;
+  publishedTime?: Date;
+  tags?: string[];
+  template?: 'default' | 'minimal' | 'tech' | 'blog' | 'twitter';
+  theme?: 'dark' | 'light';
+  baseUrl?: string;
+}): string {
+  const { 
+    title, 
+    description, 
+    type, 
+    publishedTime, 
+    tags, 
+    template = 'twitter',
+    theme = 'dark',
+    baseUrl = 'https://www.piyushmehta.com' 
+  } = params;
+  
+  const searchParams = new URLSearchParams();
+  searchParams.set('title', title);
+  
+  if (description) {
+    searchParams.set('description', description);
+  }
+  
+  if (type) {
+    searchParams.set('type', type);
+  }
+  
+  if (publishedTime) {
+    searchParams.set('date', publishedTime.toISOString());
+  }
+  
+  if (tags && tags.length > 0) {
+    searchParams.set('tags', tags.join(','));
+  }
+
+  // Add template and theme support
+  if (template !== 'twitter') {
+    searchParams.set('template', template);
+  }
+  
+  if (theme !== 'dark') {
+    searchParams.set('theme', theme);
+  }
+
+  // Use the new twitter-image route
+  return `${baseUrl}/twitter-image?${searchParams.toString()}`;
 }
 
 /**
@@ -301,13 +359,13 @@ export function extractImageMetadata(
     };
   }
   
-  // Fallback to @vercel/og generated image
+  // Fallback to generated OG image
   if (fallbackParams) {
     const ogImageUrl = generateOgImageUrl({ ...fallbackParams, baseUrl });
     return {
       url: ogImageUrl,
-      secureUrl: ogImageUrl, // @vercel/og always serves HTTPS
-      type: 'image/png', // @vercel/og generates PNG images
+      secureUrl: ogImageUrl, // Generated images always serve HTTPS
+      type: 'image/png', // Generated PNG images using resvg-js
       width: 1200, // Standard OG image dimensions
       height: 630,
       alt: `${fallbackParams.title} - Piyush Mehta`,
@@ -346,7 +404,7 @@ function getImageTypeFromUrl(imageUrl: string): string {
     case 'webp':
       return 'image/webp';
     case 'svg':
-      return 'image/svg+xml';
+      return 'image/jpeg';
     default:
       return 'image/jpeg'; // Default fallback
   }
