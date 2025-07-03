@@ -264,7 +264,7 @@ export function generateSecureImageUrl(imageUrl: string): string {
  */
 export function extractImageMetadata(
   image: { url: string; alt?: string; width?: number; height?: number; type?: string } | string | null,
-  baseUrl: string = 'https://piyushmehta.com',
+  baseUrl: string = 'https://www.piyushmehta.com',
   fallbackParams?: {
     title: string;
     description?: string;
