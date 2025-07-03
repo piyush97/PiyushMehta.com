@@ -615,14 +615,14 @@ export const GET: APIRoute = async ({ url }) => {
       ],
     });
 
-    // Convert SVG to PNG with Sharp
-    const png = await sharp(Buffer.from(svg))
-      .png()
+    // Convert SVG to JPG with Sharp
+    const jpg = await sharp(Buffer.from(svg))
+      .jpeg()
       .toBuffer();
 
-    return new Response(png, {
+    return new Response(jpg, {
       headers: {
-        'Content-Type': 'image/png',
+        'Content-Type': 'image/jpeg',
         'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
         'CDN-Cache-Control': 'max-age=31536000',
         'Vercel-CDN-Cache-Control': 'max-age=31536000',
