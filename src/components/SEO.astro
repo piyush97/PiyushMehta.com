@@ -4,7 +4,6 @@ import {
 type ImageMetadata,
 extractImageMetadata,
 generateCanonicalUrl,
-generateOgImageUrl,
 generateStructuredData,
 optimizeKeywords,
 sanitizeDescription,
@@ -119,7 +118,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 
 <!-- Twitter Meta Tags -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta property="twitter:domain" content="piyushmehta.com" />
+<meta property="twitter:domain" content="www.piyushmehta.com" />
 <meta property="twitter:url" content={url} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={optimizedDescription} />
@@ -176,13 +175,13 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://piyushmehta.com',
+            item: 'https://www.piyushmehta.com',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Blog',
-            item: 'https://piyushmehta.com/blog',
+            item: 'https://www.piyushmehta.com/blog',
           },
           {
             '@type': 'ListItem',
@@ -205,11 +204,11 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
         '@context': 'https://schema.org',
         '@type': 'Person',
         name: 'Piyush Mehta',
-        url: 'https://piyushmehta.com',
+        url: 'https://www.piyushmehta.com',
         jobTitle: ['Senior Software Engineer', 'Full Stack Developer', 'Software Architect', 'Technical Consultant'],
         description:
           'Senior Software Engineer and Full Stack Developer with 8+ years of experience in Canada. Expert in React.js, Node.js, TypeScript, cloud technologies, and enterprise software development. Available for software consulting, technical architecture, and startup MVP development.',
-        image: 'https://piyushmehta.com/images/piyush-profile.jpg',
+        image: 'https://www.piyushmehta.com/images/piyush-profile.jpg',
         sameAs: [
           'https://github.com/piyush97',
           'https://linkedin.com/in/piyush24',
@@ -331,7 +330,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 
 <!-- FAQPage Schema for Homepage -->
 {
-  url === 'https://piyushmehta.com/' && (
+  url === 'https://www.piyushmehta.com/' && (
     <script
       type="application/ld+json"
       set:html={JSON.stringify({
@@ -437,7 +436,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
           'Code Review Services'
         ],
         'priceRange': '$150-$300 per hour',
-        'url': 'https://piyushmehta.com/services',
+        'url': 'https://www.piyushmehta.com/services',
         'address': {
           '@type': 'PostalAddress',
           'addressCountry': 'Canada',
