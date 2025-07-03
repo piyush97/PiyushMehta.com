@@ -309,7 +309,7 @@ export function extractImageMetadata(
     return {
       url: ogImageUrl,
       secureUrl: ogImageUrl, // @vercel/og always serves HTTPS
-      type: 'image/png', // @vercel/og generates PNG images
+      type: 'image/jpeg', // @vercel/og generates JPG images
       width: 1200, // Standard OG image dimensions
       height: 630,
       alt: `${fallbackParams.title} - Piyush Mehta`,
