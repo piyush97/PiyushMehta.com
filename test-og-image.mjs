@@ -11,11 +11,9 @@ const __dirname = dirname(__filename);
 console.log('🧪 Testing OG Image Generation...');
 
 try {
-  // Load fonts
-  const fontPath = join(process.cwd(), 'src', 'assets', 'fonts');
-  
-  const interRegular = fs.readFileSync(join(fontPath, 'Inter-Regular.ttf'));
-  const interBold = fs.readFileSync(join(fontPath, 'Inter-Bold.ttf'));
+  // Load fonts from local files
+  const interRegular = fs.readFileSync(join(process.cwd(), 'InterVariable.ttf'));
+  const interBold = interRegular; // Use same font for bold
 
   console.log('✅ Fonts loaded successfully');
 
