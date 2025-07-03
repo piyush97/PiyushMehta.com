@@ -5,7 +5,6 @@ import type { APIRoute } from 'astro';
 import React from 'react';
 import satori from 'satori';
 import sharp from 'sharp';
-import { SITE } from "../../config";
 
 export const prerender = false;
 
@@ -240,7 +239,6 @@ export const GET: APIRoute = async ({ url }) => {
                         fontSize: '24px',
                         fontWeight: '600',
                         color: 'white',
-                        marginBottom: '5px',
                       },
                     },
                     'Piyush Mehta'
@@ -275,7 +273,7 @@ export const GET: APIRoute = async ({ url }) => {
                 fontWeight: '500',
               },
             },
-            SITE.website.replace("https://www.", "")
+            'piyushmehta.com'
           ),
         ]
       );
@@ -339,7 +337,7 @@ export const GET: APIRoute = async ({ url }) => {
                 textAlign: 'center',
               },
             },
-            `Piyush Mehta • ${SITE.website.replace("https://www.", "")}`
+            'Piyush Mehta • piyushmehta.com'
           ),
         ].filter(Boolean)
       );
@@ -397,7 +395,9 @@ export const GET: APIRoute = async ({ url }) => {
                   color: '#718096',
                   fontSize: '14px',
                 },
-              }, 'piyush-mehta.ts'),
+              },
+                'piyush-mehta.ts'
+              ),
             ]
           ),
 
@@ -419,32 +419,44 @@ export const GET: APIRoute = async ({ url }) => {
               React.createElement('div', {
                 key: 'line1',
                 style: { color: '#66d9ef', fontSize: '18px', marginBottom: '10px' },
-              }, 'const developer = {'),
+              },
+                'const developer = {'
+              ),
               
               React.createElement('div', {
                 key: 'line2',
                 style: { color: '#a6e22e', fontSize: titleFontSize, marginLeft: '40px', marginBottom: '20px', fontWeight: 'bold' },
-              }, `name: "${title.length > 50 ? title.substring(0, 50) + '...' : title}",`),
+              },
+                `name: "${title.length > 50 ? title.substring(0, 50) + '...' : title}",`
+              ),
               
               description ? React.createElement('div', {
                 key: 'line3',
                 style: { color: '#e6db74', fontSize: '24px', marginLeft: '40px', marginBottom: '20px' },
-              }, `description: "${description.length > 60 ? description.substring(0, 60) + '...' : description}",`) : null,
+              },
+                `description: "${description.length > 60 ? description.substring(0, 60) + '...' : description}",`
+              ) : null,
               
               type === 'article' && date ? React.createElement('div', {
                 key: 'line4',
                 style: { color: '#ae81ff', fontSize: '20px', marginLeft: '40px', marginBottom: '20px' },
-              }, `published: "${new Date(date).toISOString().split('T')[0]}",`) : null,
+              },
+                `published: "${new Date(date).toISOString().split('T')[0]}",`
+              ) : null,
               
               tags ? React.createElement('div', {
                 key: 'line5',
                 style: { color: '#fd971f', fontSize: '18px', marginLeft: '40px', marginBottom: '20px' },
-              }, `tags: [${tags.split(',').slice(0, 3).map(tag => `"${tag.trim()}"`).join(', ')}],`) : null,
+              },
+                `tags: [${tags.split(',').slice(0, 3).map(tag => `"${tag.trim()}"`).join(', ')}],`
+              ) : null,
               
               React.createElement('div', {
                 key: 'line6',
                 style: { color: '#66d9ef', fontSize: '18px' },
-              }, '};'),
+              },
+                '};'
+              ),
             ].filter(Boolean)
           ),
           
@@ -457,7 +469,9 @@ export const GET: APIRoute = async ({ url }) => {
               color: '#718096',
               fontSize: '16px',
             },
-          }, SITE.website.replace("https://www.", "")),
+          },
+            'piyushmehta.com'
+          ),
         ]
       );
     };
@@ -480,104 +494,70 @@ export const GET: APIRoute = async ({ url }) => {
           React.createElement(
             'div',
             {
-              key: 'left',
+              key: 'badge',
               style: {
-                flex: '1',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                paddingRight: '60px',
+                display: 'inline-block',
+                background: currentTheme.accent,
+                color: 'white',
+                padding: '8px 20px',
+                borderRadius: '20px',
+                fontSize: '16px',
+                fontWeight: '600',
+                marginBottom: '30px',
+                width: 'fit-content',
               },
             },
-            [
-              type === 'article' ? React.createElement('div', {
-                key: 'badge',
-                style: {
-                  display: 'inline-block',
-                  background: currentTheme.accent,
-                  color: 'white',
-                  padding: '8px 20px',
-                  borderRadius: '20px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  marginBottom: '30px',
-                  width: 'fit-content',
-                },
-              }, 'Blog Post') : null,
-              
-              React.createElement('div', {
-                key: 'title',
-                style: {
-                  fontSize: titleFontSize,
-                  fontWeight: 'bold',
-                  color: currentTheme.textPrimary,
-                  lineHeight: 1.2,
-                  marginBottom: '20px',
-                },
-              }, title),
-              
-              description ? React.createElement('div', {
-                key: 'description',
-                style: {
-                  fontSize: '22px',
-                  color: currentTheme.textSecondary,
-                  lineHeight: 1.5,
-                  marginBottom: '30px',
-                },
-              }, description) : null,
-              
-              React.createElement(
-                'div',
-                {
-                  key: 'meta',
-                  style: {
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '20px',
-                    color: currentTheme.textTertiary,
-                    fontSize: '18px',
-                  },
-                },
-                [
-                  'By Piyush Mehta',
-                  date ? new Date(date).toLocaleDateString() : null,
-                  tags ? tags.split(',')[0] : null,
-                ].filter(Boolean).join(' • ')
-              ),
-            ].filter(Boolean)
+            'Blog Post'
           ),
           
           React.createElement(
             'div',
             {
-              key: 'right',
+              key: 'title',
               style: {
-                width: '300px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                fontSize: titleFontSize,
+                fontWeight: 'bold',
+                color: currentTheme.textPrimary,
+                lineHeight: 1.2,
+                marginBottom: '20px',
               },
             },
-            React.createElement(
-              'div',
-              {
-                style: {
-                  width: '200px',
-                  height: '200px',
-                  borderRadius: '50%',
-                  background: currentTheme.accent,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontSize: '80px',
-                  fontWeight: 'bold',
-                },
-              },
-              'PM'
-            )
+            title
           ),
-        ]
+          
+          description ? React.createElement(
+            'div',
+            {
+              key: 'description',
+              style: {
+                fontSize: '22px',
+                color: currentTheme.textSecondary,
+                lineHeight: 1.5,
+                marginBottom: '30px',
+              },
+            },
+            description
+          ) : null,
+          
+          React.createElement(
+            'div',
+            {
+              key: 'meta',
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                gap: '20px',
+                color: currentTheme.textTertiary,
+                fontSize: '18px',
+              },
+            },
+            [
+              'By Piyush Mehta',
+              date ? new Date(date).toLocaleDateString() : null,
+              tags ? tags.split(',')[0] : null,
+            ].filter(Boolean).join(' • ')
+          ),
+        ].filter(Boolean)
       );
     };
 
@@ -615,14 +595,14 @@ export const GET: APIRoute = async ({ url }) => {
       ],
     });
 
-    // Convert SVG to JPG with Sharp
-    const jpg = await sharp(Buffer.from(svg))
-      .jpeg()
+    // Convert SVG to PNG with Sharp
+    const png = await sharp(Buffer.from(svg))
+      .png()
       .toBuffer();
 
-    return new Response(jpg, {
+    return new Response(png, {
       headers: {
-        'Content-Type': 'image/jpeg',
+        'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
         'CDN-Cache-Control': 'max-age=31536000',
         'Vercel-CDN-Cache-Control': 'max-age=31536000',
