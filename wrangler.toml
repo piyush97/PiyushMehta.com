@@ -1,4 +1,4 @@
-name = "piyushmehta-com"
+name = "piyush-com-git"
 main = "dist/_worker.js"
 compatibility_date = "2025-03-25"
 compatibility_flags = ["nodejs_compat"]
@@ -7,8 +7,5 @@ compatibility_flags = ["nodejs_compat"]
 directory = "dist"
 binding = "ASSETS"
 
-[env.production]
-name = "piyushmehta-com"
 
-[env.preview]
-name = "piyushmehta-com-preview"
+
