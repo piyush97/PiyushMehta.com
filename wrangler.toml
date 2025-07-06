@@ -1,12 +1,10 @@
 name = "piyush-com-git"
 compatibility_date = "2025-03-25"
 compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "./dist"
 
 [build]
 command = "npm run build"
-
-[assets]
-directory = "./dist"
 
 [env.production]
 NODE_ENV = "production"
