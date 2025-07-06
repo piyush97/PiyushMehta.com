@@ -1,15 +1,8 @@
-import fs from 'fs';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
-import { Resvg } from '@resvg/resvg-js';
 import type { APIRoute } from 'astro';
 import React from 'react';
 import satori from 'satori';
 
 export const prerender = false;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export const GET: APIRoute = async ({ url }) => {
   try {
@@ -60,10 +53,7 @@ export const GET: APIRoute = async ({ url }) => {
 
     const currentTheme = themes[theme as keyof typeof themes] || themes.dark;
 
-    // Load fonts from local files
-    const fontPath = join(process.cwd(), 'InterVariable.ttf');
-    const interRegular = fs.readFileSync(fontPath);
-    const interBold = interRegular; // Use same font for bold
+    // Use web fonts for Cloudflare Pages compatibility
 
     // Default template (enhanced) using React.createElement
     const getDefaultTemplate = () => {
@@ -574,44 +564,32 @@ export const GET: APIRoute = async ({ url }) => {
       }
     };
 
-    // Generate SVG with Satori
+    // Generate SVG with Satori (using web fonts for Cloudflare Pages)
     const svg = await satori(getTemplate(), {
       width: 1200,
       height: 630,
       fonts: [
         {
           name: 'Inter',
-          data: interRegular,
+          data: await fetch('https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2').then(res => res.arrayBuffer()),
           weight: 400,
           style: 'normal',
         },
         {
           name: 'Inter',
-          data: interBold,
+          data: await fetch('https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuI6fAZ9hiJ-Ek-_EeA.woff2').then(res => res.arrayBuffer()),
           weight: 700,
           style: 'normal',
         },
       ],
     });
 
-    // Convert SVG to PNG with resvg-js
-    const resvg = new Resvg(svg, {
-      fitTo: {
-        mode: 'width',
-        value: 1200,
-      },
-    });
-    
-    const pngData = resvg.render();
-    const pngBuffer = pngData.asPng();
-
-    return new Response(pngBuffer, {
+    // Return SVG directly for Cloudflare Pages compatibility
+    return new Response(svg, {
       headers: {
-        'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
-        'CDN-Cache-Control': 'max-age=31536000',
-        'Vercel-CDN-Cache-Control': 'max-age=31536000',
-        'Content-Length': pngBuffer.length.toString(),
+        'Content-Type': 'image/svg+xml',
+        'Cache-Control': 'public, max-age=31536000, immutable',
+        'CF-Cache-Status': 'HIT',
       },
     });
   } catch (error) {

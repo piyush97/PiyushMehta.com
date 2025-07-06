@@ -1,0 +1,28 @@
+name = "piyushmehta-com"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "npm run build"
+
+# Environment variables for local development
+[vars]
+NODE_ENV = "production"
+
+# Optional: Configure routes if needed
+# [env.production]
+# routes = [
+#   { pattern = "/*", zone_name = "piyushmehta.com" }
+# ]
+
+# Optional: Configure KV namespaces if needed in the future
+# [[kv_namespaces]]
+# binding = "MY_KV_NAMESPACE"
+# id = "your-kv-namespace-id"
+# preview_id = "your-preview-kv-namespace-id"
+
+# Optional: Configure R2 buckets if needed in the future
+# [[r2_buckets]]
+# binding = "MY_BUCKET"
+# bucket_name = "my-bucket"
+# preview_bucket_name = "my-preview-bucket"

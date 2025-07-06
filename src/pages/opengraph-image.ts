@@ -1,6 +1,3 @@
-import fs from 'fs';
-import { join } from 'path';
-import { Resvg } from '@resvg/resvg-js';
 import type { APIRoute } from 'astro';
 import React from 'react';
 import satori from 'satori';
@@ -10,7 +7,7 @@ export const prerender = false;
 // Image metadata
 export const alt = 'Piyush Mehta - Software Engineer & Tech Speaker';
 export const size = { width: 1200, height: 630 };
-export const contentType = 'image/png';
+export const contentType = 'image/svg+xml';
 
 export const GET: APIRoute = async ({ url }) => {
   try {
@@ -23,9 +20,7 @@ export const GET: APIRoute = async ({ url }) => {
     const tags = searchParams.get('tags');
     const theme = searchParams.get('theme') || 'dark';
 
-    // Load font
-    const fontPath = join(process.cwd(), 'InterVariable.ttf');
-    const interFont = fs.readFileSync(fontPath);
+    // Use web fonts for Cloudflare Pages compatibility
 
     // Theme configurations
     const themes = {
@@ -248,44 +243,32 @@ export const GET: APIRoute = async ({ url }) => {
       ]
     );
 
-    // Generate SVG with Satori
+    // Generate SVG with Satori (using web fonts for Cloudflare Pages)
     const svg = await satori(opengraphTemplate, {
       width: size.width,
       height: size.height,
       fonts: [
         {
           name: 'Inter',
-          data: interFont,
+          data: await fetch('https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2').then(res => res.arrayBuffer()),
           weight: 400,
           style: 'normal',
         },
         {
           name: 'Inter',
-          data: interFont,
+          data: await fetch('https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuI6fAZ9hiJ-Ek-_EeA.woff2').then(res => res.arrayBuffer()),
           weight: 700,
           style: 'normal',
         },
       ],
     });
 
-    // Convert SVG to PNG with resvg-js
-    const resvg = new Resvg(svg, {
-      fitTo: {
-        mode: 'width',
-        value: size.width,
-      },
-    });
-    
-    const pngData = resvg.render();
-    const pngBuffer = pngData.asPng();
-
-    return new Response(pngBuffer, {
+    // Return SVG directly for Cloudflare Pages compatibility
+    return new Response(svg, {
       headers: {
         'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
-        'CDN-Cache-Control': 'max-age=31536000',
-        'Vercel-CDN-Cache-Control': 'max-age=31536000',
-        'Content-Length': pngBuffer.length.toString(),
+        'Cache-Control': 'public, max-age=31536000, immutable',
+        'CF-Cache-Status': 'HIT',
       },
     });
   } catch (error) {

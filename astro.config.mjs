@@ -2,7 +2,7 @@ import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
-import vercel from '@astrojs/vercel';
+import cloudflare from '@astrojs/cloudflare';
 import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
@@ -67,26 +67,9 @@ export default defineConfig({
     assetsInlineLimit: 1024,
   },
 
-  adapter: vercel({
-    webAnalytics: {
-      enabled: true,
-    },
-    imageService: true,
-    imagesConfig: {
-      sizes: [320, 640, 768, 1024, 1280, 1536],
-      formats: ['image/webp', 'image/avif'],
-      minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-      domains: ['piyushmehta.com'],
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: '**.githubusercontent.com',
-        },
-      ],
-    },
-    isr: {
-      // caches all pages on first request and saves for 1 day
-      expiration: 60 * 60 * 24,
-    },
+  adapter: cloudflare({
+    platformProxy: {
+      enabled: true
+    }
   }),
 });

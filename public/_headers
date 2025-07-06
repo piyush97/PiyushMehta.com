@@ -1,0 +1,42 @@
+# Global security headers
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+
+# RSS feed headers
+/rss.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+# Image caching
+/*.jpg
+  Cache-Control: public, immutable, max-age=31536000
+
+/*.jpeg
+  Cache-Control: public, immutable, max-age=31536000
+
+/*.png
+  Cache-Control: public, immutable, max-age=31536000
+
+/*.gif
+  Cache-Control: public, immutable, max-age=31536000
+
+/*.ico
+  Cache-Control: public, immutable, max-age=31536000
+
+/*.svg
+  Cache-Control: public, immutable, max-age=31536000
+
+/*.webp
+  Cache-Control: public, immutable, max-age=31536000
+
+/*.avif
+  Cache-Control: public, immutable, max-age=31536000
+
+# Static assets caching
+/*.js
+  Cache-Control: public, immutable, max-age=31536000
+
+/*.css
+  Cache-Control: public, immutable, max-age=31536000

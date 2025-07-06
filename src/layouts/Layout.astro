@@ -7,7 +7,6 @@ import SEO from '../components/SEO.astro';
 import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration.astro';
 import SmartPrefetch from '../components/SmartPrefetch.astro';
 import '../styles/global.css';
-import SpeedInsights from "@vercel/speed-insights/astro"
 import favicon from "../assets/favicon.svg";
 import type { JsonLdData } from '../types/schema';
 
@@ -56,7 +55,6 @@ const {
     />
     <link rel="manifest" href="/manifest.json" />
     <meta name="generator" content={Astro.generator} />
-    <SpeedInsights />
     <!-- SEO Component (includes OpenGraph functionality) -->
     <SEO
       title={title}
