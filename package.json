@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "wrangler types && astro dev",
     "start": "wrangler types && astro dev",
-    "build": "wrangler types && astro build && npm run post-build",
-    "post-build": "echo '_worker.js' > dist/.assetsignore && echo '_routes.json' >> dist/.assetsignore",
+    "build": "wrangler types && astro build",
     "build:check": "wrangler types && astro check && astro build",
     "preview": "wrangler types && astro preview",
     "astro": "astro",
@@ -28,10 +27,12 @@
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "test:report": "playwright show-report",
-    "deploy": "wrangler pages deploy dist",
-    "deploy:preview": "wrangler pages deploy dist --compatibility-date=2025-03-25",
+    "deploy": "wrangler deploy",
+    "deploy:production": "wrangler deploy --env production",
+    "deploy:preview": "wrangler deploy --env preview",
     "cf:login": "wrangler auth login",
-    "cf:whoami": "wrangler auth whoami"
+    "cf:whoami": "wrangler auth whoami",
+    "cf:tail": "wrangler tail"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.0",

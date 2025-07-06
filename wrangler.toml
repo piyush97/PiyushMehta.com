@@ -1,13 +1,14 @@
-name = "piyush-com-git"
+name = "piyushmehta-com"
+main = "dist/_worker.js"
 compatibility_date = "2025-03-25"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = "./dist"
 
-[build]
-command = "npm run build"
+[assets]
+directory = "dist"
+binding = "ASSETS"
 
 [env.production]
-NODE_ENV = "production"
+name = "piyushmehta-com"
 
-[placement]
-mode = "smart"
+[env.preview]
+name = "piyushmehta-com-preview"
