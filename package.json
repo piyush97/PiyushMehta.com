@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "wrangler types && astro dev",
     "start": "wrangler types && astro dev",
-    "build": "wrangler types && astro check && astro build",
+    "build": "wrangler types && astro build",
+    "build:check": "wrangler types && astro check && astro build",
     "preview": "wrangler types && astro preview",
     "astro": "astro",
     "migrate:images": "node migrate-images-to-public.mjs",
@@ -25,7 +26,11 @@
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "deploy": "wrangler pages deploy dist",
+    "deploy:preview": "wrangler pages deploy dist --compatibility-date=2025-03-25",
+    "cf:login": "wrangler auth login",
+    "cf:whoami": "wrangler auth whoami"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.0",
