@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { captureError, captureMessage } from '../utils/sentry-client';
 
 interface ContactFormProps {
   className?: string;
@@ -68,8 +69,19 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
 
       // Reset success message after 5 seconds
       setTimeout(() => setSubmitStatus('idle'), 5000);
-    } catch (_error) {
+    } catch (error) {
       setSubmitStatus('error');
+      
+      // Log error to Sentry
+      captureError(error as Error, {
+        component: 'ContactForm',
+        formData: {
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          messageLength: formData.message.length,
+        },
+      });
     } finally {
       setIsSubmitting(false);
     }
