@@ -74,6 +74,10 @@ const {
     />
 
     <script>
+      // Initialize Sentry for client-side error tracking
+      import { initSentry } from '../utils/sentry-client';
+      initSentry();
+      
       // Enhanced theme detection and setting for multiple themes
       const getThemePreference = (): string => {
         if (

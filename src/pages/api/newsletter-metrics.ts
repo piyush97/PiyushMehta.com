@@ -5,6 +5,7 @@
  * This endpoint should be secured and only accessible by administrators.
  */
 
+import * as Sentry from '@sentry/node';
 import type { APIRoute } from 'astro';
 
 export const prerender = false;
@@ -32,6 +33,19 @@ export const GET: APIRoute = async ({ request }) => {
 
   // Check authentication
   if (!isAuthenticated(request)) {
+    // Log unauthorized access attempt
+    Sentry.captureMessage('Unauthorized access attempt to newsletter metrics', {
+      level: 'warning',
+      tags: {
+        endpoint: 'newsletter_metrics',
+        auth_failure: 'missing_or_invalid_token',
+      },
+      extra: {
+        userAgent: request.headers.get('user-agent'),
+        timestamp: new Date().toISOString(),
+      },
+    });
+
     return new Response(
       JSON.stringify({
         success: false,
@@ -71,6 +85,15 @@ export const GET: APIRoute = async ({ request }) => {
     );
   } catch (error) {
     console.error('Failed to get security metrics:', error);
+    
+    // Log error to Sentry
+    Sentry.captureException(error, {
+      tags: {
+        endpoint: 'newsletter_metrics',
+        operation: 'get_metrics',
+      },
+    });
+
     return new Response(
       JSON.stringify({
         success: false,
@@ -91,6 +114,20 @@ export const DELETE: APIRoute = async ({ request }) => {
   };
 
   if (!isAuthenticated(request)) {
+    // Log unauthorized deletion attempt
+    Sentry.captureMessage('Unauthorized attempt to delete security events', {
+      level: 'error',
+      tags: {
+        endpoint: 'newsletter_metrics',
+        operation: 'delete_events',
+        auth_failure: 'missing_or_invalid_token',
+      },
+      extra: {
+        userAgent: request.headers.get('user-agent'),
+        timestamp: new Date().toISOString(),
+      },
+    });
+
     return new Response(
       JSON.stringify({
         success: false,
@@ -119,6 +156,15 @@ export const DELETE: APIRoute = async ({ request }) => {
     );
   } catch (error) {
     console.error('Failed to clear security events:', error);
+    
+    // Log error to Sentry
+    Sentry.captureException(error, {
+      tags: {
+        endpoint: 'newsletter_metrics',
+        operation: 'delete_events',
+      },
+    });
+
     return new Response(
       JSON.stringify({
         success: false,
