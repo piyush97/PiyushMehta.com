@@ -14,7 +14,7 @@ export interface Props {
   title: string;
   description?: string;
   type?: 'website' | 'article';
-  image?: string;
+  image?: string | { url: string; alt?: string; width?: number; height?: number; type?: string };
   author?: string;
   publishedTime?: Date;
   modifiedTime?: Date;
@@ -23,6 +23,8 @@ export interface Props {
   noindex?: boolean;
   schema?: JsonLdData;
   keywords?: string[];
+  ogTemplate?: 'default' | 'minimal' | 'tech' | 'blog';
+  ogTheme?: 'dark' | 'light' | 'retro';
 }
 
 const {
@@ -38,6 +40,8 @@ const {
   noindex,
   schema,
   keywords,
+  ogTemplate,
+  ogTheme,
 } = Astro.props;
 ---
 
@@ -69,6 +73,8 @@ const {
       noindex={noindex}
       schema={schema}
       keywords={keywords}
+      ogTemplate={ogTemplate}
+      ogTheme={ogTheme}
     />
 
     <script>

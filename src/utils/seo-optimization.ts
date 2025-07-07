@@ -67,7 +67,8 @@ export function generateOgImageUrl(params: {
   }
 
   // Use the new opengraph-image route
-  return `${baseUrl}/opengraph-image?${searchParams.toString()}`;
+  const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+  return `${cleanBaseUrl}/opengraph-image?${searchParams.toString()}`;
 }
 
 /**
@@ -125,7 +126,8 @@ export function generateTwitterImageUrl(params: {
   }
 
   // Use the new twitter-image route
-  return `${baseUrl}/twitter-image?${searchParams.toString()}`;
+  const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+  return `${cleanBaseUrl}/twitter-image?${searchParams.toString()}`;
 }
 
 /**
