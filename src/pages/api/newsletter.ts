@@ -18,6 +18,7 @@
  * - Analytics and reporting integration
  */
 
+import * as Sentry from '@sentry/node';
 import type { APIRoute } from 'astro';
 
 export const prerender = false;
@@ -153,6 +154,18 @@ class SecurityMonitor {
 
     // Log to console (in production, use structured logging)
     console.warn('🚨 Security Event:', JSON.stringify(logEntry, null, 2));
+
+    // Send to Sentry for monitoring
+    Sentry.captureMessage(`Security Event: ${event.type}`, {
+      level: 'warning',
+      tags: {
+        event_type: event.type,
+        ip: event.ip,
+      },
+      extra: {
+        ...logEntry,
+      },
+    });
 
     // Store in Redis for analytics
     try {
@@ -755,6 +768,18 @@ export const POST: APIRoute = async ({ request }) => {
       ip: clientIP,
       timestamp: new Date().toISOString(),
     });
+
+    // Log error to Sentry
+    Sentry.captureException(error, {
+      tags: {
+        endpoint: 'newsletter_subscribe',
+        ip: clientIP,
+      },
+      extra: {
+        timestamp: new Date().toISOString(),
+      },
+    });
+
     recordFailedAttempt(clientIP);
     return new Response(
       JSON.stringify({
@@ -807,6 +832,15 @@ async function storeInDatabase(email: string) {
     console.log('Subscriber stored in database:', email);
   } catch (dbError) {
     console.error('Database error:', dbError.message);
+    
+    // Log database error to Sentry
+    Sentry.captureException(dbError, {
+      tags: {
+        component: 'database_storage',
+        email: email,
+      },
+    });
+    
     throw new Error(`Database storage failed: ${dbError.message}`);
   } finally {
     await pool.end();
@@ -828,6 +862,19 @@ async function logEmailForManualProcessing(email: string) {
     email,
     timestamp,
     message: 'Both Substack and database failed - manual follow-up required',
+  });
+
+  // Send to Sentry for alert
+  Sentry.captureMessage('Manual processing needed for newsletter subscription', {
+    level: 'error',
+    tags: {
+      component: 'newsletter_fallback',
+      email: email,
+    },
+    extra: {
+      timestamp,
+      message: 'Both Substack and database failed - manual follow-up required',
+    },
   });
 
   // For now, we'll just ensure it's prominently logged

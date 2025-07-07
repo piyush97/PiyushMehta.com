@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import vercel from '@astrojs/vercel';
 import { defineConfig } from 'astro/config';
+import sentry from '@sentry/astro';
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,6 +15,12 @@ export default defineConfig({
     defaultStrategy: 'viewport'
   },
   integrations: [
+    sentry({
+      dsn: process.env.SENTRY_DSN,
+      environment: process.env.NODE_ENV || 'production',
+      tracesSampleRate: 1.0,
+      release: process.env.npm_package_version,
+    }),
     mdx(),
     sitemap({
       changefreq: 'weekly',

@@ -35,6 +35,8 @@
     "@astrojs/tailwind": "^6.0.2",
     "@astrojs/vercel": "^8.2.0",
     "@resvg/resvg-js": "^2.6.2",
+    "@sentry/astro": "^9.35.0",
+    "@sentry/node": "^9.35.0",
     "@types/pg": "^8.15.4",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
