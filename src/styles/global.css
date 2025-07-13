@@ -71,6 +71,28 @@
   .prose.mdx-content blockquote {
     @apply border-l-4 border-accent pl-4 italic;
   }
+  
+  .prose.mdx-content strong,
+  .prose.mdx-content b {
+    @apply font-bold text-text-primary;
+  }
+  
+  .prose.mdx-content em,
+  .prose.mdx-content i {
+    @apply italic;
+  }
+  
+  .prose.mdx-content code:not(pre code) {
+    @apply px-1 py-0.5 rounded bg-light-800 text-accent font-mono text-sm;
+  }
+  
+  .prose.mdx-content pre {
+    @apply bg-light-800 border border-card-border rounded-lg p-4 overflow-x-auto;
+  }
+  
+  .prose.mdx-content pre code {
+    @apply text-text-primary font-mono text-sm;
+  }
 }
 
 /* Smooth scrolling for the entire page - optimized for 60Hz+ displays */

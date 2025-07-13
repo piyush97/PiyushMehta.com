@@ -1,0 +1,139 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1b26;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Grid Pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#374151" stroke-width="0.5" opacity="0.3"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Old Database (Left Side) -->
+  <g transform="translate(150, 200)">
+    <!-- Database Icon -->
+    <rect x="0" y="0" width="80" height="60" rx="8" fill="#dc2626" opacity="0.8"/>
+    <rect x="10" y="10" width="60" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
+    <rect x="10" y="22" width="60" height="8" rx="4" fill="#ffffff" opacity="0.7"/>
+    <rect x="10" y="34" width="60" height="8" rx="4" fill="#ffffff" opacity="0.5"/>
+    <rect x="10" y="46" width="60" height="8" rx="4" fill="#ffffff" opacity="0.3"/>
+    
+    <!-- Label -->
+    <text x="40" y="85" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="14" font-weight="600">PostgreSQL 12</text>
+    <text x="40" y="100" text-anchor="middle" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Legacy System</text>
+    
+    <!-- Performance Issues -->
+    <circle cx="70" cy="10" r="4" fill="#fbbf24"/>
+    <text x="80" y="15" fill="#fbbf24" font-family="Arial, sans-serif" font-size="10">Slow</text>
+  </g>
+  
+  <!-- Migration Arrow -->
+  <g transform="translate(400, 315)">
+    <path d="M 0 0 L 300 0" stroke="url(#accentGradient)" stroke-width="4" marker-end="url(#arrowhead)"/>
+    <text x="150" y="-10" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="600">Zero-Downtime Migration</text>
+    <text x="150" y="25" text-anchor="middle" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Logical Replication • Feature Flags • Monitoring</text>
+    
+    <!-- Migration Steps -->
+    <circle cx="75" cy="0" r="6" fill="#3b82f6"/>
+    <text x="75" y="40" text-anchor="middle" fill="#3b82f6" font-family="Arial, sans-serif" font-size="10">Replicate</text>
+    
+    <circle cx="150" cy="0" r="6" fill="#8b5cf6"/>
+    <text x="150" y="40" text-anchor="middle" fill="#8b5cf6" font-family="Arial, sans-serif" font-size="10">Validate</text>
+    
+    <circle cx="225" cy="0" r="6" fill="#10b981"/>
+    <text x="225" y="40" text-anchor="middle" fill="#10b981" font-family="Arial, sans-serif" font-size="10">Cutover</text>
+  </g>
+  
+  <!-- New Database (Right Side) -->
+  <g transform="translate(850, 200)">
+    <!-- Database Icon -->
+    <rect x="0" y="0" width="80" height="60" rx="8" fill="#10b981" opacity="0.9"/>
+    <rect x="10" y="10" width="60" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
+    <rect x="10" y="22" width="60" height="8" rx="4" fill="#ffffff" opacity="0.8"/>
+    <rect x="10" y="34" width="60" height="8" rx="4" fill="#ffffff" opacity="0.7"/>
+    <rect x="10" y="46" width="60" height="8" rx="4" fill="#ffffff" opacity="0.6"/>
+    
+    <!-- Modern Features -->
+    <rect x="85" y="5" width="15" height="15" rx="3" fill="#3b82f6" opacity="0.8"/>
+    <text x="92.5" y="15" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="8">Auto</text>
+    
+    <rect x="85" y="25" width="15" height="15" rx="3" fill="#8b5cf6" opacity="0.8"/>
+    <text x="92.5" y="35" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="8">Fast</text>
+    
+    <rect x="85" y="45" width="15" height="15" rx="3" fill="#f59e0b" opacity="0.8"/>
+    <text x="92.5" y="55" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="8">Scale</text>
+    
+    <!-- Label -->
+    <text x="40" y="85" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="14" font-weight="600">Aurora PostgreSQL 14</text>
+    <text x="40" y="100" text-anchor="middle" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Modern Architecture</text>
+    
+    <!-- Performance Gains -->
+    <circle cx="70" cy="10" r="4" fill="#10b981"/>
+    <text x="80" y="15" fill="#10b981" font-family="Arial, sans-serif" font-size="10">3x Faster</text>
+  </g>
+  
+  <!-- Performance Metrics -->
+  <g transform="translate(100, 400)">
+    <rect x="0" y="0" width="250" height="120" rx="8" fill="#374151" opacity="0.8"/>
+    <text x="125" y="25" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="14" font-weight="600">Before Migration</text>
+    
+    <text x="20" y="50" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Response Time:</text>
+    <text x="130" y="50" fill="#dc2626" font-family="Arial, sans-serif" font-size="12" font-weight="600">2.3s</text>
+    
+    <text x="20" y="70" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Throughput:</text>
+    <text x="130" y="70" fill="#dc2626" font-family="Arial, sans-serif" font-size="12" font-weight="600">15K QPS</text>
+    
+    <text x="20" y="90" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Cost:</text>
+    <text x="130" y="90" fill="#dc2626" font-family="Arial, sans-serif" font-size="12" font-weight="600">$28K/month</text>
+    
+    <text x="20" y="110" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Capacity:</text>
+    <text x="130" y="110" fill="#dc2626" font-family="Arial, sans-serif" font-size="12" font-weight="600">50K users</text>
+  </g>
+  
+  <g transform="translate(850, 400)">
+    <rect x="0" y="0" width="250" height="120" rx="8" fill="#064e3b" opacity="0.8"/>
+    <text x="125" y="25" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="14" font-weight="600">After Migration</text>
+    
+    <text x="20" y="50" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Response Time:</text>
+    <text x="130" y="50" fill="#10b981" font-family="Arial, sans-serif" font-size="12" font-weight="600">0.7s</text>
+    
+    <text x="20" y="70" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Throughput:</text>
+    <text x="130" y="70" fill="#10b981" font-family="Arial, sans-serif" font-size="12" font-weight="600">45K QPS</text>
+    
+    <text x="20" y="90" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Cost:</text>
+    <text x="130" y="90" fill="#10b981" font-family="Arial, sans-serif" font-size="12" font-weight="600">$18K/month</text>
+    
+    <text x="20" y="110" fill="#d1d5db" font-family="Arial, sans-serif" font-size="12">Capacity:</text>
+    <text x="130" y="110" fill="#10b981" font-family="Arial, sans-serif" font-size="12" font-weight="600">500K users</text>
+  </g>
+  
+  <!-- Title -->
+  <text x="600" y="80" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="42" font-weight="700">Zero-Downtime Database Migration</text>
+  <text x="600" y="120" text-anchor="middle" fill="#d1d5db" font-family="Arial, sans-serif" font-size="24">Scaling from 10M to 100M Users</text>
+  
+  <!-- Author -->
+  <text x="600" y="580" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="16">By Piyush Mehta • Senior Software Engineer</text>
+  
+  <!-- Arrow Marker -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="url(#accentGradient)"/>
+    </marker>
+  </defs>
+  
+  <!-- Decorative Elements -->
+  <circle cx="100" cy="150" r="3" fill="#3b82f6" opacity="0.6"/>
+  <circle cx="1100" cy="180" r="4" fill="#8b5cf6" opacity="0.5"/>
+  <circle cx="200" cy="350" r="2" fill="#10b981" opacity="0.7"/>
+  <circle cx="1000" cy="320" r="3" fill="#f59e0b" opacity="0.6"/>
+</svg>

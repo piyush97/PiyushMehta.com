@@ -5,7 +5,7 @@
     <link>https://piyushmehta.com</link>
     <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 13 Jul 2025 15:15:15 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 13 Jul 2025 21:18:26 GMT</lastBuildDate>
     <generator>Static RSS Generator</generator>
     <copyright>Copyright 2025 Piyush Mehta. All rights reserved.</copyright>
     <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
@@ -192,6 +192,22 @@
       <category>github</category>
       <category>github actions</category>
       <category>web dev</category>
+    </item>
+        <item>
+      <title>Zero-Downtime Database Migration: Scaling from 10M to 100M Users</title>
+      <link>https://piyushmehta.com/blog/zero-downtime-database-migration-at-scale/</link>
+      <pubDate>Sun, 13 Jul 2025 00:00:00 GMT</pubDate>
+      <description>A comprehensive case study of migrating a 50TB PostgreSQL database to support 10x user growth with zero downtime, improved performance, and 40% cost reduction.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>database</category>
+      <category>postgresql</category>
+      <category>migration</category>
+      <category>scalability</category>
+      <category>architecture</category>
+      <category>devops</category>
+      <category>performance</category>
+      <category>case study</category>
+      <category>zero downtime</category>
     </item>
   </channel>
 </rss>
