@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { captureError, captureMessage } from '../utils/sentry-client';
 
 interface NewsletterSubscriptionProps {
   className?: string;
@@ -85,6 +86,13 @@ export default function NewsletterSubscription({
       console.error('Newsletter subscription error:', error);
       setSubmitStatus('error');
       setErrorMessage('Failed to subscribe. Please try again later.');
+      
+      // Log error to Sentry
+      captureError(error as Error, {
+        component: 'NewsletterSubscription',
+        email: email,
+        variant: variant,
+      });
     } finally {
       setIsSubmitting(false);
     }
