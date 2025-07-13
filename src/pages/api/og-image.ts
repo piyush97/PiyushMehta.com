@@ -1,12 +1,9 @@
 import fs from "fs";
-import { type } from "os";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { Resvg } from "@resvg/resvg-js";
 import * as Sentry from "@sentry/node";
 import type { APIRoute } from "astro";
-import { date } from "astro/zod";
-import { title } from "process";
 import React from "react";
 import satori from "satori";
 

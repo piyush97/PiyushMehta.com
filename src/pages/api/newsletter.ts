@@ -140,47 +140,50 @@ class SecurityMonitor {
   }
 
   async logSecurityEvent(event: {
-    type: 'rate_limit' | 'blocked_email' | 'bot_detected' | 'captcha_failed' | 'suspicious_request';
-    ip: string;
-    email?: string;
-    userAgent?: string;
-    details?: Record<string, unknown>;
-  }) {
-    const timestamp = new Date().toISOString();
-    const logEntry = {
-      timestamp,
-      ...event,
-    };
+      type: 'rate_limit' | 'blocked_email' | 'bot_detected' | 'captcha_failed' | 'suspicious_request';
+      ip: string;
+      email?: string;
+      userAgent?: string;
+      details?: Record<string, unknown>;
+    }) {
+      const timestamp = new Date().toISOString();
+      const logEntry = {
+        timestamp,
+        ...event,
+      };
 
-    // Log to console (in production, use structured logging)
-    console.warn('🚨 Security Event:', JSON.stringify(logEntry, null, 2));
+      // Log to console (in production, use structured logging)
+      console.warn('🚨 Security Event:', JSON.stringify(logEntry, null, 2));
 
-    // Send to Sentry for monitoring
-    Sentry.captureMessage(`Security Event: ${event.type}`, {
-      level: 'warning',
-      tags: {
-        event_type: event.type,
-        ip: event.ip,
-      },
-      extra: {
-        ...logEntry,
-      },
-    });
+      // Send to Sentry for monitoring
+      Sentry.captureMessage(`Security Event: ${event.type}`, {
+        level: 'warning',
+        tags: {
+          event_type: event.type,
+          ip: event.ip,
+        },
+        extra: {
+          ...logEntry,
+        },
+      });
 
-    // Store in Redis for analytics
-    try {
-      const redis = await initializeStorage();
-      if (redis) {
-        await redis.lpush('newsletter:security_events', JSON.stringify(logEntry));
-        await redis.ltrim('newsletter:security_events', 0, 1000); // Keep last 1000 events
+      // Store in Redis for analytics
+      try {
+        const redis = await initializeStorage();
+        if (redis) {
+          const redisClient = redis as Record<string, unknown>;
+          if (redisClient.lpush && redisClient.ltrim) {
+            await (redisClient.lpush as (key: string, value: string) => Promise<unknown>)('newsletter:security_events', JSON.stringify(logEntry));
+            await (redisClient.ltrim as (key: string, start: number, stop: number) => Promise<unknown>)('newsletter:security_events', 0, 1000); // Keep last 1000 events
+          }
+        }
+      } catch (error) {
+        console.error('Failed to log security event to Redis:', error);
       }
-    } catch (error) {
-      console.error('Failed to log security event to Redis:', error);
-    }
 
-    // Check for alert thresholds
-    await this.checkAlertThresholds(event);
-  }
+      // Check for alert thresholds
+      await this.checkAlertThresholds(event);
+    }
 
   private async checkAlertThresholds(event: {
     type: string;
@@ -341,7 +344,7 @@ function isFailureBlocked(ip: string): boolean {
     return false;
   }
   
-  return failData.count >= RATE_LIMIT.MAX_FAILED_ATTEMPTS;
+  return failData.count >= SECURITY_CONFIG.RATE_LIMIT.MAX_FAILED_ATTEMPTS;
 }
 
 function recordFailedAttempt(ip: string): void {
@@ -349,9 +352,9 @@ function recordFailedAttempt(ip: string): void {
   const failData = failedAttempts.get(ip);
   
   if (!failData) {
-    failedAttempts.set(ip, { count: 1, resetTime: now + RATE_LIMIT.FAILED_ATTEMPT_BLOCK_MS });
+    failedAttempts.set(ip, { count: 1, resetTime: now + SECURITY_CONFIG.RATE_LIMIT.FAILED_ATTEMPT_BLOCK_MS });
   } else if (now > failData.resetTime) {
-    failedAttempts.set(ip, { count: 1, resetTime: now + RATE_LIMIT.FAILED_ATTEMPT_BLOCK_MS });
+    failedAttempts.set(ip, { count: 1, resetTime: now + SECURITY_CONFIG.RATE_LIMIT.FAILED_ATTEMPT_BLOCK_MS });
   } else {
     failData.count++;
   }
