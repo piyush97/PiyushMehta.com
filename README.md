@@ -1,8 +1,8 @@
 # Piyush Mehta - Personal Website
-
-![Screenshot of the application](/.github/hero.jpg)
-
 A modern, fast, and SEO-optimized personal website built with Astro, showcasing my work as a Senior Software Engineer, Tech Speaker, and Open Source Contributor.
+
+![Screenshot of the application](/.github/demo.gif)
+
 
 ## 🚀 Features
 
