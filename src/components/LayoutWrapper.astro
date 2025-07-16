@@ -1,0 +1,64 @@
+---
+// Layout wrapper component that adds page transitions
+---
+
+<div id="page-transition-wrapper">
+  <slot />
+</div>
+
+<script>
+  import { motion, AnimatePresence } from 'framer-motion';
+  
+  // Initialize page transitions
+  document.addEventListener('DOMContentLoaded', () => {
+    const wrapper = document.getElementById('page-transition-wrapper');
+    if (!wrapper) return;
+
+    // Add initial animation
+    wrapper.style.opacity = '0';
+    wrapper.style.transform = 'translateY(20px)';
+    
+    // Animate in
+    setTimeout(() => {
+      wrapper.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      wrapper.style.opacity = '1';
+      wrapper.style.transform = 'translateY(0)';
+    }, 100);
+  });
+
+  // Handle navigation animations
+  document.addEventListener('astro:before-preparation', () => {
+    const wrapper = document.getElementById('page-transition-wrapper');
+    if (!wrapper) return;
+    
+    wrapper.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    wrapper.style.opacity = '0';
+    wrapper.style.transform = 'translateY(-20px)';
+  });
+
+  document.addEventListener('astro:after-swap', () => {
+    const wrapper = document.getElementById('page-transition-wrapper');
+    if (!wrapper) return;
+    
+    wrapper.style.opacity = '0';
+    wrapper.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+      wrapper.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      wrapper.style.opacity = '1';
+      wrapper.style.transform = 'translateY(0)';
+    }, 50);
+  });
+</script>
+
+<style>
+  #page-transition-wrapper {
+    min-height: 100vh;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    #page-transition-wrapper {
+      transition: none !important;
+    }
+  }
+</style>
