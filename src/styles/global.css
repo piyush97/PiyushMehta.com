@@ -1,3 +1,14 @@
+/* Enterprise Design System Imports */
+@import '../design-system/tokens.css';
+@import '../design-system/themes.css';
+@import '../design-system/components.css';
+@import '../design-system/utilities.css';
+@import '../design-system/animations.css';
+@import '../design-system/formatting.css';
+
+/* Legacy animation system - will be deprecated */
+@import './animations.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
