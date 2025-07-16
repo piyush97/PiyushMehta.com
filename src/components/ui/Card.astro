@@ -1,0 +1,262 @@
+---
+export interface Props {
+  /** Card variant */
+  variant?: 'default' | 'blog' | 'project' | 'contact';
+  /** Whether card is interactive (clickable) */
+  interactive?: boolean;
+  /** Whether card has a border accent */
+  bordered?: boolean;
+  /** Card padding size */
+  padding?: 'sm' | 'md' | 'lg';
+  /** Additional CSS classes */
+  class?: string;
+  /** HREF for clickable cards */
+  href?: string;
+  /** Target for link cards */
+  target?: string;
+  /** Rel attribute for link cards */
+  rel?: string;
+  /** Card title for header */
+  title?: string;
+  /** Card description */
+  description?: string;
+  /** Media source (image, video) */
+  mediaSrc?: string;
+  /** Media alt text */
+  mediaAlt?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+
+const {
+  variant = 'default',
+  interactive = false,
+  bordered = false,
+  padding = 'md',
+  class: className = '',
+  href,
+  target,
+  rel,
+  title,
+  description,
+  mediaSrc,
+  mediaAlt,
+  ...rest
+} = Astro.props;
+
+// Generate component classes
+const baseClasses = 'c-card';
+const variantClass = variant !== 'default' ? `c-card--${variant}` : '';
+const interactiveClass = interactive || href ? 'c-card--interactive' : '';
+const borderedClass = bordered ? 'c-card--bordered' : '';
+
+const classes = [
+  baseClasses,
+  variantClass,
+  interactiveClass,
+  borderedClass,
+  className
+].filter(Boolean).join(' ');
+
+// Determine wrapper tag
+const Tag = href ? 'a' : 'article';
+const linkProps = href ? { href, target, rel } : {};
+const accessibilityProps = interactive ? { tabindex: '0' } : {};
+
+// Slots detection
+const hasHeader = title || Astro.slots.has('header');
+const hasMedia = mediaSrc || Astro.slots.has('media');
+const hasContent = description || Astro.slots.has('default') || Astro.slots.has('content');
+const hasFooter = Astro.slots.has('footer');
+---
+
+<Tag 
+  class={classes}
+  {...linkProps}
+  {...accessibilityProps}
+  {...rest}
+>
+  {hasMedia && (
+    <div class="c-card__media-container">
+      {mediaSrc ? (
+        <img 
+          src={mediaSrc} 
+          alt={mediaAlt || ''} 
+          class="c-card__media"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <slot name="media" />
+      )}
+    </div>
+  )}
+  
+  {hasHeader && (
+    <header class="c-card__header">
+      {title && <h3 class="c-card__title">{title}</h3>}
+      <slot name="header" />
+    </header>
+  )}
+  
+  {hasContent && (
+    <div class="c-card__content">
+      {description && <p class="c-card__description">{description}</p>}
+      <slot name="content" />
+      <slot />
+    </div>
+  )}
+  
+  {hasFooter && (
+    <footer class="c-card__footer">
+      <slot name="footer" />
+    </footer>
+  )}
+</Tag>
+
+<style>
+  /* Card component enhancements */
+  .c-card {
+    /* Ensure proper aspect ratios for media */
+    .c-card__media-container {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .c-card__media {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      transition: transform var(--duration-300) var(--ease-out);
+    }
+  }
+  
+  /* Interactive card enhancements */
+  .c-card--interactive {
+    cursor: pointer;
+    
+    &:hover .c-card__media {
+      transform: var(--hover-scale-sm);
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    
+    /* Keyboard navigation support */
+    &:focus:not(:focus-visible) {
+      outline: none;
+    }
+  }
+  
+  /* Variant-specific styles */
+  .c-card--blog {
+    .c-card__media-container {
+      aspect-ratio: var(--aspect-ratio-video);
+    }
+    
+    .c-card__title {
+      font-size: var(--font-size-lg);
+      line-height: var(--line-height-tight);
+      margin-bottom: var(--space-2);
+    }
+    
+    .c-card__description {
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+    }
+  }
+  
+  .c-card--project {
+    .c-card__media-container {
+      aspect-ratio: var(--aspect-ratio-video);
+    }
+    
+    .c-card__content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .c-card__description {
+      flex-grow: 1;
+      margin-bottom: var(--space-4);
+    }
+  }
+  
+  .c-card--contact {
+    text-align: center;
+    
+    .c-card__header {
+      background: linear-gradient(
+        135deg, 
+        var(--color-accent) 0%, 
+        color-mix(in srgb, var(--color-accent) 80%, white) 100%
+      );
+      color: var(--color-bg-primary);
+      border-bottom: none;
+    }
+    
+    .c-card__title {
+      color: inherit;
+      margin-bottom: 0;
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .c-card__content {
+      padding: var(--card-padding-sm);
+    }
+    
+    .c-card__header,
+    .c-card__footer {
+      padding: var(--card-padding-sm);
+    }
+    
+    .c-card__title {
+      font-size: var(--font-size-base);
+    }
+  }
+  
+  /* Accessibility: High contrast mode */
+  @media (prefers-contrast: high) {
+    .c-card {
+      border-width: 2px;
+    }
+    
+    .c-card--bordered {
+      border-width: 3px;
+    }
+  }
+  
+  /* Accessibility: Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .c-card,
+    .c-card__media {
+      transition: none;
+    }
+    
+    .c-card--interactive:hover {
+      transform: none;
+    }
+    
+    .c-card--interactive:hover .c-card__media {
+      transform: none;
+    }
+  }
+  
+  /* Print styles */
+  @media print {
+    .c-card {
+      box-shadow: none;
+      border: 1px solid #000;
+      break-inside: avoid;
+    }
+    
+    .c-card--interactive {
+      cursor: default;
+    }
+  }
+</style>

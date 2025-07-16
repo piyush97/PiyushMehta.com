@@ -1,0 +1,258 @@
+---
+export interface Props {
+  /** Badge content */
+  children?: string | any;
+  /** Badge variant */
+  variant?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'outline';
+  /** Badge size */
+  size?: 'sm' | 'md' | 'lg';
+  /** Whether badge is removable */
+  removable?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+  /** Icon element to display */
+  icon?: any;
+  /** Icon position */
+  iconPosition?: 'left' | 'right';
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+
+const {
+  children,
+  variant = 'default',
+  size = 'md',
+  removable = false,
+  class: className = '',
+  icon,
+  iconPosition = 'left',
+  ...rest
+} = Astro.props;
+
+// Generate component classes
+const baseClasses = 'c-badge';
+const variantClass = variant !== 'default' ? `c-badge--${variant}` : '';
+const sizeClass = size !== 'md' ? `c-badge--${size}` : '';
+
+const classes = [
+  baseClasses,
+  variantClass,
+  sizeClass,
+  className
+].filter(Boolean).join(' ');
+
+// Icon classes
+const iconLeftClass = iconPosition === 'left' ? 'c-badge__icon c-badge__icon--left' : '';
+const iconRightClass = iconPosition === 'right' ? 'c-badge__icon c-badge__icon--right' : '';
+---
+
+<span 
+  class={classes}
+  {...rest}
+>
+  {icon && iconPosition === 'left' && (
+    <span class={iconLeftClass} aria-hidden="true">
+      <Fragment set:html={icon} />
+    </span>
+  )}
+  
+  <slot>{children}</slot>
+  
+  {icon && iconPosition === 'right' && (
+    <span class={iconRightClass} aria-hidden="true">
+      <Fragment set:html={icon} />
+    </span>
+  )}
+  
+  {removable && (
+    <button 
+      type="button" 
+      class="c-badge__remove"
+      aria-label="Remove badge"
+      title="Remove"
+    >
+      <svg 
+        width="12" 
+        height="12" 
+        viewBox="0 0 12 12" 
+        fill="none" 
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path 
+          d="M9 3L3 9M3 3L9 9" 
+          stroke="currentColor" 
+          stroke-width="1.5" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+  )}
+</span>
+
+<style>
+  /* Badge component enhancements */
+  .c-badge {
+    /* Icon sizing and alignment */
+    .c-badge__icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      
+      svg {
+        width: 0.875em;
+        height: 0.875em;
+        flex-shrink: 0;
+      }
+    }
+    
+    .c-badge__icon--left {
+      margin-right: var(--space-1);
+    }
+    
+    .c-badge__icon--right {
+      margin-left: var(--space-1);
+    }
+  }
+  
+  /* Size variants */
+  .c-badge--sm {
+    font-size: var(--font-size-xs);
+    padding: var(--space-0_5) var(--space-1_5);
+    
+    .c-badge__icon svg {
+      width: 0.75em;
+      height: 0.75em;
+    }
+    
+    .c-badge__remove {
+      width: 1rem;
+      height: 1rem;
+      margin-left: var(--space-1);
+      
+      svg {
+        width: 0.625rem;
+        height: 0.625rem;
+      }
+    }
+  }
+  
+  .c-badge--lg {
+    font-size: var(--font-size-sm);
+    padding: var(--space-1_5) var(--space-3);
+    
+    .c-badge__icon svg {
+      width: 1em;
+      height: 1em;
+    }
+    
+    .c-badge__remove {
+      width: 1.25rem;
+      height: 1.25rem;
+      margin-left: var(--space-2);
+      
+      svg {
+        width: 0.875rem;
+        height: 0.875rem;
+      }
+    }
+  }
+  
+  /* Remove button styling */
+  .c-badge__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-left: var(--space-1_5);
+    
+    background: none;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    
+    color: inherit;
+    opacity: 0.7;
+    
+    transition: all var(--duration-150) var(--ease-out);
+    
+    &:hover {
+      opacity: 1;
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: var(--hover-scale-sm);
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 1px currentColor;
+      opacity: 1;
+    }
+    
+    &:active {
+      transform: scale(0.9);
+    }
+    
+    svg {
+      width: 0.75rem;
+      height: 0.75rem;
+      stroke-width: 2;
+    }
+  }
+  
+  /* Enhanced variant colors for dark themes */
+  .professional-dark .c-badge--success {
+    background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+    color: var(--color-success);
+    border-color: color-mix(in srgb, var(--color-success) 30%, transparent);
+  }
+  
+  .professional-dark .c-badge--warning {
+    background-color: color-mix(in srgb, var(--color-warning) 15%, transparent);
+    color: var(--color-warning);
+    border-color: color-mix(in srgb, var(--color-warning) 30%, transparent);
+  }
+  
+  .professional-dark .c-badge--error {
+    background-color: color-mix(in srgb, var(--color-error) 15%, transparent);
+    color: var(--color-error);
+    border-color: color-mix(in srgb, var(--color-error) 30%, transparent);
+  }
+  
+  /* Accessibility: High contrast mode */
+  @media (prefers-contrast: high) {
+    .c-badge {
+      border-width: 2px;
+      font-weight: var(--font-weight-semibold);
+    }
+    
+    .c-badge__remove {
+      border: 1px solid currentColor;
+    }
+  }
+  
+  /* Accessibility: Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .c-badge__remove {
+      transition: none;
+    }
+    
+    .c-badge__remove:hover,
+    .c-badge__remove:active {
+      transform: none;
+    }
+  }
+  
+  /* Print styles */
+  @media print {
+    .c-badge {
+      border: 1px solid currentColor;
+      box-shadow: none;
+    }
+    
+    .c-badge__remove {
+      display: none;
+    }
+  }
+</style>

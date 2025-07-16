@@ -1,0 +1,330 @@
+---
+export interface Props {
+  /** Input type */
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
+  /** Input size */
+  size?: 'sm' | 'md' | 'lg';
+  /** Input name attribute */
+  name?: string;
+  /** Input value */
+  value?: string;
+  /** Placeholder text */
+  placeholder?: string;
+  /** Whether input is required */
+  required?: boolean;
+  /** Whether input is disabled */
+  disabled?: boolean;
+  /** Whether input is readonly */
+  readonly?: boolean;
+  /** Whether input has an error */
+  error?: boolean;
+  /** Error message */
+  errorMessage?: string;
+  /** Helper text */
+  helperText?: string;
+  /** Input label */
+  label?: string;
+  /** Label for attribute (auto-generated if not provided) */
+  labelFor?: string;
+  /** Additional CSS classes */
+  class?: string;
+  /** Icon element to display */
+  icon?: any;
+  /** Icon position */
+  iconPosition?: 'left' | 'right';
+  /** Input ID (auto-generated if not provided) */
+  id?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+
+const {
+  type = 'text',
+  size = 'md',
+  name,
+  value,
+  placeholder,
+  required = false,
+  disabled = false,
+  readonly = false,
+  error = false,
+  errorMessage,
+  helperText,
+  label,
+  labelFor,
+  class: className = '',
+  icon,
+  iconPosition = 'left',
+  id,
+  ...rest
+} = Astro.props;
+
+// Generate unique ID if not provided
+const inputId = id || labelFor || `input-${Math.random().toString(36).substr(2, 9)}`;
+
+// Generate component classes
+const baseClasses = 'c-input';
+const sizeClass = size !== 'md' ? `c-input--${size}` : '';
+const errorClass = error ? 'c-input--error' : '';
+const iconClass = icon ? 'c-input--with-icon' : '';
+
+const classes = [
+  baseClasses,
+  sizeClass,
+  errorClass,
+  iconClass,
+  className
+].filter(Boolean).join(' ');
+
+// Container classes
+const containerClasses = ['c-input-container'];
+if (icon) containerClasses.push('c-input-container--with-icon');
+if (iconPosition === 'right') containerClasses.push('c-input-container--icon-right');
+
+// Icon classes
+const iconClasses = ['c-input__icon', `c-input__icon--${iconPosition}`];
+
+// ARIA attributes
+const ariaProps = {
+  'aria-invalid': error ? 'true' : 'false',
+  ...(errorMessage && error ? { 'aria-describedby': `${inputId}-error` } : {}),
+  ...(helperText && !error ? { 'aria-describedby': `${inputId}-helper` } : {})
+};
+---
+
+<div class="c-input-group">
+  {label && (
+    <label for={inputId} class="c-input__label">
+      {label}
+      {required && <span class="c-input__required" aria-label="required">*</span>}
+    </label>
+  )}
+  
+  <div class={containerClasses.join(' ')}>
+    {icon && (
+      <span class={iconClasses.join(' ')} aria-hidden="true">
+        <Fragment set:html={icon} />
+      </span>
+    )}
+    
+    <input
+      id={inputId}
+      type={type}
+      name={name}
+      value={value}
+      placeholder={placeholder}
+      required={required}
+      disabled={disabled}
+      readonly={readonly}
+      class={classes}
+      {...ariaProps}
+      {...rest}
+    />
+  </div>
+  
+  {helperText && !error && (
+    <p id={`${inputId}-helper`} class="c-input__helper">
+      {helperText}
+    </p>
+  )}
+  
+  {errorMessage && error && (
+    <p id={`${inputId}-error`} class="c-input__error" role="alert">
+      {errorMessage}
+    </p>
+  )}
+</div>
+
+<style>
+  /* Input group styling */
+  .c-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1_5);
+  }
+  
+  /* Label styling */
+  .c-input__label {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-tight);
+  }
+  
+  .c-input__required {
+    color: var(--color-error);
+    margin-left: var(--space-0_5);
+  }
+  
+  /* Input container for icon support */
+  .c-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .c-input-container--with-icon .c-input {
+    padding-left: var(--space-10);
+  }
+  
+  .c-input-container--icon-right .c-input {
+    padding-left: var(--input-padding-x);
+    padding-right: var(--space-10);
+  }
+  
+  /* Icon styling */
+  .c-input__icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    color: var(--color-text-muted);
+    transition: color var(--duration-200) var(--ease-out);
+    
+    svg {
+      width: 1.125rem;
+      height: 1.125rem;
+      flex-shrink: 0;
+    }
+  }
+  
+  .c-input__icon--left {
+    left: var(--space-3);
+  }
+  
+  .c-input__icon--right {
+    right: var(--space-3);
+  }
+  
+  /* Input enhancement when focused with icon */
+  .c-input:focus + .c-input__icon,
+  .c-input-container:focus-within .c-input__icon {
+    color: var(--color-accent);
+  }
+  
+  /* Size-specific icon adjustments */
+  .c-input--sm + .c-input__icon svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  .c-input--lg + .c-input__icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  /* Helper text styling */
+  .c-input__helper {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-normal);
+  }
+  
+  /* Error message styling */
+  .c-input__error {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-error);
+    line-height: var(--line-height-normal);
+    font-weight: var(--font-weight-medium);
+  }
+  
+  /* Error state styling */
+  .c-input--error {
+    border-color: var(--color-error);
+    
+    &:focus {
+      border-color: var(--color-error);
+      box-shadow: 0 0 0 var(--focus-ring-offset) var(--color-error);
+    }
+  }
+  
+  .c-input--error + .c-input__icon {
+    color: var(--color-error);
+  }
+  
+  /* Enhanced focus styles */
+  .c-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 var(--focus-ring-offset) var(--color-accent);
+  }
+  
+  /* Disabled state enhancements */
+  .c-input:disabled {
+    background-color: var(--color-surface-100);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  .c-input:disabled + .c-input__icon {
+    color: var(--color-text-muted);
+    opacity: 0.5;
+  }
+  
+  /* Readonly state */
+  .c-input:read-only {
+    background-color: var(--color-surface-100);
+    cursor: default;
+  }
+  
+  /* Placeholder enhancement */
+  .c-input::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .c-input__label {
+      font-size: var(--font-size-xs);
+    }
+    
+    .c-input {
+      font-size: var(--font-size-sm);
+    }
+  }
+  
+  /* Accessibility: High contrast mode */
+  @media (prefers-contrast: high) {
+    .c-input {
+      border-width: 2px;
+    }
+    
+    .c-input__label {
+      font-weight: var(--font-weight-semibold);
+    }
+    
+    .c-input__error {
+      font-weight: var(--font-weight-bold);
+    }
+  }
+  
+  /* Dark theme enhancements */
+  .professional-dark .c-input {
+    background-color: var(--color-surface-100);
+    border-color: var(--color-border);
+  }
+  
+  .professional-dark .c-input:focus {
+    background-color: var(--color-bg-primary);
+  }
+  
+  /* Print styles */
+  @media print {
+    .c-input {
+      border: 1px solid #000;
+      box-shadow: none;
+    }
+    
+    .c-input__helper,
+    .c-input__error {
+      display: none;
+    }
+  }
+</style>

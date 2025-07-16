@@ -1,0 +1,167 @@
+---
+export interface Props {
+  /** Button text content */
+  children?: string | any;
+  /** Button variant style */
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  /** Button size */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Button type attribute */
+  type?: 'button' | 'submit' | 'reset';
+  /** Whether button is disabled */
+  disabled?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+  /** HREF for link buttons */
+  href?: string;
+  /** Target for link buttons */
+  target?: string;
+  /** Rel attribute for link buttons */
+  rel?: string;
+  /** Icon element to display */
+  icon?: any;
+  /** Icon position */
+  iconPosition?: 'left' | 'right';
+  /** Loading state */
+  loading?: boolean;
+  /** Full width button */
+  fullWidth?: boolean;
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+
+const {
+  children,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  disabled = false,
+  class: className = '',
+  href,
+  target,
+  rel,
+  icon,
+  iconPosition = 'left',
+  loading = false,
+  fullWidth = false,
+  ...rest
+} = Astro.props;
+
+// Generate component classes
+const baseClasses = 'c-button';
+const variantClass = `c-button--${variant}`;
+const sizeClass = `c-button--${size}`;
+const fullWidthClass = fullWidth ? 'u-w-full' : '';
+const loadingClass = loading ? 'u-opacity-75 u-cursor-wait' : '';
+
+const classes = [
+  baseClasses,
+  variantClass,
+  sizeClass,
+  fullWidthClass,
+  loadingClass,
+  className
+].filter(Boolean).join(' ');
+
+// Determine tag and additional props
+const Tag = href ? 'a' : 'button';
+const linkProps = href ? { href, target, rel } : {};
+const buttonProps = !href ? { type, disabled: disabled || loading } : {};
+const ariaProps = loading ? { 'aria-busy': 'true' } : {};
+
+// Icon classes
+const iconLeftClass = iconPosition === 'left' ? 'c-button__icon c-button__icon--left' : '';
+const iconRightClass = iconPosition === 'right' ? 'c-button__icon c-button__icon--right' : '';
+---
+
+<Tag 
+  class={classes}
+  {...linkProps}
+  {...buttonProps}
+  {...ariaProps}
+  {...rest}
+>
+  {loading && (
+    <span class="c-loading u-mr-2" aria-hidden="true"></span>
+  )}
+  
+  {icon && iconPosition === 'left' && (
+    <span class={iconLeftClass} aria-hidden="true">
+      <Fragment set:html={icon} />
+    </span>
+  )}
+  
+  <slot>{children}</slot>
+  
+  {icon && iconPosition === 'right' && (
+    <span class={iconRightClass} aria-hidden="true">
+      <Fragment set:html={icon} />
+    </span>
+  )}
+</Tag>
+
+<style>
+  /* Component-specific enhancements */
+  .c-button {
+    /* Ensure icon alignment */
+    svg {
+      width: 1em;
+      height: 1em;
+      flex-shrink: 0;
+    }
+  }
+  
+  /* Loading state animation */
+  .c-button[aria-busy="true"] {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+  }
+  
+  /* Focus improvements */
+  .c-button:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+  
+  /* Interactive hover enhancement */
+  .c-button:not(:disabled):not([aria-disabled="true"]):hover {
+    transform: var(--hover-lift);
+  }
+  
+  /* Click feedback */
+  .c-button:not(:disabled):not([aria-disabled="true"]):active {
+    transform: scale(0.98);
+    transition-duration: var(--duration-100);
+  }
+  
+  /* Accessibility: High contrast mode */
+  @media (prefers-contrast: high) {
+    .c-button {
+      border-width: 2px;
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+  
+  /* Accessibility: Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .c-button {
+      transition: none;
+    }
+    
+    .c-button:hover,
+    .c-button:active {
+      transform: none;
+    }
+  }
+</style>
