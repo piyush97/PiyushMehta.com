@@ -1,0 +1,513 @@
+/* Enterprise Code Formatting Standards */
+/* Consistent formatting patterns and conventions for enterprise-level development */
+
+/* === CODE FORMATTING UTILITIES === */
+
+/* Base code formatting */
+.code-formatted {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  font-variant-ligatures: common-ligatures;
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
+/* Inline code */
+.code-inline {
+  display: inline;
+  padding: var(--space-0_5) var(--space-1);
+  background-color: var(--color-surface-200);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: 0.875em;
+  color: var(--color-text-primary);
+}
+
+/* Code block container */
+.code-block {
+  position: relative;
+  margin: var(--space-6) 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-code-bg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+/* Code block header */
+.code-block__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface-200);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+}
+
+.code-block__language {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.code-block__filename {
+  font-family: var(--font-family-mono);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+/* Code content area */
+.code-block__content {
+  position: relative;
+  overflow-x: auto;
+  padding: var(--space-4);
+  background-color: var(--color-code-bg);
+}
+
+.code-block__content pre {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.code-block__content code {
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: var(--color-code-text);
+  background: none;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+}
+
+/* Line numbers */
+.code-block--with-line-numbers .code-block__content {
+  padding-left: var(--space-12);
+}
+
+.code-block__line-numbers {
+  position: absolute;
+  top: var(--space-4);
+  left: 0;
+  width: var(--space-12);
+  padding: 0 var(--space-2);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-muted);
+  text-align: right;
+  user-select: none;
+  pointer-events: none;
+}
+
+.code-block__line-number {
+  display: block;
+}
+
+/* Copy button */
+.code-block__copy {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  
+  padding: var(--space-1_5) var(--space-2);
+  background-color: var(--color-surface-300);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: 
+    opacity var(--duration-200) var(--ease-out),
+    transform var(--duration-200) var(--ease-out),
+    background-color var(--duration-200) var(--ease-out);
+}
+
+.code-block:hover .code-block__copy,
+.code-block__copy:focus {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.code-block__copy:hover {
+  background-color: var(--color-surface-400);
+  color: var(--color-text-primary);
+}
+
+.code-block__copy:active {
+  transform: scale(0.95);
+}
+
+.code-block__copy svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+
+/* Copy success state */
+.code-block__copy--copied {
+  background-color: var(--color-success-bg);
+  border-color: var(--color-success-border);
+  color: var(--color-success);
+}
+
+/* === SYNTAX HIGHLIGHTING === */
+
+/* Base token styles */
+.token {
+  position: relative;
+}
+
+/* Comments */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* Punctuation */
+.token.punctuation {
+  color: var(--color-text-secondary);
+}
+
+/* Property, tag, boolean, number, constant, symbol, deleted */
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #e06c75;
+}
+
+/* Selector, attr-name, string, char, builtin, inserted */
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #98c379;
+}
+
+/* Operator, entity, url, language-css .token.string, style .token.string, variable */
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+  color: #d19a66;
+}
+
+/* Atrule, attr-value, function, class-name */
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+  color: #61dafb;
+}
+
+/* Keyword */
+.token.keyword {
+  color: #c678dd;
+  font-weight: var(--font-weight-medium);
+}
+
+/* Regex, important */
+.token.regex,
+.token.important {
+  color: #e06c75;
+}
+
+/* Important */
+.token.important,
+.token.bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+/* Entity */
+.token.entity {
+  cursor: help;
+}
+
+/* === THEME-SPECIFIC SYNTAX HIGHLIGHTING === */
+
+/* Light theme syntax colors */
+.professional-light .token.comment,
+.minimalist .token.comment,
+.high-contrast .token.comment {
+  color: #6a737d;
+}
+
+.professional-light .token.property,
+.professional-light .token.tag,
+.professional-light .token.boolean,
+.professional-light .token.number {
+  color: #d73a49;
+}
+
+.professional-light .token.string,
+.professional-light .token.attr-value {
+  color: #032f62;
+}
+
+.professional-light .token.keyword {
+  color: #d73a49;
+}
+
+.professional-light .token.function,
+.professional-light .token.class-name {
+  color: #6f42c1;
+}
+
+/* Dark theme syntax colors */
+.professional-dark .token.comment {
+  color: #7c7c7c;
+}
+
+.professional-dark .token.property,
+.professional-dark .token.tag,
+.professional-dark .token.boolean,
+.professional-dark .token.number {
+  color: #ff7b72;
+}
+
+.professional-dark .token.string,
+.professional-dark .token.attr-value {
+  color: #a5d6ff;
+}
+
+.professional-dark .token.keyword {
+  color: #ff7b72;
+}
+
+.professional-dark .token.function,
+.professional-dark .token.class-name {
+  color: #d2a8ff;
+}
+
+/* Retro tech theme syntax colors */
+.retro-tech .token.comment {
+  color: #546e7a;
+}
+
+.retro-tech .token.property,
+.retro-tech .token.tag,
+.retro-tech .token.boolean,
+.retro-tech .token.number {
+  color: #ff6b9d;
+}
+
+.retro-tech .token.string,
+.retro-tech .token.attr-value {
+  color: #64ffda;
+}
+
+.retro-tech .token.keyword {
+  color: #ff6b9d;
+}
+
+.retro-tech .token.function,
+.retro-tech .token.class-name {
+  color: #00ff9f;
+}
+
+/* === CODE DIFF HIGHLIGHTING === */
+
+.code-block--diff .token.deleted {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.code-block--diff .token.inserted {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.code-block--diff .token.prefix {
+  color: var(--color-text-muted);
+  user-select: none;
+}
+
+/* === HIGHLIGHTED LINES === */
+
+.code-block__line--highlighted {
+  background-color: rgba(var(--color-accent-rgb), 0.1);
+  border-left: 3px solid var(--color-accent);
+  padding-left: calc(var(--space-3) - 3px);
+  margin: 0 calc(-1 * var(--space-4));
+  padding-right: var(--space-4);
+}
+
+/* === TERMINAL/CONSOLE STYLES === */
+
+.code-block--terminal {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+}
+
+.code-block--terminal .code-block__header {
+  background-color: #2d2d2d;
+  border-bottom-color: #444;
+}
+
+.code-block--terminal .code-block__content {
+  background-color: #1a1a1a;
+  color: #00ff00;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.code-block--terminal .token.command {
+  color: #ffffff;
+}
+
+.code-block--terminal .token.output {
+  color: #cccccc;
+}
+
+.code-block--terminal .token.error {
+  color: #ff6b6b;
+}
+
+.code-block--terminal .token.success {
+  color: #51cf66;
+}
+
+/* === SCROLLBAR STYLING === */
+
+.code-block__content::-webkit-scrollbar {
+  height: 8px;
+}
+
+.code-block__content::-webkit-scrollbar-track {
+  background-color: var(--color-surface-200);
+}
+
+.code-block__content::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.code-block__content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-muted);
+}
+
+/* === RESPONSIVE DESIGN === */
+
+@media (max-width: 640px) {
+  .code-block {
+    margin: var(--space-4) calc(-1 * var(--space-4));
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .code-block__content {
+    padding: var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+  
+  .code-block--with-line-numbers .code-block__content {
+    padding-left: var(--space-8);
+  }
+  
+  .code-block__line-numbers {
+    width: var(--space-8);
+    font-size: var(--font-size-xs);
+  }
+  
+  .code-block__copy {
+    top: var(--space-2);
+    right: var(--space-2);
+    padding: var(--space-1) var(--space-1_5);
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* === ACCESSIBILITY === */
+
+@media (prefers-reduced-motion: reduce) {
+  .code-block__copy {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .code-block {
+    border-width: 2px;
+  }
+  
+  .token.comment {
+    opacity: 0.8;
+  }
+  
+  .token.keyword,
+  .token.important {
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+/* === PRINT STYLES === */
+
+@media print {
+  .code-block {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  
+  .code-block__copy {
+    display: none;
+  }
+  
+  .code-block__content {
+    overflow: visible;
+  }
+  
+  .token {
+    color: #000 !important;
+  }
+  
+  .token.comment {
+    color: #666 !important;
+  }
+}
+
+/* === FOCUS MANAGEMENT === */
+
+.code-block:focus-within {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.code-block__copy:focus {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 1px;
+}
