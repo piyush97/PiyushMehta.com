@@ -1,0 +1,337 @@
+/* Enterprise Design Token System */
+/* Unified design tokens for professional enterprise-level consistency */
+
+:root {
+  /* === SPACING SCALE === */
+  /* Consistent spatial rhythm based on 4px grid */
+  --space-px: 1px;
+  --space-0: 0;
+  --space-0_5: 0.125rem; /* 2px */
+  --space-1: 0.25rem;    /* 4px */
+  --space-1_5: 0.375rem; /* 6px */
+  --space-2: 0.5rem;     /* 8px */
+  --space-2_5: 0.625rem; /* 10px */
+  --space-3: 0.75rem;    /* 12px */
+  --space-3_5: 0.875rem; /* 14px */
+  --space-4: 1rem;       /* 16px */
+  --space-5: 1.25rem;    /* 20px */
+  --space-6: 1.5rem;     /* 24px */
+  --space-7: 1.75rem;    /* 28px */
+  --space-8: 2rem;       /* 32px */
+  --space-9: 2.25rem;    /* 36px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-11: 2.75rem;   /* 44px */
+  --space-12: 3rem;      /* 48px */
+  --space-14: 3.5rem;    /* 56px */
+  --space-16: 4rem;      /* 64px */
+  --space-20: 5rem;      /* 80px */
+  --space-24: 6rem;      /* 96px */
+  --space-28: 7rem;      /* 112px */
+  --space-32: 8rem;      /* 128px */
+  --space-36: 9rem;      /* 144px */
+  --space-40: 10rem;     /* 160px */
+  --space-44: 11rem;     /* 176px */
+  --space-48: 12rem;     /* 192px */
+  --space-52: 13rem;     /* 208px */
+  --space-56: 14rem;     /* 224px */
+  --space-60: 15rem;     /* 240px */
+  --space-64: 16rem;     /* 256px */
+  --space-72: 18rem;     /* 288px */
+  --space-80: 20rem;     /* 320px */
+  --space-96: 24rem;     /* 384px */
+
+  /* === TYPOGRAPHY SCALE === */
+  /* Harmonious font size scale */
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-size-3xl: 1.875rem;   /* 30px */
+  --font-size-4xl: 2.25rem;    /* 36px */
+  --font-size-5xl: 3rem;       /* 48px */
+  --font-size-6xl: 3.75rem;    /* 60px */
+  --font-size-7xl: 4.5rem;     /* 72px */
+  --font-size-8xl: 6rem;       /* 96px */
+  --font-size-9xl: 8rem;       /* 128px */
+
+  /* Line heights */
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+
+  /* Font weights */
+  --font-weight-thin: 100;
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  /* Font families */
+  --font-family-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-family-serif: Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-family-mono: 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+  /* === BORDER RADIUS === */
+  --radius-none: 0;
+  --radius-sm: 0.125rem;   /* 2px */
+  --radius-base: 0.25rem;  /* 4px */
+  --radius-md: 0.375rem;   /* 6px */
+  --radius-lg: 0.5rem;     /* 8px */
+  --radius-xl: 0.75rem;    /* 12px */
+  --radius-2xl: 1rem;      /* 16px */
+  --radius-3xl: 1.5rem;    /* 24px */
+  --radius-full: 9999px;
+
+  /* === SHADOWS === */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+  /* === ANIMATION DURATIONS === */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+
+  /* === ANIMATION EASING === */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* === Z-INDEX SCALE === */
+  --z-index-hide: -1;
+  --z-index-auto: auto;
+  --z-index-base: 0;
+  --z-index-docked: 10;
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1100;
+  --z-index-banner: 1200;
+  --z-index-overlay: 1300;
+  --z-index-modal: 1400;
+  --z-index-popover: 1500;
+  --z-index-skipLink: 1600;
+  --z-index-toast: 1700;
+  --z-index-tooltip: 1800;
+
+  /* === LAYOUT TOKENS === */
+  /* Maximum content widths */
+  --content-width-xs: 20rem;     /* 320px */
+  --content-width-sm: 24rem;     /* 384px */
+  --content-width-md: 28rem;     /* 448px */
+  --content-width-lg: 32rem;     /* 512px */
+  --content-width-xl: 36rem;     /* 576px */
+  --content-width-2xl: 42rem;    /* 672px */
+  --content-width-3xl: 48rem;    /* 768px */
+  --content-width-4xl: 56rem;    /* 896px */
+  --content-width-5xl: 64rem;    /* 1024px */
+  --content-width-6xl: 72rem;    /* 1152px */
+  --content-width-7xl: 80rem;    /* 1280px */
+  --content-width-prose: 65ch;   /* Optimal reading width */
+
+  /* Container padding */
+  --container-padding-mobile: var(--space-4);
+  --container-padding-tablet: var(--space-6);
+  --container-padding-desktop: var(--space-8);
+
+  /* === COMPONENT TOKENS === */
+  /* Button sizing */
+  --button-height-sm: 2rem;      /* 32px */
+  --button-height-md: 2.5rem;    /* 40px */
+  --button-height-lg: 3rem;      /* 48px */
+  --button-height-xl: 3.5rem;    /* 56px */
+
+  --button-padding-x-sm: var(--space-3);
+  --button-padding-x-md: var(--space-4);
+  --button-padding-x-lg: var(--space-6);
+  --button-padding-x-xl: var(--space-8);
+
+  --button-font-size-sm: var(--font-size-sm);
+  --button-font-size-md: var(--font-size-base);
+  --button-font-size-lg: var(--font-size-lg);
+  --button-font-size-xl: var(--font-size-xl);
+
+  /* Card tokens */
+  --card-padding-sm: var(--space-4);
+  --card-padding-md: var(--space-6);
+  --card-padding-lg: var(--space-8);
+  --card-radius: var(--radius-lg);
+  --card-shadow: var(--shadow-md);
+  --card-shadow-hover: var(--shadow-xl);
+
+  /* Input tokens */
+  --input-height-sm: var(--button-height-sm);
+  --input-height-md: var(--button-height-md);
+  --input-height-lg: var(--button-height-lg);
+  --input-padding-x: var(--space-3);
+  --input-border-width: 1px;
+  --input-radius: var(--radius-md);
+
+  /* Avatar tokens */
+  --avatar-size-xs: 1.5rem;   /* 24px */
+  --avatar-size-sm: 2rem;     /* 32px */
+  --avatar-size-md: 2.5rem;   /* 40px */
+  --avatar-size-lg: 3rem;     /* 48px */
+  --avatar-size-xl: 4rem;     /* 64px */
+  --avatar-size-2xl: 5rem;    /* 80px */
+
+  /* === ANIMATION TOKENS === */
+  /* Hover effects */
+  --hover-lift: translateY(-2px);
+  --hover-lift-lg: translateY(-4px);
+  --hover-scale-sm: scale(1.025);
+  --hover-scale-md: scale(1.05);
+  --hover-scale-lg: scale(1.1);
+
+  /* Loading animations */
+  --loading-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --loading-spin: spin 1s linear infinite;
+  --loading-bounce: bounce 1s infinite;
+
+  /* === BREAKPOINTS === */
+  /* Media query breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* === ACCESSIBILITY TOKENS === */
+  /* Focus ring */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-color: var(--color-accent);
+  --focus-ring: 0 0 0 var(--focus-ring-offset) var(--color-bg-primary), 0 0 0 calc(var(--focus-ring-offset) + var(--focus-ring-width)) var(--focus-ring-color);
+
+  /* Motion safe */
+  --motion-safe-duration: var(--duration-200);
+  --motion-reduce-duration: 0.01ms;
+
+  /* === UTILITY TOKENS === */
+  /* Common patterns */
+  --aspect-ratio-square: 1 / 1;
+  --aspect-ratio-video: 16 / 9;
+  --aspect-ratio-photo: 4 / 3;
+  --aspect-ratio-golden: 1.618 / 1;
+
+  /* Grid gaps */
+  --grid-gap-sm: var(--space-4);
+  --grid-gap-md: var(--space-6);
+  --grid-gap-lg: var(--space-8);
+
+  /* Border widths */
+  --border-width-0: 0;
+  --border-width-1: 1px;
+  --border-width-2: 2px;
+  --border-width-4: 4px;
+  --border-width-8: 8px;
+}
+
+/* === SEMANTIC COLOR TOKENS === */
+/* These are defined in the main theme files but documented here for reference */
+/*
+  --color-text-primary: Primary text color
+  --color-text-secondary: Secondary text color  
+  --color-text-muted: Muted/disabled text color
+  --color-text-inverse: Inverse text color for dark backgrounds
+  
+  --color-bg-primary: Primary background color
+  --color-bg-secondary: Secondary background color
+  --color-bg-tertiary: Tertiary background color
+  --color-bg-inverse: Inverse background color
+  
+  --color-surface-100: Lightest surface
+  --color-surface-200: Light surface
+  --color-surface-300: Medium surface
+  --color-surface-400: Dark surface
+  
+  --color-accent: Primary accent/brand color
+  --color-accent-hover: Accent color hover state
+  --color-accent-rgb: RGB values for alpha usage
+  
+  --color-border: Default border color
+  --color-border-hover: Border hover state
+  --color-border-focus: Border focus state
+  
+  --color-success: Success state color
+  --color-warning: Warning state color
+  --color-error: Error state color
+  --color-info: Information state color
+  
+  --color-shadow: Default shadow color
+  --color-overlay: Overlay background color
+*/
+
+/* === RESPONSIVE DESIGN TOKENS === */
+@media (max-width: 640px) {
+  :root {
+    --container-padding: var(--container-padding-mobile);
+    --card-padding: var(--card-padding-sm);
+    --button-height: var(--button-height-sm);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --container-padding: var(--container-padding-tablet);
+    --card-padding: var(--card-padding-md);
+    --button-height: var(--button-height-md);
+  }
+}
+
+@media (min-width: 1025px) {
+  :root {
+    --container-padding: var(--container-padding-desktop);
+    --card-padding: var(--card-padding-lg);
+    --button-height: var(--button-height-lg);
+  }
+}
+
+/* === MOTION PREFERENCES === */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-75: var(--motion-reduce-duration);
+    --duration-100: var(--motion-reduce-duration);
+    --duration-150: var(--motion-reduce-duration);
+    --duration-200: var(--motion-reduce-duration);
+    --duration-300: var(--motion-reduce-duration);
+    --duration-500: var(--motion-reduce-duration);
+    --duration-700: var(--motion-reduce-duration);
+    --duration-1000: var(--motion-reduce-duration);
+    
+    --hover-lift: translateY(0);
+    --hover-lift-lg: translateY(0);
+    --hover-scale-sm: scale(1);
+    --hover-scale-md: scale(1);
+    --hover-scale-lg: scale(1);
+  }
+}
+
+/* === HIGH CONTRAST MODE === */
+@media (prefers-contrast: high) {
+  :root {
+    --border-width-1: 2px;
+    --border-width-2: 3px;
+    --focus-ring-width: 3px;
+    --focus-ring-offset: 3px;
+  }
+}
