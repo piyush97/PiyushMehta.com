@@ -1,0 +1,868 @@
+/* Enterprise Theme System */
+/* Unified theming system with consistent patterns across all themes */
+
+/* === BASE THEME FOUNDATION === */
+/* All themes inherit from this foundation and override as needed */
+
+:root {
+  /* === ENHANCED SEMANTIC COLOR TOKENS === */
+  /* WCAG AAA compliant colors with psychological impact considerations */
+  
+  /* Text hierarchy - Enhanced for better readability and contrast */
+  --color-text-primary: #0f172a;        /* Primary content, headings - Deeper black for AAA contrast */
+  --color-text-secondary: #475569;      /* Secondary content, descriptions - Improved contrast */
+  --color-text-muted: #64748b;          /* Disabled text, placeholders - Better visibility */
+  --color-text-inverse: #ffffff;        /* Text on dark backgrounds */
+  --color-text-link: var(--color-accent);
+  --color-text-link-hover: color-mix(in srgb, var(--color-accent) 75%, #000000);
+  --color-text-link-visited: color-mix(in srgb, var(--color-accent) 85%, #663399);
+  --color-text-emphasis: #1e293b;       /* Emphasized text */
+  --color-text-subtle: #94a3b8;         /* Subtle text for less important content */
+  
+  /* Background hierarchy */
+  --color-bg-primary: #ffffff;          /* Main background */
+  --color-bg-secondary: #f9fafb;        /* Secondary background */
+  --color-bg-tertiary: #f3f4f6;         /* Tertiary background */
+  --color-bg-inverse: #111827;          /* Dark background for light text */
+  --color-bg-overlay: rgba(0, 0, 0, 0.5); /* Modal overlays */
+  
+  /* Surface colors (cards, panels, etc.) */
+  --color-surface-100: #f9fafb;         /* Lightest surface */
+  --color-surface-200: #f3f4f6;         /* Light surface */
+  --color-surface-300: #e5e7eb;         /* Medium surface */
+  --color-surface-400: #d1d5db;         /* Dark surface */
+  --color-surface-raised: #ffffff;      /* Elevated surface */
+  --color-surface-sunken: #f3f4f6;      /* Depressed surface */
+  
+  /* Interactive colors - Enhanced for trust and professionalism */
+  --color-accent: #2563eb;              /* Primary brand color - Deeper blue for trust */
+  --color-accent-hover: #1d4ed8;        /* Hover state - Enhanced feedback */
+  --color-accent-active: #1e40af;       /* Active/pressed state - Clear pressed feedback */
+  --color-accent-light: #60a5fa;        /* Lighter accent for backgrounds */
+  --color-accent-subtle: #dbeafe;       /* Very subtle accent for highlights */
+  --color-accent-rgb: 37, 99, 235;      /* RGB values for alpha usage */
+  --color-accent-contrast: #ffffff;     /* Text on accent background */
+  --color-accent-complement: #f59e0b;    /* Complementary color for highlights */
+  --color-accent-gradient: linear-gradient(135deg, var(--color-accent) 0%, color-mix(in srgb, var(--color-accent) 80%, #1e40af) 100%);
+  
+  /* Border colors */
+  --color-border: #e5e7eb;              /* Default borders */
+  --color-border-hover: #d1d5db;        /* Hover state borders */
+  --color-border-focus: var(--color-accent); /* Focus state borders */
+  --color-border-strong: #9ca3af;       /* Emphasized borders */
+  --color-border-subtle: #f3f4f6;       /* Subtle borders */
+  
+  /* Enhanced status colors - Psychologically optimized for clear communication */
+  --color-success: #059669;             /* Success states - More confident green */
+  --color-success-light: #10b981;       /* Light success for icons */
+  --color-success-bg: #d1fae5;          /* Success background */
+  --color-success-border: #86efac;      /* Success border - More prominent */
+  --color-success-text: #065f46;        /* Dark success text */
+  
+  --color-warning: #d97706;             /* Warning states - More urgent orange */
+  --color-warning-light: #f59e0b;       /* Light warning for icons */
+  --color-warning-bg: #fef3c7;          /* Warning background */
+  --color-warning-border: #fcd34d;      /* Warning border - More visible */
+  --color-warning-text: #92400e;        /* Dark warning text */
+  
+  --color-error: #dc2626;               /* Error states - More decisive red */
+  --color-error-light: #ef4444;         /* Light error for icons */
+  --color-error-bg: #fee2e2;            /* Error background */
+  --color-error-border: #fca5a5;        /* Error border - More noticeable */
+  --color-error-text: #991b1b;          /* Dark error text */
+  
+  --color-info: #0369a1;                /* Info states - Professional blue */
+  --color-info-light: #0ea5e9;          /* Light info for icons */
+  --color-info-bg: #e0f2fe;             /* Info background - Softer */
+  --color-info-border: #7dd3fc;         /* Info border */
+  --color-info-text: #0c4a6e;           /* Dark info text */
+  
+  /* Component-specific colors */
+  --color-card-bg: var(--color-bg-primary);
+  --color-card-border: var(--color-border);
+  --color-card-shadow: rgba(0, 0, 0, 0.1);
+  
+  --color-navbar-bg: rgba(255, 255, 255, 0.8);
+  --color-navbar-border: var(--color-border);
+  
+  --color-code-bg: #f8fafc;
+  --color-code-border: var(--color-border);
+  --color-code-text: #334155;
+  
+  /* Shadow colors */
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-shadow-strong: rgba(0, 0, 0, 0.25);
+  --color-shadow-subtle: rgba(0, 0, 0, 0.05);
+  
+  /* Focus and selection */
+  --color-focus-ring: var(--color-accent);
+  --color-selection: rgba(var(--color-accent-rgb), 0.2);
+  
+  /* Advanced color utilities */
+  --color-gradient-primary: linear-gradient(135deg, var(--color-accent) 0%, color-mix(in srgb, var(--color-accent) 85%, #1e40af) 100%);
+  --color-gradient-success: linear-gradient(135deg, var(--color-success) 0%, color-mix(in srgb, var(--color-success) 85%, #047857) 100%);
+  --color-gradient-warning: linear-gradient(135deg, var(--color-warning) 0%, color-mix(in srgb, var(--color-warning) 85%, #b45309) 100%);
+  --color-gradient-error: linear-gradient(135deg, var(--color-error) 0%, color-mix(in srgb, var(--color-error) 85%, #b91c1c) 100%);
+  
+  /* Color temperature and emotion */
+  --color-warm: #f59e0b;                 /* Warm, energetic */
+  --color-cool: #0ea5e9;                 /* Cool, calming */
+  --color-neutral: #6b7280;              /* Balanced, professional */
+  
+  /* === THEME METADATA === */
+  --theme-name: 'Professional Light';
+  --theme-type: 'light';
+  --theme-contrast: 'enhanced';
+  --theme-psychology: 'trust-focused';
+}
+
+/* === PROFESSIONAL DARK THEME === */
+.professional-dark {
+  /* Enhanced text hierarchy - Optimized for dark mode readability */
+  --color-text-primary: #f8fafc;        /* Slightly warmer white for better readability */
+  --color-text-secondary: #cbd5e1;      /* Improved contrast for secondary text */
+  --color-text-muted: #94a3b8;          /* Better visibility for muted text */
+  --color-text-inverse: #0f172a;        /* Deep inverse for maximum contrast */
+  --color-text-link-hover: color-mix(in srgb, var(--color-accent) 75%, #ffffff);
+  --color-text-link-visited: color-mix(in srgb, var(--color-accent) 85%, #a855f7);
+  --color-text-emphasis: #e2e8f0;       /* Emphasized text */
+  --color-text-subtle: #64748b;         /* Subtle text for less important content */
+  
+  /* Background hierarchy */
+  --color-bg-primary: #111827;
+  --color-bg-secondary: #1f2937;
+  --color-bg-tertiary: #374151;
+  --color-bg-inverse: #ffffff;
+  --color-bg-overlay: rgba(0, 0, 0, 0.7);
+  
+  /* Surface colors */
+  --color-surface-100: #1f2937;
+  --color-surface-200: #374151;
+  --color-surface-300: #4b5563;
+  --color-surface-400: #6b7280;
+  --color-surface-raised: #1f2937;
+  --color-surface-sunken: #0f172a;
+  
+  /* Interactive colors - Enhanced for dark mode accessibility */
+  --color-accent: #60a5fa;              /* Optimized blue for dark backgrounds */
+  --color-accent-hover: #3b82f6;        /* Clear hover feedback */
+  --color-accent-active: #2563eb;       /* Strong active state */
+  --color-accent-light: #93c5fd;        /* Lighter variant for subtle use */
+  --color-accent-subtle: #1e3a8a;       /* Dark subtle accent */
+  --color-accent-rgb: 96, 165, 250;     /* RGB values for alpha usage */
+  --color-accent-contrast: #0f172a;     /* Dark text on accent */
+  --color-accent-complement: #fbbf24;    /* Warm complement for dark theme */
+  --color-accent-gradient: linear-gradient(135deg, var(--color-accent) 0%, color-mix(in srgb, var(--color-accent) 80%, #3b82f6) 100%);
+  
+  /* Border colors */
+  --color-border: #374151;
+  --color-border-hover: #4b5563;
+  --color-border-focus: var(--color-accent);
+  --color-border-strong: #6b7280;
+  --color-border-subtle: #1f2937;
+  
+  /* Enhanced status colors - Optimized for dark theme psychology */
+  --color-success: #22c55e;             /* Vibrant success for dark backgrounds */
+  --color-success-light: #34d399;       /* Lighter success variant */
+  --color-success-bg: rgba(34, 197, 94, 0.15);  /* More visible background */
+  --color-success-border: rgba(34, 197, 94, 0.4); /* Stronger border */
+  --color-success-text: #bbf7d0;        /* Light success text */
+  
+  --color-warning: #fbbf24;             /* Bright warning that stands out */
+  --color-warning-light: #fcd34d;       /* Lighter warning variant */
+  --color-warning-bg: rgba(251, 191, 36, 0.15); /* More visible background */
+  --color-warning-border: rgba(251, 191, 36, 0.4); /* Stronger border */
+  --color-warning-text: #fef3c7;        /* Light warning text */
+  
+  --color-error: #f87171;               /* Clear error indication */
+  --color-error-light: #fca5a5;         /* Lighter error variant */
+  --color-error-bg: rgba(248, 113, 113, 0.15); /* More visible background */
+  --color-error-border: rgba(248, 113, 113, 0.4); /* Stronger border */
+  --color-error-text: #fecaca;          /* Light error text */
+  
+  --color-info: #60a5fa;                /* Clear info indication */
+  --color-info-light: #93c5fd;          /* Lighter info variant */
+  --color-info-bg: rgba(96, 165, 250, 0.15); /* More visible background */
+  --color-info-border: rgba(96, 165, 250, 0.4); /* Stronger border */
+  --color-info-text: #bfdbfe;           /* Light info text */
+  
+  /* Component-specific colors */
+  --color-card-bg: var(--color-surface-100);
+  --color-card-shadow: rgba(0, 0, 0, 0.3);
+  
+  --color-navbar-bg: rgba(31, 41, 55, 0.8);
+  
+  --color-code-bg: #1a1b26;
+  --color-code-text: #a9b1d6;
+  
+  /* Shadow colors */
+  --color-shadow: rgba(0, 0, 0, 0.3);
+  --color-shadow-strong: rgba(0, 0, 0, 0.5);
+  --color-shadow-subtle: rgba(0, 0, 0, 0.1);
+  
+  /* Advanced color utilities for dark theme */
+  --color-gradient-primary: linear-gradient(135deg, var(--color-accent) 0%, color-mix(in srgb, var(--color-accent) 85%, #3b82f6) 100%);
+  --color-gradient-success: linear-gradient(135deg, var(--color-success) 0%, color-mix(in srgb, var(--color-success) 85%, #16a34a) 100%);
+  --color-gradient-warning: linear-gradient(135deg, var(--color-warning) 0%, color-mix(in srgb, var(--color-warning) 85%, #f59e0b) 100%);
+  --color-gradient-error: linear-gradient(135deg, var(--color-error) 0%, color-mix(in srgb, var(--color-error) 85%, #ef4444) 100%);
+  
+  /* Color temperature and emotion for dark theme */
+  --color-warm: #fbbf24;                 /* Warm, energetic */
+  --color-cool: #22d3ee;                 /* Cool, calming */
+  --color-neutral: #94a3b8;              /* Balanced, professional */
+  
+  /* Theme metadata */
+  --theme-name: 'Professional Dark';
+  --theme-type: 'dark';
+  --theme-contrast: 'enhanced';
+  --theme-psychology: 'focus-oriented';
+}
+
+/* === PROFESSIONAL LIGHT THEME === */
+.professional-light {
+  /* Explicit light theme - inherits from :root but can override */
+  --theme-name: 'Professional Light';
+  --theme-type: 'light';
+}
+
+/* === RETRO TECH THEME === */
+.retro-tech {
+  /* Cyberpunk-inspired theme with enhanced neon psychology */
+  
+  /* Enhanced text hierarchy - Optimized for retro-futuristic appeal */
+  --color-text-primary: #00ff9f;        /* Signature neon green - energy and innovation */
+  --color-text-secondary: #64ffda;      /* Cyan accent - technology and precision */
+  --color-text-muted: #546e7a;          /* Muted for balance */
+  --color-text-inverse: #0d1117;        /* Deep space black */
+  --color-text-link: #ff6b9d;           /* Hot pink - excitement and creativity */
+  --color-text-link-hover: #ff8fab;     /* Lighter pink hover */
+  --color-text-link-visited: #c084fc;   /* Purple for visited - mystery */
+  --color-text-emphasis: #fde047;       /* Electric yellow for emphasis */
+  --color-text-subtle: #64748b;         /* Subtle gray */
+  
+  /* Background hierarchy */
+  --color-bg-primary: #0d1117;
+  --color-bg-secondary: #161b22;
+  --color-bg-tertiary: #21262d;
+  --color-bg-inverse: #ffffff;
+  --color-bg-overlay: rgba(13, 17, 23, 0.8);
+  
+  /* Surface colors */
+  --color-surface-100: #161b22;
+  --color-surface-200: #21262d;
+  --color-surface-300: #30363d;
+  --color-surface-400: #484f58;
+  --color-surface-raised: #21262d;
+  --color-surface-sunken: #0d1117;
+  
+  /* Interactive colors - High-energy cyberpunk palette */
+  --color-accent: #ff6b9d;              /* Signature hot pink - bold and energetic */
+  --color-accent-hover: #ff8fab;        /* Lighter pink hover */
+  --color-accent-active: #ff1744;       /* Intense red active state */
+  --color-accent-light: #ffb3d9;        /* Light pink variant */
+  --color-accent-subtle: #3d1a78;       /* Dark purple subtle */
+  --color-accent-rgb: 255, 107, 157;    /* RGB values */
+  --color-accent-contrast: #ffffff;     /* White contrast */
+  --color-accent-complement: #00ff9f;    /* Neon green complement */
+  --color-accent-gradient: linear-gradient(135deg, var(--color-accent) 0%, #ff1744 50%, #00ff9f 100%);
+  
+  /* Border colors */
+  --color-border: #30363d;
+  --color-border-hover: #484f58;
+  --color-border-focus: var(--color-accent);
+  --color-border-strong: #6b7280;
+  --color-border-subtle: #21262d;
+  
+  /* Cyberpunk status colors - High contrast neon palette */
+  --color-success: #00ff9f;             /* Electric green - achievement */
+  --color-success-light: #4ade80;       /* Lighter success */
+  --color-success-bg: rgba(0, 255, 159, 0.2); /* Glowing background */
+  --color-success-border: rgba(0, 255, 159, 0.5); /* Bright border */
+  --color-success-text: #00ff9f;        /* Neon success text */
+  
+  --color-warning: #fde047;             /* Electric yellow - caution */
+  --color-warning-light: #fef08a;       /* Lighter warning */
+  --color-warning-bg: rgba(253, 224, 71, 0.2); /* Glowing background */
+  --color-warning-border: rgba(253, 224, 71, 0.5); /* Bright border */
+  --color-warning-text: #fde047;        /* Neon warning text */
+  
+  --color-error: #ff1744;               /* Intense red - danger */
+  --color-error-light: #ff5370;         /* Lighter error */
+  --color-error-bg: rgba(255, 23, 68, 0.2); /* Glowing background */
+  --color-error-border: rgba(255, 23, 68, 0.5); /* Bright border */
+  --color-error-text: #ff1744;          /* Neon error text */
+  
+  --color-info: #64ffda;                /* Cyan - information */
+  --color-info-light: #a5f3fc;          /* Lighter info */
+  --color-info-bg: rgba(100, 255, 218, 0.2); /* Glowing background */
+  --color-info-border: rgba(100, 255, 218, 0.5); /* Bright border */
+  --color-info-text: #64ffda;           /* Neon info text */
+  
+  /* Component-specific colors */
+  --color-card-bg: var(--color-surface-100);
+  --color-card-shadow: rgba(255, 107, 157, 0.2);
+  
+  --color-navbar-bg: rgba(22, 27, 34, 0.9);
+  
+  --color-code-bg: #0d1117;
+  --color-code-text: #00ff9f;
+  
+  /* Advanced cyberpunk effects */
+  --color-gradient-primary: linear-gradient(135deg, var(--color-accent) 0%, #ff1744 50%, #00ff9f 100%);
+  --color-gradient-success: linear-gradient(135deg, var(--color-success) 0%, #22c55e 100%);
+  --color-gradient-warning: linear-gradient(135deg, var(--color-warning) 0%, #f59e0b 100%);
+  --color-gradient-error: linear-gradient(135deg, var(--color-error) 0%, #dc2626 100%);
+  
+  /* Cyberpunk color effects */
+  --color-glow-primary: 0 0 20px var(--color-accent);
+  --color-glow-success: 0 0 20px var(--color-success);
+  --color-glow-warning: 0 0 20px var(--color-warning);
+  --color-glow-error: 0 0 20px var(--color-error);
+  
+  /* Color temperature and emotion - Cyberpunk edition */
+  --color-warm: #ff6b9d;                 /* Hot pink warmth */
+  --color-cool: #64ffda;                 /* Cyan coolness */
+  --color-neutral: #546e7a;              /* Balanced tech gray */
+  
+  /* Theme metadata */
+  --theme-name: 'Retro Tech';
+  --theme-type: 'dark';
+  --theme-contrast: 'ultra-high';
+  --theme-psychology: 'energy-creativity';
+}
+
+/* === MINIMALIST THEME === */
+.minimalist {
+  /* Clean, minimal theme with enhanced subtle psychology */
+  
+  /* Enhanced text hierarchy - Optimized for clarity and minimalism */
+  --color-text-primary: #212121;        /* Deeper black for WCAG AAA contrast */
+  --color-text-secondary: #616161;      /* Improved contrast for secondary text */
+  --color-text-muted: #9e9e9e;          /* Better visibility for muted text */
+  --color-text-inverse: #ffffff;        /* Pure white for maximum contrast */
+  --color-text-link: #1565c0;           /* Deeper blue for trust and reliability */
+  --color-text-link-hover: #0d47a1;     /* Darker hover for clear feedback */
+  --color-text-link-visited: #6a1b9a;   /* Purple for visited links */
+  --color-text-emphasis: #424242;       /* Emphasized text */
+  --color-text-subtle: #757575;         /* Subtle text for less important content */
+  
+  /* Background hierarchy */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #fafafa;
+  --color-bg-tertiary: #f5f5f5;
+  --color-bg-inverse: #212121;
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+  
+  /* Surface colors */
+  --color-surface-100: #fafafa;
+  --color-surface-200: #f5f5f5;
+  --color-surface-300: #eeeeee;
+  --color-surface-400: #e0e0e0;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #f5f5f5;
+  
+  /* Interactive colors - Enhanced for minimalist psychology */
+  --color-accent: #1565c0;              /* Deep blue for trust and simplicity */
+  --color-accent-hover: #0d47a1;        /* Clear hover feedback */
+  --color-accent-active: #01579b;       /* Strong active state */
+  --color-accent-light: #42a5f5;        /* Lighter accent for backgrounds */
+  --color-accent-subtle: #e3f2fd;       /* Very subtle accent for highlights */
+  --color-accent-rgb: 21, 101, 192;     /* RGB values for alpha usage */
+  --color-accent-contrast: #ffffff;     /* White text on accent */
+  --color-accent-complement: #ff9800;    /* Orange complement for minimal highlights */
+  --color-accent-gradient: linear-gradient(135deg, var(--color-accent) 0%, color-mix(in srgb, var(--color-accent) 80%, #0d47a1) 100%);
+  
+  /* Border colors */
+  --color-border: #e0e0e0;
+  --color-border-hover: #bdbdbd;
+  --color-border-focus: var(--color-accent);
+  --color-border-strong: #9e9e9e;
+  --color-border-subtle: #f5f5f5;
+  
+  /* Enhanced status colors - Minimalist and clear */
+  --color-success: #2e7d32;             /* Deep green for confident success */
+  --color-success-light: #4caf50;       /* Lighter success variant */
+  --color-success-bg: #e8f5e8;          /* Subtle success background */
+  --color-success-border: #a5d6a7;      /* Clear success border */
+  --color-success-text: #1b5e20;        /* Dark success text */
+  
+  --color-warning: #ef6c00;             /* Orange for clear warnings */
+  --color-warning-light: #ff9800;       /* Lighter warning variant */
+  --color-warning-bg: #fff3e0;          /* Subtle warning background */
+  --color-warning-border: #ffcc02;      /* Clear warning border */
+  --color-warning-text: #e65100;        /* Dark warning text */
+  
+  --color-error: #d32f2f;               /* Clear red for errors */
+  --color-error-light: #f44336;         /* Lighter error variant */
+  --color-error-bg: #ffebee;            /* Subtle error background */
+  --color-error-border: #ef9a9a;        /* Clear error border */
+  --color-error-text: #c62828;          /* Dark error text */
+  
+  --color-info: #1976d2;                /* Blue for information */
+  --color-info-light: #2196f3;          /* Lighter info variant */
+  --color-info-bg: #e3f2fd;             /* Subtle info background */
+  --color-info-border: #90caf9;         /* Clear info border */
+  --color-info-text: #0d47a1;           /* Dark info text */
+  
+  /* Component-specific colors */
+  --color-card-bg: var(--color-bg-primary);
+  --color-card-shadow: rgba(0, 0, 0, 0.08);
+  
+  --color-navbar-bg: rgba(255, 255, 255, 0.95);
+  
+  --color-code-bg: #fafafa;
+  --color-code-text: #424242;
+  
+  /* Advanced minimalist utilities */
+  --color-gradient-primary: linear-gradient(135deg, var(--color-accent) 0%, color-mix(in srgb, var(--color-accent) 85%, #0d47a1) 100%);
+  --color-gradient-success: linear-gradient(135deg, var(--color-success) 0%, color-mix(in srgb, var(--color-success) 85%, #1b5e20) 100%);
+  --color-gradient-warning: linear-gradient(135deg, var(--color-warning) 0%, color-mix(in srgb, var(--color-warning) 85%, #e65100) 100%);
+  --color-gradient-error: linear-gradient(135deg, var(--color-error) 0%, color-mix(in srgb, var(--color-error) 85%, #c62828) 100%);
+  
+  /* Minimalist color psychology */
+  --color-warm: #ff9800;                 /* Warm orange for subtle energy */
+  --color-cool: #2196f3;                 /* Cool blue for calm focus */
+  --color-neutral: #9e9e9e;              /* Neutral gray for balance */
+  
+  /* Theme metadata */
+  --theme-name: 'Minimalist';
+  --theme-type: 'light';
+  --theme-contrast: 'enhanced';
+  --theme-psychology: 'clarity-focused';
+}
+
+/* === HIGH CONTRAST THEME === */
+.high-contrast {
+  /* WCAG AAA accessibility-focused ultra-high contrast theme */
+  
+  /* Ultra-enhanced text hierarchy - Maximum contrast ratios */
+  --color-text-primary: #000000;        /* Pure black for maximum contrast */
+  --color-text-secondary: #1a1a1a;      /* Near black for secondary content */
+  --color-text-muted: #4d4d4d;          /* Dark gray maintaining AAA contrast */
+  --color-text-inverse: #ffffff;        /* Pure white for dark backgrounds */
+  --color-text-link: #0000ee;           /* Classic blue for maximum recognition */
+  --color-text-link-hover: #000080;     /* Navy blue for hover state */
+  --color-text-link-visited: #551a8b;   /* Purple for visited links */
+  --color-text-emphasis: #000000;       /* Pure black for emphasis */
+  --color-text-subtle: #404040;         /* Dark gray for subtle content */
+  
+  /* Background hierarchy */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f0f0f0;
+  --color-bg-tertiary: #e0e0e0;
+  --color-bg-inverse: #000000;
+  --color-bg-overlay: rgba(0, 0, 0, 0.9);
+  
+  /* Surface colors */
+  --color-surface-100: #f8f8f8;
+  --color-surface-200: #f0f0f0;
+  --color-surface-300: #e0e0e0;
+  --color-surface-400: #d0d0d0;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #f0f0f0;
+  
+  /* Interactive colors - Ultra-high contrast */
+  --color-accent: #0000ee;              /* Classic blue for maximum accessibility */
+  --color-accent-hover: #000080;        /* Navy blue for clear hover feedback */
+  --color-accent-active: #000066;       /* Darker blue for active state */
+  --color-accent-light: #4169e1;        /* Royal blue for lighter use */
+  --color-accent-subtle: #e6f2ff;       /* Very light blue for subtle backgrounds */
+  --color-accent-rgb: 0, 0, 238;        /* RGB values for alpha usage */
+  --color-accent-contrast: #ffffff;     /* White text on accent */
+  --color-accent-complement: #ff4500;    /* Orange red complement for alerts */
+  --color-accent-gradient: linear-gradient(135deg, var(--color-accent) 0%, #000080 100%);
+  
+  /* Border colors - Maximum visibility */
+  --color-border: #000000;              /* Black borders for maximum contrast */
+  --color-border-hover: #333333;        /* Dark gray for hover states */
+  --color-border-focus: #0000ee;        /* Blue for focus indication */
+  --color-border-strong: #000000;       /* Black for strong emphasis */
+  --color-border-subtle: #808080;       /* Medium gray for subtle borders */
+  
+  /* Ultra-high contrast status colors */
+  --color-success: #006400;             /* Dark green for success */
+  --color-success-light: #228b22;       /* Forest green for lighter use */
+  --color-success-bg: #f0fff0;          /* Honeydew background */
+  --color-success-border: #008000;      /* Green border */
+  --color-success-text: #006400;        /* Dark green text */
+  
+  --color-warning: #ff6600;             /* Orange for warnings */
+  --color-warning-light: #ff8c00;       /* Dark orange for lighter use */
+  --color-warning-bg: #fff8dc;          /* Cornsilk background */
+  --color-warning-border: #ffa500;      /* Orange border */
+  --color-warning-text: #cc5500;        /* Dark orange text */
+  
+  --color-error: #cc0000;               /* Dark red for errors */
+  --color-error-light: #ff0000;         /* Red for lighter use */
+  --color-error-bg: #fff0f0;            /* Light pink background */
+  --color-error-border: #ff0000;        /* Red border */
+  --color-error-text: #990000;          /* Dark red text */
+  
+  --color-info: #0000cc;                /* Dark blue for information */
+  --color-info-light: #0000ff;          /* Blue for lighter use */
+  --color-info-bg: #f0f8ff;             /* Alice blue background */
+  --color-info-border: #0000ff;         /* Blue border */
+  --color-info-text: #000080;           /* Navy blue text */
+  
+  /* Component-specific colors */
+  --color-card-bg: var(--color-bg-primary);
+  --color-card-shadow: rgba(0, 0, 0, 0.8);  /* Strong shadow for definition */
+  
+  --color-navbar-bg: rgba(255, 255, 255, 1.0);
+  
+  --color-code-bg: #f8f8f8;
+  --color-code-text: #000000;
+  
+  /* Ultra-high contrast utilities */
+  --color-gradient-primary: linear-gradient(135deg, var(--color-accent) 0%, #000080 100%);
+  --color-gradient-success: linear-gradient(135deg, var(--color-success) 0%, #004d00 100%);
+  --color-gradient-warning: linear-gradient(135deg, var(--color-warning) 0%, #cc5500 100%);
+  --color-gradient-error: linear-gradient(135deg, var(--color-error) 0%, #990000 100%);
+  
+  /* High contrast color psychology */
+  --color-warm: #ff6600;                 /* Orange for warm, alert energy */
+  --color-cool: #0000cc;                 /* Blue for cool, focused calm */
+  --color-neutral: #808080;              /* Gray for balanced neutrality */
+  
+  /* Theme metadata */
+  --theme-name: 'High Contrast';
+  --theme-type: 'light';
+  --theme-contrast: 'ultra-high';
+  --theme-psychology: 'accessibility-first';
+}
+
+/* === CUSTOM THEME === */
+.custom-theme {
+  /* User-customizable theme with enhanced flexibility and psychology */
+  /* Inherits from professional-light by default with dynamic customization */
+  /* Custom accent color and psychological preferences applied via JavaScript */
+  
+  /* Base customizable colors - defaults that can be overridden */
+  --color-accent-custom: var(--color-accent, #2563eb);  /* Default to professional blue */
+  --color-accent-custom-hover: color-mix(in srgb, var(--color-accent-custom) 80%, #000000);
+  --color-accent-custom-active: color-mix(in srgb, var(--color-accent-custom) 70%, #000000);
+  --color-accent-custom-light: color-mix(in srgb, var(--color-accent-custom) 60%, #ffffff);
+  --color-accent-custom-subtle: color-mix(in srgb, var(--color-accent-custom) 15%, #ffffff);
+  
+  /* Dynamic color calculations for custom accent */
+  --color-accent: var(--color-accent-custom);
+  --color-accent-hover: var(--color-accent-custom-hover);
+  --color-accent-active: var(--color-accent-custom-active);
+  --color-accent-light: var(--color-accent-custom-light);
+  --color-accent-subtle: var(--color-accent-custom-subtle);
+  
+  /* Custom personality traits (can be overridden by user preferences) */
+  --theme-personality: var(--custom-personality, 'balanced');  /* Options: warm, cool, energetic, calm, balanced */
+  --theme-formality: var(--custom-formality, 'professional'); /* Options: casual, professional, formal */
+  --theme-creativity: var(--custom-creativity, 'moderate');    /* Options: conservative, moderate, creative */
+  
+  /* Customizable psychological color adjustments */
+  --color-warm-custom: var(--custom-warm, #f59e0b);          /* User can override warm accent */
+  --color-cool-custom: var(--custom-cool, #0ea5e9);          /* User can override cool accent */
+  --color-neutral-custom: var(--custom-neutral, #6b7280);    /* User can override neutral */
+  
+  /* Dynamic status colors based on custom accent */
+  --color-success-custom: var(--custom-success, #10b981);    /* Custom success color */
+  --color-warning-custom: var(--custom-warning, #f59e0b);    /* Custom warning color */
+  --color-error-custom: var(--custom-error, #ef4444);        /* Custom error color */
+  --color-info-custom: var(--color-accent-custom);           /* Info uses custom accent */
+  
+  /* Customizable component preferences */
+  --border-radius-custom: var(--custom-border-radius, var(--radius-md)); /* User preferred border radius */
+  --shadow-strength-custom: var(--custom-shadow-strength, 1); /* Shadow intensity multiplier */
+  --animation-speed-custom: var(--custom-animation-speed, 1); /* Animation speed multiplier */
+  
+  /* Advanced custom gradients */
+  --color-gradient-primary: linear-gradient(135deg, var(--color-accent-custom) 0%, var(--color-accent-custom-hover) 100%);
+  --color-gradient-success: linear-gradient(135deg, var(--color-success-custom) 0%, color-mix(in srgb, var(--color-success-custom) 80%, #000000) 100%);
+  --color-gradient-warning: linear-gradient(135deg, var(--color-warning-custom) 0%, color-mix(in srgb, var(--color-warning-custom) 80%, #000000) 100%);
+  --color-gradient-error: linear-gradient(135deg, var(--color-error-custom) 0%, color-mix(in srgb, var(--color-error-custom) 80%, #000000) 100%);
+  
+  /* Customizable emotional color mappings */
+  --color-warm: var(--color-warm-custom);
+  --color-cool: var(--color-cool-custom);
+  --color-neutral: var(--color-neutral-custom);
+  
+  /* Custom component shadows with user preference scaling */
+  --color-card-shadow: rgba(0, 0, 0, calc(0.1 * var(--shadow-strength-custom)));
+  --color-shadow: rgba(0, 0, 0, calc(0.1 * var(--shadow-strength-custom)));
+  --color-shadow-strong: rgba(0, 0, 0, calc(0.25 * var(--shadow-strength-custom)));
+  
+  /* Custom animation duration scaling */
+  --duration-custom-fast: calc(var(--duration-150) * var(--animation-speed-custom));
+  --duration-custom-normal: calc(var(--duration-300) * var(--animation-speed-custom));
+  --duration-custom-slow: calc(var(--duration-500) * var(--animation-speed-custom));
+  
+  /* Theme metadata with customization indicators */
+  --theme-name: 'Custom';
+  --theme-type: 'adaptive';
+  --theme-contrast: var(--custom-contrast, 'normal');
+  --theme-psychology: var(--custom-psychology, 'user-defined');
+  --theme-version: '2.0';
+  --theme-customizable: 'true';
+}
+
+/* === THEME SYSTEM UTILITIES === */
+
+/* Enhanced theme transition management with semantic support */
+.theme-transition {
+  transition: 
+    background-color var(--duration-300) var(--ease-out),
+    color var(--duration-300) var(--ease-out),
+    border-color var(--duration-300) var(--ease-out),
+    box-shadow var(--duration-300) var(--ease-out),
+    backdrop-filter var(--duration-300) var(--ease-out),
+    opacity var(--duration-300) var(--ease-out);
+}
+
+/* Semantic theme classes for consistent application */
+.theme-text-primary { color: var(--color-text-primary); }
+.theme-text-secondary { color: var(--color-text-secondary); }
+.theme-text-muted { color: var(--color-text-muted); }
+.theme-text-accent { color: var(--color-accent); }
+.theme-text-success { color: var(--color-success); }
+.theme-text-warning { color: var(--color-warning); }
+.theme-text-error { color: var(--color-error); }
+.theme-text-info { color: var(--color-info); }
+
+.theme-bg-primary { background-color: var(--color-bg-primary); }
+.theme-bg-secondary { background-color: var(--color-bg-secondary); }
+.theme-bg-accent { background-color: var(--color-accent); }
+.theme-bg-success { background-color: var(--color-success-bg); }
+.theme-bg-warning { background-color: var(--color-warning-bg); }
+.theme-bg-error { background-color: var(--color-error-bg); }
+.theme-bg-info { background-color: var(--color-info-bg); }
+
+.theme-border-default { border-color: var(--color-border); }
+.theme-border-accent { border-color: var(--color-accent); }
+.theme-border-success { border-color: var(--color-success-border); }
+.theme-border-warning { border-color: var(--color-warning-border); }
+.theme-border-error { border-color: var(--color-error-border); }
+.theme-border-info { border-color: var(--color-info-border); }
+
+/* Disable transitions during theme changes */
+.no-theme-transition,
+.no-theme-transition * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* === THEME-AWARE COMPONENT ENHANCEMENTS === */
+
+/* Enhanced card theming */
+.c-card {
+  background-color: var(--color-card-bg);
+  border-color: var(--color-card-border);
+  box-shadow: 0 4px 6px var(--color-card-shadow);
+}
+
+/* Enhanced navbar theming */
+.navbar {
+  background-color: var(--color-navbar-bg);
+  border-bottom-color: var(--color-navbar-border);
+  backdrop-filter: blur(8px);
+}
+
+/* Enhanced code block theming */
+.code-block,
+pre {
+  background-color: var(--color-code-bg);
+  border-color: var(--color-code-border);
+  color: var(--color-code-text);
+}
+
+/* === ACCESSIBILITY ENHANCEMENTS === */
+
+/* Comprehensive high contrast mode detection and enhancement */
+@media (prefers-contrast: high) {
+  :root {
+    /* Enhanced contrast adjustments for all themes */
+    --color-border: #000000;
+    --color-text-primary: #000000;
+    --color-text-secondary: #1a1a1a;
+    --color-text-muted: #404040;
+    --border-width-1: 2px;
+    --border-width-2: 3px;
+    --border-width-3: 4px;
+    
+    /* Status colors with maximum contrast */
+    --color-success: #006400;
+    --color-warning: #cc5500;
+    --color-error: #cc0000;
+    --color-info: #0000cc;
+    
+    /* Theme metadata update */
+    --theme-contrast: 'ultra-high';
+    --theme-accessibility: 'enhanced';
+  }
+  
+  .professional-dark,
+  .retro-tech {
+    --color-border: #ffffff;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #e0e0e0;
+    --color-text-muted: #b0b0b0;
+    
+    /* Dark theme high contrast status colors */
+    --color-success: #00ff00;
+    --color-warning: #ffaa00;
+    --color-error: #ff4444;
+    --color-info: #4444ff;
+  }
+  
+  /* All themes get enhanced borders and shadows */
+  * {
+    --shadow-strength: 2;
+    --border-opacity: 1;
+  }
+  
+  /* Consistent focus indicators across all themes */
+  .theme-focus-enhanced {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Enhanced reduced motion support with theme awareness */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-reduce-duration: 50ms;
+    --animation-speed-custom: 0.1;
+    --theme-motion: 'reduced';
+  }
+}
+
+/* Color gamut support for enhanced themes */
+@media (color-gamut: p3) {
+  .retro-tech {
+    /* Use P3 color space for enhanced neon effects */
+    --color-accent: color(display-p3 1 0.42 0.62);
+    --color-success: color(display-p3 0 1 0.62);
+    --theme-color-space: 'p3';
+  }
+}
+
+/* Light sensitivity accommodation */
+@media (prefers-contrast: less) {
+  :root {
+    --color-shadow: rgba(0, 0, 0, 0.05);
+    --color-shadow-strong: rgba(0, 0, 0, 0.15);
+    --border-width-1: 1px;
+    --theme-contrast: 'low';
+    --theme-accessibility: 'light-sensitive';
+  }
+}
+
+/* Enhanced color scheme preference integration with theme consistency */
+@media (prefers-color-scheme: dark) {
+  :root:not(.professional-light):not(.minimalist):not(.high-contrast):not(.theme-override) {
+    /* Apply enhanced dark theme as default when no explicit theme is set */
+    --color-text-primary: #f8fafc;
+    --color-text-secondary: #cbd5e1;
+    --color-text-muted: #94a3b8;
+    --color-text-inverse: #0f172a;
+    --color-bg-primary: #111827;
+    --color-bg-secondary: #1f2937;
+    --color-bg-tertiary: #374151;
+    --color-surface-100: #1f2937;
+    --color-surface-200: #374151;
+    --color-surface-300: #4b5563;
+    --color-border: #374151;
+    --color-border-hover: #4b5563;
+    --color-accent: #60a5fa;
+    --color-accent-hover: #3b82f6;
+    --color-accent-rgb: 96, 165, 250;
+    --color-success: #22c55e;
+    --color-warning: #fbbf24;
+    --color-error: #f87171;
+    --color-info: #60a5fa;
+    
+    /* Auto-detected theme metadata */
+    --theme-name: 'Auto Dark';
+    --theme-type: 'dark';
+    --theme-contrast: 'normal';
+    --theme-psychology: 'system-preference';
+  }
+}
+
+/* Light scheme preference with enhanced consistency */
+@media (prefers-color-scheme: light) {
+  :root:not(.professional-dark):not(.retro-tech):not(.theme-override) {
+    /* Ensure light theme consistency when explicitly preferred */
+    --theme-type: 'light';
+    --theme-psychology: 'system-preference';
+  }
+}
+
+/* No preference - maintain current theme with metadata update */
+@media (prefers-color-scheme: no-preference) {
+  :root {
+    --theme-psychology: 'user-neutral';
+  }
+}
+
+/* === PRINT THEME === */
+@media print {
+  * {
+    --color-text-primary: #000000 !important;
+    --color-text-secondary: #333333 !important;
+    --color-bg-primary: #ffffff !important;
+    --color-bg-secondary: #ffffff !important;
+    --color-border: #000000 !important;
+    --color-shadow: transparent !important;
+    --color-card-shadow: transparent !important;
+  }
+}
+
+/* === THEME VALIDATION === */
+
+/* Comprehensive debug mode for theme development */
+.debug-theme::before {
+  content: 'Theme: ' var(--theme-name) ' | Type: ' var(--theme-type) ' | Contrast: ' var(--theme-contrast) ' | Psychology: ' var(--theme-psychology);
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+  padding: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  z-index: 9999;
+  border-radius: 0 0 var(--radius-md) 0;
+  max-width: 50vw;
+  word-wrap: break-word;
+}
+
+/* Theme capability indicators */
+.theme-supports-dark { --supports-dark: 'true'; }
+.theme-supports-light { --supports-light: 'true'; }
+.theme-supports-custom { --supports-custom: 'true'; }
+.theme-supports-animations { --supports-animations: 'true'; }
+.theme-supports-gradients { --supports-gradients: 'true'; }
+
+/* Theme quality indicators */
+.theme-wcag-aa { --wcag-level: 'AA'; }
+.theme-wcag-aaa { --wcag-level: 'AAA'; }
+.theme-enterprise-ready { --enterprise-ready: 'true'; }
+.theme-performance-optimized { --performance-optimized: 'true'; }
+
+/* Theme consistency validation helpers */
+.validate-theme-colors {
+  /* CSS custom property fallback validation */
+  color: var(--color-text-primary, #ff0000); /* Red fallback indicates missing token */
+  background: var(--color-bg-primary, #ff00ff); /* Magenta fallback indicates missing token */
+  border-color: var(--color-border, #00ff00); /* Green fallback indicates missing token */
+}
+
+/* Theme semantic consistency check */
+.theme-semantic-check {
+  /* Ensure all themes provide required semantic tokens */
+  --required-text-primary: var(--color-text-primary);
+  --required-text-secondary: var(--color-text-secondary);
+  --required-bg-primary: var(--color-bg-primary);
+  --required-accent: var(--color-accent);
+  --required-success: var(--color-success);
+  --required-warning: var(--color-warning);
+  --required-error: var(--color-error);
+  --required-info: var(--color-info);
+}
