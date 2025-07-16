@@ -6,9 +6,6 @@
 @import '../design-system/animations.css';
 @import '../design-system/formatting.css';
 
-/* Legacy animation system - will be deprecated */
-@import './animations.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
