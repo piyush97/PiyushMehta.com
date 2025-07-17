@@ -199,7 +199,7 @@ export const InteractiveQuiz: React.FC = () => {
             
             return (
               <button
-                key={`option-${currentQuestion}-${index}`}
+                key={`option-${currentQuestion}-${option.slice(0, 20)}-${index}`}
                 type="button"
                 onClick={() => handleAnswerSelect(index)}
                 disabled={showExplanation}

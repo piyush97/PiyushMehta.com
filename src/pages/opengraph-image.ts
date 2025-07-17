@@ -12,9 +12,11 @@ export const alt = 'Piyush Mehta - Software Engineer & Tech Speaker';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, site }) => {
   try {
     const searchParams = new URL(url).searchParams;
+    const siteUrl = site || new URL('https://piyushmehta.com');
+    const siteDomain = siteUrl.hostname;
     const title = searchParams.get('title') || 'Piyush Mehta';
     const description = searchParams.get('description') || 'Software Engineer & Tech Speaker';
     const type = searchParams.get('type') || 'website';
@@ -243,7 +245,7 @@ export const GET: APIRoute = async ({ url }) => {
               fontWeight: '500',
             },
           },
-          'piyushmehta.com'
+          siteDomain
         ),
       ]
     );

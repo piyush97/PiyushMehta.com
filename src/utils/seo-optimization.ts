@@ -13,7 +13,7 @@ export interface ImageMetadata {
 }
 
 /**
- * Generate consistent OpenGraph image URLs using the new opengraph-image route
+ * Generate consistent OpenGraph image URLs using the enhanced OG generator
  * @param params - Parameters for OG image generation
  * @returns Optimized OG image URL
  */
@@ -35,11 +35,35 @@ export function generateOgImageUrl(params: {
     tags, 
     template = 'default',
     theme = 'dark',
-    baseUrl = 'https://www.piyushmehta.com' 
+    baseUrl
   } = params;
+  
+  // Ensure we have a baseUrl
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for generateOgImageUrl');
+  }
+  
+  // Map legacy templates to enhanced templates
+  const templateMapping = {
+    'default': 'syntax',
+    'minimal': 'minimal',
+    'tech': 'terminal',
+    'blog': 'blog'
+  } as const;
+  
+  // Map legacy themes to enhanced themes
+  const themeMapping = {
+    'dark': 'dark',
+    'light': 'light',
+    'retro': 'retro'
+  } as const;
   
   const searchParams = new URLSearchParams();
   searchParams.set('title', title);
+  searchParams.set('template', templateMapping[template as keyof typeof templateMapping] || 'syntax');
+  searchParams.set('theme', themeMapping[theme as keyof typeof themeMapping] || 'dark');
+  searchParams.set('showLogo', 'true');
+  searchParams.set('showBadge', 'true');
   
   if (description) {
     searchParams.set('description', description);
@@ -57,21 +81,12 @@ export function generateOgImageUrl(params: {
     searchParams.set('tags', tags.join(','));
   }
 
-  // Add template and theme support
-  if (template !== 'default') {
-    searchParams.set('template', template);
-  }
-  
-  if (theme !== 'dark') {
-    searchParams.set('theme', theme);
-  }
-
-  // Use the new opengraph-image route
-  return `${baseUrl}/opengraph-image?${searchParams.toString()}`;
+  // Use the enhanced OG API endpoint
+  return `${baseUrl}/api/og-enhanced?${searchParams.toString()}`;
 }
 
 /**
- * Generate Twitter-optimized image URLs using the new twitter-image route
+ * Generate Twitter-optimized image URLs using the enhanced OG generator
  * @param params - Parameters for Twitter image generation
  * @returns Optimized Twitter image URL
  */
@@ -93,14 +108,35 @@ export function generateTwitterImageUrl(params: {
     tags, 
     template = 'twitter',
     theme = 'dark',
-    baseUrl = 'https://www.piyushmehta.com' 
+    baseUrl
   } = params;
   
+  // Ensure we have a baseUrl
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for generateTwitterImageUrl');
+  }
+  
+  // Map legacy templates to enhanced templates
+  const templateMapping = {
+    'default': 'syntax',
+    'minimal': 'minimal',
+    'tech': 'terminal',
+    'blog': 'blog',
+    'twitter': 'modern'
+  } as const;
+  
+  // Use the enhanced OG generator for better Twitter optimization
   const searchParams = new URLSearchParams();
   searchParams.set('title', title);
+  searchParams.set('template', templateMapping[template as keyof typeof templateMapping] || 'modern');
+  searchParams.set('theme', theme);
+  searchParams.set('showLogo', 'false'); // Twitter crops logos
+  searchParams.set('showBadge', 'true');
   
   if (description) {
-    searchParams.set('description', description);
+    // Twitter prefers shorter descriptions
+    const twitterDescription = description.length > 125 ? `${description.substring(0, 125)}...` : description;
+    searchParams.set('description', twitterDescription);
   }
   
   if (type) {
@@ -115,17 +151,8 @@ export function generateTwitterImageUrl(params: {
     searchParams.set('tags', tags.join(','));
   }
 
-  // Add template and theme support
-  if (template !== 'twitter') {
-    searchParams.set('template', template);
-  }
-  
-  if (theme !== 'dark') {
-    searchParams.set('theme', theme);
-  }
-
-  // Use the new twitter-image route
-  return `${baseUrl}/twitter-image?${searchParams.toString()}`;
+  // Use the enhanced OG API endpoint
+  return `${baseUrl}/api/og-enhanced?${searchParams.toString()}`;
 }
 
 /**
@@ -163,7 +190,7 @@ export function generateStructuredData(params: {
     author: {
       '@type': 'Person',
       name: author,
-      url: 'https://www.piyushmehta.com',
+      url: new URL('/', url).origin,
       sameAs: [
         'https://github.com/piyush97',
         'https://linkedin.com/in/piyush24',
@@ -185,7 +212,7 @@ export function generateStructuredData(params: {
       publisher: {
         '@type': 'Person',
         name: author,
-        url: 'https://www.piyushmehta.com',
+        url: new URL('/', url).origin,
       },
       ...(image && { image: image }),
     };
@@ -231,7 +258,10 @@ export function optimizeKeywords(keywords: string[], tags: string[] = []): strin
  * @param baseUrl - Base URL (default: https://piyushmehta.com)
  * @returns Canonical URL
  */
-export function generateCanonicalUrl(path: string = '', baseUrl: string = 'https://www.piyushmehta.com'): string {
+export function generateCanonicalUrl(path: string = '', baseUrl?: string): string {
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for generateCanonicalUrl');
+  }
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${baseUrl}${cleanPath}`;
   
@@ -277,8 +307,11 @@ export function sanitizeDescription(description: string, maxLength: number = 160
  * @param baseUrl - Base URL for the site
  * @returns Absolute image URL
  */
-export function resolveImageUrl(imageUrl: string, baseUrl: string = 'https://www.piyushmehta.com'): string {
+export function resolveImageUrl(imageUrl: string, baseUrl: string): string {
   if (!imageUrl) return '';
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for resolveImageUrl');
+  }
   
   // Already absolute URL
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
@@ -309,8 +342,8 @@ export function generateSecureImageUrl(imageUrl: string): string {
     return imageUrl.replace('http://', 'https://');
   }
   
-  // Relative URL - resolve to HTTPS
-  return resolveImageUrl(imageUrl, 'https://www.piyushmehta.com');
+  // For relative URLs, return as-is (should be resolved first by resolveImageUrl)
+  return imageUrl;
 }
 
 /**
@@ -322,7 +355,7 @@ export function generateSecureImageUrl(imageUrl: string): string {
  */
 export function extractImageMetadata(
   image: { url: string; alt?: string; width?: number; height?: number; type?: string } | string | null,
-  baseUrl: string = 'https://www.piyushmehta.com',
+  baseUrl?: string,
   fallbackParams?: {
     title: string;
     description?: string;
@@ -333,6 +366,11 @@ export function extractImageMetadata(
     theme?: 'dark' | 'light' | 'retro';
   }
 ): ImageMetadata {
+  // Ensure we have a baseUrl
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for extractImageMetadata');
+  }
+  
   // If we have a specific image, use it
   if (image) {
     if (typeof image === 'string') {
