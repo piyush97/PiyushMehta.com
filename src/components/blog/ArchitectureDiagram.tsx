@@ -227,7 +227,7 @@ const ArchitectureDiagram: React.FC = () => {
         {phases.map((phase, index) => (
           <button
             type="button"
-            key={`phase-${index}`}
+            key={`phase-${phase.title.replace(/\s+/g, '-')}`}
             onClick={() => setSelectedPhase(index)}
             className={`px-4 py-2 rounded-lg text-sm transition-all ${
               selectedPhase === index
@@ -250,7 +250,7 @@ const ArchitectureDiagram: React.FC = () => {
       <div className="relative bg-white rounded-lg border border-card-border p-6 mb-6 overflow-x-auto">
         <svg width="600" height="500" className="min-w-full">
           {/* Render Connections */}
-          {currentPhase.connections.map((connection, index) => {
+          {currentPhase.connections.map((connection, _index) => {
             const fromComponent = currentPhase.components.find(c => c.id === connection.from);
             const toComponent = currentPhase.components.find(c => c.id === connection.to);
             
@@ -263,7 +263,7 @@ const ArchitectureDiagram: React.FC = () => {
 
             return (
               <line
-                key={index}
+                key={`connection-${connection.from}-${connection.to}`}
                 x1={x1}
                 y1={y1}
                 x2={x2}
@@ -304,6 +304,14 @@ const ArchitectureDiagram: React.FC = () => {
               <div
                 className={getComponentStyle(component.type)}
                 onClick={() => setShowDetails(component.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setShowDetails(component.id);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
                 style={{ width: '80px', height: '40px' }}
               >
                 <div className="text-center leading-tight">
@@ -346,7 +354,7 @@ const ArchitectureDiagram: React.FC = () => {
                       <h5 className="font-semibold text-text-primary">Specifications:</h5>
                       <ul className="space-y-1">
                         {details.specs.map((spec, index) => (
-                          <li key={`spec-${index}`} className="flex items-start">
+                          <li key={`spec-${spec.slice(0, 15)}-${index}`} className="flex items-start">
                             <div className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0"></div>
                             <span className="text-text-secondary text-sm">{spec}</span>
                           </li>

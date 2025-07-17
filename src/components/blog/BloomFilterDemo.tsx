@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 interface BloomFilterDemoProps {}
 
@@ -89,7 +89,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
         <div className="flex gap-2 mb-2">
           {filter.bits.map((bit, index) => (
             <div
-              key={`bit-${index}`}
+              key={`bit-${index}-${bit ? '1' : '0'}`}
               className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${
                 bit ? 'bg-green-500' : 'bg-gray-400'
               }`}
@@ -100,7 +100,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
         </div>
         <div className="flex gap-2 text-sm text-text-secondary">
           {filter.bits.map((_, index) => (
-            <div key={`bit-label-${index}`} className="w-12 text-center">
+            <div key={`bit-position-${index}`} className="w-12 text-center">
               {index}
             </div>
           ))}
@@ -174,9 +174,9 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
           Items in Filter ({filter.items.length}):
         </h4>
         <div className="flex flex-wrap gap-2">
-          {filter.items.map((item, index) => (
+          {filter.items.map((item, _index) => (
             <span
-              key={`item-${item}-${index}`}
+              key={`item-${item}-${item.length}`}
               className="bg-accent/20 text-accent px-2 py-1 rounded text-sm"
             >
               {item}

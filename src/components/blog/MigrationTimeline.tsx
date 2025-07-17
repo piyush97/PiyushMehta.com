@@ -122,7 +122,7 @@ const MigrationTimeline: React.FC = () => {
         {timelineData.map((event, index) => (
           <button
             type="button"
-            key={`timeline-${index}`}
+            key={`timeline-${event.time}`}
             onClick={() => setSelectedHour(index)}
             className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
               selectedHour === index
@@ -180,7 +180,7 @@ const MigrationTimeline: React.FC = () => {
           <h5 className="font-semibold text-text-primary">Actions Performed:</h5>
           <ul className="space-y-2">
             {timelineData[selectedHour].details.map((detail, index) => (
-              <li key={`detail-${index}`} className="flex items-start">
+              <li key={`detail-${timelineData[selectedHour].time}-${index}`} className="flex items-start">
                 <div className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0"></div>
                 <span className="text-text-secondary">{detail}</span>
               </li>

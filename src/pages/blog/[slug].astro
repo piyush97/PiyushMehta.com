@@ -22,8 +22,22 @@ const { Content, headings } = await render(post);
 
 const { title, description, date, author, tags, image, banner, ogTemplate, ogTheme } = post.data;
 
+// Import enhanced OG generator
+import { generateBlogOGImage, getRecommendedTemplate } from '../../utils/og-generator';
+
 // Calculate reading time (rough estimate)
 const readingTime = Math.ceil(post.body.split(' ').length / 200);
+
+// Generate enhanced OG image
+const recommendedTemplate = getRecommendedTemplate('article', tags);
+const enhancedOGImage = generateBlogOGImage({
+  title,
+  description,
+  publishedDate: date,
+  tags,
+  readingTime: readingTime.toString(),
+  template: (ogTemplate as string) || recommendedTemplate,
+});
 
 // Generate canonical URL
 const canonicalUrl = new URL(`/blog/${post.slug}`, Astro.site).toString();
@@ -79,7 +93,7 @@ const articleSchema = {
   modifiedTime={date}
   tags={tags}
   canonical={canonicalUrl}
-  image={image || banner}
+  image={image || banner || enhancedOGImage}
   schema={articleSchema}
   ogTemplate={ogTemplate}
   ogTheme={ogTheme}

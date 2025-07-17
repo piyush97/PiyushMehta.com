@@ -514,7 +514,7 @@ export const GET: APIRoute = async ({ url }) => {
                     },
                     `description: "${
                       description.length > 60
-                        ? description.substring(0, 60) + "..."
+                        ? `${description.substring(0, 60)}...`
                         : description
                     }",`
                   )

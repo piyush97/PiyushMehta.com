@@ -14,7 +14,7 @@ const { currentSlug, currentTags = [], maxPosts = 3 } = Astro.props;
 const allPosts = await getCollection('blog');
 
 // Calculate similarity scores for each post
-function calculateSimilarity(post: any, targetTags: string[]) {
+function calculateSimilarity(post: { data: { tags?: string[] } }, targetTags: string[]) {
   if (!post.data.tags || !targetTags.length) return 0;
   
   const postTags = post.data.tags.map((tag: string) => tag.toLowerCase());

@@ -369,7 +369,7 @@ const RiskAssessmentMatrix: React.FC = () => {
                   <h5 className="font-semibold text-text-primary mb-2">Mitigation Strategies:</h5>
                   <ul className="space-y-2">
                     {selectedRisk.mitigation.map((strategy, index) => (
-                      <li key={index} className="flex items-start">
+                      <li key={`strategy-${strategy.slice(0, 20)}-${index}`} className="flex items-start">
                         <div className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0"></div>
                         <span className="text-text-secondary">{strategy}</span>
                       </li>
