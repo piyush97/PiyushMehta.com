@@ -35,8 +35,13 @@ export function generateOgImageUrl(params: {
     tags, 
     template = 'default',
     theme = 'dark',
-    baseUrl = 'https://www.piyushmehta.com' 
+    baseUrl
   } = params;
+  
+  // Ensure we have a baseUrl
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for generateOgImageUrl');
+  }
   
   // Map legacy templates to enhanced templates
   const templateMapping = {
@@ -103,8 +108,13 @@ export function generateTwitterImageUrl(params: {
     tags, 
     template = 'twitter',
     theme = 'dark',
-    baseUrl = 'https://www.piyushmehta.com' 
+    baseUrl
   } = params;
+  
+  // Ensure we have a baseUrl
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for generateTwitterImageUrl');
+  }
   
   // Map legacy templates to enhanced templates
   const templateMapping = {
@@ -180,7 +190,7 @@ export function generateStructuredData(params: {
     author: {
       '@type': 'Person',
       name: author,
-      url: 'https://www.piyushmehta.com',
+      url: new URL('/', url).origin,
       sameAs: [
         'https://github.com/piyush97',
         'https://linkedin.com/in/piyush24',
@@ -202,7 +212,7 @@ export function generateStructuredData(params: {
       publisher: {
         '@type': 'Person',
         name: author,
-        url: 'https://www.piyushmehta.com',
+        url: new URL('/', url).origin,
       },
       ...(image && { image: image }),
     };
@@ -248,7 +258,10 @@ export function optimizeKeywords(keywords: string[], tags: string[] = []): strin
  * @param baseUrl - Base URL (default: https://piyushmehta.com)
  * @returns Canonical URL
  */
-export function generateCanonicalUrl(path: string = '', baseUrl: string = 'https://www.piyushmehta.com'): string {
+export function generateCanonicalUrl(path: string = '', baseUrl?: string): string {
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for generateCanonicalUrl');
+  }
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${baseUrl}${cleanPath}`;
   
@@ -294,8 +307,11 @@ export function sanitizeDescription(description: string, maxLength: number = 160
  * @param baseUrl - Base URL for the site
  * @returns Absolute image URL
  */
-export function resolveImageUrl(imageUrl: string, baseUrl: string = 'https://www.piyushmehta.com'): string {
+export function resolveImageUrl(imageUrl: string, baseUrl: string): string {
   if (!imageUrl) return '';
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for resolveImageUrl');
+  }
   
   // Already absolute URL
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
@@ -326,8 +342,8 @@ export function generateSecureImageUrl(imageUrl: string): string {
     return imageUrl.replace('http://', 'https://');
   }
   
-  // Relative URL - resolve to HTTPS
-  return resolveImageUrl(imageUrl, 'https://www.piyushmehta.com');
+  // For relative URLs, return as-is (should be resolved first by resolveImageUrl)
+  return imageUrl;
 }
 
 /**
@@ -339,7 +355,7 @@ export function generateSecureImageUrl(imageUrl: string): string {
  */
 export function extractImageMetadata(
   image: { url: string; alt?: string; width?: number; height?: number; type?: string } | string | null,
-  baseUrl: string = 'https://www.piyushmehta.com',
+  baseUrl?: string,
   fallbackParams?: {
     title: string;
     description?: string;
@@ -350,6 +366,11 @@ export function extractImageMetadata(
     theme?: 'dark' | 'light' | 'retro';
   }
 ): ImageMetadata {
+  // Ensure we have a baseUrl
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for extractImageMetadata');
+  }
+  
   // If we have a specific image, use it
   if (image) {
     if (typeof image === 'string') {

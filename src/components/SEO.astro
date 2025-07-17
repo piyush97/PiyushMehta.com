@@ -47,14 +47,17 @@ const {
   ogTheme = 'dark',
 } = Astro.props;
 
+// Use the actual request origin for dynamic URLs, fallback to site config
+const baseUrl = Astro.url.origin || Astro.site?.toString() || 'https://piyushmehta.com';
+
 // Optimize and sanitize content
 const optimizedDescription = sanitizeDescription(description);
-const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname);
+const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname, baseUrl);
 
 // Handle image metadata with full OG Protocol compliance and generated image fallback
 const imageMetadata: ImageMetadata = extractImageMetadata(
   image,
-  Astro.site?.toString(),
+  baseUrl,
   {
     title,
     description: optimizedDescription,
@@ -75,7 +78,7 @@ const twitterImageUrl = generateTwitterImageUrl({
   tags,
   template: ogTemplate === 'tech' ? 'tech' : 'twitter', // Use tech template or default Twitter template
   theme: ogTheme === 'retro' ? 'dark' : ogTheme, // Twitter only supports dark/light
-  baseUrl: Astro.site?.toString(),
+  baseUrl,
 });
 
 // Validate image for optimal social sharing
