@@ -80,10 +80,12 @@ const TEMPLATE_CONFIGS = {
   },
 } as const;
 
-export const GET: APIRoute = async ({ params, url }) => {
+export const GET: APIRoute = async ({ params, url, site }) => {
   try {
     const searchParams = new URL(url).searchParams;
     const pathParams = params.params?.split('/') || [];
+    const siteUrl = site || new URL('https://piyushmehta.com');
+    const siteDomain = siteUrl.hostname;
     
     // Enhanced parameter extraction (inspired by Syntax FM's URL structure)
     const title = searchParams.get("title") || decodeURIComponent(pathParams[0] || "Piyush Mehta");
@@ -351,7 +353,7 @@ export const GET: APIRoute = async ({ params, url }) => {
                 opacity: 0.7,
               },
             },
-            "piyushmehta.com"
+            siteDomain
           ),
         ]
       );
@@ -532,7 +534,7 @@ export const GET: APIRoute = async ({ params, url }) => {
                 fontSize: "16px",
               },
             },
-            "piyushmehta.com"
+            siteDomain
           ),
         ]
       );

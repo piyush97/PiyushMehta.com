@@ -11,9 +11,11 @@ export const prerender = false;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, site }) => {
   try {
     const searchParams = new URL(url).searchParams;
+    const siteUrl = site || new URL('https://piyushmehta.com');
+    const _siteDomain = siteUrl.hostname;
     const title = searchParams.get("title") || "Test Image";
 
     // Load fonts from local files

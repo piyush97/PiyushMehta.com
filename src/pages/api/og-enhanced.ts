@@ -96,9 +96,11 @@ const DESIGN_TEMPLATES = {
   },
 } as const;
 
-export const GET: APIRoute = async ({ url, request }) => {
+export const GET: APIRoute = async ({ url, request, site }) => {
   try {
     const searchParams = new URL(url).searchParams;
+    const siteUrl = site || new URL('https://piyushmehta.com');
+    const siteDomain = siteUrl.hostname;
     
     // Extract parameters
     const title = searchParams.get('title') || 'Piyush Mehta';
@@ -410,7 +412,7 @@ export const GET: APIRoute = async ({ url, request }) => {
                 opacity: 0.7,
               },
             },
-            "piyushmehta.com"
+            siteDomain
           ),
         ]
       );

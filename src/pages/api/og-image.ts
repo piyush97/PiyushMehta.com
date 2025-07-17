@@ -12,9 +12,11 @@ export const prerender = false;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, site }) => {
   try {
     const searchParams = new URL(url).searchParams;
+    const siteUrl = site || new URL('https://piyushmehta.com');
+    const siteDomain = siteUrl.hostname;
     const title = searchParams.get("title") || "Piyush Mehta";
     const description =
       searchParams.get("description") || "Software Engineer & Tech Speaker";
@@ -295,7 +297,7 @@ export const GET: APIRoute = async ({ url }) => {
                 fontWeight: "500",
               },
             },
-            "piyushmehta.com"
+            siteDomain
           ),
         ]
       );
@@ -361,7 +363,7 @@ export const GET: APIRoute = async ({ url }) => {
                 textAlign: "center",
               },
             },
-            "Piyush Mehta • piyushmehta.com"
+            `Piyush Mehta • ${siteDomain}`
           ),
         ].filter(Boolean)
       );
@@ -581,7 +583,7 @@ export const GET: APIRoute = async ({ url }) => {
                 fontSize: "16px",
               },
             },
-            "piyushmehta.com"
+            siteDomain
           ),
         ]
       );

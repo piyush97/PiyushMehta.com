@@ -28,7 +28,7 @@ const sampleProject = {
   tags: ['React', 'Portfolio', 'Design', 'Open Source'],
 };
 
-const baseUrl = 'https://piyushmehta.com';
+const baseUrl = Astro.site?.toString() || 'https://piyushmehta.com';
 ---
 
 <Layout title={title} description={description}>
