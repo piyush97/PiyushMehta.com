@@ -22,6 +22,7 @@
     "test-seo": "node test-seo-files.mjs",
     "test-rss": "node test-rss-output.mjs",
     "debug-rss": "node debug-rss-feed.mjs",
+    "validate-og": "node validate-og-images.mjs",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",

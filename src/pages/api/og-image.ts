@@ -598,83 +598,156 @@ export const GET: APIRoute = async ({ url, site }) => {
             display: "flex",
             height: "100%",
             width: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+            letterSpacing: "-.02em",
+            fontWeight: 700,
             background: currentTheme.background,
+            position: "relative",
             fontFamily: "Inter",
-            padding: "60px",
           },
         },
         [
+          // Main content container
           React.createElement(
             "div",
             {
-              key: "badge",
-              style: {
-                display: "inline-block",
-                background: currentTheme.accent,
-                color: "white",
-                padding: "8px 20px",
-                borderRadius: "20px",
-                fontSize: "16px",
-                fontWeight: "600",
-                marginBottom: "30px",
-                width: "fit-content",
-              },
-            },
-            "Blog Post"
-          ),
-
-          React.createElement(
-            "div",
-            {
-              key: "title",
-              style: {
-                fontSize: titleFontSize,
-                fontWeight: "bold",
-                color: currentTheme.textPrimary,
-                lineHeight: 1.2,
-                marginBottom: "20px",
-              },
-            },
-            title
-          ),
-
-          description
-            ? React.createElement(
-                "div",
-                {
-                  key: "description",
-                  style: {
-                    fontSize: "22px",
-                    color: currentTheme.textSecondary,
-                    lineHeight: 1.5,
-                    marginBottom: "30px",
-                  },
-                },
-                description
-              )
-            : null,
-
-          React.createElement(
-            "div",
-            {
-              key: "meta",
+              key: "main",
               style: {
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
-                gap: "20px",
-                color: currentTheme.textTertiary,
-                fontSize: "18px",
+                justifyContent: "center",
+                maxWidth: "1000px",
+                margin: "0 80px",
+                textAlign: "center",
+                background: currentTheme.cardBg,
+                border: `2px solid ${currentTheme.border}`,
+                borderRadius: "20px",
+                padding: "60px",
               },
             },
             [
-              "By Piyush Mehta",
-              date ? new Date(date).toLocaleDateString() : null,
-              tags ? tags.split(",")[0] : null,
-            ]
-              .filter(Boolean)
-              .join(" • ")
+              // Blog badge
+              React.createElement(
+                "div",
+                {
+                  key: "badge",
+                  style: {
+                    background: currentTheme.accent,
+                    color: "white",
+                    padding: "8px 24px",
+                    borderRadius: "20px",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                    marginBottom: "20px",
+                  },
+                },
+                "Blog Post"
+              ),
+
+              // Title
+              React.createElement(
+                "div",
+                {
+                  key: "title",
+                  style: {
+                    fontSize: titleFontSize,
+                    fontWeight: "bold",
+                    color: currentTheme.textPrimary,
+                    lineHeight: 1.2,
+                    marginBottom: "20px",
+                    maxWidth: "900px",
+                  },
+                },
+                title.length > 80 ? `${title.substring(0, 80)}...` : title
+              ),
+
+              // Description
+              description
+                ? React.createElement(
+                    "div",
+                    {
+                      key: "description",
+                      style: {
+                        fontSize: descriptionFontSize,
+                        color: currentTheme.textSecondary,
+                        marginBottom: "20px",
+                        lineHeight: 1.4,
+                        maxWidth: "800px",
+                      },
+                    },
+                    description.length > 120
+                      ? `${description.substring(0, 120)}...`
+                      : description
+                  )
+                : null,
+
+              // Blog post metadata
+              type === "article" && date
+                ? React.createElement(
+                    "div",
+                    {
+                      key: "date",
+                      style: {
+                        fontSize: "20px",
+                        color: currentTheme.textTertiary,
+                        marginBottom: "15px",
+                      },
+                    },
+                    `Published ${new Date(date).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      timeZone: "America/Toronto",
+                    })}`
+                  )
+                : null,
+
+              // Author signature
+              React.createElement(
+                "div",
+                {
+                  key: "author",
+                  style: {
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    background: currentTheme.accent,
+                    borderRadius: "40px",
+                    padding: "25px 60px",
+                    marginTop: "20px",
+                  },
+                },
+                [
+                  React.createElement(
+                    "div",
+                    {
+                      key: "name",
+                      style: {
+                        fontSize: "24px",
+                        fontWeight: "600",
+                        color: "white",
+                      },
+                    },
+                    "Piyush Mehta"
+                  ),
+                  React.createElement(
+                    "div",
+                    {
+                      key: "role",
+                      style: {
+                        fontSize: "16px",
+                        color: "rgba(255, 255, 255, 0.9)",
+                      },
+                    },
+                    "Software Engineer & Tech Speaker"
+                  ),
+                ]
+              ),
+            ].filter(Boolean)
           ),
-        ].filter(Boolean)
+        ]
       );
     };
 
