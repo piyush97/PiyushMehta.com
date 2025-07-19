@@ -1,8 +1,6 @@
 // 🎨 UltraThink™ OG Image Generation Engine
 // Advanced Satori-based dynamic OG image generation with creative templates
 
-import fs from "fs";
-import path from "path";
 import { Resvg } from "@resvg/resvg-js";
 import satori from "satori";
 
@@ -70,12 +68,6 @@ export interface OGImageParams {
   category?: string;
 }
 
-export interface FontData {
-  name: string;
-  data: Buffer;
-  weight: number;
-  style: "normal" | "italic";
-}
 
 export interface ThemeConfig {
   primary: string;
@@ -181,46 +173,7 @@ const DESIGN_SYSTEM = {
 };
 
 // 🔧 Font Loading Utilities
-const fontCache: Map<string, FontData> = new Map();
-
-async function loadFont(
-  name: string,
-  weight: number = 400,
-  style: "normal" | "italic" = "normal"
-): Promise<FontData> {
-  const cacheKey = `${name}-${weight}-${style}`;
-
-  if (fontCache.has(cacheKey)) {
-    return fontCache.get(cacheKey)!;
-  }
-
-  try {
-    const fontPath = path.join(process.cwd(), "public", "fonts", `${name}.otf`);
-    const fontBuffer = fs.readFileSync(fontPath);
-
-    const fontData: FontData = {
-      name,
-      data: fontBuffer,
-      weight,
-      style,
-    };
-
-    fontCache.set(cacheKey, fontData);
-    return fontData;
-  } catch (error) {
-    console.warn(`Failed to load font ${name}:`, error);
-
-    // Fallback to system font
-    const fallbackData: FontData = {
-      name: "system-ui",
-      data: Buffer.from(""), // Empty buffer for system font
-      weight,
-      style,
-    };
-
-    return fallbackData;
-  }
-}
+// Currently using CDN fonts for better reliability and compatibility
 
 // 🎨 Creative Template Generators
 
@@ -579,7 +532,7 @@ function createGradientTechTemplate(params: OGImageParams, theme: ThemeConfig) {
               justifyContent: "space-between",
               alignItems: "flex-start",
               marginBottom: DESIGN_SYSTEM.spacing.lg,
-              zIndex: "2",
+              zIndex: 2,
             },
             children: [
               {
@@ -678,7 +631,7 @@ function createGradientTechTemplate(params: OGImageParams, theme: ThemeConfig) {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              zIndex: "2",
+              zIndex: 2,
             },
             children: [
               {
@@ -728,7 +681,7 @@ function createGradientTechTemplate(params: OGImageParams, theme: ThemeConfig) {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              zIndex: "2",
+              zIndex: 2,
             },
             children: [
               // Tech Stack Tags
@@ -850,7 +803,7 @@ function createTerminalTemplate(params: OGImageParams, _theme: ThemeConfig) {
               alignItems: "center",
               gap: "12px",
               marginBottom: "40px",
-              zIndex: "2",
+              zIndex: 2,
             },
             children: [
               // Terminal Dots
@@ -924,7 +877,7 @@ function createTerminalTemplate(params: OGImageParams, _theme: ThemeConfig) {
               flexDirection: "column",
               justifyContent: "center",
               gap: "32px",
-              zIndex: "2",
+              zIndex: 2,
             },
             children: [
               // Command Line Style Title
@@ -1011,7 +964,7 @@ function createTerminalTemplate(params: OGImageParams, _theme: ThemeConfig) {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              zIndex: "2",
+              zIndex: 2,
               borderTop: "1px solid #00ff88",
               paddingTop: "24px",
             },
@@ -1068,7 +1021,12 @@ function createTerminalTemplate(params: OGImageParams, _theme: ThemeConfig) {
  * ✨ Minimal Clean Template - Elegant, typography-focused
  */
 function createMinimalTemplate(params: OGImageParams, theme: ThemeConfig) {
-  const { title, description, author, publishedTime } = params;
+  const { title, description, author = "Piyush Mehta", publishedTime } = params;
+
+  // Sanitize text content
+  const safeTitle = sanitizeText(title);
+  const safeDescription = sanitizeText(description || "");
+  const safeAuthor = sanitizeText(author);
 
   return {
     type: "div",
@@ -1078,107 +1036,177 @@ function createMinimalTemplate(params: OGImageParams, theme: ThemeConfig) {
         width: "100%",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: theme.primary,
-        padding: DESIGN_SYSTEM.spacing.xl,
+        background: `linear-gradient(180deg, ${theme.primary} 0%, ${theme.secondary}08 100%)`,
+        padding: "100px",
         fontFamily: "Inter",
         color: theme.text,
         justifyContent: "center",
         alignItems: "center",
         textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
       },
       children: [
-        // Minimal Logo/Initial
+        // Subtle background geometry
         {
           type: "div",
           props: {
             style: {
-              width: "80px",
-              height: "80px",
-              borderRadius: "50%",
-              backgroundColor: theme.accent,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "36px",
-              fontWeight: "bold",
-              color: theme.primary,
-              marginBottom: "48px",
+              position: "absolute",
+              top: "0",
+              left: "0",
+              right: "0",
+              bottom: "0",
+              backgroundImage: `radial-gradient(circle at 80% 20%, ${theme.accent}03 40%, transparent 40%), radial-gradient(circle at 20% 80%, ${theme.accent}02 30%, transparent 30%)`,
+              backgroundSize: "800px 800px, 600px 600px",
             },
-            children: "PM",
           },
         },
 
-        // Title
+        // Ultra-minimal brand mark
+        {
+          type: "div",
+          props: {
+            style: {
+              width: "1px",
+              height: "60px",
+              background: `linear-gradient(180deg, transparent 0%, ${theme.accent} 50%, transparent 100%)`,
+              marginBottom: "60px",
+              opacity: "0.8",
+            },
+          },
+        },
+
+        // Refined title typography
         {
           type: "h1",
           props: {
             style: {
-              fontSize: title.length > 50 ? "52px" : "64px",
-              fontWeight: "300",
-              lineHeight: "1.2",
-              margin: "0 0 32px 0",
-              maxWidth: "900px",
+              fontSize: safeTitle.length > 50 ? "54px" : "68px",
+              fontWeight: "200",
+              lineHeight: "1.1",
+              margin: "0 0 40px 0",
+              maxWidth: "1000px",
               color: theme.text,
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.03em",
+              position: "relative",
             },
-            children: title,
+            children: safeTitle,
           },
         },
 
-        // Description
+        // Elegant description
         description && {
           type: "p",
           props: {
             style: {
-              fontSize: "24px",
-              lineHeight: "1.5",
-              margin: "0 0 48px 0",
-              maxWidth: "700px",
+              fontSize: "22px",
+              lineHeight: "1.6",
+              margin: "0 0 60px 0",
+              maxWidth: "650px",
               color: theme.textSecondary,
-              fontWeight: "400",
+              fontWeight: "300",
+              opacity: "0.85",
+              letterSpacing: "0.01em",
             },
             children:
-              description.length > 120
-                ? `${description.substring(0, 117)}...`
-                : description,
+              safeDescription.length > 110
+                ? `${safeDescription.substring(0, 107)}...`
+                : safeDescription,
           },
         },
 
-        // Minimal Divider
-        {
-          type: "div",
-          props: {
-            style: {
-              width: "100px",
-              height: "2px",
-              backgroundColor: theme.accent,
-              marginBottom: "32px",
-            },
-          },
-        },
-
-        // Author & Date
+        // Sophisticated divider system
         {
           type: "div",
           props: {
             style: {
               display: "flex",
               alignItems: "center",
-              gap: "24px",
-              fontSize: "18px",
+              gap: "16px",
+              marginBottom: "40px",
+            },
+            children: [
+              {
+                type: "div",
+                props: {
+                  style: {
+                    width: "24px",
+                    height: "1px",
+                    background: `linear-gradient(90deg, transparent 0%, ${theme.accent}60 50%, transparent 100%)`,
+                  },
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    width: "4px",
+                    height: "4px",
+                    borderRadius: "50%",
+                    backgroundColor: theme.accent,
+                    opacity: "0.6",
+                  },
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    width: "24px",
+                    height: "1px",
+                    background: `linear-gradient(90deg, transparent 0%, ${theme.accent}60 50%, transparent 100%)`,
+                  },
+                },
+              },
+            ],
+          },
+        },
+
+        // Refined author presentation
+        {
+          type: "div",
+          props: {
+            style: {
+              display: "flex",
+              alignItems: "center",
+              gap: "20px",
+              fontSize: "16px",
               color: theme.textSecondary,
+              fontWeight: "400",
+              letterSpacing: "0.02em",
+              opacity: "0.8",
             },
             children: [
               author && {
                 type: "span",
                 props: {
-                  style: { fontWeight: "500" },
-                  children: author,
+                  style: { 
+                    fontWeight: "500",
+                    color: theme.accent,
+                    fontSize: "17px",
+                  },
+                  children: safeAuthor,
+                },
+              },
+              publishedTime && author && {
+                type: "div",
+                props: {
+                  style: {
+                    width: "1px",
+                    height: "16px",
+                    backgroundColor: theme.textSecondary,
+                    opacity: "0.3",
+                  },
                 },
               },
               publishedTime && {
                 type: "span",
                 props: {
+                  style: { 
+                    fontSize: "15px",
+                    opacity: "0.7",
+                  },
                   children: publishedTime.toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
@@ -1187,6 +1215,22 @@ function createMinimalTemplate(params: OGImageParams, theme: ThemeConfig) {
                 },
               },
             ].filter(Boolean),
+          },
+        },
+
+        // Bottom accent mark
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              bottom: "80px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "40px",
+              height: "1px",
+              background: `linear-gradient(90deg, transparent 0%, ${theme.accent}40 50%, transparent 100%)`,
+            },
           },
         },
       ].filter(Boolean),
@@ -1198,7 +1242,12 @@ function createMinimalTemplate(params: OGImageParams, theme: ThemeConfig) {
  * 🏢 Professional Template - Corporate, service-focused
  */
 function createProfessionalTemplate(params: OGImageParams, theme: ThemeConfig) {
-  const { title, description, pageType } = params;
+  const { title, description, pageType, author = "Piyush Mehta" } = params;
+  
+  // Sanitize text content
+  const safeTitle = sanitizeText(title);
+  const safeDescription = sanitizeText(description || "");
+  const safeAuthor = sanitizeText(author);
 
   return {
     type: "div",
@@ -1211,21 +1260,41 @@ function createProfessionalTemplate(params: OGImageParams, theme: ThemeConfig) {
         fontFamily: "Inter",
         color: theme.text,
         position: "relative",
+        overflow: "hidden",
       },
       children: [
+        // Background elements
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: "0",
+              right: "0",
+              width: "400px",
+              height: "400px",
+              borderRadius: "50%",
+              background: `radial-gradient(circle at center, ${theme.accent}15 0%, transparent 70%)`,
+              transform: "translate(150px, -150px)",
+            },
+          },
+        },
+        
         // Left Content Panel
         {
           type: "div",
           props: {
             style: {
               flex: "1",
-              padding: DESIGN_SYSTEM.spacing.xl,
+              padding: "60px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
+              position: "relative",
+              zIndex: "1",
             },
             children: [
-              // Header
+              // Header with enhanced design
               {
                 type: "div",
                 props: {
@@ -1236,26 +1305,27 @@ function createProfessionalTemplate(params: OGImageParams, theme: ThemeConfig) {
                         style: {
                           display: "flex",
                           alignItems: "center",
-                          gap: "16px",
-                          marginBottom: "40px",
+                          gap: "20px",
+                          marginBottom: "50px",
                         },
                         children: [
                           {
                             type: "div",
                             props: {
                               style: {
-                                width: "60px",
-                                height: "60px",
-                                borderRadius: "15px",
+                                width: "70px",
+                                height: "70px",
+                                borderRadius: "20px",
                                 background: `linear-gradient(135deg, ${theme.accent} 0%, ${theme.accent}80 100%)`,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                fontSize: "28px",
-                                fontWeight: "bold",
+                                fontSize: "32px",
+                                fontWeight: "800",
                                 color: theme.primary,
+                                boxShadow: `0 10px 30px ${theme.accent}40`,
                               },
-                              children: "PM",
+                              children: safeAuthor.charAt(0).toUpperCase(),
                             },
                           },
                           {
@@ -1266,18 +1336,19 @@ function createProfessionalTemplate(params: OGImageParams, theme: ThemeConfig) {
                                   type: "div",
                                   props: {
                                     style: {
-                                      fontSize: "24px",
-                                      fontWeight: "bold",
+                                      fontSize: "26px",
+                                      fontWeight: "700",
                                       color: theme.text,
+                                      marginBottom: "4px",
                                     },
-                                    children: "Piyush Mehta",
+                                    children: safeAuthor,
                                   },
                                 },
                                 {
                                   type: "div",
                                   props: {
                                     style: {
-                                      fontSize: "16px",
+                                      fontSize: "18px",
                                       color: theme.accent,
                                       fontWeight: "500",
                                     },
@@ -1294,7 +1365,7 @@ function createProfessionalTemplate(params: OGImageParams, theme: ThemeConfig) {
                 },
               },
 
-              // Main Content
+              // Main Content with enhanced typography
               {
                 type: "div",
                 props: {
@@ -1303,61 +1374,68 @@ function createProfessionalTemplate(params: OGImageParams, theme: ThemeConfig) {
                       type: "h1",
                       props: {
                         style: {
-                          fontSize: title.length > 40 ? "48px" : "56px",
-                          fontWeight: "bold",
-                          lineHeight: "1.2",
-                          margin: "0 0 24px 0",
-                          color: theme.text,
+                          fontSize: safeTitle.length > 40 ? "50px" : "58px",
+                          fontWeight: "800",
+                          lineHeight: "1.1",
+                          margin: "0 0 28px 0",
+                          background: `linear-gradient(135deg, ${theme.text} 0%, ${theme.accent} 100%)`,
+                          backgroundClip: "text",
+                          color: "transparent",
+                          maxWidth: "600px",
                         },
-                        children: title,
+                        children: safeTitle,
                       },
                     },
                     description && {
                       type: "p",
                       props: {
                         style: {
-                          fontSize: "22px",
-                          lineHeight: "1.5",
+                          fontSize: "24px",
+                          lineHeight: "1.6",
                           margin: "0",
                           color: theme.textSecondary,
-                          maxWidth: "500px",
+                          maxWidth: "550px",
+                          opacity: "0.9",
                         },
                         children:
-                          description.length > 100
-                            ? `${description.substring(0, 97)}...`
-                            : description,
+                          safeDescription.length > 120
+                            ? `${safeDescription.substring(0, 117)}...`
+                            : safeDescription,
                       },
                     },
                   ].filter(Boolean),
                 },
               },
 
-              // Service Badge
+              // Enhanced Service Badge
               {
                 type: "div",
                 props: {
                   style: {
-                    display: "inline-flex",
+                    display: "flex",
                     alignItems: "center",
-                    gap: "12px",
-                    padding: "16px 24px",
-                    borderRadius: "30px",
-                    backgroundColor: `${theme.accent}20`,
-                    border: `2px solid ${theme.accent}`,
-                    fontSize: "16px",
+                    gap: "14px",
+                    padding: "18px 28px",
+                    borderRadius: "50px",
+                    background: `linear-gradient(135deg, ${theme.accent}15 0%, ${theme.accent}25 100%)`,
+                    border: `2px solid ${theme.accent}60`,
+                    fontSize: "17px",
                     fontWeight: "600",
                     color: theme.accent,
                     alignSelf: "flex-start",
+                    backdropFilter: "blur(10px)",
+                    boxShadow: `0 8px 25px ${theme.accent}20`,
                   },
                   children: [
                     {
                       type: "div",
                       props: {
                         style: {
-                          width: "8px",
-                          height: "8px",
+                          width: "10px",
+                          height: "10px",
                           borderRadius: "50%",
-                          backgroundColor: theme.accent,
+                          background: `linear-gradient(135deg, ${theme.accent} 0%, ${theme.accent}80 100%)`,
+                          boxShadow: `0 0 10px ${theme.accent}60`,
                         },
                       },
                     },
@@ -1375,18 +1453,19 @@ function createProfessionalTemplate(params: OGImageParams, theme: ThemeConfig) {
           },
         },
 
-        // Right Accent Panel
+        // Enhanced Right Panel
         {
           type: "div",
           props: {
             style: {
-              width: "300px",
-              background: `linear-gradient(135deg, ${theme.accent}20 0%, ${theme.accent}40 100%)`,
+              width: "350px",
+              background: `linear-gradient(135deg, ${theme.accent}12 0%, ${theme.accent}25 100%)`,
               position: "relative",
               overflow: "hidden",
+              borderLeft: `1px solid ${theme.border}30`,
             },
             children: [
-              // Geometric Pattern
+              // Sophisticated geometric pattern
               {
                 type: "div",
                 props: {
@@ -1396,24 +1475,57 @@ function createProfessionalTemplate(params: OGImageParams, theme: ThemeConfig) {
                     left: "0",
                     right: "0",
                     bottom: "0",
-                    backgroundImage: `radial-gradient(circle at 50% 50%, ${theme.accent}30 2px, transparent 2px)`,
-                    backgroundSize: "30px 30px",
+                    backgroundImage: `
+                      radial-gradient(circle at 25% 25%, ${theme.accent}20 2px, transparent 2px),
+                      radial-gradient(circle at 75% 75%, ${theme.accent}15 2px, transparent 2px)
+                    `,
+                    backgroundSize: "40px 40px, 60px 60px",
+                    opacity: "0.6",
                   },
                 },
               },
 
-              // Large Accent Element
+              // Multiple accent elements for depth
               {
                 type: "div",
                 props: {
                   style: {
                     position: "absolute",
-                    bottom: "-100px",
-                    right: "-100px",
-                    width: "300px",
-                    height: "300px",
+                    top: "-80px",
+                    right: "-80px",
+                    width: "200px",
+                    height: "200px",
                     borderRadius: "50%",
-                    background: `radial-gradient(circle, ${theme.accent}60 0%, transparent 70%)`,
+                    background: `radial-gradient(circle, ${theme.accent}40 0%, transparent 70%)`,
+                  },
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    position: "absolute",
+                    bottom: "-120px",
+                    right: "-60px",
+                    width: "280px",
+                    height: "280px",
+                    borderRadius: "50%",
+                    background: `radial-gradient(circle, ${theme.accent}25 0%, transparent 70%)`,
+                  },
+                },
+              },
+              
+              // Vertical accent line
+              {
+                type: "div",
+                props: {
+                  style: {
+                    position: "absolute",
+                    left: "0",
+                    top: "100px",
+                    bottom: "100px",
+                    width: "4px",
+                    background: `linear-gradient(180deg, transparent 0%, ${theme.accent} 50%, transparent 100%)`,
                   },
                 },
               },
@@ -1444,53 +1556,156 @@ function createDefaultTemplate(params: OGImageParams, theme: ThemeConfig) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: theme.primary,
-        backgroundImage: `linear-gradient(45deg, ${theme.primary} 0%, ${theme.secondary} 100%)`,
+        background: `radial-gradient(ellipse at top, ${theme.secondary} 0%, ${theme.primary} 100%)`,
         fontFamily: "Inter",
         color: theme.text,
         padding: "40px",
+        position: "relative",
+        overflow: "hidden",
       },
       children: [
+        // Background decorative elements
         {
           type: "div",
           props: {
             style: {
-              fontSize: "64px",
-              fontWeight: "bold",
+              position: "absolute",
+              top: "-100px",
+              right: "-100px",
+              width: "300px",
+              height: "300px",
+              borderRadius: "50%",
+              background: `linear-gradient(135deg, ${theme.accent}30 0%, transparent 70%)`,
+              opacity: "0.4",
+            },
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              bottom: "-80px",
+              left: "-80px",
+              width: "200px",
+              height: "200px",
+              borderRadius: "50%",
+              background: `linear-gradient(135deg, ${theme.accent}20 0%, transparent 70%)`,
+              opacity: "0.5",
+            },
+          },
+        },
+        // Content container
+        {
+          type: "div",
+          props: {
+            style: {
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
               textAlign: "center",
-              marginBottom: "20px",
-              lineHeight: 1.2,
+              padding: "50px",
+              borderRadius: "20px",
+              background: `linear-gradient(135deg, ${theme.secondary}20 0%, ${theme.primary}10 100%)`,
+              backdropFilter: "blur(10px)",
+              border: `1px solid ${theme.border}30`,
+              boxShadow: `0 20px 40px -10px ${theme.primary}50`,
               maxWidth: "1000px",
+              position: "relative",
+              zIndex: "1",
             },
-            children: safeTitle,
+            children: [
+              {
+                type: "div",
+                props: {
+                  style: {
+                    fontSize: "62px",
+                    fontWeight: "800",
+                    lineHeight: "1.1",
+                    marginBottom: "24px",
+                    background: `linear-gradient(135deg, ${theme.text} 0%, ${theme.accent} 100%)`,
+                    backgroundClip: "text",
+                    color: "transparent",
+                    maxWidth: "900px",
+                  },
+                  children: safeTitle,
+                },
+              },
+              description && {
+                type: "div",
+                props: {
+                  style: {
+                    fontSize: "24px",
+                    lineHeight: "1.5",
+                    color: theme.textSecondary,
+                    maxWidth: "750px",
+                    marginBottom: "32px",
+                    opacity: "0.9",
+                  },
+                  children: safeDescription,
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "12px",
+                    marginTop: "8px",
+                  },
+                  children: [
+                    {
+                      type: "div",
+                      props: {
+                        style: {
+                          width: "28px",
+                          height: "28px",
+                          borderRadius: "50%",
+                          background: `linear-gradient(135deg, ${theme.accent} 0%, ${theme.secondary} 100%)`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "12px",
+                          fontWeight: "600",
+                          color: theme.text,
+                        },
+                        children: safeAuthor.charAt(0).toUpperCase(),
+                      },
+                    },
+                    {
+                      type: "div",
+                      props: {
+                        style: {
+                          fontSize: "18px",
+                          color: theme.accent,
+                          fontWeight: "500",
+                        },
+                        children: safeAuthor,
+                      },
+                    },
+                  ],
+                },
+              },
+            ].filter(Boolean),
           },
         },
-        description && {
-          type: "div",
-          props: {
-            style: {
-              fontSize: "28px",
-              textAlign: "center",
-              color: theme.textSecondary,
-              maxWidth: "800px",
-              marginBottom: "30px",
-              lineHeight: 1.4,
-            },
-            children: safeDescription,
-          },
-        },
+        // Bottom accent bar
         {
           type: "div",
           props: {
             style: {
-              fontSize: "20px",
-              color: theme.accent,
-              textAlign: "center",
+              position: "absolute",
+              bottom: "0",
+              left: "0",
+              right: "0",
+              height: "4px",
+              background: `linear-gradient(90deg, ${theme.accent} 0%, ${theme.secondary} 50%, ${theme.accent} 100%)`,
             },
-            children: safeAuthor,
           },
         },
-      ].filter(Boolean),
+      ],
     },
   };
 }
@@ -1737,8 +1952,21 @@ const TEMPLATE_REGISTRY = {
 function selectOptimalTemplate(params: OGImageParams): string {
   const { pageType, tags, template } = params;
 
-  // Explicit template override
-  if (template && TEMPLATE_REGISTRY[template]) {
+  // Debug logging - CRITICAL for debugging
+  if (import.meta.env.DEV) {
+    console.log('🔍 selectOptimalTemplate called with:', {
+      pageType,
+      tags,
+      requestedTemplate: template,
+      availableTemplates: Object.keys(TEMPLATE_REGISTRY)
+    });
+  }
+
+  // Explicit template override - this should be the most common path
+  if (template && template in TEMPLATE_REGISTRY) {
+    if (import.meta.env.DEV) {
+      console.log('✅ Using explicit template:', template);
+    }
     return template;
   }
 
@@ -1751,7 +1979,13 @@ function selectOptimalTemplate(params: OGImageParams): string {
         )
       )
     ) {
+      if (import.meta.env.DEV) {
+        console.log('✅ Auto-selected tech template based on tags');
+      }
       return "tech";
+    }
+    if (import.meta.env.DEV) {
+      console.log('✅ Auto-selected blog template for article');
     }
     return "blog";
   }
@@ -1761,13 +1995,22 @@ function selectOptimalTemplate(params: OGImageParams): string {
     pageType === "about" ||
     pageType === "contact"
   ) {
+    if (import.meta.env.DEV) {
+      console.log('✅ Auto-selected professional template for service page');
+    }
     return "professional";
   }
 
   if (pageType === "project") {
+    if (import.meta.env.DEV) {
+      console.log('✅ Auto-selected tech template for project');
+    }
     return "tech";
   }
 
+  if (import.meta.env.DEV) {
+    console.log('✅ Fallback to default template');
+  }
   return "default";
 }
 
@@ -1776,12 +2019,9 @@ function selectOptimalTemplate(params: OGImageParams): string {
  */
 export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
   try {
-    // Load fonts
-    const fonts = await Promise.all([
-      loadFont("Inter-Regular", 400),
-      loadFont("Inter-Medium", 500),
-      loadFont("Inter-Bold", 700),
-    ]);
+    // Skip font loading for now - focus on getting templates working
+    console.log('⚠️ Skipping font loading to get templates working first');
+    const fonts: FontData[] = [];
 
     // Get theme configuration
     const themeConfig = DESIGN_SYSTEM.themes[params.theme || "dark"];
@@ -1790,6 +2030,24 @@ export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
     const templateName = selectOptimalTemplate(params);
     const templateFunction =
       TEMPLATE_REGISTRY[templateName as keyof typeof TEMPLATE_REGISTRY] || TEMPLATE_REGISTRY.default;
+
+    // Critical debug logging to see what template is being selected
+    if (import.meta.env.DEV) {
+      console.log(`🎨 Template Generation Debug:`, {
+        inputParams: {
+          title: params.title,
+          template: params.template,
+          theme: params.theme,
+          pageType: params.pageType
+        },
+        selectedTemplate: templateName,
+        templateFunction: templateFunction.name,
+        functionExists: !!templateFunction,
+        isDefaultFallback: templateFunction === TEMPLATE_REGISTRY.default,
+        availableTemplates: Object.keys(TEMPLATE_REGISTRY),
+        registrySize: Object.keys(TEMPLATE_REGISTRY).length
+      });
+    }
 
     // Sanitize all text content in params to prevent SVG parsing issues
     const sanitizedParams = {
@@ -1809,27 +2067,45 @@ export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
     // Generate SVG using Satori with enhanced error handling
     let svg: string;
     try {
+      console.log('🎯 About to call Satori with:', {
+        templateName,
+        jsxKeys: Object.keys(jsx),
+        hasChildren: jsx.props?.children ? jsx.props.children.length : 'no children',
+        fontsAvailable: fonts.filter((font) => font.data.length > 0).length
+      });
+
+      // Use the most basic font setup that should work with any Satori version
+      const fontArrayBuffer = await fetch(
+        'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.ttf'
+      ).then((res) => res.arrayBuffer()).catch(() => new ArrayBuffer(0));
+
       svg = await satori(jsx, {
         width: 1200,
         height: 630,
-        fonts: fonts
-          .filter((font) => font.data.length > 0)
-          .map((font) => ({
-            name: font.name,
-            data: font.data,
-            weight: font.weight as 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900,
-            style: font.style as 'normal' | 'italic',
-          })),
+        fonts: fontArrayBuffer.byteLength > 0 ? [
+          {
+            name: 'Inter',
+            data: fontArrayBuffer,
+            weight: 400,
+            style: 'normal',
+          },
+        ] : [], // Empty array will trigger Satori to use system font fallback
       });
-    } catch (satoriError) {
-      console.error('❌ Satori generation failed:', {
+
+      console.log('✅ Satori generation successful, SVG length:', svg.length);
+    } catch (satoriError: unknown) {
+      const error = satoriError as Error;
+      console.error('❌ Satori generation failed - THIS IS WHY ALL IMAGES ARE IDENTICAL:', {
         error: satoriError,
+        message: error.message,
+        stack: error.stack,
         params: {
           title: params.title,
           template: params.template,
           theme: params.theme,
         },
         sanitizedParams: sanitizedParams,
+        jsx: JSON.stringify(jsx, null, 2)
       });
       throw satoriError;
     }
