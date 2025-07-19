@@ -77,19 +77,8 @@ const ogParams = new URLSearchParams({
 
 const ogImageUrl = `${baseUrl}/api/og-image?${ogParams.toString()}`;
 
-// Generate Twitter-optimized URL
-const twitterParams = new URLSearchParams({
-  title: finalConfig.title.substring(0, 80),
-  ...(finalConfig.description && { description: finalConfig.description.substring(0, 120) }),
-  ...(pageType && { type: pageType }),
-  ...(publishedTime && { date: publishedTime.toISOString() }),
-  ...(finalConfig.tags && finalConfig.tags.length > 0 && { tags: finalConfig.tags.slice(0, 3).join(',') }),
-  template: finalConfig.template === 'cyber' ? 'tech' : finalConfig.template, // Twitter-friendly templates
-  theme: finalConfig.theme === 'neon' ? 'dark' : finalConfig.theme,
-  twitter: 'true',
-});
-
-const twitterImageUrl = `${baseUrl}/api/og-image?${twitterParams.toString()}`;
+// Use the same styled OG image for Twitter cards
+const twitterImageUrl = ogImageUrl;
 
 // Development debugging
 if (import.meta.env.DEV) {
