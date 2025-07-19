@@ -37,7 +37,7 @@ export const generatePageMetadata = ({
   const canonicalUrl = `${domain}${pagePath}`;
   
   // Default image if none provided
-  const ogImage = image || `${domain}/api/og-image?title=${encodeURIComponent(title)}`;
+  const ogImage = image || `${domain}/images/social.jpg`;
   
   return {
     title,

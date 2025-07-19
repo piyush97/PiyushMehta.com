@@ -13,7 +13,7 @@ export interface ImageMetadata {
 }
 
 /**
- * Generate consistent OpenGraph image URLs using the enhanced OG generator
+ * Generate consistent OpenGraph image URLs using dynamic Satori generation
  * @param params - Parameters for OG image generation
  * @returns Optimized OG image URL
  */
@@ -23,8 +23,8 @@ export function generateOgImageUrl(params: {
   type?: string;
   publishedTime?: Date;
   tags?: string[];
-  template?: 'default' | 'minimal' | 'tech' | 'blog';
-  theme?: 'dark' | 'light' | 'retro';
+  template?: 'default' | 'minimal' | 'tech' | 'blog' | 'cyber' | 'gradient' | 'terminal' | 'modern' | 'professional';
+  theme?: 'dark' | 'light' | 'retro' | 'neon' | 'corporate' | 'warm' | 'ocean';
   baseUrl?: string;
 }): string {
   const { 
@@ -38,55 +38,30 @@ export function generateOgImageUrl(params: {
     baseUrl
   } = params;
   
-  // Ensure we have a baseUrl
+  // Ensure we have a baseUrl and clean it
   if (!baseUrl) {
     throw new Error('baseUrl is required for generateOgImageUrl');
   }
   
-  // Map legacy templates to enhanced templates
-  const templateMapping = {
-    'default': 'syntax',
-    'minimal': 'minimal',
-    'tech': 'terminal',
-    'blog': 'blog'
-  } as const;
+  // Remove trailing slash to avoid double slashes
+  const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
   
-  // Map legacy themes to enhanced themes
-  const themeMapping = {
-    'dark': 'dark',
-    'light': 'light',
-    'retro': 'retro'
-  } as const;
+  // Create URL-safe parameters for dynamic generation
+  const ogParams = new URLSearchParams({
+    title: title.substring(0, 100), // Limit length for URL
+    ...(description && { description: description.substring(0, 150) }),
+    ...(type && { type }),
+    ...(publishedTime && { date: publishedTime.toISOString() }),
+    ...(tags && tags.length > 0 && { tags: tags.slice(0, 5).join(',') }),
+    template,
+    theme,
+  });
   
-  const searchParams = new URLSearchParams();
-  searchParams.set('title', title);
-  searchParams.set('template', templateMapping[template as keyof typeof templateMapping] || 'syntax');
-  searchParams.set('theme', themeMapping[theme as keyof typeof themeMapping] || 'dark');
-  searchParams.set('showLogo', 'true');
-  searchParams.set('showBadge', 'true');
-  
-  if (description) {
-    searchParams.set('description', description);
-  }
-  
-  if (type) {
-    searchParams.set('type', type);
-  }
-  
-  if (publishedTime) {
-    searchParams.set('date', publishedTime.toISOString());
-  }
-  
-  if (tags && tags.length > 0) {
-    searchParams.set('tags', tags.join(','));
-  }
-
-  // Use the enhanced OG API endpoint
-  return `${baseUrl}/api/og-enhanced?${searchParams.toString()}`;
+  return `${cleanBaseUrl}/api/og-image?${ogParams.toString()}`;
 }
 
 /**
- * Generate Twitter-optimized image URLs using the enhanced OG generator
+ * Generate Twitter-optimized image URLs
  * @param params - Parameters for Twitter image generation
  * @returns Optimized Twitter image URL
  */
@@ -96,8 +71,8 @@ export function generateTwitterImageUrl(params: {
   type?: string;
   publishedTime?: Date;
   tags?: string[];
-  template?: 'default' | 'minimal' | 'tech' | 'blog' | 'twitter';
-  theme?: 'dark' | 'light';
+  template?: 'default' | 'minimal' | 'tech' | 'blog' | 'twitter' | 'modern' | 'professional';
+  theme?: 'dark' | 'light' | 'retro' | 'neon' | 'corporate';
   baseUrl?: string;
 }): string {
   const { 
@@ -106,53 +81,32 @@ export function generateTwitterImageUrl(params: {
     type, 
     publishedTime, 
     tags, 
-    template = 'twitter',
+    template = 'minimal', // Twitter prefers cleaner designs
     theme = 'dark',
     baseUrl
   } = params;
   
-  // Ensure we have a baseUrl
+  // Ensure we have a baseUrl and clean it
   if (!baseUrl) {
     throw new Error('baseUrl is required for generateTwitterImageUrl');
   }
   
-  // Map legacy templates to enhanced templates
-  const templateMapping = {
-    'default': 'syntax',
-    'minimal': 'minimal',
-    'tech': 'terminal',
-    'blog': 'blog',
-    'twitter': 'modern'
-  } as const;
+  // Remove trailing slash to avoid double slashes
+  const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
   
-  // Use the enhanced OG generator for better Twitter optimization
-  const searchParams = new URLSearchParams();
-  searchParams.set('title', title);
-  searchParams.set('template', templateMapping[template as keyof typeof templateMapping] || 'modern');
-  searchParams.set('theme', theme);
-  searchParams.set('showLogo', 'false'); // Twitter crops logos
-  searchParams.set('showBadge', 'true');
+  // Use the same OG API but with Twitter-optimized template
+  const twitterParams = new URLSearchParams({
+    title: title.substring(0, 80), // Shorter for Twitter
+    ...(description && { description: description.substring(0, 120) }),
+    ...(type && { type }),
+    ...(publishedTime && { date: publishedTime.toISOString() }),
+    ...(tags && tags.length > 0 && { tags: tags.slice(0, 3).join(',') }), // Fewer tags for Twitter
+    template: template === 'twitter' ? 'minimal' : template,
+    theme: theme === 'retro' ? 'dark' : theme, // Twitter prefers standard themes
+    twitter: 'true', // Special flag for Twitter optimizations
+  });
   
-  if (description) {
-    // Twitter prefers shorter descriptions
-    const twitterDescription = description.length > 125 ? `${description.substring(0, 125)}...` : description;
-    searchParams.set('description', twitterDescription);
-  }
-  
-  if (type) {
-    searchParams.set('type', type);
-  }
-  
-  if (publishedTime) {
-    searchParams.set('date', publishedTime.toISOString());
-  }
-  
-  if (tags && tags.length > 0) {
-    searchParams.set('tags', tags.join(','));
-  }
-
-  // Use the enhanced OG API endpoint
-  return `${baseUrl}/api/og-enhanced?${searchParams.toString()}`;
+  return `${cleanBaseUrl}/api/og-image?${twitterParams.toString()}`;
 }
 
 /**

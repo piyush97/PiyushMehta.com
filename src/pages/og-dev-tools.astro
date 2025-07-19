@@ -1,0 +1,448 @@
+---
+// 🛠️ OG Image Development Tools & Testing Interface
+// Comprehensive testing, validation, and preview system for OG images
+
+import Layout from '../layouts/Layout.astro';
+
+// Only available in development
+if (!import.meta.env.DEV) {
+  return Astro.redirect('/404');
+}
+
+const baseUrl = Astro.url.origin;
+
+// Template and theme options
+const templates = ['default', 'minimal', 'tech', 'blog', 'cyber', 'gradient', 'terminal', 'modern', 'professional'];
+const themes = ['dark', 'light', 'retro', 'neon', 'corporate', 'warm', 'ocean'];
+
+// Sample configurations for testing
+const sampleConfigs = [
+  {
+    title: 'Modern Blog Article with Long Title That Tests Truncation',
+    description: 'This is a comprehensive test of the modern blog template with a longer description to see how it handles text wrapping and layout.',
+    template: 'modern',
+    theme: 'dark',
+    tags: 'blog,modern,react,javascript',
+    type: 'article',
+  },
+  {
+    title: 'Tech Innovation & Development',
+    description: 'Cutting-edge technology solutions and development practices.',
+    template: 'tech',
+    theme: 'neon',
+    tags: 'tech,innovation,development',
+    type: 'project',
+  },
+  {
+    title: 'Professional Services & Consulting',
+    description: 'Expert software engineering and technical consulting services.',
+    template: 'professional',
+    theme: 'corporate',
+    tags: 'professional,consulting,services',
+    type: 'services',
+  },
+  {
+    title: 'Clean Minimal Design',
+    description: 'Simple, elegant, and focused content presentation.',
+    template: 'minimal',
+    theme: 'light',
+    tags: 'minimal,clean,design',
+    type: 'website',
+  },
+  {
+    title: 'Terminal & Cyber Aesthetics',
+    description: 'Dark terminal theme for technical and development content.',
+    template: 'terminal',
+    theme: 'neon',
+    tags: 'terminal,cyber,hacker,code',
+    type: 'article',
+  },
+];
+---
+
+<Layout
+  title="OG Image Development Tools"
+  description="Comprehensive OG image testing, validation, and preview system"
+  noindex={true}
+>
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold mb-4 text-text-primary">
+          🎨 OG Image Development Tools
+        </h1>
+        <p class="text-xl text-light-400 mb-6">
+          Comprehensive testing, validation, and preview system for Open Graph images
+        </p>
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-lg text-yellow-800">
+          <span>⚠️</span>
+          <span class="text-sm font-medium">Development Only - Not available in production</span>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <button id="healthCheckBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+          🔍 Health Check
+        </button>
+        <button id="testSuiteBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+          🧪 Run Test Suite
+        </button>
+        <button id="benchmarkBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+          🚀 Performance Test
+        </button>
+        <button id="cacheStatsBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+          📊 Cache Stats
+        </button>
+      </div>
+
+      <!-- Results Area -->
+      <div id="resultsArea" class="mb-8 p-4 bg-gray-100 rounded-lg hidden">
+        <h3 class="text-lg font-semibold mb-2">Test Results</h3>
+        <pre id="resultsContent" class="text-sm overflow-x-auto"></pre>
+      </div>
+
+      <!-- Interactive OG Generator -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 text-text-primary">🎯 Interactive OG Generator</h2>
+        
+        <form id="ogForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <div>
+              <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+              <input 
+                type="text" 
+                id="title" 
+                name="title" 
+                value="Sample Blog Post Title"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                maxlength="100"
+              />
+            </div>
+            
+            <div>
+              <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea 
+                id="description" 
+                name="description" 
+                rows="3"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                maxlength="200"
+              >This is a sample description for testing the OG image generation system.</textarea>
+            </div>
+            
+            <div>
+              <label for="tags" class="block text-sm font-medium text-gray-700 mb-1">Tags (comma-separated)</label>
+              <input 
+                type="text" 
+                id="tags" 
+                name="tags" 
+                value="blog,test,sample"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+          
+          <div class="space-y-4">
+            <div>
+              <label for="template" class="block text-sm font-medium text-gray-700 mb-1">Template</label>
+              <select 
+                id="template" 
+                name="template"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {templates.map(template => (
+                  <option value={template} selected={template === 'modern'}>
+                    {template.charAt(0).toUpperCase() + template.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label for="theme" class="block text-sm font-medium text-gray-700 mb-1">Theme</label>
+              <select 
+                id="theme" 
+                name="theme"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {themes.map(theme => (
+                  <option value={theme} selected={theme === 'dark'}>
+                    {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Page Type</label>
+              <select 
+                id="type" 
+                name="type"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="article">Article</option>
+                <option value="website">Website</option>
+                <option value="project">Project</option>
+                <option value="about">About</option>
+                <option value="contact">Contact</option>
+                <option value="services">Services</option>
+              </select>
+            </div>
+            
+            <button 
+              type="button" 
+              id="generatePreviewBtn"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors"
+            >
+              🎨 Generate Preview
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Preview Area -->
+      <div id="previewArea" class="bg-white rounded-lg shadow-lg p-6 mb-8 hidden">
+        <h3 class="text-xl font-bold mb-4">Preview</h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div>
+            <h4 class="font-semibold mb-2">OpenGraph Image (1200x630)</h4>
+            <img id="ogPreview" class="w-full border rounded-lg shadow-sm" alt="OG Preview" />
+            <p id="ogUrl" class="text-xs text-gray-500 mt-2 break-all"></p>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-2">Twitter Image (1200x630)</h4>
+            <img id="twitterPreview" class="w-full border rounded-lg shadow-sm" alt="Twitter Preview" />
+            <p id="twitterUrl" class="text-xs text-gray-500 mt-2 break-all"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample Configurations -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 text-text-primary">📋 Sample Configurations</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sampleConfigs.map((config, index) => (
+            <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+              <h3 class="font-semibold mb-2 text-sm">{config.title}</h3>
+              <p class="text-xs text-gray-600 mb-3">{config.description}</p>
+              <div class="flex flex-wrap gap-1 mb-3">
+                <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">{config.template}</span>
+                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">{config.theme}</span>
+              </div>
+              <button 
+                data-config-index={index}
+                class="load-config-btn w-full text-xs bg-gray-600 hover:bg-gray-700 text-white py-1 px-2 rounded transition-colors"
+              >
+                Load Configuration
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Template & Theme Matrix -->
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold mb-6 text-text-primary">🎨 Template & Theme Matrix</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full border-collapse border border-gray-300">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="border border-gray-300 px-3 py-2 text-left">Template</th>
+                {themes.map(theme => (
+                  <th class="border border-gray-300 px-3 py-2 text-center text-xs">
+                    {theme}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {templates.map(template => (
+                <tr>
+                  <td class="border border-gray-300 px-3 py-2 font-medium text-sm">{template}</td>
+                  {themes.map(theme => (
+                    <td class="border border-gray-300 px-1 py-1 text-center">
+                      <button 
+                        data-template={template}
+                        data-theme={theme}
+                        class="matrix-btn w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition-colors"
+                        title={`${template} + ${theme}`}
+                      >
+                        🎨
+                      </button>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ baseUrl, sampleConfigs }}>
+    // Utility functions
+    function showResults(content) {
+      const resultsArea = document.getElementById('resultsArea');
+      const resultsContent = document.getElementById('resultsContent');
+      resultsContent.textContent = content;
+      resultsArea.classList.remove('hidden');
+    }
+
+    // Health check
+    async function runHealthCheck() {
+      showResults('Running health check...');
+      try {
+        const response = await fetch(`${baseUrl}/api/og-image?title=Health Check&template=minimal&theme=light`);
+        if (response.ok) {
+          showResults('✅ Health Check PASSED - OG image system is operational');
+        } else {
+          showResults(`❌ Health Check FAILED - HTTP ${response.status}`);
+        }
+      } catch (error) {
+        showResults(`❌ Health Check ERROR - ${error.message}`);
+      }
+    }
+
+    // Test suite
+    async function runTestSuite() {
+      showResults('Running comprehensive test suite...\nThis may take a few minutes.');
+      try {
+        const response = await fetch(`${baseUrl}/api/og-image?action=stats`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        showResults(`Test Suite Results:\n${JSON.stringify(data, null, 2)}`);
+      } catch (error) {
+        showResults(`❌ Test Suite ERROR - ${error.message}`);
+      }
+    }
+
+    // Performance benchmark
+    async function runBenchmark() {
+      showResults('Running performance benchmark...');
+      const testParams = 'title=Performance Test&template=modern&theme=dark&tags=performance,benchmark';
+      const iterations = 5;
+      const times = [];
+
+      for (let i = 0; i < iterations; i++) {
+        const startTime = Date.now();
+        try {
+          await fetch(`${baseUrl}/api/og-image?${testParams}`);
+          times.push(Date.now() - startTime);
+        } catch (error) {
+          times.push(999999);
+        }
+      }
+
+      const avg = times.reduce((a, b) => a + b, 0) / times.length;
+      const min = Math.min(...times);
+      const max = Math.max(...times);
+
+      showResults(`Performance Benchmark Results:
+Average: ${Math.round(avg)}ms
+Min: ${min}ms
+Max: ${max}ms
+Iterations: ${iterations}
+First call (cache miss): ${times[0]}ms
+Subsequent calls: ${times.slice(1).map(t => t + 'ms').join(', ')}`);
+    }
+
+    // Cache stats
+    async function getCacheStats() {
+      showResults('Fetching cache statistics...');
+      try {
+        const response = await fetch(`${baseUrl}/api/og-image?action=stats`, {
+          method: 'POST'
+        });
+        const data = await response.json();
+        showResults(`Cache Statistics:\n${JSON.stringify(data, null, 2)}`);
+      } catch (error) {
+        showResults(`❌ Cache Stats ERROR - ${error.message}`);
+      }
+    }
+
+    // Generate preview
+    function generatePreview() {
+      const form = document.getElementById('ogForm');
+      const formData = new FormData(form);
+      
+      const params = new URLSearchParams();
+      for (const [key, value] of formData) {
+        params.append(key, value);
+      }
+
+      const ogUrl = `${baseUrl}/api/og-image?${params.toString()}`;
+      const twitterUrl = `${baseUrl}/api/og-image?${params.toString()}&twitter=true`;
+
+      document.getElementById('ogPreview').src = ogUrl;
+      document.getElementById('twitterPreview').src = twitterUrl;
+      document.getElementById('ogUrl').textContent = ogUrl;
+      document.getElementById('twitterUrl').textContent = twitterUrl;
+      
+      document.getElementById('previewArea').classList.remove('hidden');
+    }
+
+    // Load sample configuration
+    function loadSampleConfig(index) {
+      const config = sampleConfigs[index];
+      
+      document.getElementById('title').value = config.title;
+      document.getElementById('description').value = config.description;
+      document.getElementById('tags').value = config.tags;
+      document.getElementById('template').value = config.template;
+      document.getElementById('theme').value = config.theme;
+      document.getElementById('type').value = config.type;
+      
+      generatePreview();
+    }
+
+    // Matrix preview
+    function generateMatrixPreview(template, theme) {
+      const params = new URLSearchParams({
+        title: `${template.charAt(0).toUpperCase() + template.slice(1)} + ${theme.charAt(0).toUpperCase() + theme.slice(1)}`,
+        description: `Testing ${template} template with ${theme} theme`,
+        template: template,
+        theme: theme,
+        tags: 'matrix,test,' + template + ',' + theme
+      });
+
+      const url = `${baseUrl}/api/og-image?${params.toString()}`;
+      window.open(url, '_blank');
+    }
+
+    // Set up event listeners when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🎨 OG Dev Tools: Setting up event listeners...');
+      
+      // Button event listeners
+      document.getElementById('healthCheckBtn')?.addEventListener('click', runHealthCheck);
+      document.getElementById('testSuiteBtn')?.addEventListener('click', runTestSuite);
+      document.getElementById('benchmarkBtn')?.addEventListener('click', runBenchmark);
+      document.getElementById('cacheStatsBtn')?.addEventListener('click', getCacheStats);
+      document.getElementById('generatePreviewBtn')?.addEventListener('click', generatePreview);
+      
+      // Sample config buttons
+      document.querySelectorAll('.load-config-btn').forEach((btn, index) => {
+        btn.addEventListener('click', () => loadSampleConfig(index));
+      });
+      
+      // Matrix buttons
+      document.querySelectorAll('.matrix-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const template = btn.getAttribute('data-template');
+          const theme = btn.getAttribute('data-theme');
+          generateMatrixPreview(template, theme);
+        });
+      });
+      
+      // Auto-generate preview on page load
+      generatePreview();
+      
+      console.log('✅ OG Dev Tools: Event listeners ready!');
+    });
+  </script>
+</Layout>

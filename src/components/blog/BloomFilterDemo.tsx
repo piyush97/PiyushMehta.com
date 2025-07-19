@@ -100,7 +100,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
         </div>
         <div className="flex gap-2 text-sm text-text-secondary">
           {filter.bits.map((_, index) => (
-            <div key={`bit-position-${index}`} className="w-12 text-center">
+            <div key={`bit-position-${index}-${filter.bits.length}`} className="w-12 text-center">
               {index}
             </div>
           ))}

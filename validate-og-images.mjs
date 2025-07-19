@@ -172,7 +172,7 @@ async function main() {
   // Test all template/theme combinations first
   await testAllCombinations();
 
-  console.log("\n" + "=".repeat(50));
+  console.log(`\n${"=".repeat(50)}`);
 
   // Test all blog articles
   const { totalArticles, successCount, failureCount, results } =
