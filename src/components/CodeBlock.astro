@@ -15,7 +15,7 @@ const {
   title, 
   filename, 
   showLineNumbers = false,
-  highlight 
+  highlight: _highlight // underscore prefix to indicate intentionally unused
 } = Astro.props;
 ---
 
@@ -104,14 +104,14 @@ const {
     initializeCopyButtons() {
       // Handle copy buttons
       document.addEventListener('click', (e) => {
-        const copyBtn = e.target.closest('.copy-code-btn');
+        const copyBtn = (e.target as Element)?.closest('.copy-code-btn');
         if (copyBtn) {
           this.copyCode(copyBtn);
         }
       });
     }
 
-    async copyCode(button) {
+    async copyCode(button: HTMLElement) {
       const code = button.dataset.code || button.closest('.code-block-container')?.querySelector('code')?.textContent || '';
       
       if (!code.trim()) {
@@ -133,7 +133,7 @@ const {
       }
     }
 
-    fallbackCopy(text) {
+    fallbackCopy(text: string) {
       const textArea = document.createElement('textarea');
       textArea.value = text;
       textArea.style.position = 'fixed';
@@ -150,7 +150,7 @@ const {
       }
     }
 
-    showFeedback(button, message, type) {
+    showFeedback(button: HTMLElement, message: string, type: string) {
       const copyIcon = button.querySelector('.copy-icon');
       const checkIcon = button.querySelector('.check-icon');
       const copyText = button.querySelector('.copy-text');
@@ -217,7 +217,7 @@ const {
         const code = pre.querySelector('code');
         if (!code) return;
         
-        const lines = code.textContent.split('\n');
+        const lines = (code.textContent || '').split('\n');
         const lineNumbersDiv = document.createElement('div');
         lineNumbersDiv.className = 'line-numbers absolute left-0 top-0 bottom-0 w-12 bg-code-header border-r border-card-border flex flex-col text-xs text-light-500 select-none';
         
@@ -230,9 +230,11 @@ const {
           lineNumbersDiv.appendChild(lineNumber);
         });
         
-        pre.style.paddingLeft = '3.5rem';
-        pre.parentElement.style.position = 'relative';
-        pre.parentElement.insertBefore(lineNumbersDiv, pre);
+        (pre as HTMLElement).style.paddingLeft = '3.5rem';
+        if (pre.parentElement) {
+          (pre.parentElement as HTMLElement).style.position = 'relative';
+          pre.parentElement.insertBefore(lineNumbersDiv, pre);
+        }
       });
     }
 
@@ -250,7 +252,7 @@ const {
       });
     }
 
-    applyBasicHighlighting(code, language) {
+    applyBasicHighlighting(code: Element, language: string) {
       let content = code.innerHTML;
       
       // Common patterns
@@ -279,7 +281,7 @@ const {
       
       // Apply patterns in order
       Object.entries(patterns).forEach(([type, pattern]) => {
-        content = content.replace(pattern.regex, (match, ...groups) => {
+        content = content.replace(pattern.regex, (match: string, ...groups: any[]) => {
           if (type === 'string') {
             return `<span class="${pattern.className}">${match}</span>`;
           }
@@ -302,8 +304,8 @@ const {
       if (mutation.addedNodes.length > 0) {
         const hasCodeBlocks = Array.from(mutation.addedNodes).some(node => 
           node.nodeType === 1 && (
-            node.matches?.('.code-block-container') || 
-            node.querySelector?.('.code-block-container')
+            (node as Element).matches?.('.code-block-container') || 
+            (node as Element).querySelector?.('.code-block-container')
           )
         );
         

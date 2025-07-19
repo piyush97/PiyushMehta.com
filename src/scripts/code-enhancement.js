@@ -290,7 +290,7 @@ class CodeEnhancer {
     textArea.select();
     
     try {
-      document.execCommand('copy');
+      document.execCommand('copy'); // Note: deprecated but kept for compatibility
     } finally {
       document.body.removeChild(textArea);
     }
@@ -368,5 +368,5 @@ if (document.readyState === 'loading') {
 
 // Export for external use
 if (typeof window !== 'undefined') {
-  window.CodeEnhancer = CodeEnhancer;
+  window.CodeEnhancer = CodeEnhancer; // Global assignment for compatibility
 }

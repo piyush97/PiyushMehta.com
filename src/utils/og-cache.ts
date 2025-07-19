@@ -36,6 +36,7 @@ interface CacheStats {
   cacheSize: number;
   lastCleanup: Date;
   avgGenerationTime: number;
+  hitRate?: string;
 }
 
 let cacheStats: CacheStats = {

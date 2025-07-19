@@ -375,13 +375,28 @@ Subsequent calls: ${times.slice(1).map(t => t + 'ms').join(', ')}`);
         params.append(key, value);
       }
 
+      // Add cache-busting parameter to ensure fresh images
+      const cacheBuster = Date.now();
+      params.append('_cb', cacheBuster);
+
       const ogUrl = `${baseUrl}/api/og-image?${params.toString()}`;
       const twitterUrl = `${baseUrl}/api/og-image?${params.toString()}&twitter=true`;
 
-      document.getElementById('ogPreview').src = ogUrl;
-      document.getElementById('twitterPreview').src = twitterUrl;
-      document.getElementById('ogUrl').textContent = ogUrl;
-      document.getElementById('twitterUrl').textContent = twitterUrl;
+      // Force refresh images by updating src with cache-busting
+      const ogPreview = document.getElementById('ogPreview');
+      const twitterPreview = document.getElementById('twitterPreview');
+      
+      ogPreview.src = ogUrl;
+      twitterPreview.src = twitterUrl;
+      
+      // Also update the displayed URLs (without cache buster for copying)
+      const cleanParams = new URLSearchParams();
+      for (const [key, value] of formData) {
+        cleanParams.append(key, value);
+      }
+      
+      document.getElementById('ogUrl').textContent = `${baseUrl}/api/og-image?${cleanParams.toString()}`;
+      document.getElementById('twitterUrl').textContent = `${baseUrl}/api/og-image?${cleanParams.toString()}&twitter=true`;
       
       document.getElementById('previewArea').classList.remove('hidden');
     }

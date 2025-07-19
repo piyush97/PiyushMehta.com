@@ -2,7 +2,7 @@
 // Automated testing, validation, and quality assurance for OG images
 
 import { generateCachedOGImage, getCacheStats } from './og-cache';
-import { DESIGN_SYSTEM, type OGImageParams, generateOGImage } from './og-generator';
+import { type OGImageParams } from './og-generator';
 
 // 🎯 Test Configuration
 export interface TestConfig {
@@ -201,11 +201,11 @@ async function runSingleTest(testConfig: TestConfig): Promise<TestResult> {
       dimensions.width === 1200 && 
       dimensions.height === 630;
     
-    const passed = testConfig.shouldPass && 
-      isValidPNG && 
+    const passed = testConfig.shouldPass ? 
+      (isValidPNG && 
       hasCorrectDimensions && 
       imageBuffer.length > 0 &&
-      generationTime < 10000; // Should generate within 10 seconds
+      generationTime < 10000) : false; // Should generate within 10 seconds
     
     return {
       testName: testConfig.title || 'Unnamed Test',

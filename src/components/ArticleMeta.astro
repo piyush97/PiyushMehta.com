@@ -164,7 +164,7 @@ const shareLinks = [
           textArea.value = window.location.href;
           document.body.appendChild(textArea);
           textArea.select();
-          document.execCommand('copy');
+          document.execCommand('copy'); // Note: deprecated but kept for compatibility
           document.body.removeChild(textArea);
         }
       });

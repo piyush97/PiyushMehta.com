@@ -30,6 +30,9 @@ function validateAndSanitizeInput(searchParams: URLSearchParams): OGImageParams 
   const template = searchParams.get('template')?.trim() as OGImageParams['template'];
   const theme = searchParams.get('theme')?.trim() as OGImageParams['theme'];
   const isTwitter = searchParams.get('twitter') === 'true';
+  
+  // Ignore cache-busting parameter (used by dev tools)
+  // const cacheBuster = searchParams.get('_cb'); // ignored
 
   // Parse and validate date
   let publishedTime: Date | undefined;
@@ -182,9 +185,23 @@ export const GET: APIRoute = async ({ url }) => {
     
   } catch (error) {
     console.error('❌ Error generating OG image:', error);
+    console.error('❌ Error details:', {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      requestUrl: url.toString(),
+      searchParams: Object.fromEntries(url.searchParams),
+    });
     
-    // Return a simple fallback image with error message
-    const errorTitle = url.searchParams.get('title') || 'Error';
+    // Return a simple fallback image with actual title (not "Error")
+    const errorTitle = url.searchParams.get('title') || 'Image Generation Failed';
+    // Sanitize the title for SVG
+    const sanitizedTitle = errorTitle
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+    
     const fallbackSvg = `
       <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -195,13 +212,16 @@ export const GET: APIRoute = async ({ url }) => {
         </defs>
         <rect width="1200" height="630" fill="url(#grad)"/>
         <text x="600" y="280" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">
-          ${errorTitle.substring(0, 50)}
+          ${sanitizedTitle.substring(0, 50)}
         </text>
         <text x="600" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="#8892b0" text-anchor="middle" dominant-baseline="middle">
           Piyush Mehta - Software Engineer
         </text>
         <text x="600" y="380" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#4a5568" text-anchor="middle" dominant-baseline="middle">
           Generated Image • piyushmehta.com
+        </text>
+        <text x="600" y="420" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#ef4444" text-anchor="middle" dominant-baseline="middle">
+          Fallback Image - Check console for errors
         </text>
       </svg>
     `;

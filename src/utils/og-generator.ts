@@ -1789,7 +1789,7 @@ export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
     // Select optimal template
     const templateName = selectOptimalTemplate(params);
     const templateFunction =
-      TEMPLATE_REGISTRY[templateName] || TEMPLATE_REGISTRY.default;
+      TEMPLATE_REGISTRY[templateName as keyof typeof TEMPLATE_REGISTRY] || TEMPLATE_REGISTRY.default;
 
     // Sanitize all text content in params to prevent SVG parsing issues
     const sanitizedParams = {
@@ -1815,8 +1815,8 @@ export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
         .map((font) => ({
           name: font.name,
           data: font.data,
-          weight: font.weight,
-          style: font.style,
+          weight: font.weight as 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900,
+          style: font.style as 'normal' | 'italic',
         })),
     });
 
