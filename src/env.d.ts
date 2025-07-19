@@ -44,7 +44,14 @@ interface ImportMeta {
 declare global {
   interface Window {
     pagefind?: {
-      search(query: string): Promise<any>;
+      search(query: string): Promise<{
+        results: Array<{
+          id: string;
+          url: string;
+          excerpt: string;
+          meta: Record<string, string>;
+        }>;
+      }>;
     };
     commandPalette?: {
       open(): void;
@@ -52,7 +59,10 @@ declare global {
     };
     openCommandPalette?: () => void;
     closeCommandPalette?: () => void;
-    CodeEnhancer?: any;
+    CodeEnhancer?: {
+      init?: () => void;
+      enhance?: (element: Element) => void;
+    };
     initCodeEnhancer?: () => void;
   }
 }

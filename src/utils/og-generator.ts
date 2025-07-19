@@ -50,6 +50,8 @@ export interface OGImageParams {
     | 'terminal'
     | 'modern'
     | 'professional';
+  width?: number;
+  height?: number;
   theme?: 'dark' | 'light' | 'retro' | 'neon' | 'corporate' | 'warm' | 'ocean';
   pageType?: 'article' | 'website' | 'project' | 'about' | 'contact' | 'services' | 'portfolio';
   brandColor?: string;
@@ -2056,7 +2058,7 @@ export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
         .then((res) => res.arrayBuffer())
         .catch(() => new ArrayBuffer(0));
 
-      svg = await satori(jsx as any, {
+      svg = await satori(jsx as React.ReactElement, {
         width: 1200,
         height: 630,
         fonts:
