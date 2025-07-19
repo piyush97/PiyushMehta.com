@@ -19,7 +19,7 @@ function sanitizeText(text: string): string {
       .replace(/&quot;/g, '"')
       .replace(/&#39;/g, "'")
       .replace(/&apos;/g, "'")
-      // Then escape everything properly
+      // Then escape everything properly for SVG safety
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -1806,19 +1806,33 @@ export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
     // Generate JSX structure
     const jsx = templateFunction(sanitizedParams, themeConfig);
 
-    // Generate SVG using Satori
-    const svg = await satori(jsx, {
-      width: 1200,
-      height: 630,
-      fonts: fonts
-        .filter((font) => font.data.length > 0)
-        .map((font) => ({
-          name: font.name,
-          data: font.data,
-          weight: font.weight as 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900,
-          style: font.style as 'normal' | 'italic',
-        })),
-    });
+    // Generate SVG using Satori with enhanced error handling
+    let svg: string;
+    try {
+      svg = await satori(jsx, {
+        width: 1200,
+        height: 630,
+        fonts: fonts
+          .filter((font) => font.data.length > 0)
+          .map((font) => ({
+            name: font.name,
+            data: font.data,
+            weight: font.weight as 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900,
+            style: font.style as 'normal' | 'italic',
+          })),
+      });
+    } catch (satoriError) {
+      console.error('❌ Satori generation failed:', {
+        error: satoriError,
+        params: {
+          title: params.title,
+          template: params.template,
+          theme: params.theme,
+        },
+        sanitizedParams: sanitizedParams,
+      });
+      throw satoriError;
+    }
 
     // Additional SVG sanitization for Resvg compatibility
     const sanitizedSvg = svg

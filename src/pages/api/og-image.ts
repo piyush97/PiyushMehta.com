@@ -15,18 +15,51 @@ let generationCount = 0;
 const templateUsage = new Map<string, number>();
 
 /**
+ * 🔧 Text Normalization for Special Characters
+ */
+function normalizeText(text: string): string {
+  if (!text) return '';
+  
+  return text
+    // First, decode any URL encoding
+    .replace(/%26/g, '&')         // URL encoded ampersand
+    .replace(/%7C/g, '|')         // URL encoded pipe
+    .replace(/%2B/g, '+')         // URL encoded plus
+    .replace(/%3C/g, '<')         // URL encoded less than
+    .replace(/%3E/g, '>')         // URL encoded greater than
+    .replace(/%22/g, '"')         // URL encoded quote
+    .replace(/%27/g, "'")         // URL encoded single quote
+    // Then normalize HTML entities
+    .replace(/&amp;/g, '&')      
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    // Replace problematic characters with safe alternatives for OG generation
+    .replace(/&/g, ' and ')       // Replace ampersand with " and "
+    .replace(/\|/g, ' - ')        // Replace pipe with " - "
+    .replace(/[<>]/g, '')         // Remove angle brackets entirely
+    // Normalize whitespace
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
  * 🛡️ Input Validation & Sanitization
  */
 function validateAndSanitizeInput(searchParams: URLSearchParams): OGImageParams {
-  const title = searchParams.get('title')?.trim();
-  if (!title) {
+  const rawTitle = searchParams.get('title');
+  if (!rawTitle) {
     throw new Error('Title is required');
   }
 
-  const description = searchParams.get('description')?.trim();
-  const type = searchParams.get('type')?.trim();
+  // Enhanced parameter decoding and normalization for special characters
+  const title = normalizeText(rawTitle).trim();
+  const description = searchParams.get('description') ? normalizeText(searchParams.get('description')!).trim() : undefined;
+  const type = searchParams.get('type') ? normalizeText(searchParams.get('type')!).trim() : undefined;
   const dateString = searchParams.get('date')?.trim();
-  const tagsString = searchParams.get('tags')?.trim();
+  const tagsString = searchParams.get('tags') ? normalizeText(searchParams.get('tags')!).trim() : undefined;
   const template = searchParams.get('template')?.trim() as OGImageParams['template'];
   const theme = searchParams.get('theme')?.trim() as OGImageParams['theme'];
   const isTwitter = searchParams.get('twitter') === 'true';
