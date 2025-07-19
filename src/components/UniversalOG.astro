@@ -185,14 +185,14 @@ if (import.meta.env.DEV) {
 <link rel="dns-prefetch" href={new URL(ogImageUrl).origin} />
 <link rel="preconnect" href={new URL(ogImageUrl).origin} crossorigin />
 
-<style>
+<style define:vars={{ ogImageUrl }}>
   /* Ensure OG images are optimized for loading */
   :root {
-    --og-image-url: url(${ogImageUrl});
+    --og-image-url: var(--ogImageUrl);
   }
 </style>
 
-<script>
+<script define:vars={{ ogImageUrl }}>
   // Client-side OG image validation (development only)
   if (import.meta.env.DEV) {
     // Preload OG image to check for errors
@@ -203,6 +203,6 @@ if (import.meta.env.DEV) {
     img.onerror = () => {
       console.error('❌ Failed to load OG image:', img.src);
     };
-    img.src = '{ogImageUrl}';
+    img.src = ogImageUrl;
   }
 </script>
