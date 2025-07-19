@@ -1,54 +1,54 @@
 {
-    "cleanUrls": true,
-    "trailingSlash": false,
-    "headers": [
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
         {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                },
-                {
-                    "key": "X-XSS-Protection",
-                    "value": "1; mode=block"
-                }
-            ]
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
         },
         {
-            "source": "/rss.xml",
-            "headers": [
-                {
-                    "key": "Content-Type",
-                    "value": "application/xml; charset=utf-8"
-                },
-                {
-                    "key": "Cache-Control",
-                    "value": "public, max-age=3600"
-                }
-            ]
+          "key": "X-Frame-Options",
+          "value": "DENY"
         },
         {
-            "source": "/(.*)\\.(jpg|jpeg|png|gif|ico|svg|webp|avif)",
-            "headers": [
-                {
-                    "key": "Cache-Control",
-                    "value": "public, immutable, max-age=31536000"
-                }
-            ]
-        },
-        {
-            "source": "/(.*)\\.(js|css)",
-            "headers": [
-                {
-                    "key": "Cache-Control",
-                    "value": "public, immutable, max-age=31536000"
-                }
-            ]
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
         }
-    ]
+      ]
+    },
+    {
+      "source": "/rss.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/xml; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(jpg|jpeg|png|gif|ico|svg|webp|avif)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, immutable, max-age=31536000"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(js|css)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, immutable, max-age=31536000"
+        }
+      ]
+    }
+  ]
 }

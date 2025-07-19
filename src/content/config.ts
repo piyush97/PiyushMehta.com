@@ -19,8 +19,24 @@ const blog = defineCollection({
       })
       .optional(),
     banner: z.string().optional(),
-    ogTemplate: z.enum(['default', 'minimal', 'tech', 'blog', 'cyber', 'gradient', 'terminal', 'modern', 'professional']).default('modern').optional(),
-    ogTheme: z.enum(['dark', 'light', 'retro', 'neon', 'corporate', 'warm', 'ocean']).default('dark').optional(),
+    ogTemplate: z
+      .enum([
+        'default',
+        'minimal',
+        'tech',
+        'blog',
+        'cyber',
+        'gradient',
+        'terminal',
+        'modern',
+        'professional',
+      ])
+      .default('modern')
+      .optional(),
+    ogTheme: z
+      .enum(['dark', 'light', 'retro', 'neon', 'corporate', 'warm', 'ocean'])
+      .default('dark')
+      .optional(),
   }),
 });
 

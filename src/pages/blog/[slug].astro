@@ -33,8 +33,7 @@ const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: title,
-  description:
-    description || `${title} - A blog post by ${author || 'Piyush Mehta'}`,
+  description: description || `${title} - A blog post by ${author || 'Piyush Mehta'}`,
   author: {
     '@type': 'Person',
     name: author || 'Piyush Mehta',
@@ -79,7 +78,7 @@ const articleSchema = {
   modifiedTime={date}
   tags={tags}
   canonical={canonicalUrl}
-  image={image || banner}
+  image={typeof (image || banner) === 'string' ? (image || banner) : undefined}
   schema={articleSchema}
   ogTemplate={ogTemplate}
   ogTheme={ogTheme}

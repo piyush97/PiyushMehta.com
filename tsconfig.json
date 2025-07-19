@@ -15,12 +15,6 @@
     "noEmit": true,
     "types": ["node", "astro/client"]
   },
-  "include": [
-    "src/**/*",
-    "**/*.astro"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*", "**/*.astro"],
+  "exclude": ["node_modules", "dist"]
 }

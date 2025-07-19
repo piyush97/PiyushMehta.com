@@ -11,7 +11,7 @@ class EnhancedNavbar {
     this.mobileSearchToggle = document.getElementById('mobile-search-toggle');
     this.navbar = document.querySelector('.navbar-enhanced');
     this.isMenuOpen = false;
-    
+
     this.init();
   }
 
@@ -66,12 +66,12 @@ class EnhancedNavbar {
     this.isMenuOpen = true;
     this.mobileMenuButton.classList.add('active');
     this.mobileMenuButton.setAttribute('aria-expanded', 'true');
-    
+
     // Show mobile menu
     this.mobileMenu.classList.remove('-translate-y-full', 'opacity-0', 'invisible');
     this.mobileMenu.classList.add('translate-y-0', 'opacity-100', 'visible');
     this.mobileMenu.setAttribute('aria-hidden', 'false');
-    
+
     // Prevent body scroll when menu is open
     document.body.style.overflow = 'hidden';
 
@@ -86,20 +86,22 @@ class EnhancedNavbar {
     this.isMenuOpen = false;
     this.mobileMenuButton.classList.remove('active');
     this.mobileMenuButton.setAttribute('aria-expanded', 'false');
-    
+
     // Hide mobile menu
     this.mobileMenu.classList.add('-translate-y-full', 'opacity-0', 'invisible');
     this.mobileMenu.classList.remove('translate-y-0', 'opacity-100', 'visible');
     this.mobileMenu.setAttribute('aria-hidden', 'true');
-    
+
     // Restore body scroll
     document.body.style.overflow = '';
   }
 
   handleOutsideClick(e) {
-    if (this.isMenuOpen && 
-        !this.mobileMenu.contains(e.target) && 
-        !this.mobileMenuButton.contains(e.target)) {
+    if (
+      this.isMenuOpen &&
+      !this.mobileMenu.contains(e.target) &&
+      !this.mobileMenuButton.contains(e.target)
+    ) {
       this.closeMobileMenu();
     }
   }
@@ -125,7 +127,7 @@ class EnhancedNavbar {
       if (!this.navbar) return;
 
       const currentScrollY = window.scrollY;
-      
+
       // Add scrolled class for styling changes
       if (currentScrollY > 50) {
         this.navbar.classList.add('scrolled');
@@ -144,7 +146,7 @@ class EnhancedNavbar {
     };
 
     window.addEventListener('scroll', requestTick, { passive: true });
-    
+
     // Handle resize events
     window.addEventListener('resize', () => {
       if (window.innerWidth >= 1024 && this.isMenuOpen) {
@@ -158,7 +160,7 @@ class EnhancedNavbar {
     if (this.mobileMenu) {
       this.mobileMenu.addEventListener('keydown', (e) => {
         if (!this.isMenuOpen) return;
-        
+
         const focusableElements = this.mobileMenu.querySelectorAll(
           'a, button, [tabindex]:not([tabindex="-1"])'
         );
@@ -179,10 +181,10 @@ class EnhancedNavbar {
           }
         }
       });
-      
+
       // Close menu when clicking on navigation links
       const navLinks = this.mobileMenu.querySelectorAll('.mobile-nav-link');
-      navLinks.forEach(link => {
+      navLinks.forEach((link) => {
         link.addEventListener('click', () => {
           if (this.isMenuOpen) {
             this.closeMobileMenu();

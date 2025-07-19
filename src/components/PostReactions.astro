@@ -1,5 +1,5 @@
 ---
-import type { GetStaticPaths } from "astro";
+import type { GetStaticPaths } from 'astro';
 // Post Reactions Component using localStorage
 export interface Props {
   postId: string;
@@ -14,7 +14,7 @@ const {
   title = 'How was this post?',
   showCount = true,
   size = 'md',
-  orientation = 'horizontal'
+  orientation = 'horizontal',
 } = Astro.props;
 
 // Generate unique IDs

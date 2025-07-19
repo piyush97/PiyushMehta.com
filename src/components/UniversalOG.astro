@@ -9,7 +9,16 @@ export interface Props {
   title?: string;
   description?: string;
   tags?: string[];
-  ogTemplate?: 'default' | 'minimal' | 'tech' | 'blog' | 'cyber' | 'gradient' | 'terminal' | 'modern' | 'professional';
+  ogTemplate?:
+    | 'default'
+    | 'minimal'
+    | 'tech'
+    | 'blog'
+    | 'cyber'
+    | 'gradient'
+    | 'terminal'
+    | 'modern'
+    | 'professional';
   ogTheme?: 'dark' | 'light' | 'retro' | 'neon' | 'corporate' | 'warm' | 'ocean';
   pageType?: 'article' | 'website' | 'project' | 'about' | 'contact' | 'services';
   author?: string;
@@ -46,20 +55,23 @@ const frontmatter = {
 const ogConfig = getEnhancedOGConfig(pathname, frontmatter);
 
 // Override with explicit props if forceTemplate is true
-const finalConfig: PageOGConfig = forceTemplate && ogTemplate && ogTheme ? {
-  title: title || ogConfig.title,
-  description: description || ogConfig.description,
-  template: ogTemplate,
-  theme: ogTheme,
-  tags: tags || ogConfig.tags,
-  category: category || ogConfig.category,
-} : {
-  ...ogConfig,
-  title: title || ogConfig.title,
-  description: description || ogConfig.description,
-  tags: tags || ogConfig.tags,
-  category: category || ogConfig.category,
-};
+const finalConfig: PageOGConfig =
+  forceTemplate && ogTemplate && ogTheme
+    ? {
+        title: title || ogConfig.title,
+        description: description || ogConfig.description,
+        template: ogTemplate,
+        theme: ogTheme,
+        tags: tags || ogConfig.tags,
+        category: category || ogConfig.category,
+      }
+    : {
+        ...ogConfig,
+        title: title || ogConfig.title,
+        description: description || ogConfig.description,
+        tags: tags || ogConfig.tags,
+        category: category || ogConfig.category,
+      };
 
 // Generate OG image URL
 const baseUrl = Astro.site?.toString() || Astro.url.origin;
@@ -68,7 +80,8 @@ const ogParams = new URLSearchParams({
   ...(finalConfig.description && { description: finalConfig.description.substring(0, 150) }),
   ...(pageType && { type: pageType }),
   ...(publishedTime && { date: publishedTime.toISOString() }),
-  ...(finalConfig.tags && finalConfig.tags.length > 0 && { tags: finalConfig.tags.slice(0, 5).join(',') }),
+  ...(finalConfig.tags &&
+    finalConfig.tags.length > 0 && { tags: finalConfig.tags.slice(0, 5).join(',') }),
   template: finalConfig.template,
   theme: finalConfig.theme,
   ...(author && { author }),

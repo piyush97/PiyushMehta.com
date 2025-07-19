@@ -1,6 +1,6 @@
 /**
  * Newsletter Security Metrics API
- * 
+ *
  * Provides security analytics and monitoring data for the newsletter API.
  * This endpoint should be secured and only accessible by administrators.
  */
@@ -14,11 +14,11 @@ export const prerender = false;
 function isAuthenticated(request: Request): boolean {
   const authHeader = request.headers.get('authorization');
   const adminToken = process.env.NEWSLETTER_ADMIN_TOKEN;
-  
+
   if (!adminToken) {
     return false; // No admin token configured
   }
-  
+
   return authHeader === `Bearer ${adminToken}`;
 }
 
@@ -59,10 +59,10 @@ export const GET: APIRoute = async ({ request }) => {
     // Import SecurityMonitor from newsletter API
     const { SecurityMonitor } = await import('./newsletter');
     const monitor = SecurityMonitor.getInstance();
-    
+
     // Get security metrics
     const metrics = await monitor.getSecurityMetrics();
-    
+
     if (!metrics) {
       return new Response(
         JSON.stringify({
@@ -85,7 +85,7 @@ export const GET: APIRoute = async ({ request }) => {
     );
   } catch (error) {
     console.error('Failed to get security metrics:', error);
-    
+
     // Log error to Sentry
     Sentry.captureException(error, {
       tags: {
@@ -156,7 +156,7 @@ export const DELETE: APIRoute = async ({ request }) => {
     );
   } catch (error) {
     console.error('Failed to clear security events:', error);
-    
+
     // Log error to Sentry
     Sentry.captureException(error, {
       tags: {

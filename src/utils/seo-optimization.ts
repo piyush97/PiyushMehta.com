@@ -23,29 +23,38 @@ export function generateOgImageUrl(params: {
   type?: string;
   publishedTime?: Date;
   tags?: string[];
-  template?: 'default' | 'minimal' | 'tech' | 'blog' | 'cyber' | 'gradient' | 'terminal' | 'modern' | 'professional';
+  template?:
+    | 'default'
+    | 'minimal'
+    | 'tech'
+    | 'blog'
+    | 'cyber'
+    | 'gradient'
+    | 'terminal'
+    | 'modern'
+    | 'professional';
   theme?: 'dark' | 'light' | 'retro' | 'neon' | 'corporate' | 'warm' | 'ocean';
   baseUrl?: string;
 }): string {
-  const { 
-    title, 
-    description, 
-    type, 
-    publishedTime, 
-    tags, 
+  const {
+    title,
+    description,
+    type,
+    publishedTime,
+    tags,
     template = 'default',
     theme = 'dark',
-    baseUrl
+    baseUrl,
   } = params;
-  
+
   // Ensure we have a baseUrl and clean it
   if (!baseUrl) {
     throw new Error('baseUrl is required for generateOgImageUrl');
   }
-  
+
   // Remove trailing slash to avoid double slashes
   const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
-  
+
   // Create URL-safe parameters for dynamic generation
   const ogParams = new URLSearchParams({
     title: title.substring(0, 100), // Limit length for URL
@@ -56,7 +65,7 @@ export function generateOgImageUrl(params: {
     template,
     theme,
   });
-  
+
   return `${cleanBaseUrl}/api/og-image?${ogParams.toString()}`;
 }
 
@@ -75,25 +84,25 @@ export function generateTwitterImageUrl(params: {
   theme?: 'dark' | 'light' | 'retro' | 'neon' | 'corporate';
   baseUrl?: string;
 }): string {
-  const { 
-    title, 
-    description, 
-    type, 
-    publishedTime, 
-    tags, 
+  const {
+    title,
+    description,
+    type,
+    publishedTime,
+    tags,
     template = 'minimal', // Twitter prefers cleaner designs
     theme = 'dark',
-    baseUrl
+    baseUrl,
   } = params;
-  
+
   // Ensure we have a baseUrl and clean it
   if (!baseUrl) {
     throw new Error('baseUrl is required for generateTwitterImageUrl');
   }
-  
+
   // Remove trailing slash to avoid double slashes
   const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
-  
+
   // Use the same OG API but with Twitter-optimized template
   const twitterParams = new URLSearchParams({
     title: title.substring(0, 80), // Shorter for Twitter
@@ -105,7 +114,7 @@ export function generateTwitterImageUrl(params: {
     theme: theme === 'retro' ? 'dark' : theme, // Twitter prefers standard themes
     twitter: 'true', // Special flag for Twitter optimizations
   });
-  
+
   return `${cleanBaseUrl}/api/og-image?${twitterParams.toString()}`;
 }
 
@@ -134,7 +143,7 @@ export function generateStructuredData(params: {
     publishedTime,
     modifiedTime,
     tags = [],
-    image
+    image,
   } = params;
 
   const baseSchema = {
@@ -196,11 +205,9 @@ export function optimizeKeywords(keywords: string[], tags: string[] = []): strin
 
   // Combine all keywords and remove duplicates (case-insensitive)
   const allKeywords = [...defaultKeywords, ...keywords, ...tags];
-  const uniqueKeywords = Array.from(
-    new Set(allKeywords.map(k => k.toLowerCase()))
-  ).map(k => {
+  const uniqueKeywords = Array.from(new Set(allKeywords.map((k) => k.toLowerCase()))).map((k) => {
     // Find the original casing from the first occurrence
-    return allKeywords.find(original => original.toLowerCase() === k) || k;
+    return allKeywords.find((original) => original.toLowerCase() === k) || k;
   });
 
   return uniqueKeywords.join(', ');
@@ -218,12 +225,12 @@ export function generateCanonicalUrl(path: string = '', baseUrl?: string): strin
   }
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${baseUrl}${cleanPath}`;
-  
+
   // Ensure consistent trailing slash handling
   if (cleanPath !== '/' && url.endsWith('/')) {
     return url.slice(0, -1);
   }
-  
+
   return url;
 }
 
@@ -239,19 +246,19 @@ export function sanitizeDescription(description: string, maxLength: number = 160
     .replace(/<[^>]*>/g, '')
     .replace(/\s+/g, ' ')
     .trim();
-  
+
   if (cleaned.length <= maxLength) {
     return cleaned;
   }
-  
+
   // Truncate at word boundary
   const truncated = cleaned.slice(0, maxLength);
   const lastSpace = truncated.lastIndexOf(' ');
-  
+
   if (lastSpace > maxLength * 0.8) {
     return `${truncated.slice(0, lastSpace)}...`;
   }
-  
+
   return `${truncated}...`;
 }
 
@@ -266,12 +273,12 @@ export function resolveImageUrl(imageUrl: string, baseUrl: string): string {
   if (!baseUrl) {
     throw new Error('baseUrl is required for resolveImageUrl');
   }
-  
+
   // Already absolute URL
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
     return imageUrl;
   }
-  
+
   // Convert relative URL to absolute
   const cleanPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
   const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
@@ -285,17 +292,17 @@ export function resolveImageUrl(imageUrl: string, baseUrl: string): string {
  */
 export function generateSecureImageUrl(imageUrl: string): string {
   if (!imageUrl) return '';
-  
+
   // Already HTTPS
   if (imageUrl.startsWith('https://')) {
     return imageUrl;
   }
-  
+
   // Convert HTTP to HTTPS
   if (imageUrl.startsWith('http://')) {
     return imageUrl.replace('http://', 'https://');
   }
-  
+
   // For relative URLs, return as-is (should be resolved first by resolveImageUrl)
   return imageUrl;
 }
@@ -308,7 +315,10 @@ export function generateSecureImageUrl(imageUrl: string): string {
  * @returns Complete image metadata
  */
 export function extractImageMetadata(
-  image: { url: string; alt?: string; width?: number; height?: number; type?: string } | string | null,
+  image:
+    | { url: string; alt?: string; width?: number; height?: number; type?: string }
+    | string
+    | null,
   baseUrl?: string,
   fallbackParams?: {
     title: string;
@@ -324,7 +334,7 @@ export function extractImageMetadata(
   if (!baseUrl) {
     throw new Error('baseUrl is required for extractImageMetadata');
   }
-  
+
   // If we have a specific image, use it
   if (image) {
     if (typeof image === 'string') {
@@ -337,10 +347,10 @@ export function extractImageMetadata(
         height: getDefaultImageHeight(resolvedUrl),
       };
     }
-    
+
     const resolvedUrl = resolveImageUrl(image.url, baseUrl);
     const secureUrl = generateSecureImageUrl(resolvedUrl);
-    
+
     return {
       url: resolvedUrl,
       secureUrl: secureUrl,
@@ -350,7 +360,7 @@ export function extractImageMetadata(
       type: image.type || getImageTypeFromUrl(resolvedUrl),
     };
   }
-  
+
   // Fallback to generated OG image
   if (fallbackParams) {
     const ogImageUrl = generateOgImageUrl({ ...fallbackParams, baseUrl });
@@ -384,7 +394,7 @@ export function extractImageMetadata(
  */
 function getImageTypeFromUrl(imageUrl: string): string {
   const extension = imageUrl.split('.').pop()?.toLowerCase();
-  
+
   switch (extension) {
     case 'jpg':
     case 'jpeg':
@@ -441,31 +451,31 @@ export function validateImageForSocialSharing(imageMetadata: ImageMetadata): {
 } {
   const warnings: string[] = [];
   let isValid = true;
-  
+
   // Check URL
   if (!imageMetadata.url) {
     warnings.push('Image URL is required');
     isValid = false;
   }
-  
+
   // Check dimensions
   if (imageMetadata.width && imageMetadata.width < 200) {
     warnings.push('Image width should be at least 200px for optimal social sharing');
   }
-  
+
   if (imageMetadata.height && imageMetadata.height < 200) {
     warnings.push('Image height should be at least 200px for optimal social sharing');
   }
-  
+
   // Check alt text
   if (!imageMetadata.alt) {
     warnings.push('Alt text is recommended for accessibility and SEO');
   }
-  
+
   // Check secure URL
   if (!imageMetadata.secureUrl || !imageMetadata.secureUrl.startsWith('https://')) {
     warnings.push('HTTPS image URL is recommended for social sharing');
   }
-  
+
   return { isValid, warnings };
 }

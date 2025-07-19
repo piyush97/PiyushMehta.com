@@ -12,8 +12,8 @@ class CodeEnhancer {
   enhanceAllCodeBlocks() {
     // Find all pre > code elements that aren't already enhanced
     const codeBlocks = document.querySelectorAll('pre:not(.enhanced) > code');
-    
-    codeBlocks.forEach(code => {
+
+    codeBlocks.forEach((code) => {
       this.enhanceCodeBlock(code);
     });
   }
@@ -31,7 +31,8 @@ class CodeEnhancer {
 
     // Create enhanced wrapper
     const wrapper = document.createElement('div');
-    wrapper.className = 'code-block-container group relative my-6 overflow-hidden rounded-lg border border-card-border bg-code-bg';
+    wrapper.className =
+      'code-block-container group relative my-6 overflow-hidden rounded-lg border border-card-border bg-code-bg';
 
     // Create header if we have language info
     let header = null;
@@ -82,8 +83,9 @@ class CodeEnhancer {
     if (preClassMatch) return preClassMatch[1];
 
     // Check for data-language attribute
-    const dataLang = codeElement.getAttribute('data-language') || 
-                    codeElement.parentElement?.getAttribute('data-language');
+    const dataLang =
+      codeElement.getAttribute('data-language') ||
+      codeElement.parentElement?.getAttribute('data-language');
     if (dataLang) return dataLang;
 
     // Try to detect language from content patterns
@@ -93,16 +95,19 @@ class CodeEnhancer {
 
   guessLanguageFromContent(content) {
     const patterns = {
-      javascript: /(?:function\s+\w+|const\s+\w+\s*=|let\s+\w+|var\s+\w+|=>|console\.log|require\(|import\s+.*from)/,
-      typescript: /(?:interface\s+\w+|type\s+\w+\s*=|<.*>|as\s+\w+|public\s+|private\s+|readonly\s+)/,
-      python: /(?:def\s+\w+|import\s+\w+|from\s+\w+\s+import|print\(|if\s+__name__\s*==|class\s+\w+.*:)/,
+      javascript:
+        /(?:function\s+\w+|const\s+\w+\s*=|let\s+\w+|var\s+\w+|=>|console\.log|require\(|import\s+.*from)/,
+      typescript:
+        /(?:interface\s+\w+|type\s+\w+\s*=|<.*>|as\s+\w+|public\s+|private\s+|readonly\s+)/,
+      python:
+        /(?:def\s+\w+|import\s+\w+|from\s+\w+\s+import|print\(|if\s+__name__\s*==|class\s+\w+.*:)/,
       css: /(?:\{[^{}]*\}|@media|@import|#\w+|\.[\w-]+|:[\w-]+)/,
       html: /(?:<\/?[a-z][\s\S]*>|<!DOCTYPE|&\w+;)/i,
       json: /^\s*[\{\[][\s\S]*[\}\]]\s*$/,
       bash: /(?:#!\/bin\/bash|#!\/bin\/sh|\$\s+|sudo\s+|apt\s+|npm\s+|git\s+|curl\s+|wget\s+)/,
       sql: /(?:SELECT\s+|INSERT\s+|UPDATE\s+|DELETE\s+|CREATE\s+|ALTER\s+|DROP\s+)/i,
       yaml: /(?:^\s*-\s+|\w+:\s*$|\w+:\s+[^{[])/m,
-      xml: /(?:<\?xml|<\/?[a-z][\s\S]*>)/i
+      xml: /(?:<\?xml|<\/?[a-z][\s\S]*>)/i,
     };
 
     for (const [lang, pattern] of Object.entries(patterns)) {
@@ -116,7 +121,8 @@ class CodeEnhancer {
 
   createHeader(language, codeContent) {
     const header = document.createElement('div');
-    header.className = 'flex items-center justify-between px-4 py-3 bg-code-header border-b border-card-border';
+    header.className =
+      'flex items-center justify-between px-4 py-3 bg-code-header border-b border-card-border';
 
     // Language indicator
     const languageDiv = document.createElement('div');
@@ -139,7 +145,8 @@ class CodeEnhancer {
 
   createCopyButton(codeContent) {
     const button = document.createElement('button');
-    button.className = 'copy-code-btn flex items-center space-x-2 px-3 py-1.5 text-xs font-medium text-light-300 bg-light-800 hover:bg-light-700 hover:text-light-100 transition-all duration-200 rounded-md border border-light-600 hover:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/30';
+    button.className =
+      'copy-code-btn flex items-center space-x-2 px-3 py-1.5 text-xs font-medium text-light-300 bg-light-800 hover:bg-light-700 hover:text-light-100 transition-all duration-200 rounded-md border border-light-600 hover:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/30';
     button.setAttribute('data-code', codeContent);
     button.setAttribute('aria-label', 'Copy code to clipboard');
     button.setAttribute('title', 'Copy to clipboard');
@@ -159,7 +166,8 @@ class CodeEnhancer {
 
   createFloatingCopyButton(codeContent) {
     const button = document.createElement('button');
-    button.className = 'copy-code-btn absolute top-3 right-3 flex items-center space-x-1 px-2 py-1 text-xs font-medium text-light-400 bg-light-800/80 hover:bg-light-700 hover:text-light-100 transition-all duration-200 rounded border border-light-600 hover:border-accent/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-accent/30';
+    button.className =
+      'copy-code-btn absolute top-3 right-3 flex items-center space-x-1 px-2 py-1 text-xs font-medium text-light-400 bg-light-800/80 hover:bg-light-700 hover:text-light-100 transition-all duration-200 rounded border border-light-600 hover:border-accent/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-accent/30';
     button.setAttribute('data-code', codeContent);
     button.setAttribute('aria-label', 'Copy code to clipboard');
     button.setAttribute('title', 'Copy to clipboard');
@@ -183,9 +191,17 @@ class CodeEnhancer {
     const patterns = this.getSyntaxPatterns(language);
 
     // Apply patterns in order of precedence
-    const patternOrder = ['comment', 'string', 'regex', 'number', 'keyword', 'operator', 'punctuation'];
-    
-    patternOrder.forEach(type => {
+    const patternOrder = [
+      'comment',
+      'string',
+      'regex',
+      'number',
+      'keyword',
+      'operator',
+      'punctuation',
+    ];
+
+    patternOrder.forEach((type) => {
       if (patterns[type]) {
         content = content.replace(patterns[type].regex, patterns[type].replacement);
       }
@@ -198,55 +214,58 @@ class CodeEnhancer {
     const commonPatterns = {
       comment: {
         regex: /(\/\/.*$|\/\*[\s\S]*?\*\/|#.*$|<!--[\s\S]*?-->)/gm,
-        replacement: '<span class="token comment">$1</span>'
+        replacement: '<span class="token comment">$1</span>',
       },
       string: {
         regex: /(['"`])((?:(?!\1)[^\\]|\\.)*)(\1)/g,
-        replacement: '<span class="token string">$1$2$3</span>'
+        replacement: '<span class="token string">$1$2$3</span>',
       },
       number: {
         regex: /\b\d+(\.\d+)?\b/g,
-        replacement: '<span class="token number">$&</span>'
-      }
+        replacement: '<span class="token number">$&</span>',
+      },
     };
 
     const languageSpecific = {
       javascript: {
         ...commonPatterns,
         keyword: {
-          regex: /\b(async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|function|if|implements|import|in|instanceof|interface|let|new|null|package|private|protected|public|return|static|super|switch|this|throw|true|try|typeof|undefined|var|void|while|with|yield)\b/g,
-          replacement: '<span class="token keyword">$&</span>'
+          regex:
+            /\b(async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|function|if|implements|import|in|instanceof|interface|let|new|null|package|private|protected|public|return|static|super|switch|this|throw|true|try|typeof|undefined|var|void|while|with|yield)\b/g,
+          replacement: '<span class="token keyword">$&</span>',
         },
         operator: {
           regex: /[+\-*/%=!<>&|?:]/g,
-          replacement: '<span class="token operator">$&</span>'
-        }
+          replacement: '<span class="token operator">$&</span>',
+        },
       },
       typescript: {
         ...commonPatterns,
         keyword: {
-          regex: /\b(abstract|any|as|async|await|boolean|break|case|catch|class|const|constructor|continue|declare|default|delete|do|else|enum|export|extends|false|finally|for|from|function|get|if|implements|import|in|instanceof|interface|is|keyof|let|module|namespace|never|new|null|number|object|package|private|protected|public|readonly|require|return|set|static|string|super|switch|symbol|this|throw|true|try|type|typeof|undefined|unique|unknown|var|void|while|with|yield)\b/g,
-          replacement: '<span class="token keyword">$&</span>'
-        }
+          regex:
+            /\b(abstract|any|as|async|await|boolean|break|case|catch|class|const|constructor|continue|declare|default|delete|do|else|enum|export|extends|false|finally|for|from|function|get|if|implements|import|in|instanceof|interface|is|keyof|let|module|namespace|never|new|null|number|object|package|private|protected|public|readonly|require|return|set|static|string|super|switch|symbol|this|throw|true|try|type|typeof|undefined|unique|unknown|var|void|while|with|yield)\b/g,
+          replacement: '<span class="token keyword">$&</span>',
+        },
       },
       python: {
         ...commonPatterns,
         keyword: {
-          regex: /\b(and|as|assert|async|await|break|class|continue|def|del|elif|else|except|exec|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|print|raise|return|try|while|with|yield|True|False|None)\b/g,
-          replacement: '<span class="token keyword">$&</span>'
-        }
+          regex:
+            /\b(and|as|assert|async|await|break|class|continue|def|del|elif|else|except|exec|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|print|raise|return|try|while|with|yield|True|False|None)\b/g,
+          replacement: '<span class="token keyword">$&</span>',
+        },
       },
       css: {
         ...commonPatterns,
         selector: {
           regex: /([.#]?[\w-]+)(\s*{)/g,
-          replacement: '<span class="token selector">$1</span>$2'
+          replacement: '<span class="token selector">$1</span>$2',
         },
         property: {
           regex: /([\w-]+)(\s*:)/g,
-          replacement: '<span class="token property">$1</span>$2'
-        }
-      }
+          replacement: '<span class="token property">$1</span>$2',
+        },
+      },
     };
 
     return languageSpecific[language] || commonPatterns;
@@ -257,9 +276,11 @@ class CodeEnhancer {
       const copyBtn = e.target.closest('.copy-code-btn');
       if (!copyBtn) return;
 
-      const code = copyBtn.dataset.code || 
-                   copyBtn.closest('.code-block-container')?.querySelector('code')?.textContent || '';
-      
+      const code =
+        copyBtn.dataset.code ||
+        copyBtn.closest('.code-block-container')?.querySelector('code')?.textContent ||
+        '';
+
       if (!code.trim()) {
         this.showFeedback(copyBtn, 'No code to copy', 'error');
         return;
@@ -288,7 +309,7 @@ class CodeEnhancer {
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
-    
+
     try {
       document.execCommand('copy'); // Note: deprecated but kept for compatibility
     } finally {
@@ -300,12 +321,12 @@ class CodeEnhancer {
     const copyIcon = button.querySelector('.copy-icon');
     const checkIcon = button.querySelector('.check-icon');
     const copyText = button.querySelector('.copy-text');
-    
+
     if (type === 'success') {
       copyIcon?.classList.add('hidden');
       checkIcon?.classList.remove('hidden');
       if (copyText) copyText.textContent = message;
-      
+
       setTimeout(() => {
         copyIcon?.classList.remove('hidden');
         checkIcon?.classList.add('hidden');
@@ -330,17 +351,18 @@ class CodeEnhancer {
       mutations.forEach((mutation) => {
         if (mutation.addedNodes.length > 0) {
           const addedNodes = Array.from(mutation.addedNodes);
-          addedNodes.forEach(node => {
-            if (node.nodeType === 1) { // Element node
+          addedNodes.forEach((node) => {
+            if (node.nodeType === 1) {
+              // Element node
               // Check if the node itself is a pre > code
               if (node.tagName === 'PRE' && !node.classList.contains('enhanced')) {
                 const code = node.querySelector('code');
                 if (code) this.enhanceCodeBlock(code);
               }
-              
+
               // Check for pre > code within the node
               const codeBlocks = node.querySelectorAll?.('pre:not(.enhanced) > code');
-              codeBlocks?.forEach(code => this.enhanceCodeBlock(code));
+              codeBlocks?.forEach((code) => this.enhanceCodeBlock(code));
             }
           });
         }
@@ -349,7 +371,7 @@ class CodeEnhancer {
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
   }
 }

@@ -39,3 +39,20 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+// Global window extensions
+declare global {
+  interface Window {
+    pagefind?: {
+      search(query: string): Promise<any>;
+    };
+    commandPalette?: {
+      open(): void;
+      close(): void;
+    };
+    openCommandPalette?: () => void;
+    closeCommandPalette?: () => void;
+    CodeEnhancer?: any;
+    initCodeEnhancer?: () => void;
+  }
+}

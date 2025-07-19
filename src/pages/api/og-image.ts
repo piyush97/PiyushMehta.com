@@ -3,7 +3,7 @@
 
 import type { APIRoute } from 'astro';
 import generateCachedOGImage, { getCacheStats } from '../../utils/og-cache';
-import { type OGImageParams, generateOGImage } from '../../utils/og-generator';
+import { type OGImageParams } from '../../utils/og-generator';
 
 // 🎯 Performance & Caching Configuration
 const CACHE_DURATION = 60 * 60 * 24 * 7; // 7 days
@@ -19,30 +19,32 @@ const templateUsage = new Map<string, number>();
  */
 function normalizeText(text: string): string {
   if (!text) return '';
-  
-  return text
-    // First, decode any URL encoding
-    .replace(/%26/g, '&')         // URL encoded ampersand
-    .replace(/%7C/g, '|')         // URL encoded pipe
-    .replace(/%2B/g, '+')         // URL encoded plus
-    .replace(/%3C/g, '<')         // URL encoded less than
-    .replace(/%3E/g, '>')         // URL encoded greater than
-    .replace(/%22/g, '"')         // URL encoded quote
-    .replace(/%27/g, "'")         // URL encoded single quote
-    // Then normalize HTML entities
-    .replace(/&amp;/g, '&')      
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'")
-    // Replace problematic characters with safe alternatives for OG generation
-    .replace(/&/g, ' and ')       // Replace ampersand with " and "
-    .replace(/\|/g, ' - ')        // Replace pipe with " - "
-    .replace(/[<>]/g, '')         // Remove angle brackets entirely
-    // Normalize whitespace
-    .replace(/\s+/g, ' ')
-    .trim();
+
+  return (
+    text
+      // First, decode any URL encoding
+      .replace(/%26/g, '&') // URL encoded ampersand
+      .replace(/%7C/g, '|') // URL encoded pipe
+      .replace(/%2B/g, '+') // URL encoded plus
+      .replace(/%3C/g, '<') // URL encoded less than
+      .replace(/%3E/g, '>') // URL encoded greater than
+      .replace(/%22/g, '"') // URL encoded quote
+      .replace(/%27/g, "'") // URL encoded single quote
+      // Then normalize HTML entities
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&apos;/g, "'")
+      // Replace problematic characters with safe alternatives for OG generation
+      .replace(/&/g, ' and ') // Replace ampersand with " and "
+      .replace(/\|/g, ' - ') // Replace pipe with " - "
+      .replace(/[<>]/g, '') // Remove angle brackets entirely
+      // Normalize whitespace
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
 }
 
 /**
@@ -56,14 +58,20 @@ function validateAndSanitizeInput(searchParams: URLSearchParams): OGImageParams 
 
   // Enhanced parameter decoding and normalization for special characters
   const title = normalizeText(rawTitle).trim();
-  const description = searchParams.get('description') ? normalizeText(searchParams.get('description')!).trim() : undefined;
-  const type = searchParams.get('type') ? normalizeText(searchParams.get('type')!).trim() : undefined;
+  const description = searchParams.get('description')
+    ? normalizeText(searchParams.get('description')!).trim()
+    : undefined;
+  const type = searchParams.get('type')
+    ? normalizeText(searchParams.get('type')!).trim()
+    : undefined;
   const dateString = searchParams.get('date')?.trim();
-  const tagsString = searchParams.get('tags') ? normalizeText(searchParams.get('tags')!).trim() : undefined;
+  const tagsString = searchParams.get('tags')
+    ? normalizeText(searchParams.get('tags')!).trim()
+    : undefined;
   const template = searchParams.get('template')?.trim() as OGImageParams['template'];
   const theme = searchParams.get('theme')?.trim() as OGImageParams['theme'];
   const isTwitter = searchParams.get('twitter') === 'true';
-  
+
   // Ignore cache-busting parameter (used by dev tools)
   // const cacheBuster = searchParams.get('_cb'); // ignored
 
@@ -82,17 +90,21 @@ function validateAndSanitizeInput(searchParams: URLSearchParams): OGImageParams 
 
   // Parse tags
   const tags = tagsString
-    ? tagsString.split(',')
-        .map(tag => tag.trim())
-        .filter(tag => tag.length > 0)
+    ? tagsString
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0)
         .slice(0, 5) // Limit to 5 tags
     : [];
 
   // Determine page type
   let pageType: OGImageParams['pageType'] = 'website';
-  if (type === 'article' || tags.some(tag => ['blog', 'post', 'article'].includes(tag.toLowerCase()))) {
+  if (
+    type === 'article' ||
+    tags.some((tag) => ['blog', 'post', 'article'].includes(tag.toLowerCase()))
+  ) {
     pageType = 'article';
-  } else if (tags.some(tag => ['project', 'github', 'app'].includes(tag.toLowerCase()))) {
+  } else if (tags.some((tag) => ['project', 'github', 'app'].includes(tag.toLowerCase()))) {
     pageType = 'project';
   } else if (title.toLowerCase().includes('about')) {
     pageType = 'about';
@@ -105,13 +117,17 @@ function validateAndSanitizeInput(searchParams: URLSearchParams): OGImageParams 
   // Intelligent theme selection based on content
   let finalTheme = theme || 'dark';
   if (!theme) {
-    if (tags.some(tag => ['cyber', 'hacker', 'security'].includes(tag.toLowerCase()))) {
+    if (tags.some((tag) => ['cyber', 'hacker', 'security'].includes(tag.toLowerCase()))) {
       finalTheme = 'neon';
-    } else if (tags.some(tag => ['corporate', 'business', 'enterprise'].includes(tag.toLowerCase()))) {
+    } else if (
+      tags.some((tag) => ['corporate', 'business', 'enterprise'].includes(tag.toLowerCase()))
+    ) {
       finalTheme = 'corporate';
-    } else if (tags.some(tag => ['design', 'ui', 'ux', 'creative'].includes(tag.toLowerCase()))) {
+    } else if (tags.some((tag) => ['design', 'ui', 'ux', 'creative'].includes(tag.toLowerCase()))) {
       finalTheme = 'warm';
-    } else if (tags.some(tag => ['ocean', 'blue', 'water', 'cloud'].includes(tag.toLowerCase()))) {
+    } else if (
+      tags.some((tag) => ['ocean', 'blue', 'water', 'cloud'].includes(tag.toLowerCase()))
+    ) {
       finalTheme = 'ocean';
     }
   }
@@ -151,7 +167,7 @@ function generateCacheKey(params: OGImageParams): string {
     params.publishedTime?.toISOString() || '',
     params.tags?.join(',') || '',
   ];
-  
+
   return Buffer.from(keyParts.join('|')).toString('base64').replace(/[/+=]/g, '');
 }
 
@@ -162,7 +178,7 @@ function trackUsage(template: string) {
   generationCount++;
   const currentCount = templateUsage.get(template) || 0;
   templateUsage.set(template, currentCount + 1);
-  
+
   // Log analytics every 100 generations (development only)
   if (import.meta.env.DEV && generationCount % 100 === 0) {
     console.log('🎨 OG Image Analytics:', {
@@ -177,27 +193,29 @@ function trackUsage(template: string) {
  */
 export const GET: APIRoute = async ({ url }) => {
   const startTime = Date.now();
-  
+
   try {
     // Parse and validate input parameters
     const params = validateAndSanitizeInput(url.searchParams);
-    
+
     // Generate cache key
     const cacheKey = generateCacheKey(params);
-    
+
     // Track usage analytics
     trackUsage(params.template || 'default');
-    
+
     // Generate the OG image (with caching)
     const imageBuffer = await generateCachedOGImage(params);
-    
+
     const generationTime = Date.now() - startTime;
-    
+
     // Development logging
     if (import.meta.env.DEV) {
-      console.log(`🎨 Generated OG image: "${params.title}" (${params.template}/${params.theme}) in ${generationTime}ms`);
+      console.log(
+        `🎨 Generated OG image: "${params.title}" (${params.template}/${params.theme}) in ${generationTime}ms`
+      );
     }
-    
+
     // Return the image with appropriate headers
     return new Response(imageBuffer, {
       status: 200,
@@ -215,7 +233,6 @@ export const GET: APIRoute = async ({ url }) => {
         'Access-Control-Allow-Headers': 'Content-Type',
       },
     });
-    
   } catch (error) {
     console.error('❌ Error generating OG image:', error);
     console.error('❌ Error details:', {
@@ -224,9 +241,9 @@ export const GET: APIRoute = async ({ url }) => {
       requestUrl: url.toString(),
       searchParams: Object.fromEntries(url.searchParams),
     });
-    
+
     // Return a simple fallback image with actual title (not "Error")
-    const errorTitle = url.searchParams.get('title') || 'Image Generation Failed';
+    const errorTitle = url.searchParams.get('title') || 'Piyush Mehta';
     // Sanitize the title for SVG
     const sanitizedTitle = errorTitle
       .replace(/&/g, '&amp;')
@@ -234,7 +251,7 @@ export const GET: APIRoute = async ({ url }) => {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
-    
+
     const fallbackSvg = `
       <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -248,17 +265,14 @@ export const GET: APIRoute = async ({ url }) => {
           ${sanitizedTitle.substring(0, 50)}
         </text>
         <text x="600" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="#8892b0" text-anchor="middle" dominant-baseline="middle">
-          Piyush Mehta - Software Engineer
+          Software Engineer, Open Source Contributor, Coffee Lover
         </text>
         <text x="600" y="380" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#4a5568" text-anchor="middle" dominant-baseline="middle">
-          Generated Image • piyushmehta.com
-        </text>
-        <text x="600" y="420" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#ef4444" text-anchor="middle" dominant-baseline="middle">
-          Fallback Image - Check console for errors
+          www.piyushmehta.com
         </text>
       </svg>
     `;
-    
+
     return new Response(fallbackSvg, {
       status: 200,
       headers: {
@@ -277,33 +291,39 @@ export const POST: APIRoute = async ({ url }) => {
   if (!import.meta.env.DEV) {
     return new Response('Not available in production', { status: 404 });
   }
-  
+
   const action = url.searchParams.get('action');
-  
+
   if (action === 'stats') {
-    return new Response(JSON.stringify({
-      generation: {
-        totalGenerated: generationCount,
-        templateUsage: Object.fromEntries(templateUsage),
-      },
-      cache: getCacheStats(),
+    return new Response(
+      JSON.stringify({
+        generation: {
+          totalGenerated: generationCount,
+          templateUsage: Object.fromEntries(templateUsage),
+        },
+        cache: getCacheStats(),
+        timestamp: new Date().toISOString(),
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  }
+
+  return new Response(
+    JSON.stringify({
+      totalGenerated: generationCount,
+      templateUsage: Object.fromEntries(templateUsage),
       timestamp: new Date().toISOString(),
-    }), {
+    }),
+    {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
       },
-    });
-  }
-  
-  return new Response(JSON.stringify({
-    totalGenerated: generationCount,
-    templateUsage: Object.fromEntries(templateUsage),
-    timestamp: new Date().toISOString(),
-  }), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+    }
+  );
 };

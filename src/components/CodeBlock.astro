@@ -9,13 +9,13 @@ export interface Props {
   highlight?: string;
 }
 
-const { 
-  code = '', 
-  language = 'text', 
-  title, 
-  filename, 
+const {
+  code = '',
+  language = 'text',
+  title,
+  filename,
   showLineNumbers = false,
-  highlight: _highlight // underscore prefix to indicate intentionally unused
+  highlight: _highlight, // underscore prefix to indicate intentionally unused
 } = Astro.props;
 ---
 
@@ -106,7 +106,7 @@ const {
       document.addEventListener('click', (e) => {
         const copyBtn = (e.target as Element)?.closest('.copy-code-btn');
         if (copyBtn) {
-          this.copyCode(copyBtn);
+          this.copyCode(copyBtn as HTMLElement);
         }
       });
     }

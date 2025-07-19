@@ -614,7 +614,7 @@
       }
     },
 
-    handleDefaultKeydown(e) {
+    handleDefaultKeydown(e: KeyboardEvent) {
       const items = document.querySelectorAll('.command-item');
       
       switch (e.key) {
@@ -637,7 +637,7 @@
       }
     },
 
-    handleSearchKeydown(e) {
+    handleSearchKeydown(e: KeyboardEvent) {
       const results = document.querySelectorAll('.command-result');
       
       switch (e.key) {
@@ -684,7 +684,7 @@
       }
     },
 
-    executeCommand(element) {
+    executeCommand(element: HTMLElement) {
       const action = element.dataset.action;
       const url = element.dataset.url;
       
@@ -700,7 +700,7 @@
       this.close();
     },
 
-    executeResult(element) {
+    executeResult(element: HTMLElement) {
       const type = element.dataset.type;
       const url = element.dataset.url;
       const id = element.dataset.id;
@@ -746,7 +746,7 @@
       }
     },
 
-    fallbackCopyUrl(url) {
+    fallbackCopyUrl(url: string) {
       const textArea = document.createElement('textarea');
       textArea.value = url;
       document.body.appendChild(textArea);
@@ -762,7 +762,7 @@
       document.body.removeChild(textArea);
     },
 
-    showToast(message) {
+    showToast(message: string) {
       // Create toast element
       const toast = document.createElement('div');
       toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-y-2 opacity-0';

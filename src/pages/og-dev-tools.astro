@@ -12,14 +12,25 @@ if (!import.meta.env.DEV) {
 const baseUrl = Astro.url.origin;
 
 // Template and theme options
-const templates = ['default', 'minimal', 'tech', 'blog', 'cyber', 'gradient', 'terminal', 'modern', 'professional'];
+const templates = [
+  'default',
+  'minimal',
+  'tech',
+  'blog',
+  'cyber',
+  'gradient',
+  'terminal',
+  'modern',
+  'professional',
+];
 const themes = ['dark', 'light', 'retro', 'neon', 'corporate', 'warm', 'ocean'];
 
 // Sample configurations for testing
 const sampleConfigs = [
   {
     title: 'Modern Blog Article with Long Title That Tests Truncation',
-    description: 'This is a comprehensive test of the modern blog template with a longer description to see how it handles text wrapping and layout.',
+    description:
+      'This is a comprehensive test of the modern blog template with a longer description to see how it handles text wrapping and layout.',
     template: 'modern',
     theme: 'dark',
     tags: 'blog,modern,react,javascript',

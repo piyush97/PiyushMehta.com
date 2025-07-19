@@ -15,7 +15,9 @@ interface Risk {
 
 const RiskAssessmentMatrix: React.FC = () => {
   const [selectedRisk, setSelectedRisk] = useState<Risk | null>(null);
-  const [filterCategory, setFilterCategory] = useState<'all' | 'technical' | 'business' | 'operational'>('all');
+  const [filterCategory, setFilterCategory] = useState<
+    'all' | 'technical' | 'business' | 'operational'
+  >('all');
 
   const risks: Risk[] = [
     {
@@ -29,11 +31,11 @@ const RiskAssessmentMatrix: React.FC = () => {
         'Monitor replication lag continuously with alerts',
         'Implement automatic scaling of read replicas',
         'Pre-warm target database with recent data',
-        'Schedule migration during low-traffic window'
+        'Schedule migration during low-traffic window',
       ],
       contingency: 'Pause migration and wait for lag to decrease below 2 seconds',
       owner: 'Database Team',
-      status: 'avoided'
+      status: 'avoided',
     },
     {
       id: 'R002',
@@ -46,11 +48,11 @@ const RiskAssessmentMatrix: React.FC = () => {
         'Implement connection pooling with retry logic',
         'Test connection strings in staging environment',
         'Deploy database abstraction layer with fallback',
-        'Prepare emergency DNS rollback procedure'
+        'Prepare emergency DNS rollback procedure',
       ],
       contingency: 'Immediate rollback to original database within 5 minutes',
       owner: 'Platform Team',
-      status: 'mitigated'
+      status: 'mitigated',
     },
     {
       id: 'R003',
@@ -63,11 +65,11 @@ const RiskAssessmentMatrix: React.FC = () => {
         'Implement comprehensive data validation scripts',
         'Perform checksums on critical tables',
         'Run parallel consistency checks during replication',
-        'Maintain detailed audit logs of all changes'
+        'Maintain detailed audit logs of all changes',
       ],
       contingency: 'Stop migration and perform full data reconciliation',
       owner: 'Data Engineering',
-      status: 'avoided'
+      status: 'avoided',
     },
     {
       id: 'R004',
@@ -80,11 +82,11 @@ const RiskAssessmentMatrix: React.FC = () => {
         'Schedule migration for early Saturday morning',
         'Complete all operations before peak hours',
         'Coordinate with marketing team on timing',
-        'Prepare communication for customer support'
+        'Prepare communication for customer support',
       ],
       contingency: 'Delay migration to following weekend if issues arise',
       owner: 'Business Operations',
-      status: 'avoided'
+      status: 'avoided',
     },
     {
       id: 'R005',
@@ -97,11 +99,11 @@ const RiskAssessmentMatrix: React.FC = () => {
         'Conduct extensive load testing before migration',
         'Optimize queries and indexes proactively',
         'Prepare performance tuning scripts',
-        'Monitor key performance metrics in real-time'
+        'Monitor key performance metrics in real-time',
       ],
       contingency: 'Apply emergency performance optimizations or rollback',
       owner: 'Database Team',
-      status: 'mitigated'
+      status: 'mitigated',
     },
     {
       id: 'R006',
@@ -114,11 +116,11 @@ const RiskAssessmentMatrix: React.FC = () => {
         'Establish dedicated Slack channel for migration',
         'Conduct pre-migration dry run with all teams',
         'Create detailed runbook with clear responsibilities',
-        'Assign primary and backup owners for each task'
+        'Assign primary and backup owners for each task',
       ],
       contingency: 'Escalation to incident commander for decision making',
       owner: 'Engineering Management',
-      status: 'mitigated'
+      status: 'mitigated',
     },
     {
       id: 'R007',
@@ -131,11 +133,11 @@ const RiskAssessmentMatrix: React.FC = () => {
         'Deploy redundant monitoring systems',
         'Create backup alerting through multiple channels',
         'Prepare manual monitoring scripts',
-        'Test all monitoring systems before migration'
+        'Test all monitoring systems before migration',
       ],
       contingency: 'Switch to manual monitoring and extend validation time',
       owner: 'DevOps Team',
-      status: 'avoided'
+      status: 'avoided',
     },
     {
       id: 'R008',
@@ -148,11 +150,11 @@ const RiskAssessmentMatrix: React.FC = () => {
         'Practice rollback procedures multiple times',
         'Automate rollback steps where possible',
         'Maintain parallel write capabilities during transition',
-        'Document step-by-step rollback procedures'
+        'Document step-by-step rollback procedures',
       ],
       contingency: 'Accept extended downtime for safe rollback completion',
       owner: 'Platform Team',
-      status: 'mitigated'
+      status: 'mitigated',
     },
     {
       id: 'R009',
@@ -165,23 +167,24 @@ const RiskAssessmentMatrix: React.FC = () => {
         'Update all external service configurations',
         'Test integrations in staging environment',
         'Coordinate with third-party vendors',
-        'Prepare backup integration methods'
+        'Prepare backup integration methods',
       ],
       contingency: 'Temporarily disable non-critical integrations',
       owner: 'Integration Team',
-      status: 'avoided'
-    }
+      status: 'avoided',
+    },
   ];
 
   const getRiskLevel = (probability: string, impact: string): string => {
     const score = {
       low: 1,
       medium: 2,
-      high: 3
+      high: 3,
     };
-    
-    const totalScore = score[probability as keyof typeof score] + score[impact as keyof typeof score];
-    
+
+    const totalScore =
+      score[probability as keyof typeof score] + score[impact as keyof typeof score];
+
     if (totalScore >= 5) return 'critical';
     if (totalScore >= 4) return 'high';
     if (totalScore >= 3) return 'medium';
@@ -190,50 +193,62 @@ const RiskAssessmentMatrix: React.FC = () => {
 
   const getRiskColor = (level: string): string => {
     switch (level) {
-      case 'critical': return 'bg-light-800 border-card-border text-text-primary shadow-lg border-l-4 border-l-danger';
-      case 'high': return 'bg-light-800 border-card-border text-text-primary shadow-md border-l-4 border-l-accent';
-      case 'medium': return 'bg-light-700 border-card-border text-text-primary border-l-4 border-l-text-secondary';
-      case 'low': return 'bg-light-700 border-card-border text-text-secondary border-l-4 border-l-accent';
-      default: return 'bg-light-800 border-card-border text-text-secondary';
+      case 'critical':
+        return 'bg-light-800 border-card-border text-text-primary shadow-lg border-l-4 border-l-danger';
+      case 'high':
+        return 'bg-light-800 border-card-border text-text-primary shadow-md border-l-4 border-l-accent';
+      case 'medium':
+        return 'bg-light-700 border-card-border text-text-primary border-l-4 border-l-text-secondary';
+      case 'low':
+        return 'bg-light-700 border-card-border text-text-secondary border-l-4 border-l-accent';
+      default:
+        return 'bg-light-800 border-card-border text-text-secondary';
     }
   };
 
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case 'avoided': return 'bg-accent';
-      case 'mitigated': return 'bg-light-600';
-      case 'occurred': return 'bg-danger';
-      case 'identified': return 'bg-light-500';
-      default: return 'bg-light-600';
+      case 'avoided':
+        return 'bg-accent';
+      case 'mitigated':
+        return 'bg-light-600';
+      case 'occurred':
+        return 'bg-danger';
+      case 'identified':
+        return 'bg-light-500';
+      default:
+        return 'bg-light-600';
     }
   };
 
   const getStatusIcon = (status: string): string => {
     switch (status) {
-      case 'avoided': return '✓';
-      case 'mitigated': return '🛡️';
-      case 'occurred': return '⚠️';
-      case 'identified': return '👁️';
-      default: return '○';
+      case 'avoided':
+        return '✓';
+      case 'mitigated':
+        return '🛡️';
+      case 'occurred':
+        return '⚠️';
+      case 'identified':
+        return '👁️';
+      default:
+        return '○';
     }
   };
 
-  const filteredRisks = filterCategory === 'all' 
-    ? risks 
-    : risks.filter(risk => risk.category === filterCategory);
+  const filteredRisks =
+    filterCategory === 'all' ? risks : risks.filter((risk) => risk.category === filterCategory);
 
   const riskStats = {
     total: risks.length,
-    critical: risks.filter(r => getRiskLevel(r.probability, r.impact) === 'critical').length,
-    avoided: risks.filter(r => r.status === 'avoided').length,
-    mitigated: risks.filter(r => r.status === 'mitigated').length
+    critical: risks.filter((r) => getRiskLevel(r.probability, r.impact) === 'critical').length,
+    avoided: risks.filter((r) => r.status === 'avoided').length,
+    mitigated: risks.filter((r) => r.status === 'mitigated').length,
   };
 
   return (
     <div className="w-full max-w-6xl mx-auto p-6 bg-surface-100 rounded-lg border border-card-border">
-      <h3 className="text-xl font-bold text-text-primary mb-6">
-        Migration Risk Assessment Matrix
-      </h3>
+      <h3 className="text-xl font-bold text-text-primary mb-6">Migration Risk Assessment Matrix</h3>
 
       {/* Risk Statistics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -294,7 +309,9 @@ const RiskAssessmentMatrix: React.FC = () => {
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center">
-                  <div className={`w-6 h-6 rounded-full ${getStatusColor(risk.status)} flex items-center justify-center text-darker text-xs mr-2 shadow-sm`}>
+                  <div
+                    className={`w-6 h-6 rounded-full ${getStatusColor(risk.status)} flex items-center justify-center text-darker text-xs mr-2 shadow-sm`}
+                  >
                     {getStatusIcon(risk.status)}
                   </div>
                   <span className="font-mono text-sm text-text-secondary">{risk.id}</span>
@@ -303,18 +320,20 @@ const RiskAssessmentMatrix: React.FC = () => {
                   {risk.category}
                 </span>
               </div>
-              
+
               <h4 className="font-semibold text-text-primary mb-2">{risk.title}</h4>
-              
+
               <div className="flex justify-between text-sm mb-2">
-                <span>Probability: <strong className="capitalize">{risk.probability}</strong></span>
-                <span>Impact: <strong className="capitalize">{risk.impact}</strong></span>
+                <span>
+                  Probability: <strong className="capitalize">{risk.probability}</strong>
+                </span>
+                <span>
+                  Impact: <strong className="capitalize">{risk.impact}</strong>
+                </span>
               </div>
-              
-              <div className="text-sm text-text-secondary mb-2">
-                Owner: {risk.owner}
-              </div>
-              
+
+              <div className="text-sm text-text-secondary mb-2">Owner: {risk.owner}</div>
+
               <div className="text-xs text-text-secondary">
                 Click for detailed mitigation strategies
               </div>
@@ -345,21 +364,31 @@ const RiskAssessmentMatrix: React.FC = () => {
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="bg-light-800 border border-card-border p-3 rounded-lg">
                   <div className="text-sm text-text-secondary">Probability</div>
-                  <div className="font-semibold capitalize text-text-primary">{selectedRisk.probability}</div>
+                  <div className="font-semibold capitalize text-text-primary">
+                    {selectedRisk.probability}
+                  </div>
                 </div>
                 <div className="bg-light-800 border border-card-border p-3 rounded-lg">
                   <div className="text-sm text-text-secondary">Impact</div>
-                  <div className="font-semibold capitalize text-text-primary">{selectedRisk.impact}</div>
+                  <div className="font-semibold capitalize text-text-primary">
+                    {selectedRisk.impact}
+                  </div>
                 </div>
                 <div className="bg-light-800 border border-card-border p-3 rounded-lg">
                   <div className="text-sm text-text-secondary">Category</div>
-                  <div className="font-semibold capitalize text-text-primary">{selectedRisk.category}</div>
+                  <div className="font-semibold capitalize text-text-primary">
+                    {selectedRisk.category}
+                  </div>
                 </div>
                 <div className="bg-light-800 border border-card-border p-3 rounded-lg">
                   <div className="text-sm text-text-secondary">Status</div>
                   <div className="flex items-center">
-                    <div className={`w-4 h-4 rounded-full ${getStatusColor(selectedRisk.status)} mr-2 shadow-sm`}></div>
-                    <span className="font-semibold capitalize text-text-primary">{selectedRisk.status}</span>
+                    <div
+                      className={`w-4 h-4 rounded-full ${getStatusColor(selectedRisk.status)} mr-2 shadow-sm`}
+                    ></div>
+                    <span className="font-semibold capitalize text-text-primary">
+                      {selectedRisk.status}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -369,7 +398,10 @@ const RiskAssessmentMatrix: React.FC = () => {
                   <h5 className="font-semibold text-text-primary mb-2">Mitigation Strategies:</h5>
                   <ul className="space-y-2">
                     {selectedRisk.mitigation.map((strategy, index) => (
-                      <li key={`strategy-${strategy.slice(0, 20)}-${index}`} className="flex items-start">
+                      <li
+                        key={`strategy-${strategy.slice(0, 20)}-${index}`}
+                        className="flex items-start"
+                      >
                         <div className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0"></div>
                         <span className="text-text-secondary">{strategy}</span>
                       </li>

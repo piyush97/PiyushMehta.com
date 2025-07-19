@@ -11,14 +11,15 @@ export async function GET(context) {
     // Use context.site or fallback to hardcoded URL
     const site = context.site || new URL('https://piyushmehta.com');
     const siteUrlString = typeof site === 'string' ? site : site.toString();
-    
+
     // Log how many posts were found (for debugging)
     console.log(`Found ${publishedPosts.length} published blog posts for RSS feed`);
 
     // Generate the RSS feed
     const rssResponse = await rss({
       title: 'Piyush Mehta - Software Engineer & React Developer',
-      description: 'Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.',
+      description:
+        'Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.',
       site: site,
       items: publishedPosts.map((post) => {
         // Ensure the slug is properly formatted
@@ -26,14 +27,18 @@ export async function GET(context) {
         const postUrl = `${siteUrlString}/blog/${slug}/`;
 
         // Extract image for the post if available
-        const imageUrl = post.data.image ? 
-          (post.data.image.url.startsWith('http') ? post.data.image.url : `${siteUrlString}${post.data.image.url}`) : 
-          null;
+        const imageUrl = post.data.image
+          ? post.data.image.url.startsWith('http')
+            ? post.data.image.url
+            : `${siteUrlString}${post.data.image.url}`
+          : null;
 
         // Extract banner for the post if available
-        const bannerUrl = post.data.banner ? 
-          (post.data.banner.startsWith('http') ? post.data.banner : `${siteUrlString}${post.data.banner}`) :
-          null;
+        const bannerUrl = post.data.banner
+          ? post.data.banner.startsWith('http')
+            ? post.data.banner
+            : `${siteUrlString}${post.data.banner}`
+          : null;
 
         return {
           title: post.data.title,
@@ -88,9 +93,10 @@ export async function GET(context) {
     });
   } catch (error) {
     console.error('Error generating RSS feed:', error);
-    
+
     // Return a valid XML response even in case of error
-    return new Response(`<?xml version="1.0" encoding="UTF-8"?>
+    return new Response(
+      `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Piyush Mehta - Software Engineer &amp; React Developer</title>
@@ -106,11 +112,13 @@ export async function GET(context) {
       <pubDate>${new Date().toUTCString()}</pubDate>
     </item>
   </channel>
-</rss>`, { 
-      status: 500,
-      headers: {
-        'Content-Type': 'application/xml; charset=utf-8'
+</rss>`,
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/xml; charset=utf-8',
+        },
       }
-    });
+    );
   }
 }

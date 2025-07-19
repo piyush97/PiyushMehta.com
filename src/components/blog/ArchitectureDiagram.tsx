@@ -24,7 +24,7 @@ const ArchitectureDiagram: React.FC = () => {
         { from: 'lb1', to: 'db1' },
         { from: 'db1', to: 'db2' },
         { from: 'db1', to: 'db3' },
-      ]
+      ],
     },
     {
       title: 'Phase 2: Replication Setup',
@@ -37,8 +37,20 @@ const ArchitectureDiagram: React.FC = () => {
         { id: 'db1', label: 'PostgreSQL 12\nPrimary', type: 'database-old', x: 80, y: 300 },
         { id: 'db2', label: 'Read Replica 1', type: 'database-replica', x: 180, y: 300 },
         { id: 'repl', label: 'Logical\nReplication', type: 'replication', x: 300, y: 250 },
-        { id: 'aurora1', label: 'Aurora PostgreSQL 14\nPrimary', type: 'database-new', x: 400, y: 300 },
-        { id: 'aurora2', label: 'Aurora\nRead Replica', type: 'database-replica-new', x: 500, y: 300 },
+        {
+          id: 'aurora1',
+          label: 'Aurora PostgreSQL 14\nPrimary',
+          type: 'database-new',
+          x: 400,
+          y: 300,
+        },
+        {
+          id: 'aurora2',
+          label: 'Aurora\nRead Replica',
+          type: 'database-replica-new',
+          x: 500,
+          y: 300,
+        },
       ],
       connections: [
         { from: 'app1', to: 'lb1' },
@@ -49,19 +61,49 @@ const ArchitectureDiagram: React.FC = () => {
         { from: 'db1', to: 'repl', type: 'replication' },
         { from: 'repl', to: 'aurora1', type: 'replication' },
         { from: 'aurora1', to: 'aurora2' },
-      ]
+      ],
     },
     {
       title: 'Phase 3: Dual Database Mode',
       description: 'Applications updated to support both databases with feature flags',
       components: [
-        { id: 'app1', label: 'App Server 1\n(Updated)', type: 'application-updated', x: 50, y: 100 },
-        { id: 'app2', label: 'App Server 2\n(Updated)', type: 'application-updated', x: 150, y: 100 },
-        { id: 'app3', label: 'App Server 3\n(Updated)', type: 'application-updated', x: 250, y: 100 },
+        {
+          id: 'app1',
+          label: 'App Server 1\n(Updated)',
+          type: 'application-updated',
+          x: 50,
+          y: 100,
+        },
+        {
+          id: 'app2',
+          label: 'App Server 2\n(Updated)',
+          type: 'application-updated',
+          x: 150,
+          y: 100,
+        },
+        {
+          id: 'app3',
+          label: 'App Server 3\n(Updated)',
+          type: 'application-updated',
+          x: 250,
+          y: 100,
+        },
         { id: 'ff', label: 'Feature Flags\n(Redis)', type: 'feature-flags', x: 150, y: 180 },
         { id: 'db1', label: 'PostgreSQL 12\nPrimary', type: 'database-old', x: 80, y: 300 },
-        { id: 'aurora1', label: 'Aurora PostgreSQL 14\nPrimary', type: 'database-new', x: 220, y: 300 },
-        { id: 'aurora2', label: 'Aurora\nRead Replica', type: 'database-replica-new', x: 320, y: 300 },
+        {
+          id: 'aurora1',
+          label: 'Aurora PostgreSQL 14\nPrimary',
+          type: 'database-new',
+          x: 220,
+          y: 300,
+        },
+        {
+          id: 'aurora2',
+          label: 'Aurora\nRead Replica',
+          type: 'database-replica-new',
+          x: 320,
+          y: 300,
+        },
         { id: 'monitor', label: 'Monitoring\n(Grafana)', type: 'monitoring', x: 400, y: 180 },
       ],
       connections: [
@@ -73,7 +115,7 @@ const ArchitectureDiagram: React.FC = () => {
         { from: 'aurora1', to: 'aurora2' },
         { from: 'app1', to: 'monitor', type: 'monitoring' },
         { from: 'aurora1', to: 'monitor', type: 'monitoring' },
-      ]
+      ],
     },
     {
       title: 'Phase 4: Full Migration',
@@ -83,9 +125,27 @@ const ArchitectureDiagram: React.FC = () => {
         { id: 'app2', label: 'App Server 2', type: 'application', x: 150, y: 100 },
         { id: 'app3', label: 'App Server 3', type: 'application', x: 250, y: 100 },
         { id: 'lb1', label: 'Load Balancer\n(Updated)', type: 'load-balancer', x: 150, y: 200 },
-        { id: 'aurora1', label: 'Aurora PostgreSQL 14\nPrimary', type: 'database-new', x: 100, y: 300 },
-        { id: 'aurora2', label: 'Aurora\nRead Replica 1', type: 'database-replica-new', x: 200, y: 300 },
-        { id: 'aurora3', label: 'Aurora\nRead Replica 2', type: 'database-replica-new', x: 300, y: 300 },
+        {
+          id: 'aurora1',
+          label: 'Aurora PostgreSQL 14\nPrimary',
+          type: 'database-new',
+          x: 100,
+          y: 300,
+        },
+        {
+          id: 'aurora2',
+          label: 'Aurora\nRead Replica 1',
+          type: 'database-replica-new',
+          x: 200,
+          y: 300,
+        },
+        {
+          id: 'aurora3',
+          label: 'Aurora\nRead Replica 2',
+          type: 'database-replica-new',
+          x: 300,
+          y: 300,
+        },
         { id: 'monitor', label: 'Enhanced\nMonitoring', type: 'monitoring', x: 400, y: 250 },
         { id: 'backup', label: 'Aurora\nBackups', type: 'backup', x: 50, y: 400 },
       ],
@@ -98,13 +158,14 @@ const ArchitectureDiagram: React.FC = () => {
         { from: 'aurora1', to: 'aurora3' },
         { from: 'aurora1', to: 'monitor', type: 'monitoring' },
         { from: 'aurora1', to: 'backup', type: 'backup' },
-      ]
-    }
+      ],
+    },
   ];
 
   const getComponentStyle = (type: string) => {
-    const baseStyle = 'rounded-lg border-2 p-2 text-xs font-medium cursor-pointer transition-all hover:shadow-lg';
-    
+    const baseStyle =
+      'rounded-lg border-2 p-2 text-xs font-medium cursor-pointer transition-all hover:shadow-lg';
+
     switch (type) {
       case 'application':
         return `${baseStyle} bg-blue-100 border-blue-300 text-blue-800`;
@@ -150,77 +211,77 @@ const ArchitectureDiagram: React.FC = () => {
 
   const getComponentDetails = (type: string) => {
     const details = {
-      'application': {
+      application: {
         title: 'Application Server',
         description: 'Node.js application servers running the main application logic',
-        specs: ['8 vCPUs', '16GB RAM', 'Auto-scaling enabled']
+        specs: ['8 vCPUs', '16GB RAM', 'Auto-scaling enabled'],
       },
       'application-updated': {
         title: 'Updated Application Server',
         description: 'Application servers with dual database support and feature flag integration',
-        specs: ['Database abstraction layer', 'Feature flag client', 'Enhanced monitoring']
+        specs: ['Database abstraction layer', 'Feature flag client', 'Enhanced monitoring'],
       },
       'load-balancer': {
         title: 'Load Balancer',
         description: 'AWS Application Load Balancer distributing traffic across instances',
-        specs: ['Health checks enabled', 'SSL termination', 'Auto-scaling target']
+        specs: ['Health checks enabled', 'SSL termination', 'Auto-scaling target'],
       },
       'database-old': {
         title: 'PostgreSQL 12 (Legacy)',
         description: 'Current production database showing performance limitations',
-        specs: ['db.r5.8xlarge', '50TB storage', '100K QPS capacity']
+        specs: ['db.r5.8xlarge', '50TB storage', '100K QPS capacity'],
       },
       'database-new': {
         title: 'Aurora PostgreSQL 14',
         description: 'New high-performance database with improved architecture',
-        specs: ['Serverless v2', 'Auto-scaling', '300K+ QPS capacity']
+        specs: ['Serverless v2', 'Auto-scaling', '300K+ QPS capacity'],
       },
       'database-replica': {
         title: 'Read Replica (Legacy)',
         description: 'Read-only replica with 2-3 second lag',
-        specs: ['db.r5.4xlarge', 'Cross-AZ', 'Read-only queries']
+        specs: ['db.r5.4xlarge', 'Cross-AZ', 'Read-only queries'],
       },
       'database-replica-new': {
         title: 'Aurora Read Replica',
         description: 'High-performance read replica with minimal lag',
-        specs: ['Auto-scaling', '<150ms lag', 'Global read distribution']
+        specs: ['Auto-scaling', '<150ms lag', 'Global read distribution'],
       },
-      'replication': {
+      replication: {
         title: 'Logical Replication',
         description: 'PostgreSQL logical replication for zero-downtime migration',
-        specs: ['Real-time sync', 'Data validation', 'Configurable lag alerts']
+        specs: ['Real-time sync', 'Data validation', 'Configurable lag alerts'],
       },
       'feature-flags': {
         title: 'Feature Flags (Redis)',
         description: 'Redis-based feature flag system for gradual migration',
-        specs: ['Real-time updates', 'User-based routing', 'Rollback capability']
+        specs: ['Real-time updates', 'User-based routing', 'Rollback capability'],
       },
-      'monitoring': {
+      monitoring: {
         title: 'Monitoring System',
         description: 'Comprehensive monitoring and alerting infrastructure',
-        specs: ['Prometheus metrics', 'Grafana dashboards', 'Sentry error tracking']
+        specs: ['Prometheus metrics', 'Grafana dashboards', 'Sentry error tracking'],
       },
-      'backup': {
+      backup: {
         title: 'Aurora Backups',
         description: 'Automated backup system with point-in-time recovery',
-        specs: ['Continuous backups', '35-day retention', 'Cross-region replication']
-      }
+        specs: ['Continuous backups', '35-day retention', 'Cross-region replication'],
+      },
     };
 
-    return details[type as keyof typeof details] || {
-      title: 'Component',
-      description: 'System component',
-      specs: []
-    };
+    return (
+      details[type as keyof typeof details] || {
+        title: 'Component',
+        description: 'System component',
+        specs: [],
+      }
+    );
   };
 
   const currentPhase = phases[selectedPhase];
 
   return (
     <div className="w-full max-w-6xl mx-auto p-6 bg-surface-100 rounded-lg border border-card-border">
-      <h3 className="text-xl font-bold text-text-primary mb-6">
-        Migration Architecture Evolution
-      </h3>
+      <h3 className="text-xl font-bold text-text-primary mb-6">Migration Architecture Evolution</h3>
 
       {/* Phase Navigation */}
       <div className="flex flex-wrap gap-2 mb-6">
@@ -251,9 +312,9 @@ const ArchitectureDiagram: React.FC = () => {
         <svg width="600" height="500" className="min-w-full">
           {/* Render Connections */}
           {currentPhase.connections.map((connection, _index) => {
-            const fromComponent = currentPhase.components.find(c => c.id === connection.from);
-            const toComponent = currentPhase.components.find(c => c.id === connection.to);
-            
+            const fromComponent = currentPhase.components.find((c) => c.id === connection.from);
+            const toComponent = currentPhase.components.find((c) => c.id === connection.to);
+
             if (!fromComponent || !toComponent) return null;
 
             const x1 = fromComponent.x + 40; // Center of component
@@ -284,11 +345,7 @@ const ArchitectureDiagram: React.FC = () => {
               refY="3.5"
               orient="auto"
             >
-              <polygon
-                points="0 0, 10 3.5, 0 7"
-                fill="currentColor"
-                className="text-gray-400"
-              />
+              <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" className="text-gray-400" />
             </marker>
           </defs>
 
@@ -314,9 +371,7 @@ const ArchitectureDiagram: React.FC = () => {
                 tabIndex={0}
                 style={{ width: '80px', height: '40px' }}
               >
-                <div className="text-center leading-tight">
-                  {component.label}
-                </div>
+                <div className="text-center leading-tight">{component.label}</div>
               </div>
             </foreignObject>
           ))}
@@ -329,9 +384,9 @@ const ArchitectureDiagram: React.FC = () => {
           <div className="bg-surface-100 rounded-lg max-w-md">
             <div className="p-6">
               {(() => {
-                const component = currentPhase.components.find(c => c.id === showDetails);
+                const component = currentPhase.components.find((c) => c.id === showDetails);
                 const details = component ? getComponentDetails(component.type) : null;
-                
+
                 if (!component || !details) return null;
 
                 return (
@@ -354,7 +409,10 @@ const ArchitectureDiagram: React.FC = () => {
                       <h5 className="font-semibold text-text-primary">Specifications:</h5>
                       <ul className="space-y-1">
                         {details.specs.map((spec, index) => (
-                          <li key={`spec-${spec.slice(0, 15)}-${index}`} className="flex items-start">
+                          <li
+                            key={`spec-${spec.slice(0, 15)}-${index}`}
+                            className="flex items-start"
+                          >
                             <div className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0"></div>
                             <span className="text-text-secondary text-sm">{spec}</span>
                           </li>

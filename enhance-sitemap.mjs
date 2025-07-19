@@ -10,9 +10,9 @@ const __dirname = dirname(__filename);
 
 // Possible locations of the sitemap.xml file based on different build outputs
 const possibleSitemapPaths = [
-  path.join(__dirname, 'dist', 'sitemap.xml'),                        // Standard static output
+  path.join(__dirname, 'dist', 'sitemap.xml'), // Standard static output
   path.join(__dirname, '.vercel', 'output', 'static', 'sitemap.xml'), // Vercel static output
-  path.join(__dirname, 'public', 'sitemap.xml')                       // Fallback location to generate
+  path.join(__dirname, 'public', 'sitemap.xml'), // Fallback location to generate
 ];
 
 // The base URL for the site
@@ -21,11 +21,11 @@ const SITE_URL = 'https://piyushmehta.com';
 // Wait for the Astro build to complete and create the initial sitemap
 const enhanceSitemap = async () => {
   console.log('Enhancing sitemap.xml for SEO optimization...');
-  
+
   // Find the existing sitemap file
   let sitemapPath = null;
   let sitemapContent = null;
-  
+
   for (const potentialPath of possibleSitemapPaths) {
     if (fs.existsSync(potentialPath)) {
       sitemapPath = potentialPath;
@@ -34,14 +34,14 @@ const enhanceSitemap = async () => {
       break;
     }
   }
-  
+
   // If no sitemap found, generate a new one in public folder
   if (!sitemapPath) {
     sitemapPath = possibleSitemapPaths[2]; // public/sitemap.xml
     console.log(`No existing sitemap found, will generate a new one at: ${sitemapPath}`);
     sitemapContent = generateBaseSitemap();
   }
-  
+
   try {
     // Add additional sitemap entries for key pages with high priority
     const highPriorityUrls = [
@@ -55,21 +55,21 @@ const enhanceSitemap = async () => {
       { url: `${SITE_URL}/uses/`, priority: '0.7', changefreq: 'monthly' },
       { url: `${SITE_URL}/react-developer/`, priority: '0.9', changefreq: 'weekly' },
     ];
-    
+
     // Get blog posts to add to sitemap
     const blogPosts = await getBlogPosts();
-    
+
     // Combine high priority URLs with blog posts
     const allUrls = [...highPriorityUrls, ...blogPosts];
-    
+
     // Find the closing </urlset> tag
     const closingTag = '</urlset>';
     const closingTagIndex = sitemapContent.indexOf(closingTag);
-    
+
     if (closingTagIndex !== -1) {
       // Insert new URLs before the closing tag
       let newUrlsXml = '';
-      
+
       // Check if each URL already exists in the sitemap
       for (const { url, priority, changefreq } of allUrls) {
         if (!sitemapContent.includes(`<loc>${url}</loc>`)) {
@@ -87,7 +87,7 @@ const enhanceSitemap = async () => {
           if (urlStartIndex !== -1) {
             const urlEntryEndIndex = sitemapContent.indexOf('</url>', urlStartIndex) + 6;
             const urlEntry = sitemapContent.substring(urlStartIndex - 7, urlEntryEndIndex);
-            
+
             // Create updated URL entry
             const updatedUrlEntry = `
   <url>
@@ -96,24 +96,27 @@ const enhanceSitemap = async () => {
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`;
-            
+
             // Replace the old entry with the updated one
             sitemapContent = sitemapContent.replace(urlEntry, updatedUrlEntry);
           }
         }
       }
-      
+
       // Insert any new URLs before the closing tag
       if (newUrlsXml) {
-        sitemapContent = sitemapContent.slice(0, closingTagIndex) + newUrlsXml + sitemapContent.slice(closingTagIndex);
+        sitemapContent =
+          sitemapContent.slice(0, closingTagIndex) +
+          newUrlsXml +
+          sitemapContent.slice(closingTagIndex);
       }
-      
+
       // Ensure the directory exists
       const dir = path.dirname(sitemapPath);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
-      
+
       // Write the enhanced sitemap back to the file
       fs.writeFileSync(sitemapPath, sitemapContent, 'utf8');
       console.log(`Sitemap successfully enhanced at: ${sitemapPath}`);
@@ -140,29 +143,29 @@ function generateBaseSitemap() {
 async function getBlogPosts() {
   const blogUrls = [];
   const contentDir = path.join(__dirname, 'src', 'content', 'blog');
-  
+
   if (!fs.existsSync(contentDir)) {
     console.warn('Blog content directory not found:', contentDir);
     return blogUrls;
   }
-  
+
   // Get all blog directories
-  const blogDirs = fs.readdirSync(contentDir).filter(dir => 
-    fs.statSync(path.join(contentDir, dir)).isDirectory()
-  );
-  
+  const blogDirs = fs
+    .readdirSync(contentDir)
+    .filter((dir) => fs.statSync(path.join(contentDir, dir)).isDirectory());
+
   for (const blogDir of blogDirs) {
     // Format the blog URL correctly
     const blogUrl = `${SITE_URL}/blog/${blogDir}/`;
-    
+
     // Add to blog URLs with appropriate priority and change frequency
-    blogUrls.push({ 
-      url: blogUrl, 
-      priority: '0.7', 
-      changefreq: 'monthly' 
+    blogUrls.push({
+      url: blogUrl,
+      priority: '0.7',
+      changefreq: 'monthly',
     });
   }
-  
+
   console.log(`Found ${blogUrls.length} blog posts to add to sitemap`);
   return blogUrls;
 }
