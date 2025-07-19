@@ -40,10 +40,7 @@ export interface FormattedRepo {
  * @param token Optional GitHub token for authentication
  * @returns A Promise resolving to an array of formatted repositories
  */
-export async function fetchGitHubRepos(
-  username: string,
-  token?: string
-): Promise<FormattedRepo[]> {
+export async function fetchGitHubRepos(username: string, token?: string): Promise<FormattedRepo[]> {
   try {
     // Set up request headers
     const headers = new Headers();
@@ -60,24 +57,22 @@ export async function fetchGitHubRepos(
         headers.append('Authorization', `token ${envToken}`);
         console.log('Using GitHub token from environment for API requests');
       } else {
-        console.log(
-          'No GitHub token found. Using unauthenticated requests (rate limited).'
-        );
+        console.log('No GitHub token found. Using unauthenticated requests (rate limited).');
       }
     }
 
     // Fetch repositories with timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-    
+
     const response = await fetch(
       `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
-      { 
+      {
         headers,
-        signal: controller.signal
+        signal: controller.signal,
       }
     );
-    
+
     clearTimeout(timeoutId);
 
     if (!response.ok) {
@@ -117,20 +112,11 @@ function formatRepo(repo: GitHubRepo): FormattedRepo {
   let category = 'personal';
   if (repo.topics?.includes('api') || repo.topics?.includes('backend')) {
     category = 'backend';
-  } else if (
-    repo.topics?.includes('frontend') ||
-    repo.topics?.includes('website')
-  ) {
+  } else if (repo.topics?.includes('frontend') || repo.topics?.includes('website')) {
     category = 'frontend';
-  } else if (
-    repo.topics?.includes('fullstack') ||
-    repo.topics?.includes('full-stack')
-  ) {
+  } else if (repo.topics?.includes('fullstack') || repo.topics?.includes('full-stack')) {
     category = 'fullstack';
-  } else if (
-    repo.topics?.includes('tool') ||
-    repo.topics?.includes('utility')
-  ) {
+  } else if (repo.topics?.includes('tool') || repo.topics?.includes('utility')) {
     category = 'tool';
   }
 
@@ -178,9 +164,7 @@ function formatRepo(repo: GitHubRepo): FormattedRepo {
     console.error(`Error generating image URL for ${repo.name}:`, error);
 
     // Fallback to a simple placeholder in case of any errors
-    const displayText = encodeURIComponent(
-      repo.name.length <= 10 ? repo.name : firstLetter
-    );
+    const displayText = encodeURIComponent(repo.name.length <= 10 ? repo.name : firstLetter);
     imageUrl = `https://via.placeholder.com/300x150/${bgColor.replace('#', '')}/${getContrastColor(bgColor)}?text=${displayText}`;
   }
 

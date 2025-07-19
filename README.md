@@ -29,6 +29,8 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 - **Newsletter Security**: Enterprise-grade newsletter subscription with Redis-based rate limiting
 - **Web Analytics**: Built-in Vercel Web Analytics support
 - **Comprehensive Testing**: E2E tests with Playwright for all interactive components
+- **tRPC Integration**: Type-safe API layer with end-to-end type safety and validation
+- **Security Hardened**: Input validation, sanitization, security headers, and bot protection
 
 ## 🛠️ Tech Stack
 
@@ -39,6 +41,8 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 - **Content**: [MDX](https://mdxjs.com/) for enhanced blog posts and content
 - **Search**: [Pagefind](https://pagefind.app/) - Fully static search library
 - **Database**: [PostgreSQL](https://www.postgresql.org/) - For dynamic content and data
+- **API Layer**: [tRPC](https://trpc.io/) - End-to-end type-safe APIs with runtime validation
+- **Validation**: [Zod](https://zod.dev/) - TypeScript-first schema validation
 - **Linting & Formatting**: [Biome](https://biomejs.dev/) - Fast formatter and linter for JavaScript, TypeScript, and more
 - **OG Images**: [@vercel/og](https://vercel.com/docs/functions/og-image-generation) - Dynamic Open Graph image generation
 - **Redis**: [Upstash Redis](https://upstash.com/) - Serverless Redis for rate limiting and caching
@@ -135,10 +139,20 @@ The site will be available at `http://localhost:4321`
 │   ├── components/        # Reusable UI components (Astro & React)
 │   ├── content/           # Content collections (blog posts, etc.)
 │   ├── layouts/           # Page layouts
+│   ├── lib/               # Shared utilities and configurations
+│   │   └── trpc.ts        # tRPC client configuration
+│   ├── middleware/        # Middleware functions (security, caching, etc.)
 │   ├── pages/             # File-based routing
 │   │   ├── api/           # API routes
+│   │   │   └── trpc/      # tRPC API endpoints
 │   │   ├── blog/          # Blog pages
 │   │   └── offline.astro  # Offline fallback page
+│   ├── server/            # Server-side logic
+│   │   ├── routers/       # tRPC routers and procedures
+│   │   │   ├── _app.ts    # Main app router
+│   │   │   ├── newsletter.ts # Newsletter API
+│   │   │   └── og-image.ts   # OG image generation API
+│   │   └── trpc.ts        # tRPC server configuration
 │   ├── styles/            # Global styles
 │   ├── types/             # TypeScript type definitions
 │   └── utils/             # Utility functions
@@ -149,6 +163,39 @@ The site will be available at `http://localhost:4321`
 ```
 
 ## 🎨 Key Features & Components
+
+### tRPC API Layer
+
+Full-stack type safety with tRPC integration:
+- **End-to-End Type Safety**: Shared TypeScript types between client and server
+- **Runtime Validation**: Zod schemas for request/response validation
+- **Newsletter API**: Secure subscription management with rate limiting
+- **OG Image API**: Dynamic Open Graph image generation with templates
+- **Error Handling**: Structured error responses with Zod error formatting
+- **Rate Limiting**: IP-based rate limiting with bot detection
+- **Security Middleware**: Enhanced context with user agent tracking and IP validation
+- **React Integration**: Type-safe hooks for seamless client-server communication
+
+#### Available APIs
+
+```typescript
+// Newsletter subscription with validation
+await trpc.newsletter.subscribe.mutate({
+  email: 'user@example.com',
+  source: 'website'
+});
+
+// Dynamic OG image generation
+await trpc.ogImage.generate.mutate({
+  title: 'Blog Post Title',
+  description: 'Post description',
+  template: 'tech',
+  theme: 'dark'
+});
+
+// Get available templates and themes
+const templates = await trpc.ogImage.getTemplates.query();
+```
 
 ### Interactive UI Components
 
@@ -266,6 +313,7 @@ The site uses Astro's SSR capabilities with:
 - Database integration
 - API routes for dynamic functionality
 - Incremental Static Regeneration (ISR) for optimal performance
+- tRPC integration for type-safe API communication
 
 ## 📝 Content Management
 
@@ -303,6 +351,8 @@ Key configurations in `astro.config.mjs`:
 - **Vercel Adapter**: With Web Analytics, Image Service, and ISR enabled
 - **Image Optimization**: Domains and formats configured for `astro:assets`.
 - **Prefetching**: Global prefetch configuration enabled.
+- **Build Optimization**: Enhanced build performance with increased concurrency and optimized chunk splitting
+- **Security Headers**: Configured security middleware for enhanced protection
 
 ### SEO Defaults
 
@@ -383,6 +433,8 @@ NEWSLETTER_ADMIN_TOKEN=your_secure_admin_token
 - **Database Integration**: PostgreSQL for dynamic content and analytics
 - **Web Analytics**: Built-in Vercel Web Analytics support
 - **E2E Testing**: Comprehensive Playwright test coverage for all components
+- **Type-Safe APIs**: End-to-end type safety with tRPC and Zod validation
+- **Enhanced Security**: Input validation, sanitization, security headers, and bot protection
 
 ## 🛠️ Development Tools & Scripts
 
@@ -423,6 +475,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Built with ❤️ by Piyush Mehta in Toronto, CA 🇨🇦**
 
-This website showcases modern web development practices with Astro 5.x, server-side rendering, and optimal performance. Feel free to reach out for collaborations, feedback, or just to say hi!
+This website showcases modern web development practices with Astro 5.x, server-side rendering, tRPC integration, and optimal performance. Feel free to reach out for collaborations, feedback, or just to say hi!
 
-*Last updated: June 2025*
+*Last updated: July 2025*

@@ -7,8 +7,8 @@ import SEO from '../components/SEO.astro';
 import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration.astro';
 import SmartPrefetch from '../components/SmartPrefetch.astro';
 import '../styles/global.css';
-import SpeedInsights from "@vercel/speed-insights/astro"
-import favicon from "../assets/favicon.svg";
+import SpeedInsights from '@vercel/speed-insights/astro';
+import favicon from '../assets/favicon.svg';
 import type { JsonLdData } from '../types/schema';
 
 export interface Props {
@@ -24,6 +24,17 @@ export interface Props {
   noindex?: boolean;
   schema?: JsonLdData;
   keywords?: string[];
+  ogTemplate?:
+    | 'default'
+    | 'minimal'
+    | 'tech'
+    | 'blog'
+    | 'cyber'
+    | 'gradient'
+    | 'terminal'
+    | 'modern'
+    | 'professional';
+  ogTheme?: 'dark' | 'light' | 'retro' | 'neon' | 'corporate' | 'warm' | 'ocean';
 }
 
 const {
@@ -39,6 +50,8 @@ const {
   noindex,
   schema,
   keywords,
+  ogTemplate,
+  ogTheme,
 } = Astro.props;
 ---
 
@@ -71,6 +84,8 @@ const {
       noindex={noindex}
       schema={schema}
       keywords={keywords}
+      ogTemplate={ogTemplate}
+      ogTheme={ogTheme}
     />
 
     <script>

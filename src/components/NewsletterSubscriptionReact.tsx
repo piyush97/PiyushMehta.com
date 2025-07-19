@@ -16,9 +16,7 @@ export default function NewsletterSubscription({
 }: NewsletterSubscriptionProps) {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    'idle' | 'success' | 'error'
-  >('idle');
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [showConfetti, setShowConfetti] = useState(false);
   const [emailError, setEmailError] = useState('');
@@ -78,15 +76,13 @@ export default function NewsletterSubscription({
         setTimeout(() => setSubmitStatus('idle'), 10000);
       } else {
         setSubmitStatus('error');
-        setErrorMessage(
-          result.message || 'Failed to subscribe. Please try again later.'
-        );
+        setErrorMessage(result.message || 'Failed to subscribe. Please try again later.');
       }
     } catch (error) {
       console.error('Newsletter subscription error:', error);
       setSubmitStatus('error');
       setErrorMessage('Failed to subscribe. Please try again later.');
-      
+
       // Log error to Sentry
       captureError(error as Error, {
         component: 'NewsletterSubscription',
@@ -123,9 +119,7 @@ export default function NewsletterSubscription({
   };
 
   return (
-    <div
-      className={`newsletter-subscription relative ${getVariantStyles()} ${className}`}
-    >
+    <div className={`newsletter-subscription relative ${getVariantStyles()} ${className}`}>
       {/* Confetti Container */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none newsletter-confetti">
         {showConfetti && (
@@ -145,9 +139,7 @@ export default function NewsletterSubscription({
         )}
       </div>
 
-      <div
-        className={`${variant === 'default' ? 'max-w-md mx-auto md:mx-0' : ''}`}
-      >
+      <div className={`${variant === 'default' ? 'max-w-md mx-auto md:mx-0' : ''}`}>
         {/* Header */}
         <div className="mb-6">
           <h4
@@ -157,11 +149,7 @@ export default function NewsletterSubscription({
           >
             {title}
           </h4>
-          <p
-            className={`text-text-secondary ${
-              variant === 'modal' ? 'text-base' : 'text-sm'
-            }`}
-          >
+          <p className={`text-text-secondary ${variant === 'modal' ? 'text-base' : 'text-sm'}`}>
             {description}
           </p>
         </div>
@@ -170,11 +158,7 @@ export default function NewsletterSubscription({
         {submitStatus === 'success' && (
           <div className="p-4 mb-6 text-green-700 bg-green-100 border border-green-300 rounded-lg animate-fadeIn">
             <div className="flex items-center">
-              <svg
-                className="flex-shrink-0 w-5 h-5 mr-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
+              <svg className="flex-shrink-0 w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -183,9 +167,7 @@ export default function NewsletterSubscription({
               </svg>
               <div>
                 <p className="font-medium">Successfully subscribed! 🎉</p>
-                <p className="mt-1 text-sm">
-                  You'll receive an email confirmation shortly.
-                </p>
+                <p className="mt-1 text-sm">You'll receive an email confirmation shortly.</p>
               </div>
             </div>
           </div>
@@ -204,9 +186,7 @@ export default function NewsletterSubscription({
                   onChange={handleEmailChange}
                   placeholder="Enter your email address"
                   className={`w-full px-4 py-3 bg-surface-secondary border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200 ${
-                    emailError
-                      ? 'border-red-500 focus:ring-red-500'
-                      : 'border-card-border'
+                    emailError ? 'border-red-500 focus:ring-red-500' : 'border-card-border'
                   }`}
                   disabled={isSubmitting}
                 />
@@ -225,11 +205,7 @@ export default function NewsletterSubscription({
                         />
                       </svg>
                     ) : (
-                      <svg
-                        className="w-5 h-5 text-red-500"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
+                      <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -240,9 +216,7 @@ export default function NewsletterSubscription({
                   </div>
                 )}
               </div>
-              {emailError && (
-                <p className="mt-1 text-sm text-red-500">{emailError}</p>
-              )}
+              {emailError && <p className="mt-1 text-sm text-red-500">{emailError}</p>}
             </div>
 
             <button
@@ -288,11 +262,7 @@ export default function NewsletterSubscription({
           {submitStatus === 'error' && (
             <div className="p-3 mt-3 text-sm text-red-700 bg-red-100 border border-red-300 rounded-lg">
               <div className="flex items-center">
-                <svg
-                  className="flex-shrink-0 w-4 h-4 mr-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg className="flex-shrink-0 w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -306,18 +276,15 @@ export default function NewsletterSubscription({
 
           {/* Privacy Notice */}
           <p className="mt-4 text-xs text-text-secondary">
-            By subscribing, you agree to receive email updates. You can
-            unsubscribe at any time. We respect your privacy and never share
-            your information.
+            By subscribing, you agree to receive email updates. You can unsubscribe at any time. We
+            respect your privacy and never share your information.
           </p>
         </form>
 
         {/* Features */}
         {variant === 'modal' && (
           <div className="pt-6 mt-8 border-t border-card-border">
-            <h5 className="mb-3 text-sm font-medium text-text-primary">
-              What you'll get:
-            </h5>
+            <h5 className="mb-3 text-sm font-medium text-text-primary">What you'll get:</h5>
             <ul className="space-y-2 text-sm text-text-secondary">
               <li className="flex items-center">
                 <svg

@@ -30,11 +30,12 @@ const getCategories = () => {
 
 const getTechnologies = () => {
   // First flatten all technologies and remove empty values
-  const techs = projects.flatMap((p) => p.technologies || [])
+  const techs = projects
+    .flatMap((p) => p.technologies || [])
     .filter(Boolean)
-    .map(tech => tech.toString().trim()) // Ensure all tech items are strings and trimmed
-    .filter(tech => tech !== ''); // Remove empty strings
-    
+    .map((tech) => tech.toString().trim()) // Ensure all tech items are strings and trimmed
+    .filter((tech) => tech !== ''); // Remove empty strings
+
   // Then create a Set to get unique values
   return ['all', ...Array.from(new Set(techs)).sort()];
 };
@@ -49,8 +50,8 @@ const getDefaultImageUrl = (project: Project) => {
     }
     let color = '#';
     for (let i = 0; i < 3; i++) {
-      const value = (hash >> (i * 8)) & 0xFF;
-      color += (`00${value.toString(16)}`).slice(-2);
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
     }
     return color;
   };
@@ -59,15 +60,15 @@ const getDefaultImageUrl = (project: Project) => {
   const getContrastColor = (hexColor: string) => {
     // Remove the # if it exists
     const hex = hexColor.replace('#', '');
-    
+
     // Convert to RGB
     const r = Number.parseInt(hex.substring(0, 2), 16);
     const g = Number.parseInt(hex.substring(2, 4), 16);
     const b = Number.parseInt(hex.substring(4, 6), 16);
-    
+
     // Calculate luminance
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    
+
     // Return black for bright colors, white for dark colors
     return luminance > 0.5 ? '000000' : 'ffffff';
   };
@@ -75,7 +76,7 @@ const getDefaultImageUrl = (project: Project) => {
   const bgColor = stringToColor(project.title);
   const textColor = getContrastColor(bgColor);
   const firstLetter = project.title.charAt(0).toUpperCase();
-  
+
   return `https://via.placeholder.com/300x150/${bgColor.replace('#', '')}/${textColor}?text=${firstLetter}`;
 };
 

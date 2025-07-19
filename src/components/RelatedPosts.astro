@@ -16,28 +16,26 @@ const allPosts = await getCollection('blog');
 // Calculate similarity scores for each post
 function calculateSimilarity(post: { data: { tags?: string[] } }, targetTags: string[]) {
   if (!post.data.tags || !targetTags.length) return 0;
-  
+
   const postTags = post.data.tags.map((tag: string) => tag.toLowerCase());
-  const normalizedTargetTags = targetTags.map(tag => tag.toLowerCase());
-  
+  const normalizedTargetTags = targetTags.map((tag) => tag.toLowerCase());
+
   // Count matching tags
-  const matchingTags = postTags.filter((tag: string) => 
-    normalizedTargetTags.includes(tag)
-  ).length;
-  
+  const matchingTags = postTags.filter((tag: string) => normalizedTargetTags.includes(tag)).length;
+
   // Calculate similarity score (Jaccard similarity)
   const unionSize = new Set([...postTags, ...normalizedTargetTags]).size;
   const similarity = matchingTags / unionSize;
-  
+
   return similarity;
 }
 
 // Get related posts
 const relatedPosts = allPosts
-  .filter(post => post.slug !== currentSlug) // Exclude current post
-  .map(post => ({
+  .filter((post) => post.slug !== currentSlug) // Exclude current post
+  .map((post) => ({
     ...post,
-    similarity: calculateSimilarity(post, currentTags)
+    similarity: calculateSimilarity(post, currentTags),
   }))
   .sort((a, b) => {
     // Sort by similarity first, then by date

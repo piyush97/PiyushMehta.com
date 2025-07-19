@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface MetricData {
   name: string;
@@ -11,7 +11,9 @@ interface MetricData {
 }
 
 const PerformanceMetrics: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'performance' | 'cost' | 'capacity'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<
+    'all' | 'performance' | 'cost' | 'capacity'
+  >('all');
   const [animationComplete, setAnimationComplete] = useState(false);
 
   const metricsData: MetricData[] = [
@@ -22,7 +24,8 @@ const PerformanceMetrics: React.FC = () => {
       unit: 'ms',
       improvement: 69.6,
       category: 'performance',
-      description: 'Significant improvement in query performance due to better indexing and hardware'
+      description:
+        'Significant improvement in query performance due to better indexing and hardware',
     },
     {
       name: 'Database Throughput',
@@ -31,7 +34,7 @@ const PerformanceMetrics: React.FC = () => {
       unit: 'QPS',
       improvement: 200,
       category: 'performance',
-      description: 'Tripled query processing capacity with new architecture'
+      description: 'Tripled query processing capacity with new architecture',
     },
     {
       name: 'Connection Pool Utilization',
@@ -40,7 +43,7 @@ const PerformanceMetrics: React.FC = () => {
       unit: '%',
       improvement: 47.1,
       category: 'performance',
-      description: 'More efficient connection management reducing resource contention'
+      description: 'More efficient connection management reducing resource contention',
     },
     {
       name: 'Monthly Infrastructure Cost',
@@ -49,7 +52,7 @@ const PerformanceMetrics: React.FC = () => {
       unit: '$',
       improvement: 35.2,
       category: 'cost',
-      description: 'Aurora Serverless v2 provides better price-performance ratio'
+      description: 'Aurora Serverless v2 provides better price-performance ratio',
     },
     {
       name: 'Storage Cost per TB',
@@ -58,7 +61,7 @@ const PerformanceMetrics: React.FC = () => {
       unit: '$',
       improvement: 30,
       category: 'cost',
-      description: 'Aurora storage pricing more efficient than traditional RDS'
+      description: 'Aurora storage pricing more efficient than traditional RDS',
     },
     {
       name: 'Backup Storage Cost',
@@ -67,7 +70,7 @@ const PerformanceMetrics: React.FC = () => {
       unit: '$',
       improvement: 60,
       category: 'cost',
-      description: 'Aurora backup system more cost-effective'
+      description: 'Aurora backup system more cost-effective',
     },
     {
       name: 'Maximum Concurrent Users',
@@ -76,7 +79,7 @@ const PerformanceMetrics: React.FC = () => {
       unit: 'users',
       improvement: 900,
       category: 'capacity',
-      description: '10x capacity increase to support future growth'
+      description: '10x capacity increase to support future growth',
     },
     {
       name: 'Read Replica Lag',
@@ -85,7 +88,7 @@ const PerformanceMetrics: React.FC = () => {
       unit: 'ms',
       improvement: 94,
       category: 'capacity',
-      description: 'Aurora read replicas provide near real-time consistency'
+      description: 'Aurora read replicas provide near real-time consistency',
     },
     {
       name: 'Auto-scaling Response Time',
@@ -94,8 +97,8 @@ const PerformanceMetrics: React.FC = () => {
       unit: 'seconds',
       improvement: 92.5,
       category: 'capacity',
-      description: 'Aurora Serverless v2 scales much faster than traditional instances'
-    }
+      description: 'Aurora Serverless v2 scales much faster than traditional instances',
+    },
   ];
 
   useEffect(() => {
@@ -103,9 +106,10 @@ const PerformanceMetrics: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const filteredMetrics = selectedCategory === 'all' 
-    ? metricsData 
-    : metricsData.filter(metric => metric.category === selectedCategory);
+  const filteredMetrics =
+    selectedCategory === 'all'
+      ? metricsData
+      : metricsData.filter((metric) => metric.category === selectedCategory);
 
   const formatValue = (value: number, unit: string) => {
     if (unit === '$') {
@@ -113,18 +117,18 @@ const PerformanceMetrics: React.FC = () => {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 0,
-        maximumFractionDigits: 0
+        maximumFractionDigits: 0,
       }).format(value);
     }
-    
+
     if (value >= 1000000) {
       return `${(value / 1000000).toFixed(1)}M ${unit}`;
     }
-    
+
     if (value >= 1000) {
       return `${(value / 1000).toFixed(1)}K ${unit}`;
     }
-    
+
     return `${value} ${unit}`;
   };
 
@@ -136,28 +140,34 @@ const PerformanceMetrics: React.FC = () => {
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'performance': return '⚡';
-      case 'cost': return '💰';
-      case 'capacity': return '📈';
-      default: return '📊';
+      case 'performance':
+        return '⚡';
+      case 'cost':
+        return '💰';
+      case 'capacity':
+        return '📈';
+      default:
+        return '📊';
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'performance': return 'bg-blue-100 text-blue-800';
-      case 'cost': return 'bg-green-100 text-green-800';
-      case 'capacity': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'performance':
+        return 'bg-blue-100 text-blue-800';
+      case 'cost':
+        return 'bg-green-100 text-green-800';
+      case 'capacity':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   return (
     <div className="w-full max-w-6xl mx-auto p-6 bg-surface-100 rounded-lg border border-card-border">
-      <h3 className="text-xl font-bold text-text-primary mb-6">
-        Migration Performance Results
-      </h3>
-      
+      <h3 className="text-xl font-bold text-text-primary mb-6">Migration Performance Results</h3>
+
       {/* Category Filter */}
       <div className="flex flex-wrap gap-2 mb-6">
         {(['all', 'performance', 'cost', 'capacity'] as const).map((category) => (
@@ -184,21 +194,22 @@ const PerformanceMetrics: React.FC = () => {
             className="bg-card-bg rounded-lg p-6 border border-card-border hover:shadow-lg transition-all duration-300"
             style={{
               animationDelay: `${index * 100}ms`,
-              animation: animationComplete ? 'none' : 'fadeInUp 0.6s ease-out forwards'
+              animation: animationComplete ? 'none' : 'fadeInUp 0.6s ease-out forwards',
             }}
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
-                <h4 className="font-semibold text-text-primary mb-1">
-                  {metric.name}
-                </h4>
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(metric.category)}`}>
+                <h4 className="font-semibold text-text-primary mb-1">{metric.name}</h4>
+                <span
+                  className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(metric.category)}`}
+                >
                   {getCategoryIcon(metric.category)} {metric.category}
                 </span>
               </div>
               <div className={`text-2xl font-bold ${getImprovementColor(metric.improvement)}`}>
-                {metric.improvement >= 0 ? '+' : ''}{metric.improvement.toFixed(1)}%
+                {metric.improvement >= 0 ? '+' : ''}
+                {metric.improvement.toFixed(1)}%
               </div>
             </div>
 
@@ -210,7 +221,7 @@ const PerformanceMetrics: React.FC = () => {
                   {formatValue(metric.before, metric.unit)}
                 </span>
               </div>
-              
+
               <div className="flex justify-between items-center">
                 <span className="text-text-secondary">After:</span>
                 <span className="font-mono text-lg text-green-600">
@@ -226,22 +237,23 @@ const PerformanceMetrics: React.FC = () => {
                 <span>{metric.improvement.toFixed(1)}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
+                <div
                   className={`h-2 rounded-full transition-all duration-1000 ${
-                    metric.improvement >= 50 ? 'bg-green-500' :
-                    metric.improvement >= 25 ? 'bg-blue-500' : 'bg-orange-500'
+                    metric.improvement >= 50
+                      ? 'bg-green-500'
+                      : metric.improvement >= 25
+                        ? 'bg-blue-500'
+                        : 'bg-orange-500'
                   }`}
-                  style={{ 
-                    width: animationComplete ? `${Math.min(metric.improvement, 100)}%` : '0%' 
+                  style={{
+                    width: animationComplete ? `${Math.min(metric.improvement, 100)}%` : '0%',
                   }}
                 ></div>
               </div>
             </div>
 
             {/* Description */}
-            <p className="text-sm text-text-secondary">
-              {metric.description}
-            </p>
+            <p className="text-sm text-text-secondary">{metric.description}</p>
           </div>
         ))}
       </div>

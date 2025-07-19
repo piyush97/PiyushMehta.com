@@ -19,7 +19,7 @@ export const generatePageMetadata = ({
 }) => {
   // Base domain
   const domain = 'https://piyushmehta.com';
-  
+
   // Default keywords that should appear on all pages
   const defaultKeywords = [
     'Piyush Mehta',
@@ -29,16 +29,16 @@ export const generatePageMetadata = ({
     'ReactJS Developer',
     'Canadian Developer',
   ];
-  
+
   // Combine with page-specific keywords and deduplicate
   const allKeywords = [...new Set([...defaultKeywords, ...keywords, ...tags])];
-  
+
   // Construct canonical URL
   const canonicalUrl = `${domain}${pagePath}`;
-  
+
   // Default image if none provided
-  const ogImage = image || `${domain}/api/og-image?title=${encodeURIComponent(title)}`;
-  
+  const ogImage = image || `${domain}/images/social.jpg`;
+
   return {
     title,
     description,
@@ -71,7 +71,7 @@ export const generateKeywordVariations = (keyword) => {
     `${keyword} specialist`,
     `best ${keyword}`,
   ];
-  
+
   return variations;
 };
 
@@ -93,7 +93,7 @@ export const keywordSets = {
     'Custom React Solutions',
     'React Performance Optimization',
   ],
-  
+
   softwareEngineer: [
     'Software Engineer',
     'Software Developer',
@@ -108,7 +108,7 @@ export const keywordSets = {
     'Hire Software Engineer',
     'Software Engineering Services',
   ],
-  
+
   blog: [
     'Web Development Blog',
     'React Development Blog',
@@ -121,7 +121,7 @@ export const keywordSets = {
     'Tech Blog',
     'Software Engineering Articles',
     'Web Development Tutorials',
-  ]
+  ],
 };
 
 /**
@@ -145,11 +145,11 @@ export const generateSlug = (text) => {
  */
 export const truncateDescription = (text, maxLength = 160) => {
   if (text.length <= maxLength) return text;
-  
+
   // Find the last space before the maxLength
   const lastSpace = text.substring(0, maxLength).lastIndexOf(' ');
-  
+
   if (lastSpace === -1) return `${text.substring(0, maxLength)}...`;
-  
+
   return `${text.substring(0, lastSpace)}...`;
 };

@@ -66,6 +66,22 @@ export default defineConfig({
       "**/*.svg",
       "**/*.webp",
     ],
+    build: {
+      rollupOptions: {
+        output: {
+          // Optimize chunk splitting for better caching
+          manualChunks: {
+            vendor: ['react', 'react-dom'],
+            trpc: ['@trpc/client', '@trpc/server'],
+            utils: ['zod', 'clsx'],
+          },
+        },
+      },
+    },
+    ssr: {
+      // External dependencies that should not be bundled
+      external: ['sharp', '@resvg/resvg-js'],
+    },
   },
   image: {
     domains: ["piyushmehta.com"],
@@ -78,8 +94,8 @@ export default defineConfig({
   },
 
   build: {
-    concurrency: 2,
-    assetsInlineLimit: 1024,
+    concurrency: 4, // Increase build parallelism
+    assetsInlineLimit: 2048, // Inline more small assets
   },
 
   adapter: vercel({

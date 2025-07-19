@@ -25,11 +25,11 @@ if (segments) {
 } else {
   // Otherwise dynamically generate from path
   let currentPath = '';
-  
+
   for (let i = 0; i < pathSegments.length; i++) {
     const segment = pathSegments[i];
     currentPath += `/${segment}`;
-    
+
     // Skip adding the last segment since it will be added with the title
     if (i < pathSegments.length - 1) {
       breadcrumbItems.push({
@@ -61,6 +61,7 @@ const breadcrumbSchema = {
 <script
   type="application/ld+json"
   set:html={JSON.stringify(breadcrumbSchema)}
+  is:inline
 />
 
 <nav aria-label="Breadcrumb" class="mb-8">

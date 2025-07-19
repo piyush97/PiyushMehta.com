@@ -1,0 +1,81 @@
+---
+// 🌟 Enhanced About Page with Universal OG Integration
+// Example of how to integrate the new OG system into existing pages
+
+import UniversalOG from '../components/UniversalOG.astro';
+import Layout from '../layouts/Layout.astro';
+
+// Page metadata
+const pageTitle = 'About Piyush Mehta - Senior Software Engineer & Tech Leader';
+const pageDescription =
+  'Senior Software Engineer with 5+ years of experience in Canada. Passionate about React.js, Node.js, system architecture, and building high-performing teams.';
+const pageTags = [
+  'about',
+  'software-engineer',
+  'leadership',
+  'experience',
+  'react',
+  'nodejs',
+  'canada',
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription} />
+  
+  <!-- 🎨 Universal OG Integration -->
+  <UniversalOG
+    title={pageTitle}
+    description={pageDescription}
+    tags={pageTags}
+    pageType="about"
+    ogTemplate="professional"
+    ogTheme="warm"
+    category="About"
+    forceTemplate={true}
+  />
+  
+  <!-- Additional meta tags -->
+  <meta name="keywords" content="Piyush Mehta, Software Engineer, React Developer, Node.js, Full Stack Developer, Canada, Toronto, Senior Developer" />
+  <meta name="author" content="Piyush Mehta" />
+  <link rel="canonical" href="https://piyushmehta.com/about" />
+</head>
+<body>
+  <Layout
+    title={pageTitle}
+    description={pageDescription}
+    type="website"
+  >
+    <!-- Page content remains the same -->
+    <section class="about-hero-section">
+      <!-- ... existing content ... -->
+      <div class="relative z-10 container-base">
+        <div class="py-16 text-center md:py-24">
+          <div class="hero-content-wrapper">
+            <p class="about-hero-intro">
+              <span class="intro-icon">👋</span>
+              <span class="intro-text">Get to know me</span>
+            </p>
+            <h1 class="about-hero-title">
+              <span class="title-primary">About</span>
+              <strong class="title-accent">Me</strong>
+              <div class="title-underline"></div>
+            </h1>
+            <p class="about-hero-teaser">
+              Passionate <span class="highlight">software engineer</span> with expertise
+              in building scalable web applications and distributed systems.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Rest of the page content -->
+  </Layout>
+</body>
+</html>

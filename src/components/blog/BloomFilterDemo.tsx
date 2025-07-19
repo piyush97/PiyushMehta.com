@@ -20,69 +20,69 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
   const [filter, setFilter] = useState<BloomFilterState>({
     bits: new Array(8).fill(false),
     size: 8,
-    items: []
+    items: [],
   });
-  
+
   const [inputValue, setInputValue] = useState('');
   const [checkValue, setCheckValue] = useState('');
   const [checkResult, setCheckResult] = useState<string | null>(null);
-  
+
   const addItem = (item: string) => {
     if (!item.trim()) return;
-    
+
     const newBits = [...filter.bits];
     const hash1 = simpleHash(item, 1, filter.size);
     const hash2 = simpleHash(item, 2, filter.size);
     const hash3 = simpleHash(item, 3, filter.size);
-    
+
     newBits[hash1] = true;
     newBits[hash2] = true;
     newBits[hash3] = true;
-    
+
     setFilter({
       ...filter,
       bits: newBits,
-      items: [...filter.items, item]
+      items: [...filter.items, item],
     });
     setInputValue('');
   };
-  
+
   const checkItem = (item: string) => {
     if (!item.trim()) return;
-    
+
     const hash1 = simpleHash(item, 1, filter.size);
     const hash2 = simpleHash(item, 2, filter.size);
     const hash3 = simpleHash(item, 3, filter.size);
-    
+
     const exists = filter.bits[hash1] && filter.bits[hash2] && filter.bits[hash3];
     const actuallyExists = filter.items.includes(item);
-    
+
     if (!exists) {
       setCheckResult(`❌ "${item}" is DEFINITELY NOT in the filter (100% accurate)`);
     } else if (actuallyExists) {
       setCheckResult(`✅ "${item}" MIGHT be in the filter (and it actually is!)`);
     } else {
-      setCheckResult(`⚠️ "${item}" MIGHT be in the filter (FALSE POSITIVE - it's not actually there!)`);
+      setCheckResult(
+        `⚠️ "${item}" MIGHT be in the filter (FALSE POSITIVE - it's not actually there!)`
+      );
     }
   };
-  
+
   const reset = () => {
     setFilter({
       bits: new Array(8).fill(false),
       size: 8,
-      items: []
+      items: [],
     });
     setCheckResult(null);
   };
-  
+
   const presetItems = ['netflix', 'google', 'instagram'];
-  
+
   return (
     <div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
-      <h3 className="text-xl font-bold mb-4 text-text-primary">
-        🧪 Interactive Bloom Filter Demo
-      </h3>
-      
+      <h3 className="text-xl font-bold mb-4 text-text-primary">🧪 Interactive Bloom Filter Demo</h3>
+
       {/* Bit Array Visualization */}
       <div className="mb-6">
         <h4 className="font-semibold mb-2 text-text-primary">Bit Array (8 bits):</h4>
@@ -100,13 +100,13 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
         </div>
         <div className="flex gap-2 text-sm text-text-secondary">
           {filter.bits.map((_, index) => (
-            <div key={`bit-position-${index}`} className="w-12 text-center">
+            <div key={`bit-position-${index}-${filter.bits.length}`} className="w-12 text-center">
               {index}
             </div>
           ))}
         </div>
       </div>
-      
+
       {/* Add Item Section */}
       <div className="mb-6">
         <h4 className="font-semibold mb-2 text-text-primary">Add Item to Filter:</h4>
@@ -119,11 +119,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
             placeholder="Enter a word (e.g., 'username123')"
             className="flex-1 p-2 border border-card-border rounded bg-light-800 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
           />
-          <button
-            type="button"
-            onClick={() => addItem(inputValue)}
-            className="btn-primary"
-          >
+          <button type="button" onClick={() => addItem(inputValue)} className="btn-primary">
             Add
           </button>
         </div>
@@ -140,7 +136,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
           ))}
         </div>
       </div>
-      
+
       {/* Check Item Section */}
       <div className="mb-6">
         <h4 className="font-semibold mb-2 text-text-primary">Check if Item Exists:</h4>
@@ -153,11 +149,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
             placeholder="Check if item exists"
             className="flex-1 p-2 border border-card-border rounded bg-light-800 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
           />
-          <button
-            type="button"
-            onClick={() => checkItem(checkValue)}
-            className="btn-primary"
-          >
+          <button type="button" onClick={() => checkItem(checkValue)} className="btn-primary">
             Check
           </button>
         </div>
@@ -167,7 +159,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
           </div>
         )}
       </div>
-      
+
       {/* Current Items */}
       <div className="mb-6">
         <h4 className="font-semibold mb-2 text-text-primary">
@@ -187,7 +179,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
           )}
         </div>
       </div>
-      
+
       {/* Reset Button */}
       <button
         type="button"
@@ -196,7 +188,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
       >
         Reset Filter
       </button>
-      
+
       {/* Explanation */}
       <div className="mt-4 p-4 bg-light-700 border border-card-border rounded">
         <h5 className="font-semibold text-accent mb-2">How it works:</h5>

@@ -242,9 +242,7 @@ const combinedProjects = [
   ...githubRepos,
   ...fallbackProjects.filter(
     (fallback) =>
-      !githubRepos.some(
-        (repo) => repo.title.toLowerCase() === fallback.title.toLowerCase()
-      )
+      !githubRepos.some((repo) => repo.title.toLowerCase() === fallback.title.toLowerCase())
   ),
 ];
 
@@ -270,23 +268,21 @@ const projectsForShowcase = combinedProjects.map((project, index) => {
       year: project.year,
     };
   }
-    // It's a fallback project - create an ID from the title or index
-    uniqueId = project.title
-      ? project.title.toLowerCase().replace(/\s+/g, '-')
-      : `project-${index}`;
+  // It's a fallback project - create an ID from the title or index
+  uniqueId = project.title ? project.title.toLowerCase().replace(/\s+/g, '-') : `project-${index}`;
 
-    return {
-      id: uniqueId,
-      title: project.title,
-      description: project.description,
-      technologies: project.tags,
-      githubUrl: project.github,
-      liveUrl: project.url,
-      imageUrl: project.logo,
-      category: project.label || 'Web Application',
-      featured: index < 3, // First 3 fallback projects are featured
-      year: 2024 - index, // Mock years for fallback projects
-    };
+  return {
+    id: uniqueId,
+    title: project.title,
+    description: project.description,
+    technologies: project.tags,
+    githubUrl: project.github,
+    liveUrl: project.url,
+    imageUrl: project.logo,
+    category: project.label || 'Web Application',
+    featured: index < 3, // First 3 fallback projects are featured
+    year: 2024 - index, // Mock years for fallback projects
+  };
 });
 ---
 

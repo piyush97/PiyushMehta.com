@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -7,17 +7,18 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": [
-      "dist/**",
-      ".astro/**",
-      "node_modules/**",
-      "public/**",
-      "*.config.*",
-      "package-lock.json",
-      "bun.lock",
-      "playwright-report/**",
-      "test-results/**",
-      "test-build/**"
+    "includes": [
+      "**",
+      "!**/dist/**",
+      "!**/.astro/**",
+      "!**/node_modules/**",
+      "!**/public/**",
+      "!**/*.config.*",
+      "!**/package-lock.json",
+      "!**/bun.lock",
+      "!**/playwright-report/**",
+      "!**/test-results/**",
+      "!**/test-build/**"
     ]
   },
   "formatter": {
@@ -30,31 +31,25 @@
     "lineWidth": 100,
     "attributePosition": "auto",
     "bracketSpacing": true,
-    "include": [
-      "src/**/*.{js,jsx,ts,tsx,astro,json,jsonc}",
-      "*.{js,jsx,ts,tsx,mjs,cjs}",
-      "**/*.{js,jsx,ts,tsx,astro,json,jsonc}"
-    ],
-    "ignore": [
-      "**/.cache/**",
-      "**/node_modules/**",
-      "**/package.json",
-      "**/package-lock.json",
-      "**/public/**",
-      "**/dist/**",
-      "**/.astro/**"
+    "includes": [
+      "**/src/**/*.{js,jsx,ts,tsx,astro,json,jsonc}",
+      "**/*.{js,jsx,ts,tsx,mjs,cjs}",
+      "**/*.{js,jsx,ts,tsx,astro,json,jsonc}",
+      "!**/.cache/**",
+      "!**/node_modules/**",
+      "!**/package.json",
+      "!**/package-lock.json",
+      "!**/public/**",
+      "!**/dist/**",
+      "!**/.astro/**"
     ]
   },
-  "organizeImports": {
-    "enabled": true,
-    "ignore": ["**/.cache/**", "**/node_modules/**", "**/public/**", "**/dist/**", "**/.astro/**"]
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": false,
       "a11y": {
-        "noBlankTarget": "error",
         "useAltText": "error",
         "useButtonType": "warn",
         "useValidAnchor": "error",
@@ -75,22 +70,26 @@
       },
       "suspicious": {
         "noDebugger": "error",
-        "noConsoleLog": "off",
         "noArrayIndexKey": "warn",
         "noExplicitAny": "warn",
-        "noImplicitAnyLet": "warn"
+        "noImplicitAnyLet": "warn",
+        "noConsole": { "level": "off", "options": { "allow": ["log"] } }
       },
       "performance": {
         "noDelete": "error"
+      },
+      "security": {
+        "noBlankTarget": "error"
       }
     },
-    "ignore": [
-      "**/.cache/**",
-      "**/node_modules/**",
-      "**/public/**",
-      "**/dist/**",
-      "**/.astro/**",
-      "**/*.config.*"
+    "includes": [
+      "**",
+      "!**/.cache/**",
+      "!**/node_modules/**",
+      "!**/public/**",
+      "!**/dist/**",
+      "!**/.astro/**",
+      "!**/*.config.*"
     ]
   },
   "javascript": {
@@ -132,7 +131,7 @@
   },
   "overrides": [
     {
-      "include": ["**/*.astro"],
+      "includes": ["**/*.astro"],
       "linter": {
         "rules": {
           "style": {
@@ -145,7 +144,7 @@
       }
     },
     {
-      "include": ["src/pages/**/*.astro", "src/layouts/**/*.astro"],
+      "includes": ["**/src/pages/**/*.astro", "**/src/layouts/**/*.astro"],
       "linter": {
         "rules": {
           "correctness": {
@@ -155,7 +154,7 @@
       }
     },
     {
-      "include": ["**/*.jsx", "**/*.tsx"],
+      "includes": ["**/*.jsx", "**/*.tsx"],
       "linter": {
         "rules": {
           "a11y": {
@@ -169,7 +168,7 @@
       }
     },
     {
-      "include": ["**/*.config.*", "**/astro.config.*"],
+      "includes": ["**/*.config.*", "**/astro.config.*"],
       "linter": {
         "rules": {
           "style": {
@@ -179,7 +178,7 @@
       }
     },
     {
-      "include": ["**/*.css"],
+      "includes": ["**/*.css"],
       "linter": {
         "rules": {
           "correctness": {

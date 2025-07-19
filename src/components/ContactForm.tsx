@@ -14,9 +14,7 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    'idle' | 'success' | 'error'
-  >('idle');
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
@@ -71,7 +69,7 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
       setTimeout(() => setSubmitStatus('idle'), 5000);
     } catch (error) {
       setSubmitStatus('error');
-      
+
       // Log error to Sentry
       captureError(error as Error, {
         component: 'ContactForm',
@@ -87,9 +85,7 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
@@ -103,10 +99,7 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     <form onSubmit={handleSubmit} className={`space-y-6 ${className}`}>
       {/* Name Field */}
       <div>
-        <label
-          htmlFor="name"
-          className="block text-sm font-medium text-text-primary mb-2"
-        >
+        <label htmlFor="name" className="block text-sm font-medium text-text-primary mb-2">
           Name *
         </label>
         <input
@@ -120,17 +113,12 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           }`}
           placeholder="Your full name"
         />
-        {errors.name && (
-          <p className="mt-1 text-sm text-red-500">{errors.name}</p>
-        )}
+        {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
       </div>
 
       {/* Email Field */}
       <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-text-primary mb-2"
-        >
+        <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-2">
           Email *
         </label>
         <input
@@ -144,17 +132,12 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           }`}
           placeholder="your.email@example.com"
         />
-        {errors.email && (
-          <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-        )}
+        {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
       </div>
 
       {/* Subject Field */}
       <div>
-        <label
-          htmlFor="subject"
-          className="block text-sm font-medium text-text-primary mb-2"
-        >
+        <label htmlFor="subject" className="block text-sm font-medium text-text-primary mb-2">
           Subject *
         </label>
         <input
@@ -168,17 +151,12 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           }`}
           placeholder="What is this about?"
         />
-        {errors.subject && (
-          <p className="mt-1 text-sm text-red-500">{errors.subject}</p>
-        )}
+        {errors.subject && <p className="mt-1 text-sm text-red-500">{errors.subject}</p>}
       </div>
 
       {/* Message Field */}
       <div>
-        <label
-          htmlFor="message"
-          className="block text-sm font-medium text-text-primary mb-2"
-        >
+        <label htmlFor="message" className="block text-sm font-medium text-text-primary mb-2">
           Message *
         </label>
         <textarea
@@ -192,9 +170,7 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
           }`}
           placeholder="Tell me about your project, question, or just say hello..."
         />
-        {errors.message && (
-          <p className="mt-1 text-sm text-red-500">{errors.message}</p>
-        )}
+        {errors.message && <p className="mt-1 text-sm text-red-500">{errors.message}</p>}
       </div>
 
       {/* Submit Button */}
@@ -242,11 +218,7 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
       {submitStatus === 'success' && (
         <div className="p-4 bg-green-100 border border-green-300 text-green-700 rounded-lg">
           <div className="flex items-center">
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
+            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -255,20 +227,14 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
             </svg>
             <span className="font-medium">Message sent successfully!</span>
           </div>
-          <p className="mt-1 text-sm">
-            Thank you for reaching out. I'll get back to you soon.
-          </p>
+          <p className="mt-1 text-sm">Thank you for reaching out. I'll get back to you soon.</p>
         </div>
       )}
 
       {submitStatus === 'error' && (
         <div className="p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
           <div className="flex items-center">
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
+            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"

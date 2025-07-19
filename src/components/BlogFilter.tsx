@@ -15,15 +15,10 @@ interface BlogFilterProps {
   className?: string;
 }
 
-export default function BlogFilter({
-  posts = [],
-  className = '',
-}: BlogFilterProps) {
+export default function BlogFilter({ posts = [], className = '' }: BlogFilterProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortBy, setSortBy] = useState<'date' | 'title' | 'readingTime'>(
-    'date'
-  );
+  const [sortBy, setSortBy] = useState<'date' | 'title' | 'readingTime'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   // Get all unique categories
@@ -40,8 +35,7 @@ export default function BlogFilter({
         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesCategory =
-        selectedCategory === 'all' ||
-        post.categories.includes(selectedCategory);
+        selectedCategory === 'all' || post.categories.includes(selectedCategory);
 
       return matchesSearch && matchesCategory;
     });
@@ -97,10 +91,7 @@ export default function BlogFilter({
         <div className="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-6">
           {/* Search Input */}
           <div className="flex-1">
-            <label
-              htmlFor="search"
-              className="block mb-2 text-sm font-medium text-text-primary"
-            >
+            <label htmlFor="search" className="block mb-2 text-sm font-medium text-text-primary">
               Search Posts
             </label>
             <div className="relative">
@@ -131,10 +122,7 @@ export default function BlogFilter({
 
           {/* Category Filter */}
           <div className="flex-1">
-            <label
-              htmlFor="category"
-              className="block mb-2 text-sm font-medium text-text-primary"
-            >
+            <label htmlFor="category" className="block mb-2 text-sm font-medium text-text-primary">
               Category
             </label>
             <div className="relative">
@@ -175,39 +163,23 @@ export default function BlogFilter({
           {/* Sort Controls */}
           <div className="flex space-x-3">
             <div className="flex-1">
-              <label
-                htmlFor="sortBy"
-                className="block mb-2 text-sm font-medium text-text-primary"
-              >
+              <label htmlFor="sortBy" className="block mb-2 text-sm font-medium text-text-primary">
                 Sort By
               </label>
               <div className="relative">
                 <select
                   id="sortBy"
                   value={sortBy}
-                  onChange={(e) =>
-                    setSortBy(
-                      e.target.value as 'date' | 'title' | 'readingTime'
-                    )
-                  }
+                  onChange={(e) => setSortBy(e.target.value as 'date' | 'title' | 'readingTime')}
                   className="w-full px-4 py-2 pr-10 transition-all duration-200 border rounded-lg appearance-none cursor-pointer bg-surface-primary border-card-border text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent hover:border-accent/50"
                 >
-                  <option
-                    value="date"
-                    className="bg-surface-primary text-text-primary"
-                  >
+                  <option value="date" className="bg-surface-primary text-text-primary">
                     Date
                   </option>
-                  <option
-                    value="title"
-                    className="bg-surface-primary text-text-primary"
-                  >
+                  <option value="title" className="bg-surface-primary text-text-primary">
                     Title
                   </option>
-                  <option
-                    value="readingTime"
-                    className="bg-surface-primary text-text-primary"
-                  >
+                  <option value="readingTime" className="bg-surface-primary text-text-primary">
                     Reading Time
                   </option>
                 </select>
@@ -240,21 +212,13 @@ export default function BlogFilter({
                 <select
                   id="sortOrder"
                   value={sortOrder}
-                  onChange={(e) =>
-                    setSortOrder(e.target.value as 'asc' | 'desc')
-                  }
+                  onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
                   className="w-full px-4 py-2 pr-10 transition-all duration-200 border rounded-lg appearance-none cursor-pointer bg-surface-primary border-card-border text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent hover:border-accent/50"
                 >
-                  <option
-                    value="desc"
-                    className="bg-surface-primary text-text-primary"
-                  >
+                  <option value="desc" className="bg-surface-primary text-text-primary">
                     Descending
                   </option>
-                  <option
-                    value="asc"
-                    className="bg-surface-primary text-text-primary"
-                  >
+                  <option value="asc" className="bg-surface-primary text-text-primary">
                     Ascending
                   </option>
                 </select>
@@ -331,12 +295,8 @@ export default function BlogFilter({
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <h3 className="mb-2 text-lg font-medium text-text-primary">
-              No posts found
-            </h3>
-            <p className="text-text-secondary">
-              Try adjusting your search terms or filters.
-            </p>
+            <h3 className="mb-2 text-lg font-medium text-text-primary">No posts found</h3>
+            <p className="text-text-secondary">Try adjusting your search terms or filters.</p>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -357,9 +317,7 @@ export default function BlogFilter({
                     </a>
                   </h3>
 
-                  <p className="mb-4 text-text-secondary line-clamp-3">
-                    {post.excerpt}
-                  </p>
+                  <p className="mb-4 text-text-secondary line-clamp-3">{post.excerpt}</p>
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {post.categories.map((category) => (

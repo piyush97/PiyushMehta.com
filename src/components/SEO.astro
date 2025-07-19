@@ -1,14 +1,14 @@
 ---
 import type { JsonLdData } from '../types/schema';
 import {
-type ImageMetadata,
-extractImageMetadata,
-generateCanonicalUrl,
-generateStructuredData,
-generateTwitterImageUrl,
-optimizeKeywords,
-sanitizeDescription,
-validateImageForSocialSharing
+  extractImageMetadata,
+  generateCanonicalUrl,
+  generateStructuredData,
+  generateTwitterImageUrl,
+  type ImageMetadata,
+  optimizeKeywords,
+  sanitizeDescription,
+  validateImageForSocialSharing,
 } from '../utils/seo-optimization';
 
 export interface Props {
@@ -25,8 +25,17 @@ export interface Props {
   noindex?: boolean;
   schema?: JsonLdData;
   keywords?: string[];
-  ogTemplate?: 'default' | 'minimal' | 'tech' | 'blog';
-  ogTheme?: 'dark' | 'light' | 'retro';
+  ogTemplate?:
+    | 'default'
+    | 'minimal'
+    | 'tech'
+    | 'blog'
+    | 'cyber'
+    | 'gradient'
+    | 'terminal'
+    | 'modern'
+    | 'professional';
+  ogTheme?: 'dark' | 'light' | 'retro' | 'neon' | 'corporate' | 'warm' | 'ocean';
 }
 
 const {
@@ -42,7 +51,21 @@ const {
   canonical,
   noindex = false,
   schema,
-  keywords = ['Piyush Mehta', 'React Developer', 'Software Engineer', 'Software Engineer in Canada', 'Software Consultant in Canada', 'ReactJS', 'ReactJS Developer', 'React Developer', 'Software Engineer', 'Toronto Developer', 'Canadian Software Engineer', 'Tech Speaker', 'Open Source Contributor'],
+  keywords = [
+    'Piyush Mehta',
+    'React Developer',
+    'Software Engineer',
+    'Software Engineer in Canada',
+    'Software Consultant in Canada',
+    'ReactJS',
+    'ReactJS Developer',
+    'React Developer',
+    'Software Engineer',
+    'Toronto Developer',
+    'Canadian Software Engineer',
+    'Tech Speaker',
+    'Open Source Contributor',
+  ],
   ogTemplate = 'default',
   ogTheme = 'dark',
 } = Astro.props;
@@ -55,19 +78,15 @@ const optimizedDescription = sanitizeDescription(description);
 const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname, baseUrl);
 
 // Handle image metadata with full OG Protocol compliance and generated image fallback
-const imageMetadata: ImageMetadata = extractImageMetadata(
-  image,
-  baseUrl,
-  {
-    title,
-    description: optimizedDescription,
-    type,
-    publishedTime,
-    tags,
-    template: ogTemplate,
-    theme: ogTheme,
-  }
-);
+const imageMetadata: ImageMetadata = extractImageMetadata(image, baseUrl, {
+  title,
+  description: optimizedDescription,
+  type,
+  publishedTime,
+  tags,
+  template: ogTemplate,
+  theme: ogTheme,
+});
 
 // Generate Twitter-optimized image URL
 const twitterImageUrl = generateTwitterImageUrl({
@@ -76,8 +95,8 @@ const twitterImageUrl = generateTwitterImageUrl({
   type,
   publishedTime,
   tags,
-  template: ogTemplate === 'tech' ? 'tech' : 'twitter', // Use tech template or default Twitter template
-  theme: ogTheme === 'retro' ? 'dark' : ogTheme, // Twitter only supports dark/light
+  template: ogTemplate || 'modern', // Use specified template or default to modern
+  theme: ogTheme || 'dark', // Use specified theme or default to dark
   baseUrl,
 });
 

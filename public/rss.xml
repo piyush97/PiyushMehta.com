@@ -5,7 +5,7 @@
     <link>https://piyushmehta.com</link>
     <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 13 Jul 2025 21:18:26 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 19 Jul 2025 20:17:29 GMT</lastBuildDate>
     <generator>Static RSS Generator</generator>
     <copyright>Copyright 2025 Piyush Mehta. All rights reserved.</copyright>
     <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
@@ -181,6 +181,14 @@
       <category>personality</category>
       <category>career</category>
       <category>motivation</category>
+    </item>
+        <item>
+      <title>TypeScript 5.9 Beta: Revolutionary Features That Will Transform How You Code</title>
+      <link>https://piyushmehta.com/blog/typescript-5-9-beta-revolutionary-features/</link>
+      <pubDate>Fri, 18 Jul 2025 00:00:00 GMT</pubDate>
+      <description>Discover the game-changing features in TypeScript 5.9 beta including deferred module evaluation, Node.js 20 support, and performance optimizations that solve real developer pain points</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      
     </item>
         <item>
       <title>Monitor Website Uptime using GitHub Actions</title>
