@@ -49,13 +49,17 @@ export interface OGImageParams {
     | 'gradient'
     | 'terminal'
     | 'modern'
-    | 'professional';
+    | 'professional'
+    | 'facebook'
+    | 'linkedin'
+    | 'whatsapp';
   width?: number;
   height?: number;
   theme?: 'dark' | 'light' | 'retro' | 'neon' | 'corporate' | 'warm' | 'ocean';
   pageType?: 'article' | 'website' | 'project' | 'about' | 'contact' | 'services' | 'portfolio';
   brandColor?: string;
   accentColor?: string;
+  platform?: 'facebook' | 'linkedin' | 'whatsapp' | 'twitter' | 'general';
   showLogo?: boolean;
   showBadge?: boolean;
   customIcon?: string;
@@ -1919,6 +1923,414 @@ function createGradientCreativeTemplate(params: OGImageParams, _theme: ThemeConf
   };
 }
 
+// 📱 Platform-Specific Templates
+
+// Facebook Template - Optimized for news feed engagement
+function createFacebookTemplate(params: OGImageParams, theme: ThemeConfig) {
+  const { title, description, author = 'Piyush Mehta' } = params;
+
+  const safeTitle = sanitizeText(title);
+  const safeDescription = sanitizeText(description || '');
+  const safeAuthor = sanitizeText(author);
+
+  return {
+    type: 'div',
+    props: {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '1200px',
+        height: '630px',
+        background: 'linear-gradient(135deg, #1877f2 0%, #42a5f5 100%)',
+        padding: '60px',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        color: 'white',
+        position: 'relative',
+      },
+      children: [
+        // Facebook-style header
+        {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '40px',
+            },
+            children: [
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '30px',
+                    marginRight: '20px',
+                  },
+                  children: '👨‍💻',
+                },
+              },
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    fontSize: '24px',
+                    fontWeight: '600',
+                  },
+                  children: safeAuthor,
+                },
+              },
+            ],
+          },
+        },
+        // Main title
+        {
+          type: 'h1',
+          props: {
+            style: {
+              fontSize: safeTitle.length > 50 ? '48px' : '56px',
+              fontWeight: '800',
+              lineHeight: '1.1',
+              marginBottom: '24px',
+              textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+            },
+            children: safeTitle,
+          },
+        },
+        // Description
+        safeDescription && {
+          type: 'p',
+          props: {
+            style: {
+              fontSize: '28px',
+              lineHeight: '1.4',
+              opacity: '0.9',
+              marginBottom: '40px',
+            },
+            children: safeDescription,
+          },
+        },
+        // Footer
+        {
+          type: 'div',
+          props: {
+            style: {
+              position: 'absolute',
+              bottom: '40px',
+              left: '60px',
+              right: '60px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '20px',
+              opacity: '0.8',
+            },
+            children: [
+              {
+                type: 'span',
+                props: {
+                  children: 'piyushmehta.com',
+                },
+              },
+              {
+                type: 'span',
+                props: {
+                  children: '🔗 Share this',
+                },
+              },
+            ],
+          },
+        },
+      ].filter(Boolean),
+    },
+  };
+}
+
+// LinkedIn Template - Professional and business-focused
+function createLinkedInTemplate(params: OGImageParams, theme: ThemeConfig) {
+  const { title, description, author = 'Piyush Mehta' } = params;
+
+  const safeTitle = sanitizeText(title);
+  const safeDescription = sanitizeText(description || '');
+  const safeAuthor = sanitizeText(author);
+
+  return {
+    type: 'div',
+    props: {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '1200px',
+        height: '630px',
+        background: 'linear-gradient(135deg, #0077b5 0%, #00a0dc 100%)',
+        padding: '60px',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        color: 'white',
+        position: 'relative',
+      },
+      children: [
+        // Professional header
+        {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '50px',
+            },
+            children: [
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '12px',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '40px',
+                    marginRight: '24px',
+                  },
+                  children: '💼',
+                },
+              },
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                  },
+                  children: [
+                    {
+                      type: 'div',
+                      props: {
+                        style: {
+                          fontSize: '28px',
+                          fontWeight: '700',
+                        },
+                        children: safeAuthor,
+                      },
+                    },
+                    {
+                      type: 'div',
+                      props: {
+                        style: {
+                          fontSize: '20px',
+                          opacity: '0.8',
+                          marginTop: '4px',
+                        },
+                        children: 'Senior Software Engineer',
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        // Professional title
+        {
+          type: 'h1',
+          props: {
+            style: {
+              fontSize: safeTitle.length > 50 ? '44px' : '52px',
+              fontWeight: '700',
+              lineHeight: '1.1',
+              marginBottom: '30px',
+              textShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            },
+            children: safeTitle,
+          },
+        },
+        // Professional description
+        safeDescription && {
+          type: 'p',
+          props: {
+            style: {
+              fontSize: '26px',
+              lineHeight: '1.4',
+              opacity: '0.9',
+              marginBottom: '50px',
+            },
+            children: safeDescription,
+          },
+        },
+        // LinkedIn-style footer
+        {
+          type: 'div',
+          props: {
+            style: {
+              position: 'absolute',
+              bottom: '40px',
+              left: '60px',
+              right: '60px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '18px',
+              opacity: '0.8',
+            },
+            children: [
+              {
+                type: 'span',
+                props: {
+                  children: 'Read on piyushmehta.com',
+                },
+              },
+              {
+                type: 'span',
+                props: {
+                  children: 'in • Connect',
+                },
+              },
+            ],
+          },
+        },
+      ].filter(Boolean),
+    },
+  };
+}
+
+// WhatsApp Template - Clean and readable for messaging
+function createWhatsAppTemplate(params: OGImageParams, theme: ThemeConfig) {
+  const { title, description, author = 'Piyush Mehta' } = params;
+
+  const safeTitle = sanitizeText(title);
+  const safeDescription = sanitizeText(description || '');
+  const safeAuthor = sanitizeText(author);
+
+  return {
+    type: 'div',
+    props: {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '1200px',
+        height: '630px',
+        background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)',
+        padding: '60px',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        color: 'white',
+        position: 'relative',
+      },
+      children: [
+        // WhatsApp-style header
+        {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '40px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              padding: '20px',
+              borderRadius: '16px',
+            },
+            children: [
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '30px',
+                    marginRight: '20px',
+                  },
+                  children: '📱',
+                },
+              },
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    fontSize: '24px',
+                    fontWeight: '600',
+                  },
+                  children: safeAuthor,
+                },
+              },
+            ],
+          },
+        },
+        // Clean, readable title
+        {
+          type: 'h1',
+          props: {
+            style: {
+              fontSize: safeTitle.length > 60 ? '42px' : '50px',
+              fontWeight: '700',
+              lineHeight: '1.2',
+              marginBottom: '30px',
+              textShadow: '0 2px 6px rgba(0,0,0,0.2)',
+            },
+            children: safeTitle,
+          },
+        },
+        // Clear description
+        safeDescription && {
+          type: 'p',
+          props: {
+            style: {
+              fontSize: '24px',
+              lineHeight: '1.5',
+              opacity: '0.95',
+              marginBottom: '40px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              padding: '24px',
+              borderRadius: '12px',
+            },
+            children: safeDescription,
+          },
+        },
+        // WhatsApp-style footer
+        {
+          type: 'div',
+          props: {
+            style: {
+              position: 'absolute',
+              bottom: '40px',
+              left: '60px',
+              right: '60px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '20px',
+              opacity: '0.9',
+            },
+            children: [
+              {
+                type: 'span',
+                props: {
+                  children: '🔗 piyushmehta.com',
+                },
+              },
+              {
+                type: 'span',
+                props: {
+                  children: 'Tap to read more',
+                },
+              },
+            ],
+          },
+        },
+      ].filter(Boolean),
+    },
+  };
+}
+
 // 🎨 Template Registry
 const TEMPLATE_REGISTRY = {
   default: createDefaultTemplate,
@@ -1930,6 +2342,9 @@ const TEMPLATE_REGISTRY = {
   minimal: createMinimalTemplate,
   professional: createProfessionalTemplate,
   modern: createModernBlogTemplate,
+  facebook: createFacebookTemplate,
+  linkedin: createLinkedInTemplate,
+  whatsapp: createWhatsAppTemplate,
 };
 
 // 🤖 Intelligent Template Selection
@@ -1999,7 +2414,12 @@ export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
   try {
     // Skip font loading for now - focus on getting templates working
     console.log('⚠️ Skipping font loading to get templates working first');
-    const fonts: { name: string; data: ArrayBuffer; weight?: number; style?: string }[] = [];
+    const fonts: {
+      name: string;
+      data: ArrayBuffer;
+      weight?: number;
+      style?: string;
+    }[] = [];
 
     // Get theme configuration
     const themeConfig = DESIGN_SYSTEM.themes[params.theme || 'dark'];
