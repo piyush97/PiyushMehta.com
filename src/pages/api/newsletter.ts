@@ -20,6 +20,8 @@
 
 import * as Sentry from '@sentry/node';
 import type { APIRoute } from 'astro';
+import { CacheUtils } from '../../lib/redis-cache';
+import { dbOptimizer } from '../../utils/database-optimizer';
 
 export const prerender = false;
 
@@ -40,7 +42,9 @@ async function initializeStorage() {
         url: process.env.UPSTASH_REDIS_REST_URL,
         token: process.env.UPSTASH_REDIS_REST_TOKEN,
       });
-      console.log('Using Upstash Redis for rate limiting');
+      if (import.meta.env.DEV) {
+        console.log('Using Upstash Redis for rate limiting');
+      }
       return redis;
     }
 
@@ -48,7 +52,9 @@ async function initializeStorage() {
     if (process.env.REDIS_URL) {
       const { Redis } = await import('ioredis');
       redis = new Redis(process.env.REDIS_URL);
-      console.log('Using traditional Redis for rate limiting');
+      if (import.meta.env.DEV) {
+        console.log('Using traditional Redis for rate limiting');
+      }
       return redis;
     }
 
@@ -762,17 +768,21 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Log the subscription attempt with security info
-    console.log('Newsletter subscription received:', {
-      email: sanitizedEmail,
-      ip: clientIP,
-      userAgent: request.headers.get('user-agent'),
-      timestamp: new Date().toISOString(),
-    });
+    if (import.meta.env.DEV) {
+      console.log('Newsletter subscription received:', {
+        email: sanitizedEmail,
+        ip: clientIP,
+        userAgent: request.headers.get('user-agent'),
+        timestamp: new Date().toISOString(),
+      });
+    }
 
     // Try Substack integration first
     try {
       const result = await subscribeToSubstack(sanitizedEmail);
-      console.log('Successfully subscribed to Substack:', sanitizedEmail, result);
+      if (import.meta.env.DEV) {
+        console.log('Successfully subscribed to Substack:', sanitizedEmail, result);
+      }
 
       return new Response(
         JSON.stringify({
@@ -782,13 +792,17 @@ export const POST: APIRoute = async ({ request }) => {
         { status: 200, headers: securityHeaders }
       );
     } catch (substackError) {
-      console.error('Substack subscription failed:', substackError.message);
+      if (import.meta.env.DEV) {
+        console.error('Substack subscription failed:', substackError.message);
+      }
 
       // Try database fallback only if we have database credentials
       if (process.env.POSTGRES_URL) {
         try {
           await storeInDatabase(sanitizedEmail);
-          console.log('Fallback: Subscriber stored in database:', sanitizedEmail);
+          if (import.meta.env.DEV) {
+            console.log('Fallback: Subscriber stored in database:', sanitizedEmail);
+          }
 
           return new Response(
             JSON.stringify({
@@ -798,12 +812,16 @@ export const POST: APIRoute = async ({ request }) => {
             { status: 200, headers: securityHeaders }
           );
         } catch (dbError) {
-          console.error('Database fallback also failed:', dbError.message);
+          if (import.meta.env.DEV) {
+            console.error('Database fallback also failed:', dbError.message);
+          }
           // Final fallback: log to file or console for manual processing
           await logEmailForManualProcessing(sanitizedEmail);
         }
       } else {
-        console.log('No database fallback configured');
+        if (import.meta.env.DEV) {
+          console.log('No database fallback configured');
+        }
         // Log email for manual processing
         await logEmailForManualProcessing(sanitizedEmail);
       }
@@ -849,60 +867,76 @@ export const POST: APIRoute = async ({ request }) => {
   }
 };
 
-// Database storage function
+// Database storage function with Redis caching
 async function storeInDatabase(email: string) {
-  // Using your existing Postgres connection
-  const { Pool } = await import('pg');
+  return dbOptimizer.executeQuery(
+    'newsletter_subscribe',
+    async () => {
+      // Using your existing Postgres connection
+      const { Pool } = await import('pg');
 
-  const pool = new Pool({
-    connectionString: process.env.POSTGRES_URL,
-    ssl: {
-      rejectUnauthorized: false,
+      const pool = new Pool({
+        connectionString: process.env.POSTGRES_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+        // Add connection timeout and retry settings
+        connectionTimeoutMillis: 5000,
+        idleTimeoutMillis: 30000,
+        max: 1, // Limit connections for serverless
+      });
+
+      try {
+        // Test connection first
+        const client = await pool.connect();
+
+        // Create table if it doesn't exist
+        await client.query(`
+          CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            is_active BOOLEAN DEFAULT true,
+            source VARCHAR(100) DEFAULT 'website'
+          )
+        `);
+
+        // Insert subscriber
+        const result = await client.query(
+          'INSERT INTO newsletter_subscribers (email, source) VALUES ($1, $2) ON CONFLICT (email) DO UPDATE SET subscribed_at = CURRENT_TIMESTAMP, is_active = true RETURNING id',
+          [email, 'website-fallback']
+        );
+
+        client.release();
+        if (import.meta.env.DEV) {
+          console.log('Subscriber stored in database:', email);
+        }
+
+        // Invalidate newsletter cache after successful subscription
+        await CacheUtils.invalidateContentCache('newsletter');
+
+        return result.rows[0];
+      } catch (dbError) {
+        console.error('Database error:', dbError.message);
+
+        // Log database error to Sentry
+        Sentry.captureException(dbError, {
+          tags: {
+            component: 'database_storage',
+            email: email,
+          },
+        });
+
+        throw new Error(`Database storage failed: ${dbError.message}`);
+      } finally {
+        await pool.end();
+      }
     },
-    // Add connection timeout and retry settings
-    connectionTimeoutMillis: 5000,
-    idleTimeoutMillis: 30000,
-    max: 1, // Limit connections for serverless
-  });
-
-  try {
-    // Test connection first
-    const client = await pool.connect();
-
-    // Create table if it doesn't exist
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS newsletter_subscribers (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        is_active BOOLEAN DEFAULT true,
-        source VARCHAR(100) DEFAULT 'website'
-      )
-    `);
-
-    // Insert subscriber
-    await client.query(
-      'INSERT INTO newsletter_subscribers (email, source) VALUES ($1, $2) ON CONFLICT (email) DO UPDATE SET subscribed_at = CURRENT_TIMESTAMP, is_active = true',
-      [email, 'website-fallback']
-    );
-
-    client.release();
-    console.log('Subscriber stored in database:', email);
-  } catch (dbError) {
-    console.error('Database error:', dbError.message);
-
-    // Log database error to Sentry
-    Sentry.captureException(dbError, {
-      tags: {
-        component: 'database_storage',
-        email: email,
-      },
-    });
-
-    throw new Error(`Database storage failed: ${dbError.message}`);
-  } finally {
-    await pool.end();
-  }
+    {
+      enableCache: false, // Don't cache write operations
+      tags: ['newsletter', 'write'],
+    }
+  );
 }
 
 // Final fallback: log email for manual processing
@@ -962,7 +996,9 @@ async function subscribeToSubstack(email: string) {
   for (const method of methods) {
     try {
       const result = await method();
-      console.log('Substack subscription successful via method:', method.name);
+      if (import.meta.env.DEV) {
+        console.log('Substack subscription successful via method:', method.name);
+      }
       return result;
     } catch (error) {
       console.warn('Substack method failed:', method.name, error.message);

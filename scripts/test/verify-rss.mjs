@@ -12,11 +12,12 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const projectRoot = resolve(__dirname, '..', '..');
 
 // Change this to your website URL
 const SITE_URL = 'https://piyushmehta.com';
 const RSS_PATH = '/rss.xml';
-const LOCAL_RSS_PATH = resolve(__dirname, '../public/rss.xml');
+const LOCAL_RSS_PATH = resolve(projectRoot, 'public/rss.xml');
 
 // ANSI color codes for console output
 const colors = {

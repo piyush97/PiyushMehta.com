@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Piyush Mehta - Software Engineer &amp; React Developer</title>
+    <link>https://piyushmehta.com</link>
+    <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 19 Aug 2025 04:38:22 GMT</lastBuildDate>
+    <generator>Static RSS Generator</generator>
+    <copyright>Copyright 2025 Piyush Mehta. All rights reserved.</copyright>
+    <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
+    <webMaster>hello@piyushmehta.com (Piyush Mehta)</webMaster>
+    <atom:link href="https://piyushmehta.com/rss.xml" rel="self" type="application/rss+xml" />
+    <ttl>60</ttl>
+    <image>
+      <url>https://piyushmehta.com/favicon.svg</url>
+      <title>Piyush Mehta - Blog</title>
+      <link>https://piyushmehta.com</link>
+    </image>
+    
+        <item>
+      <title>Visit my blog for the latest articles</title>
+      <link>https://piyushmehta.com/blog</link>
+      <pubDate>Tue, 19 Aug 2025 04:38:22 GMT</pubDate>
+      <description>Please visit my blog for the latest articles on React.js, web development, and software engineering.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+    </item>
+  </channel>
+</rss>
