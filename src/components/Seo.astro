@@ -1,0 +1,21 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  url: URL;
+}
+
+const { title, description, url } = Astro.props;
+const ogImageUrl = new URL(`/og/${url.pathname.split('/').filter(Boolean).pop()}.png`, Astro.site)
+  .href;
+---
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={url} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:type" content="article" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl} />
