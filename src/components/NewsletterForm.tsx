@@ -1,16 +1,14 @@
 // Newsletter Form with tRPC Integration
 import { useState } from 'react';
 import { trpc } from '../lib/trpc';
+import { withErrorBoundary } from './ErrorBoundary';
 
 interface NewsletterFormProps {
   source?: string;
   className?: string;
 }
 
-export default function NewsletterForm({
-  source = 'website',
-  className = '',
-}: NewsletterFormProps) {
+function NewsletterForm({ source = 'website', className = '' }: NewsletterFormProps) {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -113,3 +111,6 @@ export default function NewsletterForm({
     </div>
   );
 }
+
+// Export component wrapped with error boundary
+export default withErrorBoundary(NewsletterForm);

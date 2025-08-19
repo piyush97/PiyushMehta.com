@@ -1,3 +1,6 @@
+/* Comment System Styles */
+@import './comments.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,9 +98,284 @@
   }
 }
 
-/* Smooth scrolling for the entire page - optimized for 60Hz+ displays */
+/* Base styles with dark theme as default */
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode optimized text classes */
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+/* Headings optimized for dark mode */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 650;
+}
+
+h3 {
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+/* Paragraph and text elements */
+p {
+  color: var(--color-text);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+/* Links optimized for dark mode */
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  color: var(--color-text);
+}
+
+li {
+  margin-bottom: 0.25rem;
+}
+
+/* Strong and emphasis */
+strong, b {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+em, i {
+  color: var(--color-text);
+}
+
+/* Code elements */
+code:not(pre code) {
+  color: var(--color-accent);
+  background: var(--color-surface-primary);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+pre {
+  background: var(--color-surface-primary);
+  color: var(--color-text);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+pre code {
+  color: var(--color-text);
+  background: none;
+  padding: 0;
+}
+
+/* Blockquotes */
+blockquote {
+  color: var(--color-text-secondary);
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+}
+
+/* Small text */
+small {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* Tables */
+table {
+  color: var(--color-text);
+}
+
+th {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+td {
+  color: var(--color-text);
+}
+
+/* Form elements optimized for dark mode */
+input, textarea, select {
+  background: var(--color-surface-primary);
+  color: var(--color-text);
+  border: 1px solid var(--color-card-border);
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Button styles optimized for dark mode */
+button {
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-card-border);
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--color-surface-secondary);
+  border-color: var(--color-accent);
+}
+
+/* Card and surface elements */
+.card {
+  background: var(--color-surface-primary);
+  color: var(--color-text);
+  border: 1px solid var(--color-card-border);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--color-card-border-hover);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6 {
+  color: var(--color-text-primary);
+}
+
+.card p {
+  color: var(--color-text);
+}
+
+/* Navigation and menu colors */
+nav {
+  color: var(--color-text-primary);
+}
+
+nav a {
+  color: var(--color-text-secondary);
+  transition: color 0.2s ease;
+}
+
+nav a:hover, nav a.active {
+  color: var(--color-text-primary);
+}
+
+/* Status and feedback colors for dark mode */
+.text-success {
+  color: #10b981; /* Green for success - good contrast on dark */
+}
+
+.text-warning {
+  color: #f59e0b; /* Amber for warning - good contrast on dark */
+}
+
+.text-error, .text-danger {
+  color: #ef4444; /* Red for error - good contrast on dark */
+}
+
+.text-info {
+  color: #3b82f6; /* Blue for info - matches accent */
+}
+
+/* Badge and tag styles */
+.badge, .tag {
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge-accent {
+  background: var(--color-accent);
+  color: white;
+}
+
+/* Tooltip and popup text */
+.tooltip {
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-card-border);
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -138,32 +416,36 @@ html {
 
 /* Theme Variables */
 :root {
-  /* Default (Dark) Theme */
-  --color-lighter: #fff;
-  --color-light-100: #dcdff7;
-  --color-light-200: #c8cbe8;
-  --color-light-300: #adb2dc;
-  --color-light-400: #6870af;
-  --color-light-500: #343c7a;
-  --color-light-600: #2f3568;
-  --color-light-700: #2e3360;
-  --color-light-800: #282e5e;
-  --color-light-900: #22264a;
-  --color-light-950: #1f2347;
-  --color-darker: #000;
-  --color-accent: #ffcc68;
+  /* Default (Dark) Theme - Optimized for readability */
+  --color-lighter: #ffffff;
+  --color-light-100: #f1f5f9;  /* Primary text - high contrast */
+  --color-light-200: #e2e8f0;  /* Secondary headings */
+  --color-light-300: #cbd5e1;  /* Body text - optimized contrast */
+  --color-light-400: #94a3b8;  /* Muted text */
+  --color-light-500: #64748b;  /* Subtle text */
+  --color-light-600: #475569;  /* Border elements */
+  --color-light-700: #334155;  /* Card backgrounds */
+  --color-light-800: #1e293b;  /* Surface backgrounds */
+  --color-light-900: #0f172a;  /* Main background */
+  --color-light-950: #020617;  /* Deep background */
+  --color-darker: #000000;
+  --color-accent: #3b82f6;     /* Blue accent for better accessibility */
 
-  /* Semantic colors */
+  /* Semantic colors - Optimized for dark theme readability */
   --color-bg: var(--color-light-900);
-  --color-text: var(--color-light-300);
-  --color-text-primary: var(--color-light-100);
-  --color-text-secondary: var(--color-light-400);
+  --color-bg-secondary: var(--color-light-800);     /* Secondary background */
+  --color-surface-primary: var(--color-light-800);   /* Primary surface */
+  --color-surface-secondary: var(--color-light-700); /* Secondary surface */
+  --color-text: var(--color-light-300);            /* Enhanced body text contrast */
+  --color-text-primary: var(--color-light-100);    /* High contrast for headings */
+  --color-text-secondary: var(--color-light-400);  /* Good contrast for secondary text */
+  --color-text-muted: var(--color-light-500);      /* Muted text */
   --color-card-border: var(--color-light-800);
   --color-card-border-hover: var(--color-light-700);
   --color-card-gradient-light: var(--color-light-700);
   --color-card-gradient-dark: var(--color-light-950);
-  --color-navbar-bg: rgba(34, 38, 74, 0.9);
-  --color-shadow: rgba(255, 204, 104, 0.25);
+  --color-navbar-bg: rgba(15, 23, 42, 0.95);
+  --color-shadow: rgba(59, 130, 246, 0.25);
   --color-shadow-dark: rgba(0, 0, 0, 0.25);
 
   /* Shadow values */
@@ -216,33 +498,37 @@ html {
   --color-shadow: rgba(181, 73, 9, 0.25);
 }
 
-/* Professional Dark Mode (current dark theme) */
+/* Professional Dark Mode - Enhanced readability */
 :root.professional-dark {
-  --color-lighter: #fff;
-  --color-light-100: #dcdff7;
-  --color-light-200: #c8cbe8;
-  --color-light-300: #adb2dc;
-  --color-light-400: #6870af;
-  --color-light-500: #343c7a;
-  --color-light-600: #2f3568;
-  --color-light-700: #2e3360;
-  --color-light-800: #282e5e;
-  --color-light-900: #22264a;
-  --color-light-950: #1f2347;
-  --color-darker: #000;
-  --color-accent: #ffcc68;
+  --color-lighter: #ffffff;
+  --color-light-100: #f1f5f9;  /* Primary text - high contrast */
+  --color-light-200: #e2e8f0;  /* Secondary headings */
+  --color-light-300: #cbd5e1;  /* Body text - optimized contrast */
+  --color-light-400: #94a3b8;  /* Muted text */
+  --color-light-500: #64748b;  /* Subtle text */
+  --color-light-600: #475569;  /* Border elements */
+  --color-light-700: #334155;  /* Card backgrounds */
+  --color-light-800: #1e293b;  /* Surface backgrounds */
+  --color-light-900: #0f172a;  /* Main background */
+  --color-light-950: #020617;  /* Deep background */
+  --color-darker: #000000;
+  --color-accent: #3b82f6;     /* Blue accent for better accessibility */
 
-  /* Semantic colors */
+  /* Semantic colors - Optimized for dark theme readability */
   --color-bg: var(--color-light-900);
-  --color-text: var(--color-light-300);
-  --color-text-primary: var(--color-light-100);
-  --color-text-secondary: var(--color-light-400);
+  --color-bg-secondary: var(--color-light-800);     /* Secondary background */
+  --color-surface-primary: var(--color-light-800);   /* Primary surface */
+  --color-surface-secondary: var(--color-light-700); /* Secondary surface */
+  --color-text: var(--color-light-300);            /* Enhanced body text contrast */
+  --color-text-primary: var(--color-light-100);    /* High contrast for headings */
+  --color-text-secondary: var(--color-light-400);  /* Good contrast for secondary text */
+  --color-text-muted: var(--color-light-500);      /* Muted text */
   --color-card-border: var(--color-light-800);
   --color-card-border-hover: var(--color-light-700);
   --color-card-gradient-light: var(--color-light-700);
   --color-card-gradient-dark: var(--color-light-950);
-  --color-navbar-bg: rgba(34, 38, 74, 0.9);
-  --color-shadow: rgba(255, 204, 104, 0.25);
+  --color-navbar-bg: rgba(15, 23, 42, 0.95);
+  --color-shadow: rgba(59, 130, 246, 0.25);
   --color-shadow-dark: rgba(0, 0, 0, 0.25);
 }
 

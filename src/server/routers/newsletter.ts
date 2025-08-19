@@ -21,9 +21,18 @@ export const newsletterRouter = createTRPCRouter({
       const { email, source = 'website', referrer } = input;
       const clientIP = ctx.ip;
 
+      // Validate email domain (basic check for disposable emails)
+      const disposableDomains = ['tempmail.com', 'guerrillamail.com', 'mailinator.com'];
+      const emailDomain = email.split('@')[1]?.toLowerCase();
+      if (disposableDomains.includes(emailDomain)) {
+        throw createTRPCError('BAD_REQUEST', 'Disposable email addresses are not allowed');
+      }
+
       // TODO: Implement actual newsletter subscription logic
       // This would integrate with your existing newsletter service
-      console.log('Newsletter subscription:', { email, source, referrer, clientIP });
+      if (import.meta.env.DEV) {
+        console.log('Newsletter subscription:', { email, source, referrer, clientIP });
+      }
 
       return {
         success: true,
@@ -40,6 +49,13 @@ export const newsletterRouter = createTRPCRouter({
   getMetrics: publicProcedure.input(metricsQuerySchema).query(async ({ input }) => {
     try {
       const { timeframe, detailed } = input;
+
+      // Cache key for metrics
+      const _cacheKey = `newsletter:metrics:${timeframe}`;
+
+      // TODO: Add Redis caching here
+      // const cached = await redis?.get(cacheKey);
+      // if (cached) return cached;
 
       // TODO: Implement actual metrics retrieval
       // This would query your database/analytics service
@@ -81,7 +97,9 @@ export const newsletterRouter = createTRPCRouter({
         const { email, token } = input;
 
         // TODO: Implement unsubscribe logic
-        console.log('Newsletter unsubscribe:', { email, token });
+        if (import.meta.env.DEV) {
+          console.log('Newsletter unsubscribe:', { email, token });
+        }
 
         return {
           success: true,

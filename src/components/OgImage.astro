@@ -1,0 +1,25 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<div style="background-color: #fefbfb; display: flex; flex-direction: column; height: 100%; padding: 3rem; width: 100%">
+  <div style="display:flex; align-items: center;">
+    <svg height="60" viewBox="0 0 1792 1792" fill="#000000" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1664 896q0 156-61 298t-164 245-245 164-298 61-298-61-245-164-164-245-61-298q0-137 52-265 25-60 76-138 29-45 47-69t24-33q13-15 22-24l1-1q13-13 26-22t23-16 20-11 15-6 10-1 5-1q13 0 29 12t29 28q10 15 10 26 0 8-4 21t-10 23q-12 21-28 48-33 54-52 93-12 24-18 40t-12 38-5 35q-1 15 0 33 2 21 7 48t12 53 20 61 29 64 41 66q72 119 178 187 106 68 229 68 123 0 229-68 106-68 178-187 21-35 41-66t29-64 20-61 12-53 7-48q1-18 0-33-1-10-5-35t-12-38-18-40q-19-39-52-93-16-27-28-48-6-10-10-23t-4-21q0-11 10-26t29-28 29-12q2 0 5 1t10 1 15 6 20 11 23 16 26 22l1 1q9 9 22 24 6 8 24 33t47 69q51 78 76 138 52 128 52 265z"/>
+    </svg>
+    <p style="font-size: 40px; font-weight: 700; padding-left: 20px;">Piyush Mehta</p>
+  </div>
+  <div style="display: flex; flex-direction: column; justify-content: space-between; margin-top: 2rem; height: 100%;">
+    <div style="font-size: 70px; font-weight: 700; max-width: 100%;">
+      {title}
+    </div>
+    <div style="font-size: 30px; max-width: 100%;">
+      {description}
+    </div>
+  </div>
+</div>

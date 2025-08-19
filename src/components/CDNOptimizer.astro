@@ -1,0 +1,228 @@
+---
+// CDN Optimizer component for automatic resource optimization
+import { getCDNUrl } from '../utils/cdn-manager';
+
+interface Props {
+  enableOptimization?: boolean;
+  region?: string;
+  quality?: 'high' | 'medium' | 'low';
+}
+
+const { enableOptimization = true, region, quality = 'high' } = Astro.props;
+
+// Function to optimize resource URLs
+function optimizeUrl(
+  url: string,
+  type: 'image' | 'css' | 'js' | 'font' | 'document' = 'document'
+): string {
+  if (!enableOptimization) return url;
+
+  try {
+    return getCDNUrl(url, {
+      fileType: type,
+      region,
+      quality,
+      fallbackToLocal: true,
+    });
+  } catch (error) {
+    console.warn('CDN optimization failed for:', url, error);
+    return url;
+  }
+}
+
+// Expose optimization function globally
+const optimizationScript = `
+window.CDNOptimizer = {
+  optimizeUrl: function(url, type = 'document') {
+    // Client-side URL optimization
+    if (!url || typeof url !== 'string') return url;
+    
+    // For client-side, we'll use a simple API call
+    return fetch('/api/cdn-management?operation=optimal-url&path=' + encodeURIComponent(url) + '&type=' + type)
+      .then(response => response.json())
+      .then(data => data.optimizedUrl || url)
+      .catch(() => url);
+  },
+  
+  preloadCriticalResources: function() {
+    const criticalResources = [
+      { url: '/assets/css/critical.css', type: 'css' },
+      { url: '/fonts/main.woff2', type: 'font' },
+      { url: '/assets/images/hero.webp', type: 'image' }
+    ];
+    
+    criticalResources.forEach(resource => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.href = resource.url;
+      link.as = resource.type === 'css' ? 'style' : 
+               resource.type === 'font' ? 'font' : 
+               resource.type === 'image' ? 'image' : 'fetch';
+      
+      if (resource.type === 'font') {
+        link.crossOrigin = 'anonymous';
+      }
+      
+      document.head.appendChild(link);
+    });
+  },
+  
+  optimizeImages: function() {
+    const images = document.querySelectorAll('img[data-cdn-optimize]');
+    images.forEach(img => {
+      const originalSrc = img.getAttribute('src');
+      if (originalSrc) {
+        this.optimizeUrl(originalSrc, 'image').then(optimizedUrl => {
+          if (typeof optimizedUrl === 'string') {
+            img.src = optimizedUrl;
+          }
+        });
+      }
+    });
+  },
+  
+  monitorPerformance: function() {
+    // Monitor CDN performance
+    if ('PerformanceObserver' in window) {
+      const observer = new PerformanceObserver((list) => {
+        list.getEntries().forEach((entry) => {
+          if (entry.entryType === 'resource' && entry.name.includes('cdn')) {
+            console.log('CDN Resource Performance:', {
+              name: entry.name,
+              duration: entry.duration,
+              transferSize: entry.transferSize
+            });
+          }
+        });
+      });
+      
+      observer.observe({ entryTypes: ['resource'] });
+    }
+  }
+};
+
+// Initialize CDN optimization
+document.addEventListener('DOMContentLoaded', function() {
+  window.CDNOptimizer.preloadCriticalResources();
+  window.CDNOptimizer.optimizeImages();
+  window.CDNOptimizer.monitorPerformance();
+});
+`;
+---
+
+<!-- CDN Status Display (only in development) -->
+{import.meta.env.DEV && (
+  <div class="fixed bottom-4 right-4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg p-3 text-xs font-mono shadow-lg z-50">
+    <div class="flex items-center gap-2 mb-1">
+      <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+      <span class="font-semibold">CDN Status</span>
+    </div>
+    <div id="cdn-status-info">
+      <div>Provider: <span class="text-blue-600">Loading...</span></div>
+      <div>Response: <span class="text-gray-600">--ms</span></div>
+    </div>
+  </div>
+)}
+
+<!-- CDN Optimization Script -->
+<script is:inline set:html={optimizationScript}></script>
+
+<!-- Development CDN Status Script -->
+{import.meta.env.DEV && (
+  <script is:inline>
+    // Update CDN status in development
+    async function updateCDNStatus() {
+      try {
+        const response = await fetch('/api/cdn-management?operation=status');
+        const data = await response.json();
+        
+        const statusElement = document.getElementById('cdn-status-info');
+        if (statusElement) {
+          statusElement.innerHTML = `
+            <div>Provider: <span class="text-blue-600">${data.currentProvider || 'None'}</span></div>
+            <div>Response: <span class="text-gray-600">${data.averageResponseTime}ms</span></div>
+            <div>Active: <span class="text-green-600">${data.activeProviders}/${data.totalProviders}</span></div>
+          `;
+        }
+        
+        // Update status indicator color
+        const indicator = document.querySelector('.w-2.h-2.rounded-full');
+        if (indicator) {
+          indicator.className = data.status === 'operational' 
+            ? 'w-2 h-2 bg-green-500 rounded-full'
+            : 'w-2 h-2 bg-yellow-500 rounded-full';
+        }
+      } catch (error) {
+        console.warn('Failed to update CDN status:', error);
+      }
+    }
+    
+    // Update status every 30 seconds in development
+    updateCDNStatus();
+    setInterval(updateCDNStatus, 30000);
+  </script>
+)}
+
+<!-- Resource Preloading with CDN optimization -->
+<script is:inline>
+  // Optimize and preload critical resources
+  (function() {
+    const criticalResources = [
+      '/assets/css/main.css',
+      '/fonts/main.woff2',
+      '/assets/js/main.js'
+    ];
+    
+    criticalResources.forEach(url => {
+      const link = document.createElement('link');
+      link.rel = 'dns-prefetch';
+      link.href = url;
+      document.head.appendChild(link);
+    });
+  })();
+</script>
+
+<style>
+  /* CDN optimization indicator styles */
+  .cdn-optimized {
+    position: relative;
+  }
+  
+  .cdn-optimized::after {
+    content: '⚡';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+  
+  /* Performance monitoring styles */
+  .performance-monitor {
+    background: linear-gradient(90deg, #00f5ff 0%, #0080ff 100%);
+    background-size: 200% 100%;
+    animation: performanceGlow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes performanceGlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+  
+  /* CDN status indicator */
+  .cdn-status {
+    transition: all 0.3s ease;
+  }
+  
+  .cdn-status.operational {
+    border-left: 3px solid #10b981;
+  }
+  
+  .cdn-status.degraded {
+    border-left: 3px solid #f59e0b;
+  }
+  
+  .cdn-status.offline {
+    border-left: 3px solid #ef4444;
+  }
+</style>

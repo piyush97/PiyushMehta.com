@@ -6,12 +6,16 @@ import { fetchGitHubRepos } from '../utils/github';
 // Fetch GitHub repositories with error handling
 const githubUsername = 'piyush97';
 const githubToken = import.meta.env.GITHUB_TOKEN;
-let githubRepos = [];
+let githubRepos: unknown[] = [];
 try {
   githubRepos = await fetchGitHubRepos(githubUsername, githubToken);
-  console.log(`Successfully fetched ${githubRepos.length} GitHub repos`);
+  if (import.meta.env.DEV) {
+    console.log(`Successfully fetched ${githubRepos.length} GitHub repos`);
+  }
 } catch (error) {
-  console.error('Failed to fetch GitHub repos:', error);
+  if (import.meta.env.DEV) {
+    console.error('Failed to fetch GitHub repos:', error);
+  }
   githubRepos = [];
 }
 

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { captureError, captureMessage } from '../utils/sentry-client';
+import { withErrorBoundary } from './ErrorBoundary';
 
 interface ContactFormProps {
   className?: string;
 }
 
-export default function ContactForm({ className = '' }: ContactFormProps) {
+function ContactForm({ className = '' }: ContactFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -251,3 +252,6 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     </form>
   );
 }
+
+// Export component wrapped with error boundary
+export default withErrorBoundary(ContactForm);

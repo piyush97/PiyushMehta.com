@@ -2413,7 +2413,9 @@ function selectOptimalTemplate(params: OGImageParams): string {
 export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
   try {
     // Skip font loading for now - focus on getting templates working
-    console.log('⚠️ Skipping font loading to get templates working first');
+    if (import.meta.env.DEV) {
+      console.log('⚠️ Skipping font loading to get templates working first');
+    }
     const fonts: {
       name: string;
       data: ArrayBuffer;
@@ -2464,12 +2466,14 @@ export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
     // Generate SVG using Satori with enhanced error handling
     let svg: string;
     try {
-      console.log('🎯 About to call Satori with:', {
-        templateName,
-        jsxKeys: Object.keys(jsx),
-        hasChildren: jsx.props?.children ? jsx.props.children.length : 'no children',
-        fontsAvailable: fonts.filter((font) => font.data.byteLength > 0).length,
-      });
+      if (import.meta.env.DEV) {
+        console.log('🎯 About to call Satori with:', {
+          templateName,
+          jsxKeys: Object.keys(jsx),
+          hasChildren: jsx.props?.children ? jsx.props.children.length : 'no children',
+          fontsAvailable: fonts.filter((font) => font.data.byteLength > 0).length,
+        });
+      }
 
       // Use the most basic font setup that should work with any Satori version
       const fontArrayBuffer = await fetch(
@@ -2494,7 +2498,9 @@ export async function generateOGImage(params: OGImageParams): Promise<Buffer> {
             : [], // Empty array will trigger Satori to use system font fallback
       });
 
-      console.log('✅ Satori generation successful, SVG length:', svg.length);
+      if (import.meta.env.DEV) {
+        console.log('✅ Satori generation successful, SVG length:', svg.length);
+      }
     } catch (satoriError: unknown) {
       const error = satoriError as Error;
       console.error('❌ Satori generation failed - THIS IS WHY ALL IMAGES ARE IDENTICAL:', {

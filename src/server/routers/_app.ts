@@ -1,5 +1,6 @@
 // Main tRPC Router - App Router
 import { createTRPCRouter } from '../trpc';
+import { commentsRouter } from './comments';
 import { newsletterRouter } from './newsletter';
 import { ogImageRouter } from './og-image';
 
@@ -7,6 +8,7 @@ import { ogImageRouter } from './og-image';
 export const appRouter = createTRPCRouter({
   newsletter: newsletterRouter,
   ogImage: ogImageRouter,
+  comments: commentsRouter,
 });
 
 // Export type definition of API

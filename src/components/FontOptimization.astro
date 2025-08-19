@@ -1,0 +1,112 @@
+---
+/**
+ * Font Optimization Component
+ * Implements modern font loading strategies for improved performance
+ */
+
+interface Props {
+  preloadFonts?: string[];
+  fontDisplay?: 'auto' | 'block' | 'swap' | 'fallback' | 'optional';
+}
+
+const {
+  preloadFonts = ['/fonts/muli-variable.woff2', '/fonts/muli-italic-variable.woff2'],
+  fontDisplay = 'swap',
+} = Astro.props;
+---
+
+<!-- Font preloading for critical fonts -->
+{preloadFonts.map((fontUrl) => (
+  <link
+    rel="preload"
+    href={fontUrl}
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+))}
+
+<!-- Font display optimization -->
+<style>
+  @font-face {
+    font-family: 'Muli';
+    src: url('/fonts/muli-variable.woff2') format('woff2-variations');
+    font-weight: 200 900;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+  @font-face {
+    font-family: 'Muli';
+    src: url('/fonts/muli-italic-variable.woff2') format('woff2-variations');
+    font-weight: 200 900;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+  /* Font loading optimization */
+  .font-loading-optimization {
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Critical font loading class for above-the-fold content */
+  .critical-font {
+    font-display: block;
+  }
+
+  /* Progressive enhancement for variable font support */
+  @supports (font-variation-settings: normal) {
+    body {
+      font-feature-settings: 'liga', 'kern';
+    }
+  }
+</style>
+
+<script>
+  // Font loading monitoring and optimization
+  if ('fonts' in document) {
+    // Check if fonts are already loaded
+    document.fonts.ready.then(() => {
+      if (import.meta.env.DEV) {
+        console.log('All fonts loaded successfully');
+      }
+      
+      // Add class to indicate fonts are loaded
+      document.documentElement.classList.add('fonts-loaded');
+      
+      // Performance metrics
+      if ('performance' in window) {
+        const fontLoadTime = performance.now();
+        if (import.meta.env.DEV) {
+          console.log(`Font loading completed in ${fontLoadTime}ms`);
+        }
+      }
+    });
+
+    // Preload critical fonts programmatically
+    const criticalFonts = [
+      'Muli',
+      'system-ui',
+      '-apple-system'
+    ];
+
+    criticalFonts.forEach(fontFamily => {
+      if (document.fonts.check(`16px ${fontFamily}`)) {
+        document.documentElement.classList.add(`font-${fontFamily.toLowerCase()}-loaded`);
+      }
+    });
+  }
+
+  // Fallback for browsers without Font Loading API
+  if (!('fonts' in document)) {
+    // Use timeout as fallback
+    setTimeout(() => {
+      document.documentElement.classList.add('fonts-loaded');
+    }, 3000);
+  }
+</script>

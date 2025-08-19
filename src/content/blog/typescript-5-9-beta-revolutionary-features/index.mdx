@@ -1,6 +1,6 @@
 ---
 title: "TypeScript 5.9 Beta: Revolutionary Features That Will Transform How You Code"
-description: "Discover the game-changing features in TypeScript 5.9 beta including deferred module evaluation, Node.js 20 support, and performance optimizations that solve real developer pain points"
+description: "Unlock TypeScript 5.9 beta's revolutionary features: Deferred module evaluation, Node.js 20 support, and performance optimizations for modern web development"
 date: 2025-07-18
 author: "Piyush Mehta"
 ogTemplate: "tech"
@@ -153,6 +153,7 @@ TypeScript 5.9's `tsc --init` generates a clean, minimal configuration:
 {
   "compilerOptions": {
     "target": "esnext",
+    "module": "nodenext",
     "moduleDetection": "force",
     "strict": true,
     "esModuleInterop": true,
@@ -451,6 +452,8 @@ Most TypeScript 5.9 changes are additive, but watch for:
 
 ## 📊 Performance Benchmarks
 
+> **Performance Note**: Benchmarks shown are based on community testing and may vary depending on your specific codebase and environment. Always measure performance improvements in your own applications.
+
 ### Startup Time Improvements
 
 Based on real-world testing:
@@ -648,6 +651,28 @@ console.timeEnd("startup");
 // Profile type checking speed
 // tsc --diagnostics
 ```
+
+## ❓ Frequently Asked Questions
+
+### What is TypeScript 5.9 import defer?
+
+Import defer allows you to import modules without executing them immediately. The module is only evaluated when you first use it in your code, leading to faster application startup times and better performance.
+
+### How much faster is TypeScript 5.9?
+
+TypeScript 5.9 provides performance improvements through several optimizations: 15-25% faster incremental builds, 30-50% faster type checking in library-heavy projects, and potentially 50-80% faster startup times when using import defer for heavy modules.
+
+### Is TypeScript 5.9 stable for production use?
+
+TypeScript 5.9 is currently in beta. While the features are well-tested, it's recommended to thoroughly test in your development environment before deploying to production. The stable release is expected soon.
+
+### What's the difference between "module": "node20" and "nodenext"?
+
+The "node20" option provides stable, predictable behavior fixed to Node.js v20 features, while "nodenext" tracks the latest Node.js features and may change with future Node.js updates. For production stability, "node20" is recommended.
+
+### Can I use import defer with existing modules?
+
+Yes, you can gradually adopt import defer by changing existing `import * as module` statements to `import defer * as module`. However, it only works with namespace imports, not named or default imports.
 
 ## 🎯 Conclusion
 

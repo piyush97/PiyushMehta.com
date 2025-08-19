@@ -8,7 +8,6 @@ const description =
 ---
 
 <Layout title={title} description={description}>
-  <SEO title={title} description={description} type="website" />
 
   <!-- Enhanced Hero Section -->
   <section class="uses-hero-section">
@@ -222,113 +221,283 @@ const description =
         </div>
       </section>
 
-      <!-- Tech Stack -->
+      <!-- Enhanced Tech Stack -->
       <section class="mb-12">
-        <h2 class="mb-6 text-2xl font-bold text-accent">🚀 Tech Stack</h2>
+        <div class="tech-stack-header">
+          <h2 class="mb-2 text-3xl font-bold text-accent">🚀 Tech Stack</h2>
+          <p class="mb-8 text-lg text-muted">Technologies I love working with and my proficiency levels</p>
+        </div>
 
-        <div class="space-y-8">
-          <!-- Frontend -->
-          <div class="uses-category">
-            <h3 class="mb-4 text-xl font-semibold">Frontend Development</h3>
-            <div class="grid gap-4 md:grid-cols-2">
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">React</h4>
-                <p class="text-muted">
-                  My go-to library for building user interfaces. Love the
-                  component-based architecture.
-                </p>
+        <div class="tech-stack-container">
+          <!-- Frontend Technologies -->
+          <div class="tech-category" data-category="frontend">
+            <div class="tech-category-header">
+              <div class="category-icon">🎨</div>
+              <h3 class="category-title">Frontend Development</h3>
+              <div class="category-badge">UI/UX Focus</div>
+            </div>
+            
+            <div class="tech-grid">
+              <div class="tech-card" data-level="95">
+                <div class="tech-icon">⚛️</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">React</h4>
+                  <p class="tech-description">Component-based UI library for modern web applications</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">4+ years</span>
+                    <span class="tech-level">Expert</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="95"></div>
+                </div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Next.js</h4>
-                <p class="text-muted">
-                  React framework for production-ready applications with SSR,
-                  SSG, and API routes.
-                </p>
+              <div class="tech-card" data-level="90">
+                <div class="tech-icon">▲</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Next.js</h4>
+                  <p class="tech-description">Full-stack React framework with SSR, SSG, and API routes</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">3+ years</span>
+                    <span class="tech-level">Advanced</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="90"></div>
+                </div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Astro</h4>
-                <p class="text-muted">
-                  Modern static site generator that I used to build this
-                  website. Great for content-focused sites.
-                </p>
+              <div class="tech-card" data-level="85">
+                <div class="tech-icon">🚀</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Astro</h4>
+                  <p class="tech-description">Modern static site generator for content-focused websites</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">2+ years</span>
+                    <span class="tech-level">Advanced</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="85"></div>
+                </div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">TypeScript</h4>
-                <p class="text-muted">
-                  Adds type safety to JavaScript. Essential for large
-                  applications and team collaboration.
-                </p>
+              <div class="tech-card" data-level="92">
+                <div class="tech-icon">🔷</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">TypeScript</h4>
+                  <p class="tech-description">Type-safe JavaScript for scalable application development</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">4+ years</span>
+                    <span class="tech-level">Expert</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="92"></div>
+                </div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Tailwind CSS</h4>
-                <p class="text-muted">
-                  Utility-first CSS framework that speeds up styling and keeps
-                  designs consistent.
-                </p>
+              <div class="tech-card" data-level="88">
+                <div class="tech-icon">🎨</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Tailwind CSS</h4>
+                  <p class="tech-description">Utility-first CSS framework for rapid UI development</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">3+ years</span>
+                    <span class="tech-level">Advanced</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="88"></div>
+                </div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Framer Motion</h4>
-                <p class="text-muted">
-                  Animation library for React that makes creating smooth
-                  animations effortless.
-                </p>
+              <div class="tech-card" data-level="80">
+                <div class="tech-icon">✨</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Framer Motion</h4>
+                  <p class="tech-description">Production-ready motion library for React animations</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">2+ years</span>
+                    <span class="tech-level">Proficient</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="80"></div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Backend -->
-          <div class="uses-category">
-            <h3 class="mb-4 text-xl font-semibold">Backend Development</h3>
-            <div class="grid gap-4 md:grid-cols-2">
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Node.js</h4>
-                <p class="text-muted">
-                  JavaScript runtime for building scalable server-side
-                  applications.
-                </p>
+          <!-- Backend Technologies -->
+          <div class="tech-category" data-category="backend">
+            <div class="tech-category-header">
+              <div class="category-icon">⚙️</div>
+              <h3 class="category-title">Backend Development</h3>
+              <div class="category-badge">Server & Data</div>
+            </div>
+            
+            <div class="tech-grid">
+              <div class="tech-card" data-level="90">
+                <div class="tech-icon">🟢</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Node.js</h4>
+                  <p class="tech-description">JavaScript runtime for scalable server-side applications</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">4+ years</span>
+                    <span class="tech-level">Advanced</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="90"></div>
+                </div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Express.js</h4>
-                <p class="text-muted">
-                  Minimal and flexible Node.js web application framework.
-                </p>
+              <div class="tech-card" data-level="85">
+                <div class="tech-icon">🚂</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Express.js</h4>
+                  <p class="tech-description">Minimal and flexible Node.js web application framework</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">4+ years</span>
+                    <span class="tech-level">Advanced</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="85"></div>
+                </div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">PostgreSQL</h4>
-                <p class="text-muted">
-                  Reliable and feature-rich relational database for complex
-                  applications.
-                </p>
+              <div class="tech-card" data-level="82">
+                <div class="tech-icon">🐘</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">PostgreSQL</h4>
+                  <p class="tech-description">Advanced relational database for complex applications</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">3+ years</span>
+                    <span class="tech-level">Proficient</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="82"></div>
+                </div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">MongoDB</h4>
-                <p class="text-muted">
-                  NoSQL database for flexible, document-based data storage.
-                </p>
+              <div class="tech-card" data-level="78">
+                <div class="tech-icon">🍃</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">MongoDB</h4>
+                  <p class="tech-description">NoSQL database for flexible document-based storage</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">3+ years</span>
+                    <span class="tech-level">Proficient</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="78"></div>
+                </div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Prisma</h4>
-                <p class="text-muted">
-                  Modern database toolkit with type-safe client and powerful
-                  migrations.
-                </p>
+              <div class="tech-card" data-level="88">
+                <div class="tech-icon">🔺</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Prisma</h4>
+                  <p class="tech-description">Next-generation ORM with type-safe database access</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">2+ years</span>
+                    <span class="tech-level">Advanced</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="88"></div>
+                </div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Redis</h4>
-                <p class="text-muted">
-                  In-memory data structure store for caching and real-time
-                  applications.
-                </p>
+              <div class="tech-card" data-level="75">
+                <div class="tech-icon">🔴</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Redis</h4>
+                  <p class="tech-description">In-memory data store for caching and real-time features</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">2+ years</span>
+                    <span class="tech-level">Proficient</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="75"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DevOps & Tools -->
+          <div class="tech-category" data-category="tools">
+            <div class="tech-category-header">
+              <div class="category-icon">🛠️</div>
+              <h3 class="category-title">DevOps & Tools</h3>
+              <div class="category-badge">Infrastructure</div>
+            </div>
+            
+            <div class="tech-grid">
+              <div class="tech-card" data-level="85">
+                <div class="tech-icon">🐙</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Git & GitHub</h4>
+                  <p class="tech-description">Version control and collaborative development platform</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">5+ years</span>
+                    <span class="tech-level">Advanced</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="85"></div>
+                </div>
+              </div>
+
+              <div class="tech-card" data-level="80">
+                <div class="tech-icon">🐳</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Docker</h4>
+                  <p class="tech-description">Containerization for consistent development environments</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">3+ years</span>
+                    <span class="tech-level">Proficient</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="80"></div>
+                </div>
+              </div>
+
+              <div class="tech-card" data-level="88">
+                <div class="tech-icon">▲</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">Vercel</h4>
+                  <p class="tech-description">Platform for frontend deployment and edge functions</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">3+ years</span>
+                    <span class="tech-level">Advanced</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="88"></div>
+                </div>
+              </div>
+
+              <div class="tech-card" data-level="75">
+                <div class="tech-icon">☁️</div>
+                <div class="tech-content">
+                  <h4 class="tech-name">AWS</h4>
+                  <p class="tech-description">Cloud services for scalable application infrastructure</p>
+                  <div class="tech-meta">
+                    <span class="tech-years">2+ years</span>
+                    <span class="tech-level">Proficient</span>
+                  </div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" data-width="75"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -403,82 +572,235 @@ const description =
         </div>
       </section>
 
-      <!-- Services & Hosting -->
+      <!-- Enhanced Services & Hosting -->
       <section class="mb-12">
-        <h2 class="mb-6 text-2xl font-bold text-accent">
-          ☁️ Services & Hosting
-        </h2>
+        <div class="services-stack-header">
+          <h2 class="mb-2 text-3xl font-bold text-accent">☁️ Services & Hosting</h2>
+          <p class="mb-8 text-lg text-muted">Cloud services and platforms powering my development workflow</p>
+        </div>
 
-        <div class="space-y-8">
-          <!-- Hosting -->
-          <div class="uses-category">
-            <h3 class="mb-4 text-xl font-semibold">Hosting & Deployment</h3>
-            <div class="grid gap-4 md:grid-cols-2">
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Vercel</h4>
-                <p class="text-muted">
-                  Primary deployment platform for frontend applications.
-                  Excellent DX and performance.
-                </p>
+        <div class="services-stack-container">
+          <!-- Hosting & Deployment -->
+          <div class="service-category" data-category="hosting">
+            <div class="service-category-header">
+              <div class="category-icon">🚀</div>
+              <h3 class="category-title">Hosting & Deployment</h3>
+              <div class="category-badge">Edge & CDN</div>
+            </div>
+            
+            <div class="service-grid">
+              <div class="service-card" data-usage="95" data-status="primary">
+                <div class="service-icon">▲</div>
+                <div class="service-content">
+                  <h4 class="service-name">Vercel</h4>
+                  <p class="service-description">Primary deployment platform with edge functions and global CDN</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Primary</span>
+                    <span class="service-status">Active</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="95"></div>
+                </div>
+                <div class="service-badge service-primary">Primary</div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Netlify</h4>
-                <p class="text-muted">
-                  Alternative hosting platform with great features for static
-                  sites and serverless functions.
-                </p>
+              <div class="service-card" data-usage="75" data-status="active">
+                <div class="service-icon">🌐</div>
+                <div class="service-content">
+                  <h4 class="service-name">Netlify</h4>
+                  <p class="service-description">Static site hosting with serverless functions and form handling</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Secondary</span>
+                    <span class="service-status">Active</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="75"></div>
+                </div>
+                <div class="service-badge service-secondary">Secondary</div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">AWS</h4>
-                <p class="text-muted">
-                  Cloud services for more complex applications requiring
-                  scalable infrastructure.
-                </p>
+              <div class="service-card" data-usage="85" data-status="active">
+                <div class="service-icon">☁️</div>
+                <div class="service-content">
+                  <h4 class="service-name">AWS</h4>
+                  <p class="service-description">Cloud infrastructure for scalable applications and data storage</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Enterprise</span>
+                    <span class="service-status">Active</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="85"></div>
+                </div>
+                <div class="service-badge service-enterprise">Enterprise</div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">DigitalOcean</h4>
-                <p class="text-muted">
-                  Simple cloud hosting for backend services and databases.
-                </p>
+              <div class="service-card" data-usage="70" data-status="active">
+                <div class="service-icon">🌊</div>
+                <div class="service-content">
+                  <h4 class="service-name">DigitalOcean</h4>
+                  <p class="service-description">Simple cloud hosting for backend services and databases</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Development</span>
+                    <span class="service-status">Active</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="70"></div>
+                </div>
+                <div class="service-badge service-development">Development</div>
               </div>
             </div>
           </div>
 
-          <!-- Services -->
-          <div class="uses-category">
-            <h3 class="mb-4 text-xl font-semibold">Development Services</h3>
-            <div class="grid gap-4 md:grid-cols-2">
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">GitHub</h4>
-                <p class="text-muted">
-                  Version control and collaboration platform for all my
-                  projects.
-                </p>
+          <!-- Development Services -->
+          <div class="service-category" data-category="development">
+            <div class="service-category-header">
+              <div class="category-icon">⚙️</div>
+              <h3 class="category-title">Development Services</h3>
+              <div class="category-badge">DevOps & Tools</div>
+            </div>
+            
+            <div class="service-grid">
+              <div class="service-card" data-usage="95" data-status="primary">
+                <div class="service-icon">🐙</div>
+                <div class="service-content">
+                  <h4 class="service-name">GitHub</h4>
+                  <p class="service-description">Version control, CI/CD, and collaborative development platform</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Primary</span>
+                    <span class="service-status">Daily</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="95"></div>
+                </div>
+                <div class="service-badge service-primary">Primary</div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Sentry</h4>
-                <p class="text-muted">
-                  Error tracking and performance monitoring for production
-                  applications.
-                </p>
+              <div class="service-card" data-usage="88" data-status="active">
+                <div class="service-icon">🛡️</div>
+                <div class="service-content">
+                  <h4 class="service-name">Sentry</h4>
+                  <p class="service-description">Error tracking and performance monitoring for production apps</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Monitoring</span>
+                    <span class="service-status">Active</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="88"></div>
+                </div>
+                <div class="service-badge service-monitoring">Monitoring</div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">Cloudflare</h4>
-                <p class="text-muted">
-                  CDN and DNS management for better performance and security.
-                </p>
+              <div class="service-card" data-usage="90" data-status="active">
+                <div class="service-icon">🔶</div>
+                <div class="service-content">
+                  <h4 class="service-name">Cloudflare</h4>
+                  <p class="service-description">CDN, DNS management, and security for better performance</p>
+                  <div class="service-meta">
+                    <span class="service-usage">CDN</span>
+                    <span class="service-status">Active</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="90"></div>
+                </div>
+                <div class="service-badge service-cdn">CDN</div>
               </div>
 
-              <div class="uses-item">
-                <h4 class="font-medium text-accent">MongoDB Atlas</h4>
-                <p class="text-muted">
-                  Managed MongoDB service for database hosting and management.
-                </p>
+              <div class="service-card" data-usage="80" data-status="active">
+                <div class="service-icon">🍃</div>
+                <div class="service-content">
+                  <h4 class="service-name">MongoDB Atlas</h4>
+                  <p class="service-description">Managed MongoDB service for database hosting and management</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Database</span>
+                    <span class="service-status">Active</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="80"></div>
+                </div>
+                <div class="service-badge service-database">Database</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics & Monitoring -->
+          <div class="service-category" data-category="analytics">
+            <div class="service-category-header">
+              <div class="category-icon">📊</div>
+              <h3 class="category-title">Analytics & Monitoring</h3>
+              <div class="category-badge">Insights & Performance</div>
+            </div>
+            
+            <div class="service-grid">
+              <div class="service-card" data-usage="85" data-status="active">
+                <div class="service-icon">📈</div>
+                <div class="service-content">
+                  <h4 class="service-name">Google Analytics</h4>
+                  <p class="service-description">Web analytics and user behavior tracking for data-driven decisions</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Analytics</span>
+                    <span class="service-status">Active</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="85"></div>
+                </div>
+                <div class="service-badge service-analytics">Analytics</div>
+              </div>
+
+              <div class="service-card" data-usage="78" data-status="active">
+                <div class="service-icon">⚡</div>
+                <div class="service-content">
+                  <h4 class="service-name">Lighthouse CI</h4>
+                  <p class="service-description">Automated performance monitoring and web vitals tracking</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Performance</span>
+                    <span class="service-status">Automated</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="78"></div>
+                </div>
+                <div class="service-badge service-performance">Performance</div>
+              </div>
+
+              <div class="service-card" data-usage="72" data-status="active">
+                <div class="service-icon">📱</div>
+                <div class="service-content">
+                  <h4 class="service-name">Plausible</h4>
+                  <p class="service-description">Privacy-friendly web analytics without cookies or tracking</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Privacy</span>
+                    <span class="service-status">Active</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="72"></div>
+                </div>
+                <div class="service-badge service-privacy">Privacy</div>
+              </div>
+
+              <div class="service-card" data-usage="82" data-status="active">
+                <div class="service-icon">🔍</div>
+                <div class="service-content">
+                  <h4 class="service-name">LogRocket</h4>
+                  <p class="service-description">Session replay and debugging for frontend applications</p>
+                  <div class="service-meta">
+                    <span class="service-usage">Debugging</span>
+                    <span class="service-status">Active</span>
+                  </div>
+                </div>
+                <div class="usage-bar">
+                  <div class="usage-progress" data-width="82"></div>
+                </div>
+                <div class="service-badge service-debugging">Debugging</div>
               </div>
             </div>
           </div>
@@ -1297,4 +1619,935 @@ const description =
     text-decoration: none;
     opacity: 0.8;
   }
+
+  /* Enhanced Tech Stack Styles */
+  .tech-stack-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .tech-stack-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .tech-category {
+    position: relative;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-accent-rgb), 0.02) 0%,
+      rgba(var(--color-accent-rgb), 0.05) 100%
+    );
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(var(--color-accent-rgb), 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .tech-category:hover {
+    transform: translateY(-2px);
+    border-color: rgba(var(--color-accent-rgb), 0.2);
+    box-shadow: 0 10px 40px rgba(var(--color-accent-rgb), 0.1);
+  }
+
+  .tech-category-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .category-icon {
+    font-size: 2rem;
+    padding: 0.5rem;
+    background: rgba(var(--color-accent-rgb), 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .category-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+    flex: 1;
+  }
+
+  .category-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.375rem 0.75rem;
+    background: rgba(var(--color-accent-rgb), 0.15);
+    color: var(--color-accent);
+    border-radius: 20px;
+    border: 1px solid rgba(var(--color-accent-rgb), 0.3);
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .tech-card {
+    position: relative;
+    background: var(--color-light-950);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(var(--color-accent-rgb), 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .tech-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-accent-rgb), 0.03) 0%,
+      transparent 50%,
+      rgba(var(--color-accent-rgb), 0.01) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .tech-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(var(--color-accent-rgb), 0.2);
+    box-shadow: 
+      0 12px 40px rgba(var(--color-accent-rgb), 0.08),
+      0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  .tech-card:hover::before {
+    opacity: 1;
+  }
+
+  .tech-card:hover .tech-icon {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  .tech-card:hover .skill-progress {
+    animation: skillBarFill 1.2s ease-out forwards;
+  }
+
+  .tech-icon {
+    font-size: 2.5rem;
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--color-accent-rgb), 0.08);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    align-self: flex-start;
+  }
+
+  .tech-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .tech-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+    transition: color 0.3s ease;
+  }
+
+  .tech-card:hover .tech-name {
+    color: var(--color-accent);
+  }
+
+  .tech-description {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .tech-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: auto;
+  }
+
+  .tech-years {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .tech-level {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    background: rgba(var(--color-accent-rgb), 0.1);
+    color: var(--color-accent);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.2);
+  }
+
+  .skill-bar {
+    position: relative;
+    height: 4px;
+    background: rgba(var(--color-accent-rgb), 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+  }
+
+  .skill-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--color-accent) 0%,
+      rgba(var(--color-accent-rgb), 0.8) 100%
+    );
+    border-radius: 2px;
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Skill level color coding */
+  .tech-card[data-level="95"] .skill-progress,
+  .tech-card[data-level="92"] .skill-progress,
+  .tech-card[data-level="90"] .skill-progress {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  }
+
+  .tech-card[data-level="88"] .skill-progress,
+  .tech-card[data-level="85"] .skill-progress,
+  .tech-card[data-level="82"] .skill-progress {
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  }
+
+  .tech-card[data-level="80"] .skill-progress,
+  .tech-card[data-level="78"] .skill-progress,
+  .tech-card[data-level="75"] .skill-progress {
+    background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+  }
+
+  /* Animation keyframes */
+  @keyframes skillBarFill {
+    from {
+      width: 0;
+    }
+    to {
+      width: var(--skill-width);
+    }
+  }
+
+  /* Category-specific styling */
+  .tech-category[data-category="frontend"] .category-icon {
+    background: linear-gradient(135deg, #ec4899, #be185d);
+    color: white;
+  }
+
+  .tech-category[data-category="backend"] .category-icon {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+  }
+
+  .tech-category[data-category="tools"] .category-icon {
+    background: linear-gradient(135deg, #10b981, #047857);
+    color: white;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .tech-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tech-category {
+      padding: 1.5rem;
+    }
+
+    .tech-category-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      text-align: left;
+    }
+
+    .category-title {
+      font-size: 1.25rem;
+    }
+
+    .tech-card {
+      padding: 1.25rem;
+    }
+
+    .tech-icon {
+      font-size: 2rem;
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .tech-name {
+      font-size: 1.125rem;
+    }
+
+    .tech-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+
+  /* Dark mode adjustments */
+  :root.dark .tech-category {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-accent-rgb), 0.03) 0%,
+      rgba(var(--color-accent-rgb), 0.08) 100%
+    );
+  }
+
+  :root.dark .tech-card {
+    background: var(--color-light-900);
+    border-color: rgba(var(--color-accent-rgb), 0.15);
+  }
+
+  :root.dark .tech-card:hover {
+    border-color: rgba(var(--color-accent-rgb), 0.3);
+    box-shadow: 
+      0 12px 40px rgba(var(--color-accent-rgb), 0.15),
+      0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Intersection Observer animation */
+  .tech-category {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tech-category.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .tech-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tech-card.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Enhanced Services & Hosting Styles */
+  .services-stack-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .services-stack-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .service-category {
+    position: relative;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-accent-rgb), 0.02) 0%,
+      rgba(var(--color-accent-rgb), 0.05) 100%
+    );
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(var(--color-accent-rgb), 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .service-category:hover {
+    transform: translateY(-2px);
+    border-color: rgba(var(--color-accent-rgb), 0.2);
+    box-shadow: 0 10px 40px rgba(var(--color-accent-rgb), 0.1);
+  }
+
+  .service-category-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .service-card {
+    position: relative;
+    background: var(--color-light-950);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(var(--color-accent-rgb), 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-accent-rgb), 0.03) 0%,
+      transparent 50%,
+      rgba(var(--color-accent-rgb), 0.01) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .service-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(var(--color-accent-rgb), 0.2);
+    box-shadow: 
+      0 12px 40px rgba(var(--color-accent-rgb), 0.08),
+      0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  .service-card:hover::before {
+    opacity: 1;
+  }
+
+  .service-card:hover .service-icon {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  .service-card:hover .usage-progress {
+    animation: usageBarFill 1.2s ease-out forwards;
+  }
+
+  .service-icon {
+    font-size: 2.5rem;
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--color-accent-rgb), 0.08);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    align-self: flex-start;
+  }
+
+  .service-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .service-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+    transition: color 0.3s ease;
+  }
+
+  .service-card:hover .service-name {
+    color: var(--color-accent);
+  }
+
+  .service-description {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .service-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: auto;
+  }
+
+  .service-usage {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .service-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    background: rgba(var(--color-accent-rgb), 0.1);
+    color: var(--color-accent);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.2);
+  }
+
+  .usage-bar {
+    position: relative;
+    height: 4px;
+    background: rgba(var(--color-accent-rgb), 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+  }
+
+  .usage-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--color-accent) 0%,
+      rgba(var(--color-accent-rgb), 0.8) 100%
+    );
+    border-radius: 2px;
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .service-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    border: 1px solid;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+  }
+
+  .service-card:hover .service-badge {
+    opacity: 1;
+  }
+
+  /* Service badge color coding */
+  .service-primary {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-color: #059669;
+  }
+
+  .service-secondary {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border-color: #2563eb;
+  }
+
+  .service-enterprise {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border-color: #d97706;
+  }
+
+  .service-development {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+    border-color: #7c3aed;
+  }
+
+  .service-monitoring {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border-color: #dc2626;
+  }
+
+  .service-cdn {
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    color: white;
+    border-color: #0891b2;
+  }
+
+  .service-database {
+    background: linear-gradient(135deg, #84cc16, #65a30d);
+    color: white;
+    border-color: #65a30d;
+  }
+
+  .service-analytics {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    border-color: #ea580c;
+  }
+
+  .service-performance {
+    background: linear-gradient(135deg, #eab308, #ca8a04);
+    color: white;
+    border-color: #ca8a04;
+  }
+
+  .service-privacy {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    border-color: #4f46e5;
+  }
+
+  .service-debugging {
+    background: linear-gradient(135deg, #ec4899, #be185d);
+    color: white;
+    border-color: #be185d;
+  }
+
+  /* Usage level color coding */
+  .service-card[data-usage="95"] .usage-progress,
+  .service-card[data-usage="90"] .usage-progress,
+  .service-card[data-usage="88"] .usage-progress {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  }
+
+  .service-card[data-usage="85"] .usage-progress,
+  .service-card[data-usage="82"] .usage-progress,
+  .service-card[data-usage="80"] .usage-progress {
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  }
+
+  .service-card[data-usage="78"] .usage-progress,
+  .service-card[data-usage="75"] .usage-progress,
+  .service-card[data-usage="72"] .usage-progress,
+  .service-card[data-usage="70"] .usage-progress {
+    background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+  }
+
+  /* Animation keyframes */
+  @keyframes usageBarFill {
+    from {
+      width: 0;
+    }
+    to {
+      width: var(--usage-width);
+    }
+  }
+
+  /* Category-specific styling */
+  .service-category[data-category="hosting"] .category-icon {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+  }
+
+  .service-category[data-category="development"] .category-icon {
+    background: linear-gradient(135deg, #10b981, #047857);
+    color: white;
+  }
+
+  .service-category[data-category="analytics"] .category-icon {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .service-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .service-category {
+      padding: 1.5rem;
+    }
+
+    .service-category-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      text-align: left;
+    }
+
+    .service-card {
+      padding: 1.25rem;
+    }
+
+    .service-icon {
+      font-size: 2rem;
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .service-name {
+      font-size: 1.125rem;
+    }
+
+    .service-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .service-badge {
+      top: 0.75rem;
+      right: 0.75rem;
+      font-size: 0.6rem;
+      padding: 0.2rem 0.4rem;
+    }
+  }
+
+  /* Dark mode adjustments */
+  :root.dark .service-category {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-accent-rgb), 0.03) 0%,
+      rgba(var(--color-accent-rgb), 0.08) 100%
+    );
+  }
+
+  :root.dark .service-card {
+    background: var(--color-light-900);
+    border-color: rgba(var(--color-accent-rgb), 0.15);
+  }
+
+  :root.dark .service-card:hover {
+    border-color: rgba(var(--color-accent-rgb), 0.3);
+    box-shadow: 
+      0 12px 40px rgba(var(--color-accent-rgb), 0.15),
+      0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Intersection Observer animation */
+  .service-category {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .service-category.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .service-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .service-card.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
 </style>
+
+<script>
+  // Enhanced Tech Stack Interactivity
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize skill bar animations
+    function initSkillBars() {
+      const techCards = document.querySelectorAll('.tech-card');
+      
+      techCards.forEach(card => {
+        const skillProgress = card.querySelector('.skill-progress');
+        const level = card.getAttribute('data-level');
+        
+        if (skillProgress && level) {
+          skillProgress.style.setProperty('--skill-width', level + '%');
+        }
+      });
+    }
+
+    // Initialize usage bar animations for services
+    function initUsageBars() {
+      const serviceCards = document.querySelectorAll('.service-card');
+      
+      serviceCards.forEach(card => {
+        const usageProgress = card.querySelector('.usage-progress');
+        const usage = card.getAttribute('data-usage');
+        
+        if (usageProgress && usage) {
+          usageProgress.style.setProperty('--usage-width', usage + '%');
+        }
+      });
+    }
+
+    // Intersection Observer for scroll animations
+    function initScrollAnimations() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('animate');
+              
+              // Animate tech cards within the category
+              if (entry.target.classList.contains('tech-category')) {
+                const techCards = entry.target.querySelectorAll('.tech-card');
+                techCards.forEach((card, cardIndex) => {
+                  setTimeout(() => {
+                    card.classList.add('animate');
+                  }, cardIndex * 100);
+                });
+              }
+              
+              // Animate service cards within the category
+              if (entry.target.classList.contains('service-category')) {
+                const serviceCards = entry.target.querySelectorAll('.service-card');
+                serviceCards.forEach((card, cardIndex) => {
+                  setTimeout(() => {
+                    card.classList.add('animate');
+                  }, cardIndex * 100);
+                });
+              }
+            }, index * 200);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      });
+
+      // Observe tech categories
+      document.querySelectorAll('.tech-category').forEach(category => {
+        observer.observe(category);
+      });
+      
+      // Observe service categories
+      document.querySelectorAll('.service-category').forEach(category => {
+        observer.observe(category);
+      });
+    }
+
+    // Enhanced hover effects
+    function initHoverEffects() {
+      const techCards = document.querySelectorAll('.tech-card');
+      const serviceCards = document.querySelectorAll('.service-card');
+      
+      techCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+          // Add ripple effect
+          const ripple = document.createElement('div');
+          ripple.className = 'ripple';
+          ripple.style.cssText = `
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(var(--color-accent-rgb), 0.1);
+            width: 100px;
+            height: 100px;
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+          `;
+          
+          const rect = this.getBoundingClientRect();
+          const size = 100;
+          const x = event.clientX - rect.left - size / 2;
+          const y = event.clientY - rect.top - size / 2;
+          
+          ripple.style.left = x + 'px';
+          ripple.style.top = y + 'px';
+          
+          this.appendChild(ripple);
+          
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      });
+      
+      // Add hover effects to service cards
+      serviceCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+          // Add ripple effect
+          const ripple = document.createElement('div');
+          ripple.className = 'ripple';
+          ripple.style.cssText = `
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(var(--color-accent-rgb), 0.1);
+            width: 100px;
+            height: 100px;
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+          `;
+          
+          const rect = this.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          const x = event.clientX - rect.left - size / 2;
+          const y = event.clientY - rect.top - size / 2;
+          
+          ripple.style.left = x + 'px';
+          ripple.style.top = y + 'px';
+          
+          this.appendChild(ripple);
+          
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      });
+    }
+
+    // Add ripple animation keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Initialize all functionality
+    initSkillBars();
+    initUsageBars();
+    initScrollAnimations();
+    initHoverEffects();
+
+    // Optional: Add keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Tab') {
+        document.querySelectorAll('.tech-card:focus').forEach(card => {
+          card.classList.add('keyboard-focus');
+        });
+      }
+    });
+  });
+</script>

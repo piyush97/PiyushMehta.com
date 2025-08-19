@@ -29,7 +29,7 @@ const readingTime = Math.ceil(post.body.split(' ').length / 200);
 const canonicalUrl = new URL(`/blog/${post.slug}`, Astro.site).toString();
 
 // Create structured data for the article
-const articleSchema = {
+const articleSchema: Record<string, any> = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: title,
@@ -56,32 +56,27 @@ const articleSchema = {
     '@type': 'WebPage',
     '@id': canonicalUrl,
   },
-  ...(image && {
-    image: {
-      '@type': 'ImageObject',
-      url: new URL(image.url, Astro.site).toString(),
-      description: image.alt,
-      ...(image.width && { width: image.width }),
-      ...(image.height && { height: image.height }),
-    },
-  }),
 };
+
+if (image && image.url) {
+  articleSchema.image = {
+    '@type': 'ImageObject',
+    url: new URL(image.url, Astro.site).toString(),
+    description: image.alt,
+  };
+  if (image.width) {
+    articleSchema.image.width = image.width;
+  }
+  if (image.height) {
+    articleSchema.image.height = image.height;
+  }
+}
 ---
 
 <Layout
   title={title}
   description={description ||
     `${title} - A blog post by ${author || 'Piyush Mehta'}`}
-  type="article"
-  author={author}
-  publishedTime={date}
-  modifiedTime={date}
-  tags={tags}
-  canonical={canonicalUrl}
-  image={typeof (image || banner) === 'string' ? (image || banner) : undefined}
-  schema={articleSchema}
-  ogTemplate={ogTemplate}
-  ogTheme={ogTheme}
 >
   <div class="page-container">
     <div class="max-w-4xl container-base">
@@ -298,18 +293,60 @@ const articleSchema = {
       />
 
       <!-- Comments Section -->
-      <GiscusComments
-        repo="piyushmehta/piyushmehta.com"
-        repoId="R_kgDOL1234567890"
-        category="Blog Comments"
-        categoryId="DIC_kwDOL1234567890"
-        mapping="pathname"
-        reactionsEnabled={true}
-        inputPosition="bottom"
-        theme="preferred_color_scheme"
-        lang="en"
-        loading="lazy"
-      />
+      <div class="comments-section mt-16">
+        <!-- New Custom Comment System -->
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold text-text-primary mb-4">💬 Comments</h2>
+          <p class="text-text-secondary mb-6">
+            Share your thoughts and engage with the community. All comments are moderated for quality.
+          </p>
+        </div>
+        
+        <!-- React Comment System (Client-side) -->
+        <div id="comment-system-root" data-post-id={post.slug}></div>
+        
+        <!-- Comment System Initialization Script -->
+        <script>
+          // Initialize comment system
+          import('/src/scripts/comment-system-init.ts').then(module => {
+            module.initializeCommentSystem();
+          }).catch(error => {
+            console.error('Failed to load comment system:', error);
+            const commentRoot = document.getElementById('comment-system-root');
+            if (commentRoot) {
+              commentRoot.innerHTML = `
+                <div class="comment-system-error bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+                  <p class="text-yellow-800 mb-2">
+                    ⚠️ Comment system is loading...
+                  </p>
+                  <p class="text-yellow-600 text-sm">
+                    If this message persists, please use the GitHub Discussions below.
+                  </p>
+                </div>
+              `;
+            }
+          });
+        </script>
+        
+        <!-- Fallback: Giscus Comments -->
+        <details class="mt-8">
+          <summary class="cursor-pointer text-accent hover:text-accent/80 font-medium mb-4">
+            Alternative: GitHub Discussions
+          </summary>
+          <GiscusComments
+            repo="piyushmehta/piyushmehta.com"
+            repoId="R_kgDOL1234567890"
+            category="Blog Comments"
+            categoryId="DIC_kwDOL1234567890"
+            mapping="pathname"
+            reactionsEnabled={true}
+            inputPosition="bottom"
+            theme="preferred_color_scheme"
+            lang="en"
+            loading="lazy"
+          />
+        </details>
+      </div>
     </div>
   </div>
 </Layout>

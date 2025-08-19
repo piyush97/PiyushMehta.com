@@ -5,7 +5,7 @@
     <link>https://piyushmehta.com</link>
     <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 19 Jul 2025 20:17:29 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 19 Aug 2025 04:53:55 GMT</lastBuildDate>
     <generator>Static RSS Generator</generator>
     <copyright>Copyright 2025 Piyush Mehta. All rights reserved.</copyright>
     <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
@@ -93,6 +93,14 @@
       <category>microsoft azure bot sdk</category>
       <category>azure bot sdk</category>
       <category>Piyush97</category>
+    </item>
+        <item>
+      <title>Adding Arch Linux to My Development Arsenal: A macOS Developer&apos;s Journey</title>
+      <link>https://piyushmehta.com/blog/from-macos-to-arch-linux-developer-journey/</link>
+      <pubDate>Tue, 19 Aug 2025 00:00:00 GMT</pubDate>
+      <description>Why I expanded beyond macOS to include Arch Linux in my development toolkit, exploring Hyprland while keeping my MacBook M1 Pro for the best of both worlds</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      
     </item>
         <item>
       <title>🔥 A Beginner’s Guide to Hacktoberfest &amp; Winning the schwag 👕</title>
@@ -186,7 +194,7 @@
       <title>TypeScript 5.9 Beta: Revolutionary Features That Will Transform How You Code</title>
       <link>https://piyushmehta.com/blog/typescript-5-9-beta-revolutionary-features/</link>
       <pubDate>Fri, 18 Jul 2025 00:00:00 GMT</pubDate>
-      <description>Discover the game-changing features in TypeScript 5.9 beta including deferred module evaluation, Node.js 20 support, and performance optimizations that solve real developer pain points</description>
+      <description>Unlock TypeScript 5.9 beta&apos;s revolutionary features: Deferred module evaluation, Node.js 20 support, and performance optimizations for modern web development</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
       
     </item>

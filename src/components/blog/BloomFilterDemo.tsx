@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { withErrorBoundary } from '../ErrorBoundary';
 
 interface BloomFilterDemoProps {}
 
@@ -16,7 +17,7 @@ function simpleHash(str: string, seed: number, size: number): number {
   return Math.abs(hash);
 }
 
-export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
+const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
   const [filter, setFilter] = useState<BloomFilterState>({
     bits: new Array(8).fill(false),
     size: 8,
@@ -202,3 +203,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
     </div>
   );
 };
+
+// Export component wrapped with error boundary
+export const WrappedBloomFilterDemo = withErrorBoundary(BloomFilterDemo);
+export { WrappedBloomFilterDemo as BloomFilterDemo };

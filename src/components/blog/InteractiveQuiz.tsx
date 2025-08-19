@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { withErrorBoundary } from '../ErrorBoundary';
 
 interface Question {
   id: number;
@@ -77,7 +78,7 @@ const questions: Question[] = [
   },
 ];
 
-export const InteractiveQuiz: React.FC = () => {
+const InteractiveQuiz: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -237,3 +238,7 @@ export const InteractiveQuiz: React.FC = () => {
     </div>
   );
 };
+
+// Export component wrapped with error boundary
+export const WrappedInteractiveQuiz = withErrorBoundary(InteractiveQuiz);
+export { WrappedInteractiveQuiz as InteractiveQuiz };

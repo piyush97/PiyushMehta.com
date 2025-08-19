@@ -41,3 +41,13 @@ examples/**/env.d.ts
 # want to share with others (see
 # https://github.com/withastro/astro/pull/11759#discussion_r1721444711)
 *.code-workspace
+.claude
+.serena
+tests/*
+test-reports/*
+playwright-report/*
+.claudedocs*
+.og-cache/
+test-og-images
+test-results
+ts59-test.png

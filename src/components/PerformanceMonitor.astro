@@ -1,0 +1,379 @@
+---
+/**
+ * Performance Monitoring Component
+ * Tracks Core Web Vitals and provides development insights
+ */
+
+interface Props {
+  enableInProduction?: boolean;
+  reportToAnalytics?: boolean;
+  thresholds?: {
+    lcp: number;
+    fid: number;
+    cls: number;
+  };
+}
+
+const {
+  enableInProduction = false,
+  reportToAnalytics = true,
+  thresholds = {
+    lcp: 2500, // 2.5s
+    fid: 100, // 100ms
+    cls: 0.1, // 0.1
+  },
+} = Astro.props;
+
+const shouldMonitor = import.meta.env.DEV || enableInProduction;
+---
+
+{shouldMonitor && (
+  <script define:vars={{ thresholds, reportToAnalytics }}>
+    // Performance monitoring and Core Web Vitals tracking
+    class PerformanceMonitor {
+      constructor(thresholds, reportToAnalytics) {
+        this.thresholds = thresholds;
+        this.reportToAnalytics = reportToAnalytics;
+        this.metrics = {};
+        this.init();
+      }
+
+      init() {
+        // Wait for page to be fully loaded
+        if (document.readyState === 'complete') {
+          this.startMonitoring();
+        } else {
+          window.addEventListener('load', () => this.startMonitoring());
+        }
+      }
+
+      startMonitoring() {
+        this.measureNavigationTiming();
+        this.measureCoreWebVitals();
+        this.measureResourceTiming();
+        this.setupPerformanceObserver();
+      }
+
+      measureNavigationTiming() {
+        if (!('performance' in window) || !performance.getEntriesByType) return;
+
+        const navigation = performance.getEntriesByType('navigation')[0];
+        if (!navigation) return;
+
+        this.metrics.navigationTiming = {
+          dns: navigation.domainLookupEnd - navigation.domainLookupStart,
+          tcp: navigation.connectEnd - navigation.connectStart,
+          ttfb: navigation.responseStart - navigation.requestStart,
+          domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+          load: navigation.loadEventEnd - navigation.loadEventStart,
+          total: navigation.loadEventEnd - navigation.navigationStart
+        };
+
+        if (import.meta.env.DEV) {
+          console.log('📊 Navigation Timing:', this.metrics.navigationTiming);
+        }
+      }
+
+      measureCoreWebVitals() {
+        // LCP (Largest Contentful Paint)
+        this.measureLCP();
+        
+        // FID (First Input Delay)
+        this.measureFID();
+        
+        // CLS (Cumulative Layout Shift)
+        this.measureCLS();
+      }
+
+      measureLCP() {
+        if (!('PerformanceObserver' in window)) return;
+
+        try {
+          const observer = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            const lastEntry = entries[entries.length - 1];
+            
+            this.metrics.lcp = lastEntry.startTime;
+            this.evaluateMetric('lcp', this.metrics.lcp);
+            
+            if (import.meta.env.DEV) {
+              console.log(`🎯 LCP: ${this.metrics.lcp}ms`);
+            }
+          });
+          
+          observer.observe({ entryTypes: ['largest-contentful-paint'] });
+        } catch (e) {
+          if (import.meta.env.DEV) {
+            console.warn('LCP measurement not supported');
+          }
+        }
+      }
+
+      measureFID() {
+        if (!('PerformanceObserver' in window)) return;
+
+        try {
+          const observer = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            entries.forEach((entry) => {
+              this.metrics.fid = entry.processingStart - entry.startTime;
+              this.evaluateMetric('fid', this.metrics.fid);
+              
+              if (import.meta.env.DEV) {
+                console.log(`⚡ FID: ${this.metrics.fid}ms`);
+              }
+            });
+          });
+          
+          observer.observe({ entryTypes: ['first-input'] });
+        } catch (e) {
+          if (import.meta.env.DEV) {
+            console.warn('FID measurement not supported');
+          }
+        }
+      }
+
+      measureCLS() {
+        if (!('PerformanceObserver' in window)) return;
+
+        let clsValue = 0;
+        let sessionValue = 0;
+        let sessionEntries = [];
+
+        try {
+          const observer = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            
+            entries.forEach((entry) => {
+              if (!entry.hadRecentInput) {
+                const firstSessionEntry = sessionEntries[0];
+                const lastSessionEntry = sessionEntries[sessionEntries.length - 1];
+                
+                if (sessionValue && 
+                    entry.startTime - lastSessionEntry.startTime < 1000 &&
+                    entry.startTime - firstSessionEntry.startTime < 5000) {
+                  sessionValue += entry.value;
+                  sessionEntries.push(entry);
+                } else {
+                  sessionValue = entry.value;
+                  sessionEntries = [entry];
+                }
+                
+                if (sessionValue > clsValue) {
+                  clsValue = sessionValue;
+                  this.metrics.cls = clsValue;
+                  this.evaluateMetric('cls', this.metrics.cls);
+                  
+                  if (import.meta.env.DEV) {
+                    console.log(`📐 CLS: ${this.metrics.cls}`);
+                  }
+                }
+              }
+            });
+          });
+          
+          observer.observe({ entryTypes: ['layout-shift'] });
+        } catch (e) {
+          if (import.meta.env.DEV) {
+            console.warn('CLS measurement not supported');
+          }
+        }
+      }
+
+      measureResourceTiming() {
+        if (!('performance' in window) || !performance.getEntriesByType) return;
+
+        const resources = performance.getEntriesByType('resource');
+        const resourceMetrics = {
+          total: resources.length,
+          images: 0,
+          scripts: 0,
+          stylesheets: 0,
+          fonts: 0,
+          largest: null,
+          slowest: null
+        };
+
+        let maxSize = 0;
+        let maxDuration = 0;
+
+        resources.forEach(resource => {
+          // Categorize resources
+          if (resource.name.match(/\.(jpg|jpeg|png|gif|webp|avif|svg)$/i)) {
+            resourceMetrics.images++;
+          } else if (resource.name.match(/\.(js|mjs)$/i)) {
+            resourceMetrics.scripts++;
+          } else if (resource.name.match(/\.css$/i)) {
+            resourceMetrics.stylesheets++;
+          } else if (resource.name.match(/\.(woff|woff2|ttf|otf)$/i)) {
+            resourceMetrics.fonts++;
+          }
+
+          // Track largest and slowest resources
+          const size = resource.transferSize || 0;
+          const duration = resource.responseEnd - resource.responseStart;
+
+          if (size > maxSize) {
+            maxSize = size;
+            resourceMetrics.largest = {
+              name: resource.name,
+              size: size,
+              duration: duration
+            };
+          }
+
+          if (duration > maxDuration) {
+            maxDuration = duration;
+            resourceMetrics.slowest = {
+              name: resource.name,
+              size: size,
+              duration: duration
+            };
+          }
+        });
+
+        this.metrics.resources = resourceMetrics;
+
+        if (import.meta.env.DEV) {
+          console.log('📦 Resource Metrics:', resourceMetrics);
+        }
+      }
+
+      setupPerformanceObserver() {
+        if (!('PerformanceObserver' in window)) return;
+
+        try {
+          // Monitor long tasks (> 50ms)
+          const longTaskObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            entries.forEach((entry) => {
+              if (import.meta.env.DEV) {
+                console.warn(`🐌 Long task detected: ${entry.duration}ms`);
+              }
+              
+              this.reportMetric('long-task', {
+                duration: entry.duration,
+                startTime: entry.startTime
+              });
+            });
+          });
+          
+          longTaskObserver.observe({ entryTypes: ['longtask'] });
+        } catch (e) {
+          if (import.meta.env.DEV) {
+            console.warn('Long task monitoring not supported');
+          }
+        }
+      }
+
+      evaluateMetric(type, value) {
+        const threshold = this.thresholds[type];
+        if (!threshold) return;
+
+        const status = value <= threshold ? 'good' : 'needs-improvement';
+        
+        if (import.meta.env.DEV) {
+          const emoji = status === 'good' ? '✅' : '⚠️';
+          console.log(`${emoji} ${type.toUpperCase()}: ${value}${type === 'cls' ? '' : 'ms'} (${status})`);
+        }
+
+        this.reportMetric(type, {
+          value,
+          threshold,
+          status
+        });
+      }
+
+      reportMetric(type, data) {
+        if (!this.reportToAnalytics) return;
+
+        // Report to analytics service (customize based on your analytics provider)
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'web_vital', {
+            metric_name: type,
+            metric_value: data.value || data.duration,
+            metric_status: data.status
+          });
+        }
+
+        // Report to Sentry if available
+        if (window.Sentry) {
+          window.Sentry.addBreadcrumb({
+            category: 'performance',
+            message: `${type}: ${data.value || data.duration}`,
+            level: data.status === 'good' ? 'info' : 'warning',
+            data: data
+          });
+        }
+      }
+
+      // Public method to get current metrics
+      getMetrics() {
+        return this.metrics;
+      }
+
+      // Public method to generate performance report
+      generateReport() {
+        const report = {
+          timestamp: new Date().toISOString(),
+          url: window.location.href,
+          userAgent: navigator.userAgent,
+          metrics: this.metrics,
+          recommendations: this.generateRecommendations()
+        };
+
+        if (import.meta.env.DEV) {
+          console.log('📈 Performance Report:', report);
+        }
+
+        return report;
+      }
+
+      generateRecommendations() {
+        const recommendations = [];
+
+        if (this.metrics.lcp > this.thresholds.lcp) {
+          recommendations.push('Consider optimizing largest contentful paint by reducing image sizes or improving server response times');
+        }
+
+        if (this.metrics.fid > this.thresholds.fid) {
+          recommendations.push('Reduce first input delay by minimizing JavaScript execution time');
+        }
+
+        if (this.metrics.cls > this.thresholds.cls) {
+          recommendations.push('Improve cumulative layout shift by setting explicit dimensions for images and avoiding content insertion');
+        }
+
+        if (this.metrics.resources && this.metrics.resources.total > 100) {
+          recommendations.push('Consider reducing the number of resources or implementing resource bundling');
+        }
+
+        return recommendations;
+      }
+    }
+
+    // Initialize performance monitoring
+    window.performanceMonitor = new PerformanceMonitor(thresholds, reportToAnalytics);
+
+    // Expose metrics for debugging
+    if (import.meta.env.DEV) {
+      window.getPerformanceMetrics = () => window.performanceMonitor.getMetrics();
+      window.generatePerformanceReport = () => window.performanceMonitor.generateReport();
+    }
+  </script>
+)}
+
+{import.meta.env.DEV && (
+  <div id="performance-debug" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-size: 12px; z-index: 9999; max-width: 300px;">
+    <div style="font-weight: bold; margin-bottom: 5px;">Performance Monitor</div>
+    <div>Check console for detailed metrics</div>
+    <div style="margin-top: 5px;">
+      <button onclick="console.log(window.getPerformanceMetrics?.())" style="background: #007acc; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 10px;">
+        Get Metrics
+      </button>
+      <button onclick="console.log(window.generatePerformanceReport?.())" style="background: #007acc; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-left: 5px;">
+        Report
+      </button>
+    </div>
+  </div>
+)}

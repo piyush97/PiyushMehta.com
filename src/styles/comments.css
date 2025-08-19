@@ -1,0 +1,430 @@
+/* Comment System Styles - Responsive & Accessible */
+
+/* Comment System Container */
+.comment-system {
+  @apply max-w-none;
+}
+
+/* Comment Form Styles */
+.comment-form {
+  @apply w-full;
+}
+
+.comment-form input,
+.comment-form textarea {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.comment-form input:focus,
+.comment-form textarea:focus {
+  @apply outline-none ring-2 border-accent;
+  ring-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.comment-form input:invalid,
+.comment-form textarea:invalid {
+  @apply border-red-400;
+}
+
+.comment-form input:disabled,
+.comment-form textarea:disabled {
+  @apply cursor-not-allowed bg-light-700;
+  opacity: 0.6;
+}
+
+/* Character counter styling */
+.character-counter {
+  @apply text-xs text-text-secondary transition-colors;
+}
+
+.character-counter.warning {
+  @apply text-yellow-600;
+}
+
+.character-counter.error {
+  @apply text-red-600;
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply inline-flex items-center justify-center px-4 py-2 border border-transparent 
+         text-sm font-medium rounded-lg text-white transition-all duration-200 ease-in-out
+         disabled:cursor-not-allowed
+         focus:outline-none focus:ring-2 focus:ring-offset-2;
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-accent);
+  opacity: 0.9;
+}
+
+.btn-primary:focus {
+  ring-color: var(--color-accent);
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center px-4 py-2 border border-card-border 
+         text-sm font-medium rounded-lg text-text-primary bg-transparent hover:bg-light-700
+         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent
+         transition-all duration-200 ease-in-out;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center px-3 py-1 text-sm font-medium
+         text-text-secondary hover:text-accent bg-transparent hover:bg-light-700
+         rounded-md transition-all duration-200 ease-in-out;
+}
+
+/* Comment Item Styles */
+.comment-item {
+  @apply relative;
+}
+
+.comment-item.nested {
+  @apply border-l-2 border-card-border pl-4 ml-6;
+}
+
+.comment-item.nested::before {
+  content: '';
+  @apply absolute left-0 top-0 w-0.5 h-full bg-gradient-to-b;
+  background-image: linear-gradient(to bottom, rgba(59, 130, 246, 0.3), transparent);
+}
+
+/* Avatar Styles */
+.comment-avatar {
+  @apply w-10 h-10 rounded-full bg-light-700 flex-shrink-0 overflow-hidden
+         border-2 border-transparent transition-all duration-200;
+}
+
+.comment-avatar:hover {
+  @apply transform scale-105;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.comment-avatar img {
+  @apply w-full h-full object-cover;
+}
+
+/* Comment Content */
+.comment-content {
+  @apply prose prose-sm max-w-none text-text-primary;
+}
+
+.comment-content p {
+  @apply mb-2 last:mb-0 leading-relaxed;
+}
+
+.comment-content a {
+  @apply text-accent hover:underline;
+}
+
+/* Comment Actions */
+.comment-actions {
+  @apply flex items-center gap-4 text-sm;
+}
+
+.comment-action {
+  @apply flex items-center gap-1 text-text-secondary hover:text-accent
+         transition-colors duration-200 cursor-pointer select-none;
+}
+
+.comment-action.active {
+  @apply text-accent;
+}
+
+.comment-action svg {
+  @apply w-4 h-4 transition-transform duration-200;
+}
+
+.comment-action:hover svg {
+  @apply transform scale-110;
+}
+
+/* Like button specific styles */
+.like-button {
+  @apply comment-action;
+}
+
+.like-button.liked {
+  @apply text-red-500;
+}
+
+.like-button.liked svg {
+  @apply fill-current;
+}
+
+/* Reply Form Styles */
+.reply-form-container {
+  @apply mt-4 p-4 rounded-lg border animate-fadeIn;
+  background-color: rgba(243, 244, 246, 0.5);
+  border-color: rgba(209, 213, 219, 0.5);
+}
+
+/* Comment Status Badges */
+.status-badge {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.status-badge.pending {
+  @apply bg-yellow-100 text-yellow-800 border border-yellow-200;
+}
+
+.status-badge.approved {
+  @apply bg-green-100 text-green-800 border border-green-200;
+}
+
+.status-badge.rejected {
+  @apply bg-red-100 text-red-800 border border-red-200;
+}
+
+/* Loading States */
+.comment-loading {
+  @apply flex items-center justify-center py-8;
+}
+
+.comment-loading-spinner {
+  @apply animate-spin rounded-full h-8 w-8 border-b-2 border-accent;
+}
+
+.comment-skeleton {
+  @apply animate-pulse space-y-4;
+}
+
+.comment-skeleton .skeleton-line {
+  @apply h-4 bg-light-700 rounded;
+}
+
+.comment-skeleton .skeleton-avatar {
+  @apply w-10 h-10 bg-light-700 rounded-full;
+}
+
+/* Sort Dropdown */
+.comment-sort-select {
+  @apply px-3 py-1 text-sm border border-card-border rounded-lg 
+         bg-light-800 text-text-primary focus:ring-2 focus:ring-accent 
+         focus:border-transparent transition-all duration-200;
+}
+
+/* Empty State */
+.comment-empty-state {
+  @apply text-center py-12;
+}
+
+.comment-empty-state svg {
+  @apply w-16 h-16 mx-auto mb-4 text-text-secondary opacity-50;
+}
+
+.comment-empty-state h3 {
+  @apply text-lg font-medium text-text-primary mb-2;
+}
+
+.comment-empty-state p {
+  @apply text-text-secondary;
+}
+
+/* Error States */
+.comment-error {
+  @apply p-4 bg-red-50 border border-red-200 rounded-lg text-red-800;
+}
+
+.comment-success {
+  @apply p-4 bg-green-50 border border-green-200 rounded-lg text-green-800;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .comment-form .grid {
+    @apply grid-cols-1;
+  }
+  
+  .comment-item.nested {
+    @apply ml-4 pl-3;
+  }
+  
+  .comment-avatar {
+    @apply w-8 h-8;
+  }
+  
+  .comment-actions {
+    @apply gap-3;
+  }
+  
+  .comment-action {
+    @apply text-xs;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    @apply px-3 py-1.5 text-xs;
+  }
+}
+
+@media (max-width: 480px) {
+  .comment-system {
+    @apply px-2;
+  }
+  
+  .comment-form {
+    @apply space-y-3;
+  }
+  
+  .reply-form-container {
+    @apply p-3;
+  }
+  
+  .comment-actions {
+    @apply flex-wrap gap-2;
+  }
+  
+  .comment-sort-select {
+    @apply text-xs px-2 py-1;
+  }
+}
+
+/* Accessibility Improvements */
+.comment-form input:focus-visible,
+.comment-form textarea:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible {
+  @apply outline-2 outline-offset-2 outline-accent;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .comment-item.nested {
+    @apply border-l-4 border-accent;
+  }
+  
+  .comment-action:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+  
+  .btn-primary {
+    @apply border-2 border-accent;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .comment-avatar,
+  .comment-action,
+  .comment-action svg,
+  .btn-primary,
+  .btn-secondary,
+  .animate-fadeIn,
+  .animate-slideDown,
+  .comment-loading-spinner {
+    @apply transition-none;
+    animation: none;
+  }
+}
+
+/* Dark theme specific adjustments */
+.professional-dark .comment-form input,
+.professional-dark .comment-form textarea {
+  @apply bg-light-800 border-light-600 text-light-100 placeholder-light-400;
+}
+
+.professional-dark .comment-form input:focus,
+.professional-dark .comment-form textarea:focus {
+  @apply border-accent bg-light-700;
+}
+
+.professional-dark .btn-secondary {
+  @apply border-light-600 text-light-200 hover:bg-light-700 hover:border-light-500;
+}
+
+.professional-dark .comment-sort-select {
+  @apply bg-light-800 border-light-600 text-light-200;
+}
+
+.professional-dark .status-badge.pending {
+  @apply text-yellow-200 border-yellow-700;
+  background-color: rgba(120, 53, 15, 0.3);
+}
+
+.professional-dark .status-badge.approved {
+  @apply text-green-200 border-green-700;
+  background-color: rgba(20, 83, 45, 0.3);
+}
+
+.professional-dark .status-badge.rejected {
+  @apply text-red-200 border-red-700;
+  background-color: rgba(127, 29, 29, 0.3);
+}
+
+/* Light theme specific adjustments */
+.professional-light .comment-form input,
+.professional-light .comment-form textarea {
+  @apply bg-white border-gray-300 text-gray-900 placeholder-gray-500;
+}
+
+.professional-light .comment-form input:focus,
+.professional-light .comment-form textarea:focus {
+  @apply border-accent bg-white;
+}
+
+.professional-light .btn-secondary {
+  @apply border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400;
+}
+
+.professional-light .comment-sort-select {
+  @apply bg-white border-gray-300 text-gray-900;
+}
+
+/* Print styles */
+@media print {
+  .comment-form,
+  .comment-actions,
+  .comment-sort-select {
+    @apply hidden;
+  }
+  
+  .comment-item {
+    @apply break-inside-avoid;
+  }
+  
+  .comment-content {
+    @apply text-black;
+  }
+}

@@ -1,6 +1,7 @@
 // OG Image Generator Component with tRPC
 import { useEffect, useState } from 'react';
 import { trpc } from '../lib/trpc';
+import { withErrorBoundary } from './ErrorBoundary';
 
 // Types for templates and themes
 interface Template {
@@ -22,7 +23,7 @@ interface OGImageGeneratorProps {
   className?: string;
 }
 
-export default function OGImageGenerator({
+function OGImageGenerator({
   initialTitle = '',
   initialDescription = '',
   className = '',
@@ -240,3 +241,6 @@ export default function OGImageGenerator({
     </div>
   );
 }
+
+// Export component wrapped with error boundary
+export default withErrorBoundary(OGImageGenerator);
