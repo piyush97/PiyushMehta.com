@@ -1,14 +1,17 @@
 ---
 import CommandPalette from '../components/CommandPalette.astro';
+import FontOptimization from '../components/FontOptimization.astro';
 import Footer from '../components/Footer.astro';
+import GDPRConsent from '../components/GDPRConsent';
 import Navbar from '../components/Navbar.astro';
+import PerformanceMonitor from '../components/PerformanceMonitor.astro';
 import ReadingProgress from '../components/ReadingProgress.astro';
-import SEO from '../components/SEO.astro';
+import Seo from '../components/Seo.astro';
 import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration.astro';
 import SmartPrefetch from '../components/SmartPrefetch.astro';
 import '../styles/global.css';
 import SpeedInsights from '@vercel/speed-insights/astro';
-import favicon from '../assets/favicon.svg';
+const favicon = '/favicon.svg';
 import type { JsonLdData } from '../types/schema';
 
 export interface Props {
@@ -70,23 +73,16 @@ const {
     <link rel="manifest" href="/manifest.json" />
     <meta name="generator" content={Astro.generator} />
     <SpeedInsights />
+    <!-- Font Optimization for improved performance -->
+    <FontOptimization />
     <!-- SEO Component (includes OpenGraph functionality) -->
-    <SEO
+    <Seo
       title={title}
       description={description}
-      type={type}
-      image={image}
-      author={author}
-      publishedTime={publishedTime}
-      modifiedTime={modifiedTime}
-      tags={tags}
-      canonical={canonical}
-      noindex={noindex}
-      schema={schema}
-      keywords={keywords}
-      ogTemplate={ogTemplate}
-      ogTheme={ogTheme}
+      url={Astro.url}
     />
+    <!-- Performance monitoring for Core Web Vitals -->
+    <PerformanceMonitor enableInProduction={false} reportToAnalytics={true} />
 
     <script>
       // Initialize Sentry for client-side error tracking
@@ -101,6 +97,7 @@ const {
         ) {
           return localStorage.getItem('theme') || 'professional-dark';
         }
+        // Default to dark theme unless user explicitly prefers light
         return window.matchMedia('(prefers-color-scheme: light)').matches
           ? 'professional-light'
           : 'professional-dark';
@@ -382,18 +379,37 @@ const {
 .font-bold { font-weight: 700; }
 .font-semibold { font-weight: 600; }
 :root {
-        --color-text-primary: #1f2937;
-        --color-text-secondary: #6b7280;
+        /* Default (Dark) Theme - Optimized for readability */
+        --color-lighter: #ffffff;
+        --color-light-100: #f1f5f9;  /* Primary text - high contrast */
+        --color-light-200: #e2e8f0;  /* Secondary headings */
+        --color-light-300: #cbd5e1;  /* Body text - optimized contrast */
+        --color-light-400: #94a3b8;  /* Muted text */
+        --color-light-500: #64748b;  /* Disabled text */
+        --color-light-600: #475569;  /* Borders */
+        --color-light-700: #334155;  /* Subtle backgrounds */
+        --color-light-800: #1e293b;  /* Card backgrounds */
+        --color-light-900: #0f172a;  /* Deep backgrounds */
+        --color-dark-100: #0f172a;
+        --color-dark-200: #1e293b;
+        --color-dark-300: #334155;
+        --color-dark-400: #475569;
+        --color-dark-500: #64748b;
+        --color-text-primary: var(--color-light-100);
+        --color-text: var(--color-light-300);
+        --color-text-secondary: var(--color-light-400);
         --color-accent: #3b82f6;
-        --color-surface-100: #f9fafb;
-        --color-card-border: #e5e7eb;
+        --color-surface-100: var(--color-dark-200);
+        --color-card-border: var(--color-light-600);
       }
-.professional-dark {
-        --color-text-primary: #f9fafb;
-        --color-text-secondary: #d1d5db;
-        --color-accent: #60a5fa;
-        --color-surface-100: #1f2937;
-        --color-card-border: #374151;
+.professional-light {
+        /* Light theme with enhanced readability */
+        --color-text-primary: #1e293b;
+        --color-text: #334155;
+        --color-text-secondary: #64748b;
+        --color-accent: #3b82f6;
+        --color-surface-100: #f8fafc;
+        --color-card-border: #e2e8f0;
       }
 .no-transition * { transition: none !important; }
 .container-base { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
@@ -425,6 +441,9 @@ const {
       <slot />
     </main>
     <Footer />
+    
+    <!-- GDPR Consent Management -->
+    <GDPRConsent client:load />
 
     <script src="/src/scripts/enhanced-navbar.js"></script>
     
