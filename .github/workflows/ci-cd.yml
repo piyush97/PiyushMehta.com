@@ -1,0 +1,200 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, og-image-fixes ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# Use least privilege principle
+permissions:
+  contents: read
+  pull-requests: read
+  security-events: write
+  actions: read
+
+env:
+  NODE_VERSION: '20'
+  BUN_VERSION: 'latest'
+
+jobs:
+  # Code quality and security checks
+  quality-checks:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+          
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+          
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+        
+      - name: Run code quality checks
+        run: |
+          echo "🔍 Running code quality checks..."
+          bun run check
+          
+      - name: Security audit (informational)
+        run: |
+          echo "🔒 Running security audit..."
+          bun audit --audit-level high || echo "Security audit completed - review findings above"
+        continue-on-error: true
+
+  # Build verification
+  build:
+    name: Build Verification
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+          
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+          
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+        
+      - name: Build project
+        run: |
+          echo "🏗️ Building project..."
+          bun run build
+          
+      - name: Verify build output
+        run: |
+          echo "✅ Verifying build artifacts..."
+          [ -d "dist" ] && echo "✅ Build directory exists" || exit 1
+          [ -f ".vercel/output/config.json" ] && echo "✅ Vercel config generated" || echo "⚠️ Vercel config missing (expected for some builds)"
+
+  # Enhanced testing
+  test:
+    name: End-to-End Testing
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+          
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+          
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+        
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps
+        
+      - name: Run tests
+        run: |
+          echo "🧪 Running end-to-end tests..."
+          bun run test
+        env:
+          CI: true
+          
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: test-reports/
+          retention-days: 7
+
+  # Security configuration verification
+  security-config:
+    name: Security Configuration Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+          
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          
+      - name: Verify security middleware
+        run: |
+          echo "🔒 Checking security configuration..."
+          
+          if [ -f "src/middleware/security.ts" ]; then
+            echo "✅ Security middleware found"
+            
+            # Check for CSP configuration
+            if grep -q "Content-Security-Policy" src/middleware/security.ts; then
+              echo "✅ Content Security Policy configured"
+            else
+              echo "❌ Content Security Policy not found"
+              exit 1
+            fi
+            
+            # Check for additional security headers
+            grep -q "X-Frame-Options" src/middleware/security.ts && echo "✅ X-Frame-Options configured" || echo "⚠️ X-Frame-Options missing"
+            grep -q "X-Content-Type-Options" src/middleware/security.ts && echo "✅ X-Content-Type-Options configured" || echo "⚠️ X-Content-Type-Options missing"
+            grep -q "Referrer-Policy" src/middleware/security.ts && echo "✅ Referrer-Policy configured" || echo "⚠️ Referrer-Policy missing"
+            
+          else
+            echo "❌ Security middleware not found"
+            exit 1
+          fi
+          
+          # Check for rate limiting
+          if [ -f "src/middleware/rateLimit.ts" ] || [ -f "src/middleware/advanced-rate-limit.ts" ]; then
+            echo "✅ Rate limiting middleware found"
+          else
+            echo "⚠️ Rate limiting middleware not found"
+          fi
+          
+          echo "🔒 Security configuration check completed"
+
+  # Deployment readiness (for main branch)
+  deployment-ready:
+    name: Deployment Ready
+    runs-on: ubuntu-latest
+    needs: [quality-checks, build, security-config]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Deployment status
+        run: |
+          echo "🚀 All checks passed - ready for deployment"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Workflow: ${{ github.workflow }}"

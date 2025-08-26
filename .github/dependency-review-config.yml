@@ -1,0 +1,47 @@
+# Dependency Review Configuration
+# https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/configuring-dependency-review
+
+# Allow moderate and low vulnerabilities in development dependencies
+fail-on-severity: 'critical'
+warn-on-severity: 'high'
+
+# Allow certain licenses
+allow-licenses:
+  - 'MIT'
+  - 'Apache-2.0'
+  - 'BSD-2-Clause'
+  - 'BSD-3-Clause'
+  - 'ISC'
+  - 'Unlicense'
+  - 'CC0-1.0'
+
+# Deny problematic licenses
+deny-licenses:
+  - 'GPL-2.0'
+  - 'GPL-3.0'
+  - 'AGPL-1.0'
+  - 'AGPL-3.0'
+
+# Allow certain package sources
+allow-dependencies-licenses:
+  - name: '@astrojs/*'
+  - name: '@types/*'
+  - name: '@vercel/*'
+
+# Exclude certain paths from analysis
+exclude-paths:
+  - '.github/**'
+  - 'node_modules/**'
+  - 'dist/**'
+
+# Configuration for vulnerability database
+vulnerability-check: true
+license-check: true
+
+# Allow vulnerabilities in specific packages with justification
+allow-vulnerabilities:
+  # Allow moderate vulnerabilities in transitive dependencies
+  # that cannot be easily updated without major refactoring
+  - name: 'path-to-regexp'
+    severity: 'moderate'
+    reason: 'Transitive dependency from @astrojs/vercel - awaiting upstream fix'

@@ -39,7 +39,7 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet package.json bun.lock; then
+          if git diff --quiet package.json bun.lockb; then
             echo "has-changes=false" >> $GITHUB_OUTPUT
           else
             echo "has-changes=true" >> $GITHUB_OUTPUT
@@ -104,7 +104,7 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet package.json bun.lock; then
+          if git diff --quiet package.json bun.lockb; then
             echo "has-changes=false" >> $GITHUB_OUTPUT
           else
             echo "has-changes=true" >> $GITHUB_OUTPUT
