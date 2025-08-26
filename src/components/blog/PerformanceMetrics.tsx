@@ -1,298 +1,223 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 interface MetricData {
-  name: string;
-  before: number;
-  after: number;
-  unit: string;
-  improvement: number;
-  category: 'performance' | 'cost' | 'capacity';
-  description: string;
+  macos: number;
+  arch: number;
 }
 
-const PerformanceMetrics: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'performance' | 'cost' | 'capacity'>('all');
-  const [animationComplete, setAnimationComplete] = useState(false);
+interface PerformanceData {
+  bootTime: MetricData;
+  memoryUsage: MetricData;
+  dockerBuild: MetricData;
+  ideStartup: MetricData;
+  fileSearch: MetricData;
+}
 
-  const metricsData: MetricData[] = [
+interface PerformanceMetricsProps {
+  data: PerformanceData;
+}
+
+const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
+  const [selectedMetric, setSelectedMetric] = useState<keyof PerformanceData>('dockerBuild');
+
+  const metrics = [
     {
-      name: 'Query Response Time (95th percentile)',
-      before: 2300,
-      after: 700,
-      unit: 'ms',
-      improvement: 69.6,
-      category: 'performance',
-      description: 'Significant improvement in query performance due to better indexing and hardware'
-    },
-    {
-      name: 'Database Throughput',
-      before: 15000,
-      after: 45000,
-      unit: 'QPS',
-      improvement: 200,
-      category: 'performance',
-      description: 'Tripled query processing capacity with new architecture'
-    },
-    {
-      name: 'Connection Pool Utilization',
-      before: 85,
-      after: 45,
-      unit: '%',
-      improvement: 47.1,
-      category: 'performance',
-      description: 'More efficient connection management reducing resource contention'
-    },
-    {
-      name: 'Monthly Infrastructure Cost',
-      before: 28250,
-      after: 18300,
-      unit: '$',
-      improvement: 35.2,
-      category: 'cost',
-      description: 'Aurora Serverless v2 provides better price-performance ratio'
-    },
-    {
-      name: 'Storage Cost per TB',
-      before: 100,
-      after: 70,
-      unit: '$',
-      improvement: 30,
-      category: 'cost',
-      description: 'Aurora storage pricing more efficient than traditional RDS'
-    },
-    {
-      name: 'Backup Storage Cost',
-      before: 2000,
-      after: 800,
-      unit: '$',
-      improvement: 60,
-      category: 'cost',
-      description: 'Aurora backup system more cost-effective'
-    },
-    {
-      name: 'Maximum Concurrent Users',
-      before: 50000,
-      after: 500000,
-      unit: 'users',
-      improvement: 900,
-      category: 'capacity',
-      description: '10x capacity increase to support future growth'
-    },
-    {
-      name: 'Read Replica Lag',
-      before: 2500,
-      after: 150,
-      unit: 'ms',
-      improvement: 94,
-      category: 'capacity',
-      description: 'Aurora read replicas provide near real-time consistency'
-    },
-    {
-      name: 'Auto-scaling Response Time',
-      before: 600,
-      after: 45,
+      key: 'bootTime' as keyof PerformanceData,
+      label: 'Boot Time',
       unit: 'seconds',
-      improvement: 92.5,
-      category: 'capacity',
-      description: 'Aurora Serverless v2 scales much faster than traditional instances'
+      description: 'Time from power on to desktop',
+      lowerIsBetter: true
+    },
+    {
+      key: 'memoryUsage' as keyof PerformanceData,
+      label: 'Memory Usage',
+      unit: 'GB',
+      description: 'Idle system memory consumption',
+      lowerIsBetter: true
+    },
+    {
+      key: 'dockerBuild' as keyof PerformanceData,
+      label: 'Docker Build',
+      unit: 'seconds',
+      description: 'Average build time for medium project',
+      lowerIsBetter: true
+    },
+    {
+      key: 'ideStartup' as keyof PerformanceData,
+      label: 'IDE Startup',
+      unit: 'seconds',
+      description: 'VS Code with extensions loaded',
+      lowerIsBetter: true
+    },
+    {
+      key: 'fileSearch' as keyof PerformanceData,
+      label: 'File Search',
+      unit: 'seconds',
+      description: 'Find files in large project',
+      lowerIsBetter: true
     }
   ];
 
-  useEffect(() => {
-    const timer = setTimeout(() => setAnimationComplete(true), 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const filteredMetrics = selectedCategory === 'all' 
-    ? metricsData 
-    : metricsData.filter(metric => metric.category === selectedCategory);
-
-  const formatValue = (value: number, unit: string) => {
-    if (unit === '$') {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }).format(value);
-    }
-    
-    if (value >= 1000000) {
-      return `${(value / 1000000).toFixed(1)}M ${unit}`;
-    }
-    
-    if (value >= 1000) {
-      return `${(value / 1000).toFixed(1)}K ${unit}`;
-    }
-    
-    return `${value} ${unit}`;
-  };
-
-  const getImprovementColor = (improvement: number) => {
-    if (improvement >= 50) return 'text-green-600';
-    if (improvement >= 25) return 'text-blue-600';
-    return 'text-orange-600';
-  };
-
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'performance': return '⚡';
-      case 'cost': return '💰';
-      case 'capacity': return '📈';
-      default: return '📊';
+  const calculateImprovement = (macos: number, arch: number, lowerIsBetter: boolean) => {
+    if (lowerIsBetter) {
+      return Math.round(((macos - arch) / macos) * 100);
+    } else {
+      return Math.round(((arch - macos) / macos) * 100);
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'performance': return 'bg-blue-100 text-blue-800';
-      case 'cost': return 'bg-green-100 text-green-800';
-      case 'capacity': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+  const getBarWidth = (value: number, max: number) => {
+    return Math.max((value / max) * 100, 5); // Minimum 5% width for visibility
   };
+
+  const selectedMetricData = metrics.find(m => m.key === selectedMetric)!;
+  const macosValue = data[selectedMetric].macos;
+  const archValue = data[selectedMetric].arch;
+  const improvement = calculateImprovement(macosValue, archValue, selectedMetricData.lowerIsBetter);
+  const maxValue = Math.max(macosValue, archValue);
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 bg-surface-100 rounded-lg border border-card-border">
-      <h3 className="text-xl font-bold text-text-primary mb-6">
-        Migration Performance Results
+    <div className="not-prose bg-surface-2 border border-border rounded-xl p-6 my-8">
+      <h3 className="text-xl font-semibold text-text-primary mb-6">
+        Performance Comparison: Real World Metrics
       </h3>
-      
-      {/* Category Filter */}
+
+      {/* Metric Selector */}
       <div className="flex flex-wrap gap-2 mb-6">
-        {(['all', 'performance', 'cost', 'capacity'] as const).map((category) => (
+        {metrics.map((metric) => (
           <button
             type="button"
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-4 py-2 rounded-lg capitalize transition-all ${
-              selectedCategory === category
-                ? 'bg-accent text-white'
-                : 'bg-card-bg text-text-secondary hover:bg-accent/20'
+            key={metric.key}
+            onClick={() => setSelectedMetric(metric.key)}
+            className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+              selectedMetric === metric.key
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-surface-3 text-text-secondary hover:text-text-primary hover:bg-surface-1'
             }`}
           >
-            {category === 'all' ? '📊 All Metrics' : `${getCategoryIcon(category)} ${category}`}
+            {metric.label}
           </button>
         ))}
       </div>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredMetrics.map((metric, index) => (
-          <div
-            key={metric.name}
-            className="bg-card-bg rounded-lg p-6 border border-card-border hover:shadow-lg transition-all duration-300"
-            style={{
-              animationDelay: `${index * 100}ms`,
-              animation: animationComplete ? 'none' : 'fadeInUp 0.6s ease-out forwards'
-            }}
-          >
-            {/* Header */}
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <h4 className="font-semibold text-text-primary mb-1">
-                  {metric.name}
-                </h4>
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(metric.category)}`}>
-                  {getCategoryIcon(metric.category)} {metric.category}
-                </span>
-              </div>
-              <div className={`text-2xl font-bold ${getImprovementColor(metric.improvement)}`}>
-                {metric.improvement >= 0 ? '+' : ''}{metric.improvement.toFixed(1)}%
-              </div>
-            </div>
-
-            {/* Before/After Comparison */}
-            <div className="space-y-3 mb-4">
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">Before:</span>
-                <span className="font-mono text-lg text-red-600">
-                  {formatValue(metric.before, metric.unit)}
-                </span>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">After:</span>
-                <span className="font-mono text-lg text-green-600">
-                  {formatValue(metric.after, metric.unit)}
-                </span>
-              </div>
-            </div>
-
-            {/* Visual Progress Bar */}
-            <div className="mb-4">
-              <div className="flex justify-between text-xs text-text-secondary mb-1">
-                <span>Performance Gain</span>
-                <span>{metric.improvement.toFixed(1)}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className={`h-2 rounded-full transition-all duration-1000 ${
-                    metric.improvement >= 50 ? 'bg-green-500' :
-                    metric.improvement >= 25 ? 'bg-blue-500' : 'bg-orange-500'
-                  }`}
-                  style={{ 
-                    width: animationComplete ? `${Math.min(metric.improvement, 100)}%` : '0%' 
-                  }}
-                ></div>
-              </div>
-            </div>
-
-            {/* Description */}
-            <p className="text-sm text-text-secondary">
-              {metric.description}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      {/* Summary Stats */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-green-600 mb-1">0%</div>
-          <div className="text-sm text-green-800">Downtime During Migration</div>
+      {/* Selected Metric Visualization */}
+      <div className="bg-surface-1 border border-border rounded-lg p-6">
+        <div className="mb-4">
+          <h4 className="text-lg font-semibold text-text-primary mb-1">
+            {selectedMetricData.label}
+          </h4>
+          <p className="text-text-secondary text-sm">
+            {selectedMetricData.description}
+          </p>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-blue-600 mb-1">300%</div>
-          <div className="text-sm text-blue-800">Average Performance Improvement</div>
-        </div>
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-purple-600 mb-1">10x</div>
-          <div className="text-sm text-purple-800">Capacity Increase</div>
-        </div>
-      </div>
 
-      {/* Business Impact */}
-      <div className="mt-6 p-4 bg-accent/10 border border-accent/20 rounded-lg">
-        <h5 className="font-semibold text-text-primary mb-2">💼 Business Impact</h5>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div>
-            <strong>Revenue Protection:</strong> Zero revenue loss during migration weekend
+        <div className="space-y-4">
+          {/* macOS Bar */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-text-primary font-medium">macOS</span>
+              <span className="font-mono text-text-primary">
+                {macosValue} {selectedMetricData.unit}
+              </span>
+            </div>
+            <div className="bg-surface-3 rounded-full h-3 overflow-hidden">
+              <div
+                className="bg-blue-500 h-full transition-all duration-1000 ease-out"
+                style={{ width: `${getBarWidth(macosValue, maxValue)}%` }}
+              />
+            </div>
           </div>
-          <div>
-            <strong>User Experience:</strong> 40% faster page load times
+
+          {/* Arch Linux Bar */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-text-primary font-medium">Arch Linux</span>
+              <span className="font-mono text-text-primary">
+                {archValue} {selectedMetricData.unit}
+              </span>
+            </div>
+            <div className="bg-surface-3 rounded-full h-3 overflow-hidden">
+              <div
+                className="bg-green-500 h-full transition-all duration-1000 ease-out"
+                style={{ width: `${getBarWidth(archValue, maxValue)}%` }}
+              />
+            </div>
           </div>
-          <div>
-            <strong>Operational Efficiency:</strong> 35% reduction in infrastructure costs
-          </div>
-          <div>
-            <strong>Future Readiness:</strong> 10x capacity for continued growth
+        </div>
+
+        {/* Improvement Badge */}
+        <div className="mt-4 text-center">
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${
+            improvement > 0
+              ? 'bg-green-500/10 border border-green-500/20'
+              : 'bg-red-500/10 border border-red-500/20'
+          }`}>
+            <div className={`w-2 h-2 rounded-full ${
+              improvement > 0 ? 'bg-green-500' : 'bg-red-500'
+            }`} />
+            <span className={`font-semibold ${
+              improvement > 0 ? 'text-green-600' : 'text-red-600'
+            }`}>
+              {improvement > 0 ? '+' : ''}{improvement}% improvement
+            </span>
           </div>
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+      {/* Overview Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
+        {metrics.map((metric) => {
+          const metricImprovement = calculateImprovement(
+            data[metric.key].macos,
+            data[metric.key].arch,
+            metric.lowerIsBetter
+          );
+          
+          return (
+            <div
+              key={metric.key}
+              className={`bg-surface-1 border rounded-lg p-4 cursor-pointer transition-colors ${
+                selectedMetric === metric.key
+                  ? 'border-primary bg-primary/5'
+                  : 'border-border hover:border-primary/50'
+              }`}
+              onClick={() => setSelectedMetric(metric.key)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedMetric(metric.key);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label={`Select ${metric.label} metric`}
+            >
+              <div className="text-center">
+                <div className="text-sm text-text-secondary mb-1">
+                  {metric.label}
+                </div>
+                <div className={`text-lg font-bold ${
+                  metricImprovement > 0 ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {metricImprovement > 0 ? '+' : ''}{metricImprovement}%
+                </div>
+                <div className="text-xs text-text-secondary mt-1">
+                  {data[metric.key].arch} {metric.unit}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-6 text-sm text-text-secondary bg-surface-1 border border-border rounded-lg p-4">
+        <h5 className="font-medium text-text-primary mb-2">Methodology</h5>
+        <p>
+          All benchmarks were performed on identical hardware (Intel NUC13ANKi7) with the same applications and workloads. 
+          Tests were averaged over 10 runs with system caches cleared between tests. 
+          macOS version: 14.6, Arch Linux with Zen kernel 6.16.3.
+        </p>
+      </div>
     </div>
   );
 };

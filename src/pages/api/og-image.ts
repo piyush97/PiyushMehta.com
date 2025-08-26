@@ -609,7 +609,9 @@ export const GET: APIRoute = async ({ url, site }) => {
             {
               key: "badge",
               style: {
-                display: "inline-block",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 background: currentTheme.accent,
                 color: "white",
                 padding: "8px 20px",
@@ -617,7 +619,7 @@ export const GET: APIRoute = async ({ url, site }) => {
                 fontSize: "16px",
                 fontWeight: "600",
                 marginBottom: "30px",
-                width: "fit-content",
+                maxWidth: "300px",
               },
             },
             "Blog Post"

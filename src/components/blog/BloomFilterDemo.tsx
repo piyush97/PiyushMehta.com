@@ -99,9 +99,9 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
           ))}
         </div>
         <div className="flex gap-2 text-sm text-text-secondary">
-          {filter.bits.map((_, index) => (
-            <div key={`bit-position-${index}`} className="w-12 text-center">
-              {index}
+          {[0, 1, 2, 3, 4, 5, 6, 7].slice(0, filter.bits.length).map((position) => (
+            <div key={`position-label-${position}`} className="w-12 text-center">
+              {position}
             </div>
           ))}
         </div>

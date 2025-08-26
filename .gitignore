@@ -17,8 +17,27 @@ package-lock.json
 .eslintcache
 .pnpm-store
 
+# Test coverage and reports
+coverage/
+nyc_output/
+playwright-report/
+test-reports/
+test-build/
+
 # do not commit .env files or any files that end with `.env`
 *.env
+.env.local
+.env.production
+.env.development
+.env.test
+
+# Security files that should never be committed
+*.key
+*.pem
+*.p12
+*.crt
+secrets.json
+auth.json
 
 packages/astro/src/**/*.prebuilt.ts
 packages/astro/src/**/*.prebuilt-dev.ts
@@ -41,3 +60,8 @@ examples/**/env.d.ts
 # want to share with others (see
 # https://github.com/withastro/astro/pull/11759#discussion_r1721444711)
 *.code-workspace
+.claude/
+.serena/
+.claudedocs/
+*.md
+tests/*.ts-snapshots

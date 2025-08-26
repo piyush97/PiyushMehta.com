@@ -7,8 +7,9 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const CONTENT_DIR = path.join(__dirname, 'src', 'content', 'blog');
-const PUBLIC_DIR = path.join(__dirname, 'public');
+const PROJECT_ROOT = path.dirname(__dirname);
+const CONTENT_DIR = path.join(PROJECT_ROOT, 'src', 'content', 'blog');
+const PUBLIC_DIR = path.join(PROJECT_ROOT, 'public');
 const BLOG_IMAGES_DIR = path.join(PUBLIC_DIR, 'blog');
 
 // Ensure the blog images directory exists in public

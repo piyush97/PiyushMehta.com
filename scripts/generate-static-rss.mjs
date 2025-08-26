@@ -64,7 +64,8 @@ async function generateStaticRss() {
  */
 async function getBlogPostItems() {
   try {
-    const contentDir = path.join(__dirname, 'src', 'content', 'blog');
+    const projectRoot = dirname(__dirname);
+    const contentDir = path.join(projectRoot, 'src', 'content', 'blog');
     
     // Check if directory exists
     if (!fs.existsSync(contentDir)) {
