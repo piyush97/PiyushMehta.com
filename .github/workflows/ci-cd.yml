@@ -127,7 +127,7 @@ jobs:
           CI: true
           
       - name: Upload test results
-        uses: actions/upload-artifact@ea165f8e9060bff1b8fcafc5c6b75f3d04b43f09 # v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: playwright-report
