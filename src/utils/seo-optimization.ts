@@ -43,13 +43,13 @@ export function generateOgImageUrl(params: {
     throw new Error('baseUrl is required for generateOgImageUrl');
   }
   
-  // Map legacy templates to enhanced templates
-  const templateMapping = {
-    'default': 'syntax',
-    'minimal': 'minimal',
-    'tech': 'terminal',
-    'blog': 'blog'
-  } as const;
+   // Map legacy templates to enhanced templates
+   const templateMapping = {
+     'default': 'modern',
+     'minimal': 'minimal',
+     'tech': 'tech',
+     'blog': 'blog'
+   } as const;
   
   // Map legacy themes to enhanced themes
   const themeMapping = {
@@ -116,14 +116,14 @@ export function generateTwitterImageUrl(params: {
     throw new Error('baseUrl is required for generateTwitterImageUrl');
   }
   
-  // Map legacy templates to enhanced templates
-  const templateMapping = {
-    'default': 'syntax',
-    'minimal': 'minimal',
-    'tech': 'terminal',
-    'blog': 'blog',
-    'twitter': 'modern'
-  } as const;
+   // Map legacy templates to enhanced templates
+   const templateMapping = {
+     'default': 'modern',
+     'minimal': 'minimal',
+     'tech': 'tech',
+     'blog': 'blog',
+     'twitter': 'modern'
+   } as const;
   
   // Use the enhanced OG generator for better Twitter optimization
   const searchParams = new URLSearchParams();
