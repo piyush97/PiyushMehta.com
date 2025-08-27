@@ -31,7 +31,13 @@ const sampleProject = {
 const baseUrl = Astro.site?.toString() || 'https://piyushmehta.com';
 ---
 
-<Layout title={title} description={description}>
+<Layout
+   title={title}
+   description={description}
+   type="website"
+   ogTemplate="tech"
+   ogTheme="dark"
+ >
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="text-center mb-12">
       <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
