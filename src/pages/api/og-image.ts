@@ -9,6 +9,20 @@ import satori from "satori";
 
 export const prerender = false;
 
+// Configuration constants
+const OG_IMAGE_CONFIG = {
+  WIDTH: 1200,
+  HEIGHT: 630,
+  MAX_CONTENT_WIDTH: 1000,
+  MAX_TITLE_WIDTH: 900,
+  MAX_DESCRIPTION_WIDTH: 800,
+  TITLE_TRUNCATE_LENGTH: 80,
+  DESCRIPTION_TRUNCATE_LENGTH: 120,
+  TECH_TITLE_TRUNCATE_LENGTH: 50,
+  TECH_DESCRIPTION_TRUNCATE_LENGTH: 60,
+  TAGS_MAX_COUNT: 3,
+} as const;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -155,7 +169,7 @@ export const GET: APIRoute = async ({ url, site }) => {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                maxWidth: "1000px",
+                maxWidth: `${OG_IMAGE_CONFIG.MAX_CONTENT_WIDTH}px`,
                 margin: "0 80px",
                 textAlign: "center",
                 background: currentTheme.cardBg,
@@ -176,10 +190,10 @@ export const GET: APIRoute = async ({ url, site }) => {
                     color: currentTheme.textPrimary,
                     lineHeight: 1.2,
                     marginBottom: "20px",
-                    maxWidth: "900px",
+                    maxWidth: `${OG_IMAGE_CONFIG.MAX_TITLE_WIDTH}px`,
                   },
                 },
-                title.length > 80 ? `${title.substring(0, 80)}...` : title
+                title.length > OG_IMAGE_CONFIG.TITLE_TRUNCATE_LENGTH ? `${title.substring(0, OG_IMAGE_CONFIG.TITLE_TRUNCATE_LENGTH)}...` : title
               ),
 
               // Description
@@ -193,11 +207,11 @@ export const GET: APIRoute = async ({ url, site }) => {
                         color: currentTheme.textSecondary,
                         marginBottom: "20px",
                         lineHeight: 1.4,
-                        maxWidth: "800px",
+                        maxWidth: `${OG_IMAGE_CONFIG.MAX_DESCRIPTION_WIDTH}px`,
                       },
                     },
-                    description.length > 120
-                      ? `${description.substring(0, 120)}...`
+                    description.length > OG_IMAGE_CONFIG.DESCRIPTION_TRUNCATE_LENGTH
+                      ? `${description.substring(0, OG_IMAGE_CONFIG.DESCRIPTION_TRUNCATE_LENGTH)}...`
                       : description
                   )
                 : null,
@@ -235,7 +249,7 @@ export const GET: APIRoute = async ({ url, site }) => {
                         marginBottom: "30px",
                       },
                     },
-                    tags.split(",").slice(0, 3).join(" • ")
+                    tags.split(",").slice(0, OG_IMAGE_CONFIG.TAGS_MAX_COUNT).join(" • ")
                   )
                 : null,
 
@@ -347,7 +361,7 @@ export const GET: APIRoute = async ({ url, site }) => {
                     textAlign: "center",
                     marginBottom: "40px",
                     lineHeight: 1.4,
-                    maxWidth: "800px",
+                    maxWidth: `${OG_IMAGE_CONFIG.MAX_DESCRIPTION_WIDTH}px`,
                   },
                 },
                 description
@@ -498,7 +512,7 @@ export const GET: APIRoute = async ({ url, site }) => {
                   },
                 },
                 `name: "${
-                  title.length > 50 ? `${title.substring(0, 50)}...` : title
+                  title.length > OG_IMAGE_CONFIG.TECH_TITLE_TRUNCATE_LENGTH ? `${title.substring(0, OG_IMAGE_CONFIG.TECH_TITLE_TRUNCATE_LENGTH)}...` : title
                 }",`
               ),
 
@@ -515,8 +529,8 @@ export const GET: APIRoute = async ({ url, site }) => {
                       },
                     },
                     `description: "${
-                      description.length > 60
-                        ? `${description.substring(0, 60)}...`
+                      description.length > OG_IMAGE_CONFIG.TECH_DESCRIPTION_TRUNCATE_LENGTH
+                        ? `${description.substring(0, OG_IMAGE_CONFIG.TECH_DESCRIPTION_TRUNCATE_LENGTH)}...`
                         : description
                     }",`
                   )
@@ -554,7 +568,7 @@ export const GET: APIRoute = async ({ url, site }) => {
                     },
                     `tags: [${tags
                       .split(",")
-                      .slice(0, 3)
+                      .slice(0, OG_IMAGE_CONFIG.TAGS_MAX_COUNT)
                       .map((tag) => `"${tag.trim()}"`)
                       .join(", ")}],`
                   )
@@ -696,8 +710,8 @@ export const GET: APIRoute = async ({ url, site }) => {
 
     // Generate SVG with Satori
     const svg = await satori(getTemplate(), {
-      width: 1200,
-      height: 630,
+      width: OG_IMAGE_CONFIG.WIDTH,
+      height: OG_IMAGE_CONFIG.HEIGHT,
       fonts: [
         {
           name: "Inter",
@@ -718,7 +732,7 @@ export const GET: APIRoute = async ({ url, site }) => {
     const resvg = new Resvg(svg, {
       fitTo: {
         mode: "width",
-        value: 1200,
+        value: OG_IMAGE_CONFIG.WIDTH,
       },
     });
 
