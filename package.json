@@ -44,7 +44,7 @@
     "@upstash/redis": "^1.35.3",
     "@vercel/og": "^0.6.8",
     "@vercel/speed-insights": "^1.2.0",
-    "astro": "^5.13.3",
+    "astro": "^5.13.4",
     "ioredis": "^5.7.0",
     "node-fetch": "^3.3.2",
     "pg": "^8.16.3",
