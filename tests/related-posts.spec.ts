@@ -249,7 +249,7 @@ test.describe('Related Posts', () => {
     // Mock analytics tracking
     await page.addInitScript(() => {
       window.analyticsEvents = [];
-      window.gtag = (...args: any[]) => {
+      window.gtag = (...args: unknown[]) => {
         window.analyticsEvents.push(args);
       };
     });

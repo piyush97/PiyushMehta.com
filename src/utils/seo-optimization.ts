@@ -23,16 +23,18 @@ export function generateOgImageUrl(params: {
   type?: string;
   publishedTime?: Date;
   tags?: string[];
+  readingTime?: string;
+  author?: string;
   template?: 'default' | 'minimal' | 'tech' | 'blog';
   theme?: 'dark' | 'light' | 'retro';
   baseUrl?: string;
 }): string {
-  const { 
-    title, 
-    description, 
-    type, 
-    publishedTime, 
-    tags, 
+  const {
+    title,
+    description,
+    type,
+    publishedTime,
+    tags,
     template = 'default',
     theme = 'dark',
     baseUrl

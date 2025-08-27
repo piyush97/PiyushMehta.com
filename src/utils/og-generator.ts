@@ -7,7 +7,7 @@ export interface OGImageOptions {
   title: string;
   description?: string;
   type?: 'website' | 'article' | 'project';
-  template?: 'modern' | 'tech' | 'cyber' | 'minimal' | 'terminal' | 'gradient' | 'professional' | 'dark' | 'blog';
+  template?: 'modern' | 'tech' | 'blog' | 'minimal' | 'professional';
   theme?: 'dark' | 'light' | 'auto';
   author?: string;
   date?: string | Date;
@@ -42,11 +42,11 @@ export const OG_TEMPLATES = {
     bestFor: ['technology', 'enterprise', 'b2b'],
     features: ['professional-design', 'tech-elements', 'corporate-style'],
   },
-  cyber: {
-    name: 'Cyberpunk Neon',
-    description: 'Neon colors with futuristic elements',
-    bestFor: ['tech', 'gaming', 'creative'],
-    features: ['neon-effects', 'dark-theme', 'glowing-elements'],
+  blog: {
+    name: 'Blog Article',
+    description: 'Optimized for blog posts with reading metadata',
+    bestFor: ['articles', 'blog-posts', 'content-marketing'],
+    features: ['reading-time', 'article-metadata', 'content-focus'],
   },
   minimal: {
     name: 'Clean Minimal',
@@ -54,35 +54,11 @@ export const OG_TEMPLATES = {
     bestFor: ['articles', 'documentation', 'clean-design'],
     features: ['minimal-design', 'light-theme', 'typography-focus'],
   },
-  terminal: {
-    name: 'Developer Terminal',
-    description: 'Code editor styled with syntax highlighting',
-    bestFor: ['programming', 'tutorials', 'tech-articles'],
-    features: ['code-styling', 'syntax-highlighting', 'terminal-ui'],
-  },
-  gradient: {
-    name: 'Gradient Design',
-    description: 'Vibrant gradients with modern glass effects',
-    bestFor: ['creative', 'blog', 'general'],
-    features: ['glass-morphism', 'animated-gradients', 'floating-elements'],
-  },
   professional: {
     name: 'Professional',
     description: 'Clean professional design for business',
     bestFor: ['business', 'consulting', 'corporate'],
     features: ['professional-design', 'clean-layout', 'corporate-style'],
-  },
-  dark: {
-    name: 'Dark Theme',
-    description: 'Modern dark design with accent colors',
-    bestFor: ['tech', 'development', 'modern'],
-    features: ['dark-theme', 'modern-design', 'accent-colors'],
-  },
-  blog: {
-    name: 'Blog Article',
-    description: 'Optimized for blog posts with reading metadata',
-    bestFor: ['articles', 'blog-posts', 'content-marketing'],
-    features: ['reading-time', 'article-metadata', 'content-focus'],
   },
 } as const;
 
@@ -217,12 +193,12 @@ export function getRecommendedTemplate(
   type: OGImageOptions['type'],
   tags?: string[]
 ): keyof typeof OG_TEMPLATES {
-  // AI-powered template selection based on content analysis
+  // Template selection based on content analysis
   const contentKeywords = tags?.join(' ').toLowerCase() || '';
-  
+
   if (type === 'article') {
     if (contentKeywords.includes('programming') || contentKeywords.includes('code')) {
-      return 'terminal';
+      return 'tech';
     }
     if (contentKeywords.includes('design') || contentKeywords.includes('creative')) {
       return 'modern';
@@ -230,15 +206,12 @@ export function getRecommendedTemplate(
     return 'blog';
   }
   if (type === 'project') {
-    if (contentKeywords.includes('game') || contentKeywords.includes('creative')) {
-      return 'cyber';
-    }
     if (contentKeywords.includes('business') || contentKeywords.includes('enterprise')) {
-      return 'tech';
+      return 'professional';
     }
-    return 'modern';
+    return 'tech';
   }
-  
+
   return 'modern'; // Default fallback
 }
 
@@ -317,7 +290,7 @@ export function generateTwitterOGImage(options: OGImageOptions): OGImageResult {
   // Twitter prefers specific templates and sizing
   const twitterOptions: OGImageOptions = {
     ...options,
-    template: options.template === 'terminal' ? 'tech' : options.template,
+    template: options.template === 'tech' ? 'tech' : 'modern',
     showLogo: false, // Twitter crops logos
     description: options.description?.substring(0, 125), // Twitter limits
   };

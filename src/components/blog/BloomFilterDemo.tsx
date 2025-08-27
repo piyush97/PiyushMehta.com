@@ -97,7 +97,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
         <div className="flex gap-2 mb-2">
           {filter.bits.map((bit, index) => (
             <div
-              key={`bit-${index}`}
+              key={`bit-${index}-${bit}`}
               className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${
                 bit ? 'bg-green-500' : 'bg-gray-400'
               }`}

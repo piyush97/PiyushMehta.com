@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import ArticleMeta from '../../components/ArticleMeta.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import GiscusComments from '../../components/GiscusComments.astro';
+import OptimizedImage from '../../components/OptimizedImage.astro';
 import PostReactions from '../../components/PostReactions.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
 import Layout from '../../layouts/Layout.astro';
@@ -23,7 +24,7 @@ const { Content, headings } = await render(post);
 const { title, description, date, author, tags, image, banner, ogTemplate, ogTheme } = post.data;
 
 // Import enhanced OG generator
-import { generateBlogOGImage, getRecommendedTemplate } from '../../utils/og-generator';
+import { generateBlogOGImage, getRecommendedTemplate } from '../../utils/seo-optimization';
 
 // Calculate reading time (rough estimate)
 const readingTime = Math.ceil(post.body.split(' ').length / 200);
@@ -232,15 +233,17 @@ const articleSchema = {
         {
           image && image.url && (
             <div class="mb-8">
-              <img
+              <OptimizedImage
                 src={image.url}
                 alt={image.alt || title}
                 class="w-full h-auto rounded-lg shadow-lg"
                 loading="lazy"
-                decoding="async"
+                priority={true}
+                quality={90}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
               />
               {image.alt && (
-                <p class="mt-2 text-sm text-center text-gray-600 italic">
+                <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-400 italic">
                   {image.alt}
                 </p>
               )}
