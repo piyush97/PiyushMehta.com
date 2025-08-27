@@ -17,6 +17,7 @@ export interface OGImageOptions {
   showBadge?: boolean;
   language?: string;
   baseUrl?: string;
+  _episode?: string; // For backward compatibility
 }
 
 export interface OGImageResult {

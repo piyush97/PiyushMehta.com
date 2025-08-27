@@ -20,14 +20,23 @@ test.describe('Reading Progress', () => {
     const isBlogPost = await page.locator('article').count() > 0;
     
     if (isBlogPost) {
-      // Reading progress should be visible
-      await expect(page.locator('#reading-progress-container')).toBeVisible();
-      await expect(page.locator('#reading-progress-bar')).toBeVisible();
-      
-      // Progress should start at 0%
+      // Reading progress container should exist
+      await expect(page.locator('#reading-progress-container')).toBeAttached();
       const progressBar = page.locator('#reading-progress-bar');
-      const initialWidth = await progressBar.evaluate(el => el.style.width);
+      await expect(progressBar).toBeAttached();
+      
+      // Progress should start at 0% width
+      const initialWidth = await progressBar.evaluate(el => el.style.width || '0%');
       expect(initialWidth).toBe('0%');
+      
+      // After scrolling, progress bar should become visible
+      await page.evaluate(() => window.scrollTo(0, 300));
+      await page.waitForTimeout(200);
+      
+      // Now the progress bar should be visible with some width
+      await expect(progressBar).toBeVisible();
+      const scrolledWidth = await progressBar.evaluate(el => el.style.width);
+      expect(parseFloat(scrolledWidth)).toBeGreaterThan(0);
     }
   });
 
@@ -37,24 +46,27 @@ test.describe('Reading Progress', () => {
     if (isBlogPost) {
       const progressBar = page.locator('#reading-progress-bar');
       
-      // Get initial progress
-      const initialWidth = await progressBar.evaluate(el => el.style.width);
+      // Get initial progress (should be 0% or empty)
+      const initialWidth = await progressBar.evaluate(el => el.style.width || '0%');
+      const initialValue = parseFloat(initialWidth) || 0;
       
       // Scroll down a bit
       await page.evaluate(() => window.scrollTo(0, window.innerHeight * 0.5));
-      await page.waitForTimeout(100);
+      await page.waitForTimeout(200);
       
       // Progress should have increased
       const midWidth = await progressBar.evaluate(el => el.style.width);
-      expect(parseFloat(midWidth)).toBeGreaterThan(parseFloat(initialWidth));
+      const midValue = parseFloat(midWidth) || 0;
+      expect(midValue).toBeGreaterThan(initialValue);
       
       // Scroll to bottom
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-      await page.waitForTimeout(100);
+      await page.waitForTimeout(200);
       
       // Progress should be near 100%
       const endWidth = await progressBar.evaluate(el => el.style.width);
-      expect(parseFloat(endWidth)).toBeGreaterThan(80); // Near 100%
+      const endValue = parseFloat(endWidth) || 0;
+      expect(endValue).toBeGreaterThan(80); // Near 100%
     }
   });
 

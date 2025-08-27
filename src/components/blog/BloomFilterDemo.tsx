@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 interface BloomFilterDemoProps {}
 
@@ -18,7 +18,7 @@ function simpleHash(str: string, seed: number, size: number): number {
 
 export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
   const [filter, setFilter] = useState<BloomFilterState>({
-    bits: new Array(8).fill(false),
+    bits: Array.from({ length: 8 }, () => false),
     size: 8,
     items: []
   });
@@ -68,14 +68,22 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
   
   const reset = () => {
     setFilter({
-      bits: new Array(8).fill(false),
+      bits: Array.from({ length: 8 }, () => false),
       size: 8,
       items: []
     });
     setCheckResult(null);
+    setInputValue('');
+    setCheckValue('');
   };
   
   const presetItems = ['netflix', 'google', 'instagram'];
+  
+  // Memoize position labels array to avoid recreation on every render
+  const positionLabels = useMemo(() => 
+    Array.from({ length: filter.size }, (_, i) => i),
+    [filter.size]
+  );
   
   return (
     <div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
@@ -89,7 +97,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
         <div className="flex gap-2 mb-2">
           {filter.bits.map((bit, index) => (
             <div
-              key={`bit-${index}-${bit ? '1' : '0'}`}
+              key={`bit-${index}`}
               className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${
                 bit ? 'bg-green-500' : 'bg-gray-400'
               }`}
@@ -99,9 +107,9 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
           ))}
         </div>
         <div className="flex gap-2 text-sm text-text-secondary">
-          {filter.bits.map((_, index) => (
-            <div key={`bit-position-${index}`} className="w-12 text-center">
-              {index}
+          {positionLabels.map((position) => (
+            <div key={`position-label-${position}`} className="w-12 text-center">
+              {position}
             </div>
           ))}
         </div>
@@ -174,9 +182,9 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
           Items in Filter ({filter.items.length}):
         </h4>
         <div className="flex flex-wrap gap-2">
-          {filter.items.map((item, _index) => (
+          {filter.items.map((item, index) => (
             <span
-              key={`item-${item}-${item.length}`}
+              key={`item-${index}-${item}`}
               className="bg-accent/20 text-accent px-2 py-1 rounded text-sm"
             >
               {item}

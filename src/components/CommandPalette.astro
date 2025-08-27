@@ -8,8 +8,12 @@
   class="fixed inset-0 z-50 flex items-start justify-center pt-16 transition-all duration-300 opacity-0 invisible bg-black/50 backdrop-blur-sm"
   aria-hidden="true"
   role="dialog"
+  aria-labelledby="command-palette-title"
 >
   <div class="w-full max-w-2xl bg-light-900 rounded-xl shadow-2xl border border-card-border overflow-hidden mx-4">
+    <!-- Hidden title for accessibility -->
+    <h2 id="command-palette-title" class="sr-only">Command Palette</h2>
+    
     <!-- Command Input -->
     <div class="flex items-center p-4 border-b border-card-border">
       <svg 
@@ -27,10 +31,11 @@
       </svg>
       
       <input
-        id="command-input"
+        id="command-search"
         type="text"
         placeholder="Type a command or search..."
         class="flex-1 bg-transparent text-light-100 placeholder-light-400 outline-none text-lg"
+        aria-label="Search commands and content"
       />
       
       <button
@@ -68,7 +73,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
                 <div class="flex-1">
-                  <div class="text-light-100 font-medium">Change Theme</div>
+                  <div class="text-light-100 font-medium">Toggle Theme</div>
                   <div class="text-sm text-light-400">Switch between light and dark themes</div>
                 </div>
                 <kbd class="ml-3 px-2 py-1 bg-light-800 text-light-300 text-xs rounded">⌘ T</kbd>
@@ -168,7 +173,7 @@
       </div>
 
       <!-- Search results list -->
-      <div id="command-results-list" class="hidden">
+      <div id="command-results-list" class="hidden search-results">
         <!-- Results will be populated by JavaScript -->
       </div>
     </div>
@@ -209,7 +214,7 @@
     commands: [
       {
         id: 'theme',
-        title: 'Change Theme',
+        title: 'Toggle Theme',
         description: 'Switch between light and dark themes',
         keywords: ['theme', 'dark', 'light', 'toggle', 'appearance'],
         icon: 'theme',
@@ -283,7 +288,7 @@
     
     init() {
       this.modal = document.getElementById('command-palette');
-      this.input = document.getElementById('command-input');
+      this.input = document.getElementById('command-search');
       this.clearBtn = document.getElementById('command-clear');
       this.closeBtn = document.getElementById('command-close');
       this.defaultView = document.getElementById('command-default');
@@ -505,7 +510,7 @@
     showDefault() {
       this.hideAllViews();
       this.defaultView?.classList.remove('hidden');
-      this.selectedIndex = -1;
+      this.selectedIndex = 0; // Start with first item selected
       this.updateSelectedItem();
       
       if (this.countSpan) {
@@ -665,20 +670,20 @@
         const items = document.querySelectorAll('.command-item');
         items.forEach((item, index) => {
           if (index === this.selectedIndex) {
-            item.classList.add('bg-light-800', 'border-l-accent');
+            item.classList.add('bg-light-800', 'border-l-accent', 'highlighted');
             item.scrollIntoView({ block: 'nearest' });
           } else {
-            item.classList.remove('bg-light-800', 'border-l-accent');
+            item.classList.remove('bg-light-800', 'border-l-accent', 'highlighted');
           }
         });
       } else {
         const results = document.querySelectorAll('.command-result');
         results.forEach((result, index) => {
           if (index === this.selectedIndex) {
-            result.classList.add('bg-light-800', 'border-l-accent');
+            result.classList.add('bg-light-800', 'border-l-accent', 'highlighted');
             result.scrollIntoView({ block: 'nearest' });
           } else {
-            result.classList.remove('bg-light-800', 'border-l-accent');
+            result.classList.remove('bg-light-800', 'border-l-accent', 'highlighted');
           }
         });
       }
@@ -805,6 +810,18 @@
 </script>
 
 <style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;

@@ -420,7 +420,15 @@ async function warmCriticalCaches() {
 
 The results exceeded our expectations:
 
-<PerformanceMetrics client:load />
+export const migrationData = {
+  bootTime: { macos: 45, arch: 12 },
+  memoryUsage: { macos: 8.2, arch: 4.1 },
+  dockerBuild: { macos: 45, arch: 18 },
+  ideStartup: { macos: 3.2, arch: 1.9 },
+  fileSearch: { macos: 2.1, arch: 0.8 }
+};
+
+<PerformanceMetrics data={migrationData} client:load />
 
 **Database Performance:**
 - Query response time: 95th percentile improved from 2.3s to 0.7s

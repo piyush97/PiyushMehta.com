@@ -9,7 +9,7 @@ test.describe('Integration Tests', () => {
     if (await firstPostLink.count() > 0) {
       await firstPostLink.click();
     } else {
-      test.skip('No blog posts found for integration testing');
+      test.skip(true, 'No blog posts found for integration testing');
     }
     
     // Wait for page to load

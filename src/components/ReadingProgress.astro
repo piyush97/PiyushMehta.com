@@ -5,7 +5,7 @@
 <!-- Reading Progress Bar -->
 <div 
   id="reading-progress-container"
-  class="fixed top-0 left-0 right-0 z-40 bg-transparent pointer-events-none"
+  class="fixed top-0 left-0 right-0 z-40 bg-transparent pointer-events-none opacity-0 invisible"
   aria-hidden="true"
 >
   <div
@@ -69,6 +69,14 @@
       this.calculateReadingTime();
       this.bindEvents();
       this.updateProgress();
+      
+      // Ensure progress bar is visible on blog posts
+      setTimeout(() => {
+        if (this.isBlogPost() && this.progressContainer) {
+          this.progressContainer.classList.remove('opacity-0', 'invisible');
+          this.progressContainer.classList.add('opacity-100', 'visible');
+        }
+      }, 100);
     }
 
     isBlogPost() {
@@ -202,15 +210,15 @@
         this.readingPercentageElement.textContent = `${Math.round(progress)}%`;
       }
 
-      // Show/hide progress bar based on scroll position
-      const shouldShow = scrollTop > 100 && progress < 100;
+      // Show/hide progress bar based on scroll position  
+      const shouldShow = scrollTop > 50 || progress > 0;
       
-      if (shouldShow && !this.progressContainer.classList.contains('visible')) {
-        this.progressContainer.classList.add('visible');
+      if (shouldShow) {
         this.progressContainer.style.opacity = '1';
-      } else if (!shouldShow && this.progressContainer.classList.contains('visible')) {
-        this.progressContainer.classList.remove('visible');
+        this.progressContainer.style.visibility = 'visible';
+      } else {
         this.progressContainer.style.opacity = '0';
+        this.progressContainer.style.visibility = 'hidden';
       }
 
       // Auto-hide reading info when scrolling

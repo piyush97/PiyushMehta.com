@@ -66,6 +66,22 @@ export default defineConfig({
       "**/*.svg",
       "**/*.webp",
     ],
+    resolve: {
+      alias: {
+        "@": new URL("./src", import.meta.url).pathname,
+        "@/components": new URL("./src/components", import.meta.url).pathname,
+        "@/layouts": new URL("./src/layouts", import.meta.url).pathname,
+        "@/pages": new URL("./src/pages", import.meta.url).pathname,
+        "@/utils": new URL("./src/utils", import.meta.url).pathname,
+        "@/types": new URL("./src/types", import.meta.url).pathname,
+        "@/content": new URL("./src/content", import.meta.url).pathname,
+        "@/assets": new URL("./src/assets", import.meta.url).pathname,
+        "@/styles": new URL("./src/styles", import.meta.url).pathname,
+        "@/middleware": new URL("./src/middleware", import.meta.url).pathname,
+        "@/app": new URL("./src/app", import.meta.url).pathname,
+        "@/scripts": new URL("./scripts", import.meta.url).pathname,
+      }
+    },
   },
   image: {
     domains: ["piyushmehta.com"],
@@ -80,6 +96,46 @@ export default defineConfig({
   build: {
     concurrency: 2,
     assetsInlineLimit: 1024,
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // Core vendor libraries (rarely change, cache for long time)
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
+            }
+            if (id.includes('@astrojs/')) {
+              return 'vendor-astro';
+            }
+            if (id.includes('@sentry/')) {
+              return 'vendor-monitoring';
+            }
+            if (id.includes('satori') || id.includes('@resvg') || id.includes('@vercel/og')) {
+              return 'vendor-images';
+            }
+            if (id.includes('workbox')) {
+              return 'vendor-pwa';
+            }
+            // Other third-party packages
+            return 'vendor-libs';
+          }
+          
+          // Application code chunking
+          if (id.includes('/src/components/blog/')) {
+            return 'components-blog';
+          }
+          if (id.includes('CommentSystem') || id.includes('AuthModal') || id.includes('NewsletterForm')) {
+            return 'components-interactive';
+          }
+          if (id.includes('/src/utils/')) {
+            return 'utils';
+          }
+          if (id.includes('/src/middleware/')) {
+            return 'middleware';
+          }
+        },
+      },
+    },
   },
 
   adapter: vercel({
