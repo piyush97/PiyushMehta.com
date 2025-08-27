@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 const BASE_URL = 'http://localhost:4321';
 
 // Test data constants
-const TEST_TEMPLATES = ['default', 'minimal', 'tech', 'blog'] as const;
+const TEST_TEMPLATES = ['modern', 'minimal', 'tech', 'blog'] as const;
 const TEST_THEMES = ['dark', 'light', 'retro'] as const;
 const TEST_TYPES = ['website', 'article'] as const;
 
@@ -26,7 +26,7 @@ function generateOGImageURL(params: OGImageParams = {}): string {
     title: 'Test Title',
     description: 'Test Description',
     type: 'article',
-    template: 'default',
+    template: 'modern',
     theme: 'dark',
     ...params
   };
@@ -35,7 +35,7 @@ function generateOGImageURL(params: OGImageParams = {}): string {
     if (value) searchParams.set(key, value);
   });
 
-  return `${BASE_URL}/api/og-image?${searchParams.toString()}`;
+   return `${BASE_URL}/api/og-enhanced?${searchParams.toString()}`;
 }
 
 // Helper function to test image response

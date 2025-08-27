@@ -138,9 +138,7 @@ test.describe('Command Palette', () => {
   });
 
   test('should work on mobile', async ({ page, isMobile }) => {
-    if (!isMobile) {
-      test.skip('This test is only for mobile devices');
-    }
+    test.skip(!isMobile, 'This test is only for mobile devices');
     
     // On mobile, command palette should open with search button
     await page.locator('.search-btn, [aria-label*="search"]').click();
