@@ -1,15 +1,44 @@
 import { chromium } from '@playwright/test';
 
+/**
+ * Configuration from command line arguments and environment variables
+ */
+const config = {
+  // Check for --headless flag or HEADLESS environment variable
+  headless: process.argv.includes('--headless') || process.env.HEADLESS === 'true',
+  // Check for --dev flag to force headless false (visible browser)
+  dev: process.argv.includes('--dev') || process.env.DEBUG_MODE === 'true',
+  // Allow custom URL via --url flag or URL environment variable
+  url: process.argv.find(arg => arg.startsWith('--url='))?.split('=')[1] || 
+        process.env.TEST_URL || 
+        'http://localhost:4322/blog/macos-to-arch-linux-omarchy-developer-productivity/',
+  // Browser timeout
+  timeout: parseInt(process.env.BROWSER_TIMEOUT || '30000', 10)
+};
+
+// Dev mode overrides headless
+if (config.dev) {
+  config.headless = false;
+}
+
 async function auditSEO() {
   console.log('🔍 Starting SEO Optimization Audit...\n');
+  console.log(`Configuration:
+  - Headless Mode: ${config.headless}
+  - Dev Mode: ${config.dev} 
+  - Target URL: ${config.url}
+  - Timeout: ${config.timeout}ms\n`);
   
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ 
+    headless: config.headless,
+    timeout: config.timeout
+  });
   const page = await browser.newPage();
   
   try {
-    // Navigate to blog post
-    console.log('📍 Navigating to blog post...');
-    await page.goto('http://localhost:4322/blog/macos-to-arch-linux-omarchy-developer-productivity/');
+    // Navigate to target URL
+    console.log(`📍 Navigating to ${config.url}...`);
+    await page.goto(config.url);
     await page.waitForLoadState('networkidle');
     
     // Test 1: Meta Tags Analysis
@@ -188,6 +217,48 @@ async function auditSEO() {
   } finally {
     await browser.close();
   }
+}
+
+// Show help if requested
+if (process.argv.includes('--help') || process.argv.includes('-h')) {
+  console.log(`
+SEO Debug Tool - Usage Examples:
+
+Basic usage:
+  node debug-seo.js                    # Runs with visible browser (default)
+
+Headless mode:
+  node debug-seo.js --headless         # Runs without visible browser
+  HEADLESS=true node debug-seo.js      # Same using environment variable
+
+Development mode:
+  node debug-seo.js --dev              # Force visible browser with debug info
+  DEBUG_MODE=true node debug-seo.js    # Same using environment variable
+
+Custom URL:
+  node debug-seo.js --url=http://localhost:4321/
+  TEST_URL=http://localhost:4321/ node debug-seo.js
+
+Combined options:
+  node debug-seo.js --headless --url=http://localhost:4321/blog/example/
+  HEADLESS=true TEST_URL=http://localhost:4321/ node debug-seo.js
+
+Environment Variables:
+  HEADLESS=true          # Enable headless mode
+  DEBUG_MODE=true        # Enable development/debug mode  
+  TEST_URL=url          # Custom URL to test
+  BROWSER_TIMEOUT=30000  # Browser timeout in milliseconds
+
+Examples for CI/CD:
+  # In GitHub Actions or CI environments
+  HEADLESS=true TEST_URL=http://localhost:4322/blog/post/ node debug-seo.js
+  
+  # For local development with visible browser
+  node debug-seo.js --dev --url=http://localhost:4321/
+  
+Priority: Command line flags > Environment variables > Defaults
+`);
+  process.exit(0);
 }
 
 auditSEO().catch(console.error);
