@@ -30,13 +30,42 @@ const __dirname = dirname(__filename);
 
 // Possible locations of the sitemap.xml file based on different build outputs
 const possibleSitemapPaths = [
-  path.join(__dirname, "dist", "sitemap.xml"), // Standard static output
-  path.join(__dirname, ".vercel", "output", "static", "sitemap.xml"), // Vercel static output
-  path.join(__dirname, "public", "sitemap.xml"), // Fallback location to generate
+  path.join(__dirname, "..", "dist", "sitemap.xml"), // Standard static output
+  path.join(__dirname, "..", ".vercel", "output", "static", "sitemap.xml"), // Vercel static output
+  path.join(__dirname, "..", "public", "sitemap.xml"), // Fallback location to generate
 ];
 
 // The base URL for the site
 const SITE_URL = "https://piyushmehta.com";
+
+/**
+ * Escape XML special characters to prevent malformed XML
+ */
+function escapeXml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+/**
+ * Validates if XML content is well-formed
+ */
+function isValidXml(xmlContent) {
+  try {
+    // Basic XML validation checks
+    const hasXmlDeclaration = xmlContent.includes('<?xml');
+    const hasUrlsetOpen = xmlContent.includes('<urlset');
+    const hasUrlsetClose = xmlContent.includes('</urlset>');
+    const balancedUrls = (xmlContent.match(/<url>/g) || []).length === (xmlContent.match(/<\/url>/g) || []).length;
+    
+    return hasXmlDeclaration && hasUrlsetOpen && hasUrlsetClose && balancedUrls;
+  } catch (_error) {
+    return false;
+  }
+}
 
 /**
  * Main function to enhance the sitemap
@@ -47,21 +76,29 @@ async function enhanceSitemap() {
   // Find the existing sitemap file
   let sitemapPath = null;
   let sitemapContent = null;
+  let isCorrupted = false;
 
   for (const potentialPath of possibleSitemapPaths) {
     if (fs.existsSync(potentialPath)) {
       sitemapPath = potentialPath;
       console.log(`Found sitemap at: ${sitemapPath}`);
       sitemapContent = fs.readFileSync(sitemapPath, "utf8");
+      
+      // Validate the existing sitemap
+      if (!isValidXml(sitemapContent)) {
+        console.warn(`Existing sitemap at ${sitemapPath} is corrupted or malformed. Will regenerate.`);
+        isCorrupted = true;
+        sitemapContent = null;
+      }
       break;
     }
   }
 
-  // If no sitemap found, generate a new one in public folder
-  if (!sitemapPath) {
+  // If no sitemap found or corrupted, generate a new one in public folder
+  if (!sitemapPath || !sitemapContent || isCorrupted) {
     sitemapPath = possibleSitemapPaths[2]; // public/sitemap.xml
     console.log(
-      `No existing sitemap found, will generate a new one at: ${sitemapPath}`
+      `${!sitemapPath ? 'No existing sitemap found' : 'Corrupted sitemap detected'}, will generate a new one at: ${sitemapPath}`
     );
     sitemapContent = generateBaseSitemap();
   }
@@ -94,71 +131,40 @@ async function enhanceSitemap() {
     // Combine high priority URLs with blog posts
     const allUrls = [...highPriorityUrls, ...blogPosts];
 
-    // Find the closing </urlset> tag
-    const closingTag = "</urlset>";
-    const closingTagIndex = sitemapContent.indexOf(closingTag);
-
-    if (closingTagIndex !== -1) {
-      // Insert new URLs before the closing tag
-      let newUrlsXml = "";
-
-      // Check if each URL already exists in the sitemap
-      for (const { url, priority, changefreq } of allUrls) {
-        if (!sitemapContent.includes(`<loc>${url}</loc>`)) {
-          // Add new URL
-          newUrlsXml += `
-  <url>
-    <loc>${url}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
+    // Generate clean sitemap from scratch to avoid malformed XML issues
+    const currentDate = new Date().toISOString();
+    const urlEntries = allUrls.map(({ url, priority, changefreq }) => 
+      `  <url>
+    <loc>${escapeXml(url)}</loc>
+    <lastmod>${currentDate}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
-  </url>`;
-        } else {
-          // Update priority and changefreq for existing URLs
-          const urlStartIndex = sitemapContent.indexOf(`<loc>${url}</loc>`);
-          if (urlStartIndex !== -1) {
-            const urlEntryEndIndex =
-              sitemapContent.indexOf("</url>", urlStartIndex) + 6;
-            const urlEntry = sitemapContent.substring(
-              urlStartIndex - 7,
-              urlEntryEndIndex
-            );
+  </url>`
+    ).join('\n');
 
-            // Create updated URL entry
-            const updatedUrlEntry = `
-  <url>
-    <loc>${url}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-    <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>
-  </url>`;
+    // Generate complete sitemap
+    sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+${urlEntries}
+</urlset>`;
 
-            // Replace the old entry with the updated one
-            sitemapContent = sitemapContent.replace(urlEntry, updatedUrlEntry);
-          }
-        }
-      }
+    // Ensure the directory exists
+    const dir = path.dirname(sitemapPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
 
-      // Insert any new URLs before the closing tag
-      if (newUrlsXml) {
-        sitemapContent =
-          sitemapContent.slice(0, closingTagIndex) +
-          newUrlsXml +
-          sitemapContent.slice(closingTagIndex);
-      }
-
-      // Ensure the directory exists
-      const dir = path.dirname(sitemapPath);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
-
+    // Validate the generated sitemap before writing
+    if (isValidXml(sitemapContent)) {
       // Write the enhanced sitemap back to the file
       fs.writeFileSync(sitemapPath, sitemapContent, "utf8");
-      console.log(`Sitemap successfully enhanced at: ${sitemapPath}`);
-      console.log(`Added/updated ${allUrls.length} URLs in the sitemap`);
+      console.log(`Sitemap successfully generated at: ${sitemapPath}`);
+      console.log(`Added ${allUrls.length} URLs to the sitemap`);
     } else {
-      console.error("Could not find closing </urlset> tag in sitemap.xml");
+      throw new Error('Generated sitemap failed XML validation');
     }
   } catch (error) {
     console.error("Error enhancing sitemap:", error);
@@ -195,7 +201,7 @@ function generateBaseSitemap() {
  */
 async function getBlogPosts() {
   const blogUrls = [];
-  const projectRoot = dirname(__dirname);
+  const projectRoot = path.join(__dirname, "..");
   const contentDir = path.join(projectRoot, "src", "content", "blog");
 
   if (!fs.existsSync(contentDir)) {
