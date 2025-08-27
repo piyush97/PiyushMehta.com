@@ -23,16 +23,18 @@ export function generateOgImageUrl(params: {
   type?: string;
   publishedTime?: Date;
   tags?: string[];
+  readingTime?: string;
+  author?: string;
   template?: 'default' | 'minimal' | 'tech' | 'blog';
   theme?: 'dark' | 'light' | 'retro';
   baseUrl?: string;
 }): string {
-  const { 
-    title, 
-    description, 
-    type, 
-    publishedTime, 
-    tags, 
+  const {
+    title,
+    description,
+    type,
+    publishedTime,
+    tags,
     template = 'default',
     theme = 'dark',
     baseUrl
@@ -331,19 +333,108 @@ export function resolveImageUrl(imageUrl: string, baseUrl: string): string {
  */
 export function generateSecureImageUrl(imageUrl: string): string {
   if (!imageUrl) return '';
-  
+
   // Already HTTPS
   if (imageUrl.startsWith('https://')) {
     return imageUrl;
   }
-  
+
   // Convert HTTP to HTTPS
   if (imageUrl.startsWith('http://')) {
     return imageUrl.replace('http://', 'https://');
   }
-  
+
   // For relative URLs, return as-is (should be resolved first by resolveImageUrl)
   return imageUrl;
+}
+
+/**
+ * Get recommended template based on article type and tags
+ * @param type - Article type ('article', 'website', etc.)
+ * @param tags - Array of tags
+ * @returns Recommended template name
+ */
+export function getRecommendedTemplate(type: string, tags: string[] = []): string {
+  // Default template based on type
+  if (type === 'article') {
+    // Check tags for specific template recommendations
+    const tagString = tags.join(' ').toLowerCase();
+
+    if (tagString.includes('react') || tagString.includes('javascript') || tagString.includes('frontend')) {
+      return 'modern';
+    }
+
+    if (tagString.includes('docker') || tagString.includes('kubernetes') || tagString.includes('devops')) {
+      return 'tech';
+    }
+
+    if (tagString.includes('ai') || tagString.includes('machine learning') || tagString.includes('data')) {
+      return 'modern';
+    }
+
+    // Default for articles
+    return 'blog';
+  }
+
+  // Default for other types
+  return 'modern';
+}
+
+/**
+ * Generate OG image URL specifically for blog posts
+ * @param params - Parameters for blog OG image generation
+ * @returns OG image URL
+ */
+export function generateBlogOGImage(params: {
+  title: string;
+  description?: string;
+  publishedDate?: Date;
+  tags?: string[];
+  readingTime?: string;
+  template?: string;
+  baseUrl?: string;
+}): string {
+  const {
+    title,
+    description,
+    publishedDate,
+    tags = [],
+    readingTime,
+    template = 'blog',
+    baseUrl
+  } = params;
+
+  // Ensure we have a baseUrl
+  if (!baseUrl) {
+    throw new Error('baseUrl is required for generateBlogOGImage');
+  }
+
+  const searchParams = new URLSearchParams();
+  searchParams.set('title', title);
+  searchParams.set('template', template);
+  searchParams.set('theme', 'dark');
+  searchParams.set('type', 'article');
+  searchParams.set('showLogo', 'true');
+  searchParams.set('showBadge', 'true');
+
+  if (description) {
+    searchParams.set('description', description);
+  }
+
+  if (publishedDate) {
+    searchParams.set('date', publishedDate.toISOString());
+  }
+
+  if (tags && tags.length > 0) {
+    searchParams.set('tags', tags.join(','));
+  }
+
+  if (readingTime) {
+    searchParams.set('readingTime', readingTime);
+  }
+
+  // Use the enhanced OG API endpoint
+  return `${baseUrl}/api/og-enhanced?${searchParams.toString()}`;
 }
 
 /**

@@ -1,5 +1,13 @@
 import { expect, test } from '@playwright/test';
 
+// Extend window interface for analytics testing
+declare global {
+  interface Window {
+    analyticsEvents: unknown[][];
+    gtag: (...args: unknown[]) => void;
+  }
+}
+
 test.describe('Related Posts', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to a blog post to test related posts
@@ -11,7 +19,7 @@ test.describe('Related Posts', () => {
       await firstPostLink.click();
     } else {
       // Skip if no blog posts found
-      test.skip('No blog posts found to test related posts');
+      test.skip();
     }
   });
 
@@ -159,7 +167,7 @@ test.describe('Related Posts', () => {
 
   test('should be responsive on mobile', async ({ page, isMobile }) => {
     if (!isMobile) {
-      test.skip('This test is only for mobile devices');
+      test.skip();
     }
     
     const relatedPosts = page.locator('.related-post-card');
@@ -216,7 +224,7 @@ test.describe('Related Posts', () => {
 
   test('should handle hover effects', async ({ page, isMobile }) => {
     if (isMobile) {
-      test.skip('Hover effects are not applicable on mobile devices');
+      test.skip();
     }
     
     const relatedPosts = page.locator('.related-post-card');
@@ -249,7 +257,7 @@ test.describe('Related Posts', () => {
     // Mock analytics tracking
     await page.addInitScript(() => {
       window.analyticsEvents = [];
-      window.gtag = (...args: any[]) => {
+      window.gtag = (...args: unknown[]) => {
         window.analyticsEvents.push(args);
       };
     });

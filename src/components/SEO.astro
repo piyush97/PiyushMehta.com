@@ -9,7 +9,7 @@ generateTwitterImageUrl,
 optimizeKeywords,
 sanitizeDescription,
 validateImageForSocialSharing
-} from '../utils/seo-optimization';
+} from '../utils/og-generator';
 
 export interface Props {
   title: string;
@@ -54,20 +54,47 @@ const baseUrl = Astro.url.origin || Astro.site?.toString() || 'https://piyushmeh
 const optimizedDescription = sanitizeDescription(description);
 const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname, baseUrl);
 
-// Handle image metadata with full OG Protocol compliance and generated image fallback
-const imageMetadata: ImageMetadata = extractImageMetadata(
-  image,
-  baseUrl,
-  {
-    title,
-    description: optimizedDescription,
-    type,
-    publishedTime,
-    tags,
-    template: ogTemplate,
-    theme: ogTheme,
-  }
-);
+// Handle image metadata with full OG Protocol compliance
+// Prioritize existing images over generated ones for better social media compatibility
+let imageMetadata: ImageMetadata;
+
+if (image && typeof image === 'string') {
+  // Use the provided image URL directly
+  imageMetadata = {
+    url: image.startsWith('http') ? image : `${baseUrl}${image}`,
+    secureUrl: image.startsWith('http') ? image : `${baseUrl}${image}`,
+    type: 'image/jpeg',
+    width: 1200,
+    height: 630,
+    alt: `${title} - ${author}`,
+  };
+} else if (image && typeof image === 'object' && image.url) {
+  // Use the provided image object
+  const imageUrl = image.url.startsWith('http') ? image.url : `${baseUrl}${image.url}`;
+  imageMetadata = {
+    url: imageUrl,
+    secureUrl: imageUrl,
+    alt: image.alt || `${title} - ${author}`,
+    width: image.width || 1200,
+    height: image.height || 630,
+    type: image.type || 'image/jpeg',
+  };
+} else {
+  // Fallback to generated OG image only when no image is provided
+  imageMetadata = extractImageMetadata(
+    null, // No image provided
+    baseUrl,
+    {
+      title,
+      description: optimizedDescription,
+      type,
+      publishedTime,
+      tags,
+      template: ogTemplate,
+      theme: ogTheme,
+    }
+  );
+}
 
 // Generate Twitter-optimized image URL
 const twitterImageUrl = generateTwitterImageUrl({

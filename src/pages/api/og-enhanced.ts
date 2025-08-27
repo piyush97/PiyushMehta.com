@@ -7,12 +7,24 @@ import satori from "satori";
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ url }): Promise<Response> => {
+
+
+export const GET: APIRoute = async ({ url, request }): Promise<Response> => {
+  const searchParams = new URL(url).searchParams;
+  const title = searchParams.get('title') || 'Piyush Mehta';
+  const description = searchParams.get('description') || 'Software Engineer & Tech Speaker';
+  const template = searchParams.get('template') || 'modern';
+
   try {
-    const searchParams = new URL(url).searchParams;
-    const title = searchParams.get('title') || 'Piyush Mehta';
-    const description = searchParams.get('description') || 'Software Engineer & Tech Speaker';
-    const template = searchParams.get('template') || 'modern';
+
+    // Check if this is a social media crawler
+    const userAgent = request.headers.get('user-agent') || '';
+    const isSocialCrawler = /facebook|twitter|linkedin|whatsapp|telegram|discord|slack/i.test(userAgent);
+
+    // For social media crawlers, add extra delay to ensure proper rendering
+    if (isSocialCrawler) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
 
     // Load fonts
     const fontPath = join(process.cwd(), "InterVariable.ttf");
@@ -257,15 +269,75 @@ export const GET: APIRoute = async ({ url }): Promise<Response> => {
     const pngData = resvg.render();
     const pngBuffer = pngData.asPng();
 
+    // Different caching strategies for social crawlers vs regular users
+    const cacheControl = isSocialCrawler
+      ? 'public, max-age=86400, s-maxage=86400' // 24 hours for crawlers
+      : 'public, max-age=31536000, immutable'; // 1 year for regular users
+
     return new Response(new Uint8Array(pngBuffer), {
       headers: {
         'Content-Type': 'image/png',
         'Content-Length': pngBuffer.length.toString(),
-        'Cache-Control': 'public, max-age=31536000, immutable',
+        'Cache-Control': cacheControl,
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'X-Robots-Tag': 'noindex',
+        // Additional headers for social media crawlers
+        ...(isSocialCrawler && {
+          'X-Crawler-Friendly': 'true',
+          'Link': `<${url}>; rel="canonical"`,
+        }),
       },
     });
   } catch (error) {
     console.error('Error generating OG image:', error);
-    return new Response('Error generating OG image', { status: 500 });
+
+    // Return a fallback static image for social media crawlers
+    try {
+      const fallbackImagePath = join(process.cwd(), "public/images/social.jpg");
+      const fallbackImage = fs.readFileSync(fallbackImagePath);
+
+      return new Response(fallbackImage, {
+        headers: {
+          'Content-Type': 'image/jpeg',
+          'Content-Length': fallbackImage.length.toString(),
+          'Cache-Control': 'public, max-age=86400',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'X-Fallback-Image': 'true',
+        },
+      });
+    } catch (fallbackError) {
+      console.error('Fallback image error:', fallbackError);
+
+      // Create a simple fallback SVG image as last resort
+      const fallbackSvg = `
+        <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1200" height="630" fill="#1f2347"/>
+          <text x="600" y="300" text-anchor="middle" fill="#f9fafb" font-family="Arial" font-size="48" font-weight="bold">
+            ${title ? title.substring(0, 50) + (title.length > 50 ? '...' : '') : 'Piyush Mehta'}
+          </text>
+          <text x="600" y="360" text-anchor="middle" fill="#d1d5db" font-family="Arial" font-size="24">
+            piyushmehta.com
+          </text>
+        </svg>
+      `;
+
+      const resvg = new Resvg(fallbackSvg);
+      const pngData = resvg.render();
+      const pngBuffer = pngData.asPng();
+
+      return new Response(new Uint8Array(pngBuffer), {
+        headers: {
+          'Content-Type': 'image/png',
+          'Content-Length': pngBuffer.length.toString(),
+          'Cache-Control': 'public, max-age=3600', // 1 hour cache for error fallbacks
+          'Access-Control-Allow-Origin': '*',
+          'X-Emergency-Fallback': 'true',
+        },
+      });
+    }
   }
 };

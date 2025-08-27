@@ -1,0 +1,74 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f2347;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#282e5e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2e3360;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="macos" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#333333;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="linux" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1793d1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a8dadc;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="150" cy="150" r="100" fill="#60a5fa" opacity="0.1"/>
+  <circle cx="1050" cy="480" r="150" fill="#60a5fa" opacity="0.08"/>
+  
+  <!-- Main content -->
+  <g transform="translate(600, 315)">
+    <!-- macOS representation -->
+    <g transform="translate(-250, 0)">
+      <!-- macOS window -->
+      <rect x="-120" y="-80" width="240" height="160" rx="12" fill="url(#macos)"/>
+      <!-- macOS traffic lights -->
+      <circle cx="-90" cy="-60" r="8" fill="#ff5f57"/>
+      <circle cx="-60" cy="-60" r="8" fill="#ffbd2e"/>
+      <circle cx="-30" cy="-60" r="8" fill="#28ca42"/>
+      <!-- macOS dock -->
+      <rect x="-100" y="50" width="200" height="20" rx="10" fill="rgba(255,255,255,0.2)"/>
+      <!-- macOS icons -->
+      <rect x="-80" y="55" width="12" height="10" rx="2" fill="white"/>
+      <rect x="-55" y="55" width="12" height="10" rx="2" fill="white"/>
+      <rect x="-30" y="55" width="12" height="10" rx="2" fill="white"/>
+    </g>
+    
+    <!-- Arrow -->
+    <path d="M-20 -15 L10 -15 L10 -30 L40 -15 L10 0 L10 -15" fill="#60a5fa"/>
+    
+    <!-- Linux representation -->
+    <g transform="translate(150, 0)">
+      <!-- Linux terminal -->
+      <rect x="-120" y="-80" width="240" height="160" rx="12" fill="#1a1a2e"/>
+      <!-- Terminal header -->
+      <rect x="-120" y="-80" width="240" height="30" rx="12" fill="#2d3748"/>
+      <text x="0" y="-60" text-anchor="middle" font-family="monospace" font-size="12" fill="#a6e22e">$ omarchy</text>
+      <!-- Terminal content -->
+      <text x="-100" y="-20" font-family="monospace" font-size="14" fill="#66d9ef">piyush@omarchy</text>
+      <text x="-100" y="0" font-family="monospace" font-size="14" fill="#f92672">~/projects</text>
+      <text x="-100" y="20" font-family="monospace" font-size="14" fill="#a6e22e">$ ./develop</text>
+      <!-- Linux penguin -->
+      <g transform="translate(80, 40)">
+        <circle cx="0" cy="-10" r="8" fill="#a8dadc"/>
+        <ellipse cx="0" cy="5" rx="12" ry="15" fill="#a8dadc"/>
+        <circle cx="-4" cy="-12" r="2" fill="black"/>
+        <circle cx="4" cy="-12" r="2" fill="black"/>
+        <ellipse cx="0" cy="-8" rx="3" ry="2" fill="#1793d1"/>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Title -->
+  <text x="600" y="450" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="white">macOS to Arch Linux</text>
+  <text x="600" y="490" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#d1d5db">Omarchy Productivity</text>
+  
+  <!-- Website URL -->
+  <text x="600" y="580" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#9ca3af">piyushmehta.com</text>
+</svg>
