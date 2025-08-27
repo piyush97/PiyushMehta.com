@@ -38,6 +38,7 @@ const enhancedOGImage = generateBlogOGImage({
   tags,
   readingTime: readingTime.toString(),
   template: (ogTemplate as string) || recommendedTemplate,
+  baseUrl: Astro.site?.toString() || 'https://piyushmehta.com',
 });
 
 // Generate canonical URL
