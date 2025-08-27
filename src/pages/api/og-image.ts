@@ -1,6 +1,5 @@
 import fs from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+import { join } from "path";
 import { Resvg } from "@resvg/resvg-js";
 import * as Sentry from "@sentry/node";
 import type { APIRoute } from "astro";
@@ -9,7 +8,6 @@ import satori from "satori";
 
 export const prerender = false;
 
-// Configuration constants
 const OG_IMAGE_CONFIG = {
   WIDTH: 1200,
   HEIGHT: 630,
@@ -23,22 +21,28 @@ const OG_IMAGE_CONFIG = {
   TAGS_MAX_COUNT: 3,
 } as const;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 export const GET: APIRoute = async ({ url, site }) => {
+  // Declare variables outside try block for error logging
+  let title = "Piyush Mehta";
+  let description = "Software Engineer & Tech Speaker";
+  let type = "website";
+  let template = "default";
+  let date: string | null = null;
+  let tags: string | null = null;
+  let theme = "dark";
+
   try {
     const searchParams = new URL(url).searchParams;
     const siteUrl = site || new URL('https://piyushmehta.com');
     const siteDomain = siteUrl.hostname;
-    const title = searchParams.get("title") || "Piyush Mehta";
-    const description =
+    title = searchParams.get("title") || "Piyush Mehta";
+    description =
       searchParams.get("description") || "Software Engineer & Tech Speaker";
-    const type = searchParams.get("type") || "website";
-    const template = searchParams.get("template") || "default";
-    const date = searchParams.get("date");
-    const tags = searchParams.get("tags");
-    const theme = searchParams.get("theme") || "dark";
+    type = searchParams.get("type") || "website";
+    template = searchParams.get("template") || "default";
+    date = searchParams.get("date");
+    tags = searchParams.get("tags");
+    theme = searchParams.get("theme") || "dark";
 
     // Enhanced styling based on content type and template
     const isArticle = type === "article";
@@ -739,7 +743,7 @@ export const GET: APIRoute = async ({ url, site }) => {
     const pngData = resvg.render();
     const pngBuffer = pngData.asPng();
 
-    return new Response(pngBuffer, {
+    return new Response(new Uint8Array(pngBuffer), {
       headers: {
         "Content-Type": "image/png",
         "Cache-Control":
