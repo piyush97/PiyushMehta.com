@@ -270,7 +270,17 @@ export const devRateLimit = {
   // Test rate limiting
   test: async (request: Request, options?: RateLimitOptions) => {
     return await rateLimit(request, options);
-  }
+  },
+  
+  // Cleanup interval management for development
+  startCleanup: (intervalMs?: number) => startCleanupInterval(intervalMs),
+  stopCleanup: () => stopCleanupInterval(),
+  
+  // Get cleanup interval status
+  getCleanupStatus: () => ({
+    active: cleanupInterval !== null,
+    intervalId: cleanupInterval
+  })
 };
 
 /**
@@ -297,10 +307,56 @@ export const prodRateLimit = {
   })
 };
 
-// Cleanup expired entries every 5 minutes
-setInterval(() => {
-  memoryStore.cleanup();
-}, 5 * 60 * 1000);
+/**
+ * Cleanup interval management
+ * Prevents memory leaks by providing proper cleanup mechanisms
+ */
+let cleanupInterval: NodeJS.Timeout | null = null;
+
+/**
+ * Start automatic cleanup of expired entries
+ * Only runs in server environments
+ */
+export function startCleanupInterval(intervalMs: number = 5 * 60 * 1000): void {
+  // Prevent multiple intervals
+  if (cleanupInterval) {
+    clearInterval(cleanupInterval);
+  }
+  
+  // Only start in server environments
+  if (typeof window === 'undefined') {
+    cleanupInterval = setInterval(() => {
+      memoryStore.cleanup();
+    }, intervalMs);
+  }
+}
+
+/**
+ * Stop automatic cleanup interval
+ * Important for preventing memory leaks during shutdowns
+ */
+export function stopCleanupInterval(): void {
+  if (cleanupInterval) {
+    clearInterval(cleanupInterval);
+    cleanupInterval = null;
+  }
+}
+
+/**
+ * Initialize cleanup on module load (server environments only)
+ */
+if (typeof window === 'undefined') {
+  startCleanupInterval();
+}
+
+/**
+ * Process shutdown handlers for graceful cleanup
+ */
+if (typeof process !== 'undefined') {
+  process.on('SIGTERM', stopCleanupInterval);
+  process.on('SIGINT', stopCleanupInterval);
+  process.on('beforeExit', stopCleanupInterval);
+}
 
 /**
  * Export main rate limiting functionality
@@ -312,5 +368,10 @@ export default {
   getHeaders: getRateLimitHeaders,
   botDetection,
   dev: devRateLimit,
-  prod: prodRateLimit
+  prod: prodRateLimit,
+  cleanup: {
+    start: startCleanupInterval,
+    stop: stopCleanupInterval,
+    manual: () => memoryStore.cleanup()
+  }
 };
