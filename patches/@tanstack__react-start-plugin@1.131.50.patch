@@ -1,0 +1,20 @@
+diff --git a/dist/esm/index.js b/dist/esm/index.js
+index 505438b7de2fdc8a8ae808cb6c46458f065210f7..148501488324290368ede35a2d702e06aef3c04e 100644
+--- a/dist/esm/index.js
++++ b/dist/esm/index.js
+@@ -105,8 +105,14 @@ export default createStartHandler({
+     !(opts == null ? void 0 : opts.customViteReactPlugin) && viteReact(options.react)
+   ];
+ }
++// Shim: createTanStackStartPlugin is the factory function variant
++function createTanStackStartPlugin(opts) {
++  return TanStackStartVitePlugin(opts);
++}
++
+ export {
+   TanStackStartVitePlugin,
+-  TanStackStartVitePlugin as tanstackStart
++  TanStackStartVitePlugin as tanstackStart,
++  createTanStackStartPlugin
+ };
+ //# sourceMappingURL=index.js.map

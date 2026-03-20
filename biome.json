@@ -9,7 +9,7 @@
     "ignoreUnknown": true,
     "ignore": [
       "dist/**",
-      ".astro/**",
+      ".output/**",
       "node_modules/**",
       "public/**",
       "*.config.*",
@@ -31,9 +31,9 @@
     "attributePosition": "auto",
     "bracketSpacing": true,
     "include": [
-      "src/**/*.{js,jsx,ts,tsx,astro,json,jsonc}",
+      "src/**/*.{js,jsx,ts,tsx,json,jsonc}",
       "*.{js,jsx,ts,tsx,mjs,cjs}",
-      "**/*.{js,jsx,ts,tsx,astro,json,jsonc}"
+      "**/*.{js,jsx,ts,tsx,json,jsonc}"
     ],
     "ignore": [
       "**/.cache/**",
@@ -42,12 +42,12 @@
       "**/package-lock.json",
       "**/public/**",
       "**/dist/**",
-      "**/.astro/**"
+      "**/.output/**"
     ]
   },
   "organizeImports": {
     "enabled": true,
-    "ignore": ["**/.cache/**", "**/node_modules/**", "**/public/**", "**/dist/**", "**/.astro/**"]
+    "ignore": ["**/.cache/**", "**/node_modules/**", "**/public/**", "**/dist/**", "**/.output/**"]
   },
   "linter": {
     "enabled": true,
@@ -89,7 +89,7 @@
       "**/node_modules/**",
       "**/public/**",
       "**/dist/**",
-      "**/.astro/**",
+      "**/.output/**",
       "**/*.config.*"
     ]
   },
@@ -131,29 +131,6 @@
     }
   },
   "overrides": [
-    {
-      "include": ["**/*.astro"],
-      "linter": {
-        "rules": {
-          "style": {
-            "useConst": "off"
-          },
-          "correctness": {
-            "noUnusedVariables": "off"
-          }
-        }
-      }
-    },
-    {
-      "include": ["src/pages/**/*.astro", "src/layouts/**/*.astro"],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noUnusedVariables": "off"
-          }
-        }
-      }
-    },
     {
       "include": ["**/*.jsx", "**/*.tsx"],
       "linter": {

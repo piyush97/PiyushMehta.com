@@ -1,0 +1,3 @@
+patchedDependencies:
+  '@tanstack/react-start-plugin@1.131.50': patches/@tanstack__react-start-plugin@1.131.50.patch
+  '@tanstack/router-generator@1.131.50': patches/@tanstack__router-generator@1.131.50.patch

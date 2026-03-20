@@ -1,0 +1,47 @@
+diff --git a/dist/esm/index.js b/dist/esm/index.js
+index e22890c7b262d6100e73ed3aa9ceb4ba67cf32b4..ecf704a63459079ee278d5dfb0076139d91cbd23 100644
+--- a/dist/esm/index.js
++++ b/dist/esm/index.js
+@@ -5,8 +5,34 @@ import { getRouteNodes } from "./filesystem/physical/getRouteNodes.js";
+ import { getRouteNodes as getRouteNodes2 } from "./filesystem/virtual/getRouteNodes.js";
+ import { rootPathId } from "./filesystem/physical/rootPathId.js";
+ import { ensureStringArgument } from "./transform/utils.js";
++
++// Shim: CONSTANTS and startAPIRouteSegmentsFromTSRFilePath were added after 1.131.50
++// but @tanstack/start-config@1.120.20 was compiled expecting them.
++const CONSTANTS = {
++  APIRouteExportVariable: 'APIRoute',
++};
++
++function startAPIRouteSegmentsFromTSRFilePath(filePath, _tsrConfig) {
++  const cleaned = filePath.replace(/^\//, '').replace(/\.(tsx?|jsx?)$/, '');
++  const parts = cleaned.split('/');
++  return parts.map((part) => {
++    if (part.startsWith('$') && part.endsWith(')')) {
++      // optional param like $id()
++      return { type: 'param', value: part.slice(1, -2) };
++    }
++    if (part === '$') {
++      return { type: 'splat', value: '*' };
++    }
++    if (part.startsWith('$')) {
++      return { type: 'param', value: part.slice(1) };
++    }
++    return { type: 'static', value: part };
++  });
++}
++
+ export {
+   Generator,
++  CONSTANTS,
+   baseConfigSchema,
+   capitalize,
+   checkRouteFullPathUniqueness,
+@@ -28,6 +54,7 @@ export {
+   resolveConfigPath,
+   rootPathId,
+   routePathToVariable,
++  startAPIRouteSegmentsFromTSRFilePath,
+   trimPathLeft,
+   getRouteNodes2 as virtualGetRouteNodes,
+   writeIfDifferent

@@ -1,0 +1,16 @@
+diff --git a/dist/esm/index.js b/dist/esm/index.js
+index 5ae44cfe2c03668ad27fdb4ffa808b3fff454c7d..37c763ffc5447010419a12460d95ce3aed3b8cd8 100644
+--- a/dist/esm/index.js
++++ b/dist/esm/index.js
+@@ -9,4 +9,10 @@ import { getGlobalStartContext } from "./getGlobalStartContext.js";
+ import { hydrate, json, mergeHeaders } from "@tanstack/router-core/ssr/client";
+ import { RawStream } from "@tanstack/router-core";
+ import { createClientOnlyFn, createIsomorphicFn, createServerOnlyFn } from "@tanstack/start-fn-stubs";
+-export { FRAME_HEADER_SIZE, FrameType, RawStream, TSS_CONTENT_TYPE_FRAMED, TSS_CONTENT_TYPE_FRAMED_VERSIONED, TSS_FORMDATA_CONTEXT, TSS_FRAMED_PROTOCOL_VERSION, TSS_SERVER_FUNCTION, X_TSS_CONTEXT, X_TSS_RAW_RESPONSE, X_TSS_SERIALIZED, createClientOnlyFn, createIsomorphicFn, createMiddleware, createNullProtoObject, createServerFn, createServerOnlyFn, createStart, execValidator, executeMiddleware, flattenMiddlewares, getDefaultSerovalPlugins, getGlobalStartContext, getRouterInstance, hydrate, json, mergeHeaders, safeObjectMerge, validateFramedProtocolVersion };
++// Shim for @tanstack/start@1.120.x compatibility
++// startSerializer was removed in newer versions - provide a simple JSON-based fallback
++const startSerializer = {
++  stringify: (value) => JSON.stringify(value),
++  parse: (value) => JSON.parse(value),
++};
++export { FRAME_HEADER_SIZE, FrameType, RawStream, TSS_CONTENT_TYPE_FRAMED, TSS_CONTENT_TYPE_FRAMED_VERSIONED, TSS_FORMDATA_CONTEXT, TSS_FRAMED_PROTOCOL_VERSION, TSS_SERVER_FUNCTION, X_TSS_CONTEXT, X_TSS_RAW_RESPONSE, X_TSS_SERIALIZED, createClientOnlyFn, createIsomorphicFn, createMiddleware, createNullProtoObject, createServerFn, createServerOnlyFn, createStart, execValidator, executeMiddleware, flattenMiddlewares, getDefaultSerovalPlugins, getGlobalStartContext, getRouterInstance, hydrate, json, mergeHeaders, safeObjectMerge, startSerializer, validateFramedProtocolVersion };

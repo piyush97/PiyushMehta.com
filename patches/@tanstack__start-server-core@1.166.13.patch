@@ -1,0 +1,84 @@
+diff --git a/dist/esm/fake-tanstack-router-entry.js b/dist/esm/fake-tanstack-router-entry.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..2e1c24ab187ee015c49b048f0763756ac4ed0f44
+--- /dev/null
++++ b/dist/esm/fake-tanstack-router-entry.js
+@@ -0,0 +1,5 @@
++// Placeholder: the real router entry is injected by the TanStack Start Vite plugin
++// This file satisfies the package imports map resolution for static analysis
++export async function createRouter() {
++  throw new Error('Router entry not injected by build system');
++}
+diff --git a/dist/esm/index.js b/dist/esm/index.js
+index b235fa700e3c0d0ca5af2738e654e9065baf0402..8431a43e8d11d059899e512ef788899763beb0b7 100644
+--- a/dist/esm/index.js
++++ b/dist/esm/index.js
+@@ -1,6 +1,6 @@
+-import { clearResponseHeaders, clearSession, deleteCookie, getCookie, getCookies, getRequest, getRequestHeader, getRequestHeaders, getRequestHost, getRequestIP, getRequestProtocol, getRequestUrl, getResponse, getResponseHeader, getResponseHeaders, getResponseStatus, getSession, getValidatedQuery, removeResponseHeader, requestHandler, sealSession, setCookie, setResponseHeader, setResponseHeaders, setResponseStatus, unsealSession, updateSession, useSession } from "./request-response.js";
++import { clearResponseHeaders, clearSession, deleteCookie, getCookie, getCookies, getRequest, getRequestHeader, getRequestHeaders, getRequestHost, getRequestIP, getRequestProtocol, getRequestUrl, getResponse, getResponseHeader, getResponseHeaders, getResponseStatus, getSession, getValidatedQuery, removeResponseHeader, requestHandler, eventHandler, toWebRequest, getEvent, sealSession, setCookie, setResponseHeader, setResponseHeaders, setResponseStatus, unsealSession, updateSession, useSession } from "./request-response.js";
+ import { HEADERS } from "./constants.js";
+ import { createStartHandler } from "./createStartHandler.js";
+ import { VIRTUAL_MODULES } from "./virtual-modules.js";
+ import { attachRouterServerSsrUtils, createRequestHandler, defineHandlerCallback, transformPipeableStreamWithRouter, transformReadableStreamWithRouter } from "@tanstack/router-core/ssr/server";
+-export { HEADERS, VIRTUAL_MODULES, attachRouterServerSsrUtils, clearResponseHeaders, clearSession, createRequestHandler, createStartHandler, defineHandlerCallback, deleteCookie, getCookie, getCookies, getRequest, getRequestHeader, getRequestHeaders, getRequestHost, getRequestIP, getRequestProtocol, getRequestUrl, getResponse, getResponseHeader, getResponseHeaders, getResponseStatus, getSession, getValidatedQuery, removeResponseHeader, requestHandler, sealSession, setCookie, setResponseHeader, setResponseHeaders, setResponseStatus, transformPipeableStreamWithRouter, transformReadableStreamWithRouter, unsealSession, updateSession, useSession };
++export { HEADERS, VIRTUAL_MODULES, attachRouterServerSsrUtils, clearResponseHeaders, clearSession, createRequestHandler, createStartHandler, defineHandlerCallback, deleteCookie, eventHandler, toWebRequest, getEvent, getCookie, getCookies, getRequest, getRequestHeader, getRequestHeaders, getRequestHost, getRequestIP, getRequestProtocol, getRequestUrl, getResponse, getResponseHeader, getResponseHeaders, getResponseStatus, getSession, getValidatedQuery, removeResponseHeader, requestHandler, sealSession, setCookie, setResponseHeader, setResponseHeaders, setResponseStatus, transformPipeableStreamWithRouter, transformReadableStreamWithRouter, unsealSession, updateSession, useSession };
+diff --git a/dist/esm/request-response.js b/dist/esm/request-response.js
+index 036088e4ad8fd851f680aa5b41769722584992aa..bb92398b2b9a936ac01ad72a8e9785eecb7fd2d0 100644
+--- a/dist/esm/request-response.js
++++ b/dist/esm/request-response.js
+@@ -213,6 +213,36 @@ function getValidatedQuery$1(schema) {
+ 	return getValidatedQuery(getH3Event(), schema);
+ }
+ //#endregion
+-export { clearResponseHeaders, clearSession$1 as clearSession, deleteCookie$1 as deleteCookie, getCookie, getCookies, getRequest, getRequestHeader, getRequestHeaders, getRequestHost$1 as getRequestHost, getRequestIP$1 as getRequestIP, getRequestProtocol$1 as getRequestProtocol, getRequestUrl, getResponse, getResponseHeader, getResponseHeaders, getResponseStatus, getSession$1 as getSession, getValidatedQuery$1 as getValidatedQuery, removeResponseHeader, requestHandler, sealSession$1 as sealSession, setCookie$1 as setCookie, setResponseHeader, setResponseHeaders, setResponseStatus, unsealSession$1 as unsealSession, updateSession$1 as updateSession, useSession$1 as useSession };
++
++// Shims for @tanstack/start@1.120.x compatibility
++// eventHandler wraps a handler that receives a h3-like event object
++function eventHandler(handler) {
++  return requestHandler((request, opts) => {
++    const fakeEvent = {
++      node: {
++        req: { on: () => {}, removeListener: () => {} },
++        res: {}
++      },
++      request
++    };
++    return handler(fakeEvent);
++  });
++}
++
++// toWebRequest converts an event (h3-like) to a Web Request
++function toWebRequest(event) {
++  return event.request || event;
++}
++
++// getEvent returns current event from AsyncLocalStorage context
++function getEvent() {
++  try {
++    return getH3Event();
++  } catch {
++    return null;
++  }
++}
++
++export { clearResponseHeaders, clearSession$1 as clearSession, deleteCookie$1 as deleteCookie, getCookie, getCookies, getRequest, getRequestHeader, getRequestHeaders, getRequestHost$1 as getRequestHost, getRequestIP$1 as getRequestIP, getRequestProtocol$1 as getRequestProtocol, getRequestUrl, getResponse, getResponseHeader, getResponseHeaders, getResponseStatus, getSession$1 as getSession, getValidatedQuery$1 as getValidatedQuery, removeResponseHeader, requestHandler, eventHandler, toWebRequest, getEvent, sealSession$1 as sealSession, setCookie$1 as setCookie, setResponseHeader, setResponseHeaders, setResponseStatus, unsealSession$1 as unsealSession, updateSession$1 as updateSession, useSession$1 as useSession };
+ 
+ //# sourceMappingURL=request-response.js.map
+\ No newline at end of file
+diff --git a/package.json b/package.json
+index bcf1b712b6e14cdd23bcc15e18c78ffe5f21060b..5bb3342fbc281be6f50d4c0c87bc987e4ff5c673 100644
+--- a/package.json
++++ b/package.json
+@@ -49,6 +49,12 @@
+   "imports": {
+     "#tanstack-start-server-fn-resolver": {
+       "default": "./dist/esm/fake-start-server-fn-resolver.js"
++    },
++    "#tanstack-router-entry": {
++      "default": "./dist/esm/fake-tanstack-router-entry.js"
++    },
++    "#tanstack-start-entry": {
++      "default": "./dist/esm/fake-tanstack-router-entry.js"
+     }
+   },
+   "sideEffects": false,

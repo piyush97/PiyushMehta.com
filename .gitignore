@@ -3,6 +3,9 @@ node_modules/
 dist/
 *.tsbuildinfo
 .DS_Store
+.output/
+.vinxi/
+app.config.timestamp_*.js
 .vercel
 .netlify
 _site/
