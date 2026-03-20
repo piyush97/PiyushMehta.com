@@ -104,7 +104,7 @@ test.describe('Command Palette', () => {
     
     // Verify clipboard contains the page URL
     const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
-    expect(clipboardText).toContain('localhost:4321');
+    expect(clipboardText).toContain('localhost:3000');
   });
 
   test('should search blog content', async ({ page }) => {

@@ -2,6 +2,15 @@ import {
   createStartHandler,
   defaultStreamHandler,
 } from '@tanstack/start/server'
+import * as Sentry from '@sentry/cloudflare'
 import { createRouter } from './router'
 
-export default createStartHandler({ createRouter })(defaultStreamHandler)
+const handler = createStartHandler({ createRouter })(defaultStreamHandler)
+
+export default Sentry.withSentry(
+  (env: Record<string, string>) => ({
+    dsn: env.SENTRY_DSN,
+    tracesSampleRate: 1.0,
+  }),
+  handler,
+)
