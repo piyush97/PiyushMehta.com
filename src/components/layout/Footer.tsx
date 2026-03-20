@@ -1,52 +1,7 @@
 // src/components/layout/Footer.tsx
-import { useState } from 'react'
+const currentYear = new Date().getFullYear()
 
 export function Footer() {
-  const currentYear = new Date().getFullYear()
-  const [emailValue, setEmailValue] = useState('')
-  const [buttonText, setButtonText] = useState('Subscribe')
-  const [buttonDisabled, setButtonDisabled] = useState(false)
-  const [honeypot, setHoneypot] = useState('')
-
-  const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!emailValue) return
-
-    const originalText = buttonText
-    setButtonText('Subscribing...')
-    setButtonDisabled(true)
-
-    try {
-      const response = await fetch('/api/newsletter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: emailValue,
-          honeypot: honeypot,
-          timestamp: Date.now(),
-          referrer: document.referrer,
-        }),
-      })
-      const data = await response.json()
-      if (data.success) {
-        setButtonText('Subscribed!')
-        setEmailValue('')
-        setTimeout(() => {
-          setButtonText(originalText)
-          setButtonDisabled(false)
-        }, 2000)
-      } else {
-        throw new Error(data.message || 'Subscription failed')
-      }
-    } catch {
-      setButtonText('Try Again')
-      setTimeout(() => {
-        setButtonText(originalText)
-        setButtonDisabled(false)
-      }, 3000)
-    }
-  }
-
   return (
     <footer className="border-t footer-section bg-light-950 border-card-border">
       <div className="py-12 container-base lg:py-16">
@@ -154,45 +109,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Newsletter Signup */}
-        <div className="pt-8 mt-12 border-t footer-newsletter border-card-border">
-          <div className="max-w-md mx-auto md:mx-0">
-            <h4 className="mb-3 text-lg font-semibold text-text-primary">Stay Updated</h4>
-            <p className="mb-4 text-sm text-text-secondary">
-              Get notified about new blog posts and tech talks.
-            </p>
-            <form className="newsletter-form" onSubmit={handleNewsletterSubmit}>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-2 transition-colors border rounded-lg newsletter-input bg-light-800 border-card-border text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
-                  required
-                  value={emailValue}
-                  onChange={(e) => setEmailValue(e.target.value)}
-                />
-                {/* Honeypot field for bot protection (hidden) */}
-                <input
-                  type="text"
-                  name="website"
-                  className="honeypot-field"
-                  style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
-                  tabIndex={-1}
-                  autoComplete="off"
-                  value={honeypot}
-                  onChange={(e) => setHoneypot(e.target.value)}
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-2 btn-primary whitespace-nowrap"
-                  disabled={buttonDisabled}
-                >
-                  {buttonText}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
       </div>
 
       {/* Footer Bottom */}
