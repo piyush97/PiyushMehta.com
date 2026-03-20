@@ -6,7 +6,7 @@
 
 **Architecture:** Feature-based module structure with a four-layer data flow (route → service → repository → infrastructure). MDX compiled at build time via `@mdx-js/rollup`. Cloudflare Workers bindings replace Vercel-specific infrastructure.
 
-**Tech Stack:** TanStack Start (Vinxi/Vite), React 18, Tailwind CSS 3, `@mdx-js/rollup`, `gray-matter`, Resend, `@sentry/cloudflare`, Cloudflare Workers, Wrangler, Zod, Biome, Playwright
+**Tech Stack:** TanStack Start (Vinxi/Vite), React 18, Tailwind CSS 3, `@mdx-js/rollup`, `remark-frontmatter`, `remark-mdx-frontmatter`, Resend, `@sentry/cloudflare`, Cloudflare Workers, Wrangler, Zod, Biome, Playwright
 
 **Spec:** `docs/superpowers/specs/2026-03-19-tanstack-start-migration-design.md`
 
@@ -36,7 +36,7 @@ git checkout -b tanstack-migration
 | `src/lib/errors.ts` | Create | Typed `AppError` discriminated union |
 | `src/lib/result.ts` | Create | `Result<T>` type |
 | `src/lib/theme.ts` | Create | Theme init script string |
-| `src/lib/sentry.ts` | Create | `@sentry/cloudflare` init |
+| `src/lib/sentry.ts` | Create | `@sentry/cloudflare` init helper |
 | `src/routes/__root.tsx` | Create | Root layout — replaces `Layout.astro` |
 | `src/components/layout/Nav.tsx` | Create | Navbar — listens to `themechange` event |
 | `src/components/layout/Footer.tsx` | Create | Footer |
@@ -55,7 +55,7 @@ git checkout -b tanstack-migration
 | `src/features/blog/components/TagList.tsx` | Create | Tag pills |
 | `src/features/projects/types.ts` | Create | `Project` interface |
 | `src/features/projects/data/fallback.ts` | Create | Static fallback project list |
-| `src/features/projects/lib/github.ts` | Create | GitHub API (carried from `src/utils/github.ts`) |
+| `src/features/projects/lib/github.ts` | Create | GitHub API (fixed — no `import.meta.env`) |
 | `src/features/projects/lib/service.ts` | Create | Merge live repos + fallback |
 | `src/features/projects/components/ProjectCard.tsx` | Create | Project card |
 | `src/features/projects/components/ProjectList.tsx` | Create | Project grid |
@@ -63,7 +63,7 @@ git checkout -b tanstack-migration
 | `src/features/contact/lib/repository.ts` | Create | Resend API call |
 | `src/features/contact/lib/service.ts` | Create | Rate limit → validate → send |
 | `src/features/contact/components/ContactForm.tsx` | Create | Contact form UI |
-| `src/features/videos/data/videos.ts` | Create | Static video list (from `videos.astro`) |
+| `src/features/videos/data/videos.ts` | Create | Static video list |
 | `src/features/videos/components/VideoCard.tsx` | Create | Video card |
 | `src/features/feeds/lib/rss.ts` | Create | RSS XML generation |
 | `src/features/feeds/lib/sitemap.ts` | Create | Sitemap XML generation |
@@ -76,11 +76,88 @@ git checkout -b tanstack-migration
 | `src/routes/blog/index.tsx` | Create | Blog listing |
 | `src/routes/blog/$slug.tsx` | Create | Blog post |
 | `src/routes/api/contact.ts` | Create | Contact form server function |
-| `src/routes/api/rss[.]xml.ts` | Create | RSS feed API route |
-| `src/routes/api/sitemap[.]xml.ts` | Create | Sitemap API route |
-| `src/routes/api/robots[.]txt.ts` | Create | Robots.txt API route |
+| `src/routes/api/rss[.]xml.ts` | Create | RSS feed — served at `/rss.xml` |
+| `src/routes/api/sitemap[.]xml.ts` | Create | Sitemap — served at `/sitemap.xml` |
+| `src/routes/api/robots[.]txt.ts` | Create | Robots — served at `/robots.txt` |
 | `playwright.config.ts` | Modify | Update ports for Vinxi dev server |
-| `tests/simple.spec.ts` | Modify | Update selectors for new React structure |
+
+---
+
+## Phase 0 — Pre-migration Content Cleanup
+
+**Must be done before the new build system is in place. These MDX files contain Astro-specific syntax that will break `@mdx-js/rollup`.**
+
+### Task 0: Fix MDX Content
+
+**Files:**
+- Move: `src/content/blog/macos-to-arch-linux-omarchy-developer-productivity.mdx` → `src/content/blog/macos-to-arch-linux-omarchy-developer-productivity/index.mdx`
+- Modify: `src/content/blog/bloom-filters/index.mdx` (lines 47, 90, 139)
+- Modify: `src/content/blog/macos-to-arch-linux-omarchy-developer-productivity/index.mdx` (lines 71, 320)
+- Modify: `src/content/blog/zero-downtime-database-migration-at-scale/index.mdx` (lines 89, 99, 329, 431)
+
+**Why:** `client:load` and `client:visible` are Astro-specific JSX attributes. They are not valid React props. When `@mdx-js/rollup` compiles these files, TypeScript will error on unknown props. The fix is to remove the attribute — React components render immediately without lazy hydration directives.
+
+**Note on `migrating-legacy-codebase-to-astro`:** That post uses `client:*` in code block examples (backtick fences), not as actual component usage in the document body. Grep matches inside code fences are false positives — no changes needed to that file.
+
+- [ ] **Step 1: Move the loose top-level MDX file into a subdirectory**
+
+```bash
+mkdir -p src/content/blog/macos-to-arch-linux-omarchy-developer-productivity
+mv src/content/blog/macos-to-arch-linux-omarchy-developer-productivity.mdx \
+   src/content/blog/macos-to-arch-linux-omarchy-developer-productivity/index.mdx
+```
+
+- [ ] **Step 2: Strip `client:load` from `bloom-filters/index.mdx`**
+
+```bash
+sed -i 's/ client:load//g; s/ client:visible//g; s/ client:idle//g' \
+  src/content/blog/bloom-filters/index.mdx
+```
+
+Verify the three affected lines now read:
+```mdx
+<BloomFilterDemo />
+<TechComparison />
+<InteractiveQuiz />
+```
+
+- [ ] **Step 3: Strip `client:*` from `macos-to-arch-linux-omarchy-developer-productivity/index.mdx`**
+
+```bash
+sed -i 's/ client:load//g; s/ client:visible//g; s/ client:idle//g' \
+  src/content/blog/macos-to-arch-linux-omarchy-developer-productivity/index.mdx
+```
+
+Verify lines 71 and 320 now read:
+```mdx
+<SetupShowcase />
+<SystemComparison macosData={costData.macosData} archData={costData.archData} />
+```
+
+- [ ] **Step 4: Strip `client:load` from `zero-downtime-database-migration-at-scale/index.mdx`**
+
+```bash
+sed -i 's/ client:load//g; s/ client:visible//g; s/ client:idle//g' \
+  src/content/blog/zero-downtime-database-migration-at-scale/index.mdx
+```
+
+Verify four lines now have no `client:*` attribute.
+
+- [ ] **Step 5: Confirm no `client:*` remain in actual MDX component usage**
+
+```bash
+grep -rn "client:load\|client:visible\|client:idle" src/content/blog/ \
+  --include="*.mdx" | grep -v "^\`\`\`\|^    \|^  \`"
+```
+
+Expected: No output (any remaining matches are inside code blocks).
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add src/content/blog/
+git commit -m "fix: restructure loose MDX file, strip Astro client: directives from posts"
+```
 
 ---
 
@@ -96,15 +173,17 @@ git checkout -b tanstack-migration
 - Modify: `biome.json`
 - Create: `wrangler.toml`
 
-- [ ] **Step 1: Install TanStack Start and remove Astro deps**
+- [ ] **Step 1: Remove Astro packages, install TanStack Start**
 
 ```bash
 pnpm remove astro @astrojs/react @astrojs/tailwind @astrojs/mdx @astrojs/sitemap @astrojs/vercel @vercel/og satori @upstash/redis @upstash/ratelimit
 pnpm add @tanstack/start @tanstack/react-router vinxi
 pnpm add @mdx-js/mdx @mdx-js/rollup remark-frontmatter remark-mdx-frontmatter
-pnpm add resend @sentry/cloudflare zod gray-matter
+pnpm add resend @sentry/cloudflare zod
 pnpm add -D wrangler @cloudflare/workers-types
 ```
+
+Note: Do NOT add `gray-matter` — it is unused. Frontmatter is handled at build time by `remark-mdx-frontmatter`.
 
 - [ ] **Step 2: Create `app.config.ts`**
 
@@ -114,7 +193,6 @@ import { defineConfig } from '@tanstack/start/config'
 import mdx from '@mdx-js/rollup'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
-import { cloudflareWorkersPreset } from 'vinxi/lib/presets/cloudflare-workers'
 
 export default defineConfig({
   server: {
@@ -130,7 +208,32 @@ export default defineConfig({
 })
 ```
 
-- [ ] **Step 3: Update `tsconfig.json`**
+Note: No unused imports. The `preset: 'cloudflare-workers'` string is the correct way to set the Vinxi preset.
+
+- [ ] **Step 3: Update `package.json` scripts**
+
+```json
+{
+  "scripts": {
+    "dev": "vinxi dev",
+    "build": "vinxi build --preset cloudflare-workers",
+    "preview": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "lint": "biome lint src/",
+    "lint:fix": "biome lint --write src/",
+    "check": "biome check src/",
+    "check:write": "biome check --write src/",
+    "ci": "biome ci src/",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui"
+  }
+}
+```
+
+The `--preset cloudflare-workers` flag is required on the build script — without it, Vinxi outputs a Node.js bundle incompatible with Cloudflare Workers.
+
+- [ ] **Step 4: Update `tsconfig.json`**
 
 ```json
 {
@@ -156,24 +259,23 @@ export default defineConfig({
 }
 ```
 
-- [ ] **Step 4: Update `tailwind.config.mjs` content globs**
+- [ ] **Step 5: Update `tailwind.config.mjs` content globs**
 
-Replace the `content` array:
+Replace the `content` array value:
 ```js
 content: ['./src/**/*.{html,js,jsx,ts,tsx,mdx}'],
 ```
-(Remove `.astro` — it no longer exists.)
+Remove `.astro` — it no longer exists in the project.
 
-- [ ] **Step 5: Update `biome.json`**
+- [ ] **Step 6: Update `biome.json`**
 
-Remove all `.astro` references from `include`, `ignore`, and `overrides`. Remove the two Astro-specific `overrides` blocks (the ones that include `**/*.astro` and `src/pages/**/*.astro`).
+Remove all `.astro` references. Specifically:
+1. In `files.ignore`: replace `.astro/**` with `.output/**`
+2. In `formatter.include`: remove `"src/**/*.{js,jsx,ts,tsx,astro,json,jsonc}"` — replace with `"src/**/*.{js,jsx,ts,tsx,json,jsonc}"`
+3. In `formatter.ignore` and `organizeImports.ignore`: replace `**/.astro/**` with `**/.output/**`
+4. Delete the two `overrides` blocks whose `include` patterns reference `**/*.astro` or `src/pages/**/*.astro`
 
-Update the `files.ignore` block to replace `.astro/**` with `.output/**`:
-```json
-"ignore": ["dist/**", ".output/**", "node_modules/**", "public/**", "*.config.*"]
-```
-
-- [ ] **Step 6: Create `wrangler.toml`**
+- [ ] **Step 7: Create `wrangler.toml`**
 
 ```toml
 name = "piyushmehta-com"
@@ -188,11 +290,10 @@ directory = ".output/public"
 type = "ESModule"
 globs = ["**/*.mjs"]
 
-# Rate Limiting for contact form (check current Cloudflare docs for exact syntax)
-# https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
-[[unsafe.bindings]]
-name = "RATE_LIMITER"
-type = "ratelimit"
+# Cloudflare Rate Limiting API (stable — NOT [[unsafe.bindings]])
+# See: https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
+[[rate_limiting]]
+binding = "RATE_LIMITER"
 namespace_id = "1"
 simple = { limit = 5, period = 60 }
 
@@ -201,48 +302,30 @@ CONTACT_FROM_EMAIL = "noreply@piyushmehta.com"
 CONTACT_TO_EMAIL = "hello@piyushmehta.com"
 ```
 
-- [ ] **Step 7: Update `package.json` scripts**
+IMPORTANT: Use `[[rate_limiting]]` with `binding =`, NOT `[[unsafe.bindings]]` with `type = "ratelimit"`. The unsafe syntax is beta-era and deprecated.
 
-```json
-{
-  "scripts": {
-    "dev": "vinxi dev",
-    "build": "vinxi build",
-    "preview": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "lint": "biome lint src/",
-    "lint:fix": "biome lint --write src/",
-    "check": "biome check src/",
-    "check:write": "biome check --write src/",
-    "ci": "biome ci src/",
-    "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:ui": "playwright test --ui"
-  }
-}
-```
+- [ ] **Step 8: Create minimal bootstrap to verify build**
 
-- [ ] **Step 8: Verify project builds (empty app)**
-
-Create a minimal `src/routes/__root.tsx` to satisfy the router:
+Create `src/routes/__root.tsx` (placeholder — will be rewritten in Task 4):
 ```tsx
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 export const Route = createRootRoute({ component: () => <Outlet /> })
 ```
 
-Create `src/routes/index.tsx`:
+Create `src/routes/index.tsx` (placeholder):
 ```tsx
 import { createFileRoute } from '@tanstack/react-router'
 export const Route = createFileRoute('/')({ component: () => <div>Hello</div> })
 ```
 
-Run:
+- [ ] **Step 9: Verify build**
+
 ```bash
 pnpm build
 ```
-Expected: Build completes, `.output/` directory created.
+Expected: Build completes, `.output/` directory created containing `server/index.mjs`.
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 10: Commit**
 
 ```bash
 git add package.json app.config.ts tsconfig.json tailwind.config.mjs biome.json wrangler.toml src/routes/__root.tsx src/routes/index.tsx
@@ -254,28 +337,11 @@ git commit -m "chore: scaffold TanStack Start + Cloudflare Workers project"
 ### Task 2: Infrastructure Layer
 
 **Files:**
-- Create: `src/lib/env.ts`
-- Create: `src/lib/errors.ts`
 - Create: `src/lib/result.ts`
+- Create: `src/lib/errors.ts`
+- Create: `src/lib/env.ts`
 
-- [ ] **Step 1: Create `src/lib/result.ts`**
-
-```ts
-// src/lib/result.ts
-export type Result<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: AppError }
-
-export function ok<T>(data: T): Result<T> {
-  return { ok: true, data }
-}
-
-export function err(error: AppError): Result<never> {
-  return { ok: false, error }
-}
-```
-
-- [ ] **Step 2: Create `src/lib/errors.ts`**
+- [ ] **Step 1: Create `src/lib/errors.ts`**
 
 ```ts
 // src/lib/errors.ts
@@ -285,30 +351,41 @@ export type AppError =
   | { type: 'not_found'; resource: string }
   | { type: 'internal' }
 
-export function internalError(): AppError {
-  return { type: 'internal' }
+export function internalError(): AppError { return { type: 'internal' } }
+export function notFoundError(resource: string): AppError { return { type: 'not_found', resource } }
+export function validationError(fields: Record<string, string>): AppError { return { type: 'validation', fields } }
+export function rateLimitedError(retryAfter = 60): AppError { return { type: 'rate_limited', retryAfter } }
+```
+
+- [ ] **Step 2: Create `src/lib/result.ts`**
+
+```ts
+// src/lib/result.ts
+import type { AppError } from './errors'
+
+export type Result<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: AppError }
+
+export function ok<T>(data: T): Result<T> {
+  return { ok: true, data }
 }
 
-export function notFoundError(resource: string): AppError {
-  return { type: 'not_found', resource }
-}
-
-export function validationError(fields: Record<string, string>): AppError {
-  return { type: 'validation', fields }
-}
-
-export function rateLimitedError(retryAfter = 60): AppError {
-  return { type: 'rate_limited', retryAfter }
+// Returns { ok: false; error: AppError } — not parameterized, avoids Result<never>
+export function err(error: AppError): { ok: false; error: AppError } {
+  return { ok: false, error }
 }
 ```
+
+Note: `err()` returns `{ ok: false; error: AppError }` (not `Result<never>`) so it is assignable to `Result<T>` for any `T` in TypeScript's structural type system.
 
 - [ ] **Step 3: Create `src/lib/env.ts`**
 
 ```ts
 // src/lib/env.ts
 // Cloudflare Workers do NOT use process.env.
-// Env vars are injected as the `env` parameter of the fetch handler.
-// In TanStack Start's Cloudflare adapter, access them via the execution context.
+// Env vars are passed as the `env` object in the fetch handler.
+// In TanStack Start's Cloudflare adapter, access via: (context as any).cloudflare.env
 import { z } from 'zod'
 
 const EnvSchema = z.object({
@@ -321,8 +398,7 @@ const EnvSchema = z.object({
 
 export type Env = z.infer<typeof EnvSchema>
 
-// Call this with the Cloudflare env object from the execution context.
-// Throws if any required variable is missing — fail fast.
+// Throws ZodError if any required variable is missing — fail fast at request time
 export function validateEnv(rawEnv: unknown): Env {
   return EnvSchema.parse(rawEnv)
 }
@@ -348,7 +424,7 @@ git commit -m "feat: add infrastructure layer — result type, error types, env 
 
 **Files:**
 - Create: `public/_headers`
-- Verify: all CSS files exist at `src/styles/`
+- Verify: CSS files exist at `src/styles/`
 
 - [ ] **Step 1: Create `public/_headers`**
 
@@ -386,9 +462,16 @@ ls src/styles/
 ```
 Expected: `global.css  themes.css  base.css  components.css  utilities.css`
 
-If they exist, no action needed — they carry over unchanged.
+These carry over unchanged — no modifications needed.
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 3: Build verify**
+
+```bash
+pnpm build
+```
+Expected: Clean build.
+
+- [ ] **Step 4: Commit**
 
 ```bash
 git add public/_headers
@@ -413,34 +496,20 @@ git commit -m "feat: add Cloudflare security headers and cache rules"
 
 ```ts
 // src/lib/theme.ts
-// This script runs before CSS loads to prevent flash of wrong theme.
-// Injected as a raw <script> tag in __root.tsx <head>.
-export const themeInitScript = `
-(function() {
-  var t = localStorage.getItem('theme') || 'dark';
-  var root = document.documentElement;
-  root.classList.remove('professional-dark','professional-light','high-contrast','retro-tech','minimalist','custom-theme','light');
-  if (t === 'dark') root.classList.add('professional-dark');
-  else if (t === 'light') root.classList.add('professional-light');
-  else if (t === 'high-contrast') root.classList.add('high-contrast');
-  else root.classList.add('professional-dark');
-})();
-`.trim();
+// Runs before CSS loads to prevent flash of wrong theme.
+// Injected as a raw <script> in __root.tsx <head>.
+export const themeInitScript = `(function(){var t=localStorage.getItem('theme')||'dark';var r=document.documentElement;r.classList.remove('professional-dark','professional-light','high-contrast','retro-tech','minimalist','custom-theme','light');if(t==='dark')r.classList.add('professional-dark');else if(t==='light')r.classList.add('professional-light');else if(t==='high-contrast')r.classList.add('high-contrast');else r.classList.add('professional-dark');})();`
 ```
 
 - [ ] **Step 2: Create `src/lib/sentry.ts`**
 
 ```ts
 // src/lib/sentry.ts
-import * as Sentry from '@sentry/cloudflare'
-
-export function initSentry(dsn: string | undefined) {
-  if (!dsn) return
-  Sentry.init({
-    dsn,
-    tracesSampleRate: 0.1,
-    environment: 'production',
-  })
+// @sentry/cloudflare uses withSentry() to wrap the Worker fetch handler.
+// Do NOT call Sentry.init() on each request — it is called once at the entry point.
+// This module exports a helper to get the DSN from context.
+export function getSentryDsn(cfEnv: Record<string, unknown>): string | undefined {
+  return typeof cfEnv.SENTRY_DSN === 'string' ? cfEnv.SENTRY_DSN : undefined
 }
 ```
 
@@ -477,9 +546,7 @@ export function ThemeSelector() {
 
   useEffect(() => {
     setCurrent(getCurrentTheme())
-    const handler = (e: Event) => {
-      setCurrent((e as CustomEvent).detail.theme)
-    }
+    const handler = (e: Event) => setCurrent((e as CustomEvent<{ theme: Theme }>).detail.theme)
     document.addEventListener('themechange', handler)
     return () => document.removeEventListener('themechange', handler)
   }, [])
@@ -511,25 +578,21 @@ export function ThemeSelector() {
 
 - [ ] **Step 4: Create `src/components/layout/Nav.tsx`**
 
-Carry over the navbar from `src/components/Navbar.astro`, converting to React. Key points:
-- Convert `class=` → `className=`
-- `<a>` links stay the same (TanStack Router also supports `<Link>` but plain `<a>` works for nav links)
-- Add `useEffect` to listen for `themechange` CustomEvent for theme button state
-- Import `ThemeSelector` component
+Carry over navbar content from `src/components/Navbar.astro`. Convert `class=` → `className=`. Import `ThemeSelector`. All CSS class names are identical.
 
 ```tsx
 // src/components/layout/Nav.tsx
 import { ThemeSelector } from '../theme/ThemeSelector'
 
-export function Nav() {
-  const links = [
-    { href: '/blog', label: 'Blog' },
-    { href: '/projects', label: 'Projects' },
-    { href: '/videos', label: 'Videos' },
-    { href: '/about', label: 'About' },
-    { href: '/contact-me', label: 'Contact' },
-  ]
+const links = [
+  { href: '/blog', label: 'Blog' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/videos', label: 'Videos' },
+  { href: '/about', label: 'About' },
+  { href: '/contact-me', label: 'Contact' },
+]
 
+export function Nav() {
   return (
     <nav className="navbar" role="navigation" aria-label="Main navigation">
       <div className="container-base navbar-inner">
@@ -552,13 +615,13 @@ export function Nav() {
 
 - [ ] **Step 5: Create `src/components/layout/Footer.tsx`**
 
-Carry over footer from `src/components/Footer.astro`, converting `class=` → `className=`. Keep all existing content and links.
+Carry over content from `src/components/Footer.astro`. Convert `class=` → `className=`. Keep all links and copy.
 
 - [ ] **Step 6: Create shared UI primitives**
 
 ```tsx
 // src/components/ui/Button.tsx
-import type { ReactNode, ButtonHTMLAttributes, AnchorHTMLAttributes } from 'react'
+import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary'
@@ -567,11 +630,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export function Button({ variant = 'primary', className = '', children, ...props }: ButtonProps) {
   return (
-    <button
-      type="button"
-      className={`btn-${variant} ${className}`.trim()}
-      {...props}
-    >
+    <button type="button" className={`btn-${variant} ${className}`.trim()} {...props}>
       {children}
     </button>
   )
@@ -580,18 +639,19 @@ export function Button({ variant = 'primary', className = '', children, ...props
 
 ```tsx
 // src/components/ui/Tag.tsx
-interface TagProps { label: string }
-
-export function Tag({ label }: TagProps) {
+export function Tag({ label }: { label: string }) {
   return <span className="project-tag">{label}</span>
 }
 ```
 
 - [ ] **Step 7: Rewrite `src/routes/__root.tsx`**
 
+Note on imports: `HeadContent` and `Scripts` come from `@tanstack/start` (the full-stack package), not from `@tanstack/react-router`. Verify these exports exist in the installed version before committing.
+
 ```tsx
 // src/routes/__root.tsx
-import { createRootRoute, Outlet, HeadContent, Scripts } from '@tanstack/react-router'
+import { createRootRoute, Outlet } from '@tanstack/react-router'
+import { HeadContent, Scripts } from '@tanstack/start'
 import { Nav } from '../components/layout/Nav'
 import { Footer } from '../components/layout/Footer'
 import { themeInitScript } from '../lib/theme'
@@ -615,7 +675,6 @@ function RootLayout() {
     <html lang="en">
       <head>
         <HeadContent />
-        {/* Theme init: runs before CSS to prevent flash of wrong theme */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
@@ -631,7 +690,7 @@ function RootLayout() {
 }
 ```
 
-- [ ] **Step 8: Verify build**
+- [ ] **Step 8: Build verify**
 
 ```bash
 pnpm build
@@ -642,14 +701,14 @@ Expected: Build completes without errors.
 
 ```bash
 git add src/routes/__root.tsx src/components/ src/lib/theme.ts src/lib/sentry.ts
-git commit -m "feat: add root layout, nav, footer, theme system"
+git commit -m "feat: add root layout, nav, footer, theme system (3 themes: dark/light/high-contrast)"
 ```
 
 ---
 
 ## Phase 2 — Content Pipeline + Static Pages
 
-### Task 5: Blog Content Pipeline (MDX)
+### Task 5: Blog Content Pipeline
 
 **Files:**
 - Create: `src/features/blog/types.ts`
@@ -676,7 +735,7 @@ export interface PostFrontmatter {
 export interface Post {
   slug: string
   frontmatter: PostFrontmatter
-  Component: ComponentType  // compiled MDX → React component (build-time)
+  Component: ComponentType
 }
 ```
 
@@ -695,7 +754,6 @@ export const PostFrontmatterSchema = z.object({
   image: z.object({ url: z.string(), alt: z.string() }).optional(),
 })
 
-// Validates at build time — throw means build fails
 export function validateFrontmatter(raw: unknown, slug: string) {
   const result = PostFrontmatterSchema.safeParse(raw)
   if (!result.success) {
@@ -709,35 +767,38 @@ export function validateFrontmatter(raw: unknown, slug: string) {
 
 ```ts
 // src/features/blog/lib/repository.ts
-// MDX files are compiled at build time by @mdx-js/rollup.
-// remark-mdx-frontmatter exposes frontmatter as a named export.
+// @mdx-js/rollup compiles ALL MDX files at build time.
+// remark-mdx-frontmatter exports frontmatter as a named 'frontmatter' export.
+// The glob matches both subdirectory posts (*/index.mdx) and any loose top-level .mdx files.
 import type { ComponentType } from 'react'
 import { validateFrontmatter } from './schemas'
 import type { Post } from '../types'
 
-// Vite processes all MDX files at build time. Each module exports:
-//   default — the React component
-//   frontmatter — the parsed YAML frontmatter (via remark-mdx-frontmatter)
 const modules = import.meta.glob<{
   default: ComponentType
   frontmatter: Record<string, unknown>
-}>('../../../content/blog/*/index.mdx', { eager: true })
+}>(
+  [
+    '../../../content/blog/*/index.mdx',
+    '../../../content/blog/*.mdx',
+  ],
+  { eager: true }
+)
 
 function extractSlug(path: string): string {
-  // path: ../../../content/blog/my-post/index.mdx → my-post
-  const match = path.match(/\/blog\/([^/]+)\/index\.mdx$/)
-  return match?.[1] ?? path
+  // ../../../content/blog/my-post/index.mdx → my-post
+  // ../../../content/blog/my-post.mdx → my-post
+  const withDir = path.match(/\/blog\/([^/]+)\/index\.mdx$/)
+  if (withDir) return withDir[1]
+  const loose = path.match(/\/blog\/([^/]+)\.mdx$/)
+  return loose?.[1] ?? path
 }
 
 export function getAllPostModules(): Post[] {
   return Object.entries(modules).map(([path, mod]) => {
     const slug = extractSlug(path)
     const frontmatter = validateFrontmatter(mod.frontmatter, slug)
-    return {
-      slug,
-      frontmatter,
-      Component: mod.default,
-    }
+    return { slug, frontmatter, Component: mod.default }
   })
 }
 ```
@@ -747,7 +808,8 @@ export function getAllPostModules(): Post[] {
 ```ts
 // src/features/blog/lib/service.ts
 import { getAllPostModules } from './repository'
-import { ok } from '../../../lib/result'
+import { ok, err } from '../../../lib/result'
+import { notFoundError } from '../../../lib/errors'
 import type { Result } from '../../../lib/result'
 import type { Post } from '../types'
 
@@ -759,14 +821,13 @@ export function listPosts(): Result<Post[]> {
 }
 
 export function findPost(slug: string): Result<Post> {
-  const all = getAllPostModules()
-  const post = all.find((p) => p.slug === slug && !p.frontmatter.draft)
-  if (!post) return { ok: false, error: { type: 'not_found', resource: `blog/${slug}` } }
+  const post = getAllPostModules().find((p) => p.slug === slug && !p.frontmatter.draft)
+  if (!post) return err(notFoundError(`blog/${slug}`))
   return ok(post)
 }
 ```
 
-- [ ] **Step 5: Create `src/features/blog/lib/index.ts`** (public API)
+- [ ] **Step 5: Create `src/features/blog/lib/index.ts`**
 
 ```ts
 // src/features/blog/lib/index.ts
@@ -774,12 +835,12 @@ export { listPosts, findPost } from './service'
 export type { Post } from '../types'
 ```
 
-- [ ] **Step 6: Run build to verify MDX pipeline compiles all posts**
+- [ ] **Step 6: Build verify — all 21 posts must compile**
 
 ```bash
-pnpm build 2>&1 | grep -E "error|Error|warn|blog"
+pnpm build 2>&1 | grep -iE "error|fail|blog"
 ```
-Expected: No frontmatter errors. If any post fails schema validation, fix the frontmatter of that post.
+Expected: No errors. 21 posts (including the moved `macos-to-arch-linux` post) must all compile.
 
 - [ ] **Step 7: Commit**
 
@@ -804,13 +865,10 @@ git commit -m "feat: add blog content pipeline — build-time MDX compilation wi
 ```tsx
 // src/features/blog/components/TagList.tsx
 interface Props { tags: string[] }
-
 export function TagList({ tags }: Props) {
   return (
     <div className="project-tags">
-      {tags.map((tag) => (
-        <span key={tag} className="project-tag">{tag}</span>
-      ))}
+      {tags.map((tag) => <span key={tag} className="project-tag">{tag}</span>)}
     </div>
   )
 }
@@ -818,7 +876,7 @@ export function TagList({ tags }: Props) {
 
 - [ ] **Step 2: Create `src/features/blog/components/BlogCard.tsx`**
 
-Carry over from `src/components/BlogCard.astro`, converting to React TSX. Replace `class=` with `className=`. The card links to `/blog/${slug}`.
+Carry over from `src/components/BlogCard.astro`, converting to React TSX. Replace `class=` with `className=`. All CSS class names are identical.
 
 ```tsx
 // src/features/blog/components/BlogCard.tsx
@@ -829,15 +887,16 @@ interface Props { post: Post }
 
 export function BlogCard({ post }: Props) {
   const { slug, frontmatter } = post
+  const formattedDate = frontmatter.date.toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric',
+  })
   return (
     <article className="blog-card">
       <a href={`/blog/${slug}`} className="blog-card-link">
         <div className="blog-card-content">
-          <div className="blog-card-meta">
-            <time dateTime={frontmatter.date.toISOString()} className="blog-card-date">
-              {frontmatter.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </time>
-          </div>
+          <time dateTime={frontmatter.date.toISOString()} className="blog-card-date">
+            {formattedDate}
+          </time>
           <h2 className="blog-card-title">{frontmatter.title}</h2>
           <p className="blog-card-description">{frontmatter.description}</p>
           <TagList tags={frontmatter.tags} />
@@ -856,16 +915,11 @@ import type { Post } from '../types'
 import { BlogCard } from './BlogCard'
 
 interface Props { posts: Post[] }
-
 export function BlogList({ posts }: Props) {
-  if (posts.length === 0) {
-    return <p className="blog-empty">No posts yet.</p>
-  }
+  if (posts.length === 0) return <p className="blog-empty">No posts yet.</p>
   return (
     <div className="blog-grid">
-      {posts.map((post) => (
-        <BlogCard key={post.slug} post={post} />
-      ))}
+      {posts.map((post) => <BlogCard key={post.slug} post={post} />)}
     </div>
   )
 }
@@ -878,16 +932,13 @@ export function BlogList({ posts }: Props) {
 import type { PostFrontmatter } from '../types'
 import { TagList } from './TagList'
 
-interface Props { frontmatter: PostFrontmatter; slug: string }
-
+interface Props { frontmatter: PostFrontmatter }
 export function PostHeader({ frontmatter }: Props) {
   return (
     <header className="post-header">
-      <div className="post-meta">
-        <time dateTime={frontmatter.date.toISOString()} className="post-date">
-          {frontmatter.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-        </time>
-      </div>
+      <time dateTime={frontmatter.date.toISOString()} className="post-date">
+        {frontmatter.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </time>
       <h1 className="post-title">{frontmatter.title}</h1>
       <p className="post-description">{frontmatter.description}</p>
       <TagList tags={frontmatter.tags} />
@@ -900,19 +951,14 @@ export function PostHeader({ frontmatter }: Props) {
 
 ```tsx
 // src/features/blog/components/PostBody.tsx
-// The MDX component is pre-compiled at build time by @mdx-js/rollup.
-// All import statements inside MDX are resolved by Vite's module graph.
-// No client-side evaluate() needed.
+// MDX is compiled at build time by @mdx-js/rollup.
+// The Component is a standard React component — render it directly.
+// No client-side evaluate() — all imports (including interactive components) are resolved by Vite.
 import type { ComponentType } from 'react'
 
 interface Props { Component: ComponentType }
-
 export function PostBody({ Component }: Props) {
-  return (
-    <div className="prose">
-      <Component />
-    </div>
-  )
+  return <div className="prose"><Component /></div>
 }
 ```
 
@@ -920,12 +966,12 @@ export function PostBody({ Component }: Props) {
 
 ```bash
 git add src/features/blog/components/
-git commit -m "feat: add blog UI components — BlogCard, BlogList, PostHeader, PostBody"
+git commit -m "feat: add blog UI components — BlogCard, BlogList, PostHeader, PostBody, TagList"
 ```
 
 ---
 
-### Task 7: Static Pages (Homepage, About, Uses, Videos)
+### Task 7: Static Pages
 
 **Files:**
 - Rewrite: `src/routes/index.tsx`
@@ -937,8 +983,9 @@ git commit -m "feat: add blog UI components — BlogCard, BlogList, PostHeader, 
 
 - [ ] **Step 1: Rewrite `src/routes/index.tsx`**
 
-Carry over content from `src/pages/index.astro`. Convert the hero section and any sections to React. Replace `class=` with `className=`. All CSS classes remain identical.
+Copy the full content of `src/pages/index.astro`. Remove the `---` frontmatter delimiters and imports. Convert all `class=` to `className=`. Wrap in a `createFileRoute` component. Keep all section content and CSS class names identical.
 
+The component structure should be:
 ```tsx
 // src/routes/index.tsx
 import { createFileRoute } from '@tanstack/react-router'
@@ -956,27 +1003,27 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   return (
     <>
-      {/* Hero section — carry over from src/pages/index.astro, converting class → className */}
-      <section className="hero">
-        {/* ... existing hero content ... */}
-      </section>
-      {/* ... remaining sections ... */}
+      {/* Copy all section JSX from src/pages/index.astro here, with class → className */}
     </>
   )
 }
 ```
 
+Completion criterion: `pnpm dev` → homepage at `http://localhost:3000` renders the hero section with the correct heading text.
+
 - [ ] **Step 2: Create `src/routes/about.tsx`**
 
-Carry over all content from `src/pages/about.astro`. Convert to React TSX. Preserve all CSS class names. The "What I Do" cards, skills grid, and contact CTA are unchanged content.
+Same pattern as index. Carry over all content from `src/pages/about.astro`. Convert `class=` → `className=`.
+
+Completion criterion: `http://localhost:3000/about` renders the "About Me" heading and all six "What I Do" activity cards.
 
 - [ ] **Step 3: Create `src/routes/uses.tsx`**
 
-Carry over from `src/pages/uses.astro`. Convert to React TSX.
+Same pattern. Carry over from `src/pages/uses.astro`.
 
 - [ ] **Step 4: Extract video data to `src/features/videos/data/videos.ts`**
 
-From `src/pages/videos.astro`, extract the hardcoded video array into a typed data file:
+Open `src/pages/videos.astro` and find the video array. Copy it to a typed data file:
 
 ```ts
 // src/features/videos/data/videos.ts
@@ -992,7 +1039,7 @@ export interface Video {
 }
 
 export const videos: Video[] = [
-  // copy the video objects from src/pages/videos.astro
+  // paste the video objects from src/pages/videos.astro
 ]
 ```
 
@@ -1003,7 +1050,6 @@ export const videos: Video[] = [
 import type { Video } from '../data/videos'
 
 interface Props { video: Video }
-
 export function VideoCard({ video }: Props) {
   return (
     <article className="video-card">
@@ -1037,21 +1083,19 @@ function VideosPage() {
     <div className="container-base">
       <h1>Videos</h1>
       <div className="videos-grid">
-        {videos.map((video) => (
-          <VideoCard key={video.id} video={video} />
-        ))}
+        {videos.map((video) => <VideoCard key={video.id} video={video} />)}
       </div>
     </div>
   )
 }
 ```
 
-- [ ] **Step 7: Verify build**
+- [ ] **Step 7: Build verify**
 
 ```bash
 pnpm build
 ```
-Expected: All pages compile without errors.
+Expected: All static pages compile without errors.
 
 - [ ] **Step 8: Commit**
 
@@ -1142,26 +1186,29 @@ function BlogPostPage() {
   return (
     <article className="container-base post-container">
       <a href="/blog" className="post-back-link">← Blog</a>
-      <PostHeader frontmatter={post.frontmatter} slug={post.slug} />
+      <PostHeader frontmatter={post.frontmatter} />
       <PostBody Component={post.Component} />
     </article>
   )
 }
 ```
 
-- [ ] **Step 3: Verify build — all 20 posts must compile**
+- [ ] **Step 3: Build verify — all 21 posts must compile**
 
 ```bash
-pnpm build 2>&1 | tail -20
+pnpm build 2>&1 | tail -10
 ```
-Expected: `Build complete` with no MDX errors.
+Expected: `Build complete` with no errors.
 
-- [ ] **Step 4: Start dev server and manually verify one blog post renders correctly**
+- [ ] **Step 4: Start dev server and verify interactive MDX post**
 
 ```bash
 pnpm dev
 ```
-Open `http://localhost:3000/blog/bloom-filters` — the post with `BloomFilterDemo`, `TechComparison`, and `InteractiveQuiz` imports. Verify the interactive components render (they should, because Vite resolved them at build time).
+Open `http://localhost:3000/blog/bloom-filters`. Verify:
+- Page renders with title "Bloom Filters..."
+- `BloomFilterDemo`, `TechComparison`, `InteractiveQuiz` components render (no `client:load` attributes remain)
+- No React prop warnings in browser console
 
 - [ ] **Step 5: Commit**
 
@@ -1201,20 +1248,75 @@ export interface Project {
 }
 ```
 
-- [ ] **Step 2: Copy `src/utils/github.ts` → `src/features/projects/lib/github.ts`**
+- [ ] **Step 2: Create `src/features/projects/lib/github.ts`**
 
-Copy the file as-is. Remove any Astro-specific imports if present.
+Copy `src/utils/github.ts` but fix the `import.meta.env.GITHUB_TOKEN` fallback — remove it entirely. The token is always injected from the Cloudflare env via the service layer. The function signature stays the same (`token?: string`).
+
+```ts
+// src/features/projects/lib/github.ts
+// NOTE: import.meta.env.GITHUB_TOKEN removed — Cloudflare Workers do not expose
+// env vars via import.meta.env. Token is always passed as a parameter from the loader.
+
+export interface FormattedRepo {
+  id: string
+  title: string
+  description: string
+  githubUrl: string
+  liveUrl?: string
+  technologies: string[]
+}
+
+export async function fetchGitHubRepos(
+  username: string,
+  token: string
+): Promise<FormattedRepo[]> {
+  const headers = new Headers()
+  headers.append('Accept', 'application/vnd.github.v3+json')
+  if (token) headers.append('Authorization', `token ${token}`)
+
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 5000)
+
+  try {
+    const response = await fetch(
+      `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
+      { headers, signal: controller.signal }
+    )
+    clearTimeout(timeoutId)
+
+    if (!response.ok) throw new Error(`GitHub API error: ${response.status}`)
+
+    const repos = await response.json() as Array<{
+      id: number; name: string; description: string; html_url: string;
+      homepage: string; fork: boolean; topics: string[]; language: string
+    }>
+
+    return repos
+      .filter((r) => !r.fork)
+      .map((r) => ({
+        id: String(r.id),
+        title: r.name,
+        description: r.description ?? '',
+        githubUrl: r.html_url,
+        liveUrl: r.homepage || undefined,
+        technologies: r.topics ?? [],
+      }))
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+```
 
 - [ ] **Step 3: Create `src/features/projects/data/fallback.ts`**
 
-Copy the hardcoded project list from `src/pages/projects.astro` (the `manualProjects` / fallback array):
+Copy the hardcoded project list from `src/pages/projects.astro` (the `manualProjects` array or equivalent). These use the `Project` interface shape with `id`, `title`, `description`, `url`, `github`, `tags`, `logo`, `color`.
 
 ```ts
 // src/features/projects/data/fallback.ts
 import type { Project } from '../types'
 
 export const fallbackProjects: Project[] = [
-  // copy all hardcoded project objects from src/pages/projects.astro
+  // paste all hardcoded project objects from src/pages/projects.astro
 ]
 ```
 
@@ -1222,40 +1324,44 @@ export const fallbackProjects: Project[] = [
 
 ```ts
 // src/features/projects/lib/service.ts
-import { fetchGitHubRepos } from './github'
+import { fetchGitHubRepos, type FormattedRepo } from './github'
 import { fallbackProjects } from '../data/fallback'
 import { ok } from '../../../lib/result'
 import type { Result } from '../../../lib/result'
 import type { Project } from '../types'
 
+// Merges live GitHub data with the fallback list.
+// Fallback provides logo/color/tags not available from GitHub API.
+// Live data provides updated liveUrl if set on the repo homepage.
+function mergeWithFallback(liveRepos: FormattedRepo[], fallback: Project[]): Project[] {
+  const liveByName = new Map<string, FormattedRepo>()
+  for (const repo of liveRepos) {
+    const name = repo.githubUrl.split('/').pop()
+    if (name) liveByName.set(name, repo)
+  }
+
+  return fallback.map((project) => {
+    const repoName = project.github?.split('/').pop()
+    const live = repoName ? liveByName.get(repoName) : undefined
+    if (!live) return project
+    return { ...project, url: live.liveUrl ?? project.url }
+  })
+}
+
 export async function getProjects(githubToken: string): Promise<Result<Project[]>> {
   try {
     const liveRepos = await fetchGitHubRepos('piyush97', githubToken)
-    // Merge live repos with fallback — fallback provides logo/color not in GitHub API
-    const merged = mergeWithFallback(liveRepos, fallbackProjects)
-    return ok(merged)
+    return ok(mergeWithFallback(liveRepos, fallbackProjects))
   } catch {
     // GitHub API failure is not fatal — serve fallback list silently
     return ok(fallbackProjects)
   }
 }
-
-function mergeWithFallback(live: Awaited<ReturnType<typeof fetchGitHubRepos>>, fallback: Project[]): Project[] {
-  // Prefer fallback metadata (logo, color, description) but use live GitHub URL
-  const liveMap = new Map(live.map((r) => [r.githubUrl.split('/').pop() ?? '', r]))
-  return fallback.map((p) => {
-    const repoName = p.github?.split('/').pop() ?? ''
-    const liveData = liveMap.get(repoName)
-    return liveData
-      ? { ...p, url: liveData.liveUrl || p.url }
-      : p
-  })
-}
 ```
 
 - [ ] **Step 5: Create `src/features/projects/components/ProjectCard.tsx`**
 
-Carry over from `src/components/ProjectCard.astro`, converting to React. All CSS class names remain identical.
+Carry over from `src/components/ProjectCard.astro`. Convert `class=` → `className=`. All CSS class names are identical. Use the `Project` interface for props.
 
 - [ ] **Step 6: Create `src/features/projects/components/ProjectList.tsx`**
 
@@ -1265,13 +1371,10 @@ import type { Project } from '../types'
 import { ProjectCard } from './ProjectCard'
 
 interface Props { projects: Project[] }
-
 export function ProjectList({ projects }: Props) {
   return (
     <div className="projects-grid">
-      {projects.map((project) => (
-        <ProjectCard key={project.id} project={project} />
-      ))}
+      {projects.map((project) => <ProjectCard key={project.id} project={project} />)}
     </div>
   )
 }
@@ -1288,7 +1391,8 @@ import { fallbackProjects } from '../features/projects/data/fallback'
 
 export const Route = createFileRoute('/projects')({
   loader: async ({ context }) => {
-    const cfEnv = (context as any)?.cloudflare?.env ?? {}
+    // Cloudflare Workers env is injected by the adapter into context
+    const cfEnv = (context as { cloudflare?: { env?: Record<string, string> } })?.cloudflare?.env ?? {}
     const githubToken = cfEnv.GITHUB_TOKEN ?? ''
     if (!githubToken) return fallbackProjects
     const result = await getProjects(githubToken)
@@ -1309,11 +1413,18 @@ function ProjectsPage() {
 }
 ```
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 8: Build verify**
+
+```bash
+pnpm build
+```
+Expected: Clean build, no TypeScript errors.
+
+- [ ] **Step 9: Commit**
 
 ```bash
 git add src/features/projects/ src/routes/projects.tsx
-git commit -m "feat: add projects page — GitHub API with static fallback"
+git commit -m "feat: add projects page — GitHub API with static fallback, fixed env access"
 ```
 
 ---
@@ -1338,7 +1449,7 @@ export const ContactSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   email: z.string().email('Valid email required'),
   message: z.string().min(10, 'Message must be at least 10 characters').max(2000),
-  _hp: z.string().max(0, 'Bot detected'), // honeypot — must be empty
+  _hp: z.string().max(0, 'Bot detected'),
 })
 
 export type ContactInput = z.infer<typeof ContactSchema>
@@ -1388,21 +1499,23 @@ interface RateLimiter {
 export async function submitContact(
   input: unknown,
   env: Env,
-  rateLimiter: RateLimiter,
+  rateLimiter: RateLimiter | undefined,
   clientIp: string
 ): Promise<Result<void>> {
-  // 1. Rate limit
-  const limit = await rateLimiter.limit({ key: clientIp })
-  if (!limit.success) return err(rateLimitedError(60))
+  // 1. Rate limit (skip if binding not available, e.g. local dev)
+  if (rateLimiter) {
+    const limit = await rateLimiter.limit({ key: clientIp })
+    if (!limit.success) return err(rateLimitedError(60))
+  }
 
   // 2. Validate
   const parsed = ContactSchema.safeParse(input)
   if (!parsed.success) return err(validationError(flattenZodErrors(parsed.error)))
 
-  // 3. Honeypot check — silently succeed to not reveal detection
+  // 3. Honeypot — silently succeed
   if (parsed.data._hp) return ok(undefined)
 
-  // 4. Send — map all internal errors to generic 'internal'
+  // 4. Send
   try {
     await sendContactEmail(parsed.data, env)
     return ok(undefined)
@@ -1422,9 +1535,9 @@ import { validateEnv } from '../../lib/env'
 
 export const APIRoute = createAPIFileRoute('/api/contact')({
   POST: async ({ request, context }) => {
-    const cfEnv = (context as any)?.cloudflare?.env ?? {}
+    const cfEnv = (context as { cloudflare?: { env?: Record<string, unknown> } })?.cloudflare?.env ?? {}
     const env = validateEnv(cfEnv)
-    const rateLimiter = cfEnv.RATE_LIMITER
+    const rateLimiter = (cfEnv as { RATE_LIMITER?: { limit: (o: { key: string }) => Promise<{ success: boolean }> } }).RATE_LIMITER
 
     const body = await request.json().catch(() => null)
     if (!body) {
@@ -1436,8 +1549,7 @@ export const APIRoute = createAPIFileRoute('/api/contact')({
 
     if (!result.ok) {
       const status = result.error.type === 'rate_limited' ? 429
-        : result.error.type === 'validation' ? 400
-        : 500
+        : result.error.type === 'validation' ? 400 : 500
       return Response.json({ ok: false, error: result.error }, { status })
     }
 
@@ -1463,22 +1575,18 @@ export function ContactForm() {
     e.preventDefault()
     setStatus('submitting')
     setErrors({})
-
-    const form = e.currentTarget
-    const data = Object.fromEntries(new FormData(form))
-
+    const data = Object.fromEntries(new FormData(e.currentTarget))
     const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     })
-    const json = await res.json()
-
+    const json = await res.json() as { ok: boolean; error?: { type: string; fields?: Record<string, string> } }
     if (json.ok) {
-      setStatus('success')
-      form.reset()
+      setStatus('success');
+      (e.target as HTMLFormElement).reset()
     } else if (json.error?.type === 'validation') {
-      setErrors(json.error.fields)
+      setErrors(json.error.fields ?? {})
       setStatus('idle')
     } else {
       setStatus('error')
@@ -1487,31 +1595,25 @@ export function ContactForm() {
 
   return (
     <form className="contact-form" onSubmit={handleSubmit} noValidate>
-      {/* Honeypot field — hidden from humans */}
       <input type="text" name="_hp" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" aria-hidden="true" />
-
       <div className="form-field">
         <label htmlFor="name" className="form-label">Name</label>
-        <input id="name" name="name" type="text" required className="form-input" aria-describedby={errors.name ? 'name-error' : undefined} />
-        {errors.name && <p id="name-error" className="form-error" role="alert">{errors.name}</p>}
+        <input id="name" name="name" type="text" required className="form-input" />
+        {errors.name && <p className="form-error" role="alert">{errors.name}</p>}
       </div>
-
       <div className="form-field">
         <label htmlFor="email" className="form-label">Email</label>
-        <input id="email" name="email" type="email" required className="form-input" aria-describedby={errors.email ? 'email-error' : undefined} />
-        {errors.email && <p id="email-error" className="form-error" role="alert">{errors.email}</p>}
+        <input id="email" name="email" type="email" required className="form-input" />
+        {errors.email && <p className="form-error" role="alert">{errors.email}</p>}
       </div>
-
       <div className="form-field">
         <label htmlFor="message" className="form-label">Message</label>
-        <textarea id="message" name="message" required rows={6} className="form-input form-textarea" aria-describedby={errors.message ? 'message-error' : undefined} />
-        {errors.message && <p id="message-error" className="form-error" role="alert">{errors.message}</p>}
+        <textarea id="message" name="message" required rows={6} className="form-input form-textarea" />
+        {errors.message && <p className="form-error" role="alert">{errors.message}</p>}
       </div>
-
       <button type="submit" className="btn-primary" disabled={status === 'submitting'}>
         {status === 'submitting' ? 'Sending…' : 'Send message'}
       </button>
-
       {status === 'success' && <p className="form-success" role="status">Message sent! I'll get back to you soon.</p>}
       {status === 'error' && <p className="form-error" role="alert">Something went wrong. Please try again.</p>}
     </form>
@@ -1535,21 +1637,18 @@ function ContactPage() {
   return (
     <div className="container-base">
       <h1>Get in touch</h1>
-      <p>I'm always interested in new opportunities, collaborations, and speaking engagements.</p>
       <ContactForm />
     </div>
   )
 }
 ```
 
-- [ ] **Step 7: Set Resend API key as Cloudflare secret (do this before deploy, skip for local dev)**
+- [ ] **Step 7: Build verify**
 
 ```bash
-# Run after wrangler login, before first deploy
-wrangler secret put RESEND_API_KEY
-wrangler secret put GITHUB_TOKEN
-wrangler secret put SENTRY_DSN
+pnpm build
 ```
+Expected: Clean build, no TypeScript errors in contact layer.
 
 - [ ] **Step 8: Commit**
 
@@ -1569,6 +1668,8 @@ git commit -m "feat: add contact form — Zod validation, rate limiting, honeypo
 - Create: `src/routes/api/sitemap[.]xml.ts`
 - Create: `src/routes/api/robots[.]txt.ts`
 
+**Important note on routing:** Feed files live in `src/routes/api/` for organization, but `createAPIFileRoute('/rss.xml')` specifies the URL path as `/rss.xml` (not `/api/rss.xml`). The first argument to `createAPIFileRoute` is the canonical URL path — the file location is irrelevant. RSS subscribers who bookmarked `/rss.xml` will not be broken.
+
 - [ ] **Step 1: Create `src/features/feeds/lib/rss.ts`**
 
 ```ts
@@ -1578,17 +1679,14 @@ import type { Post } from '../../blog/types'
 const SITE_URL = 'https://piyushmehta.com'
 
 export function generateRss(posts: Post[]): string {
-  const items = posts
-    .slice(0, 20)
-    .map((post) => `
+  const items = posts.slice(0, 20).map((post) => `
     <item>
       <title><![CDATA[${post.frontmatter.title}]]></title>
       <description><![CDATA[${post.frontmatter.description}]]></description>
       <link>${SITE_URL}/blog/${post.slug}</link>
       <guid isPermaLink="true">${SITE_URL}/blog/${post.slug}</guid>
       <pubDate>${post.frontmatter.date.toUTCString()}</pubDate>
-    </item>`)
-    .join('')
+    </item>`).join('')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -1611,7 +1709,6 @@ export function generateRss(posts: Post[]): string {
 import type { Post } from '../../blog/types'
 
 const SITE_URL = 'https://piyushmehta.com'
-
 const STATIC_ROUTES = ['/', '/about', '/blog', '/projects', '/uses', '/videos', '/contact-me']
 
 export function generateSitemap(posts: Post[]): string {
@@ -1641,7 +1738,7 @@ export function generateSitemap(posts: Post[]): string {
 - [ ] **Step 3: Create `src/routes/api/rss[.]xml.ts`**
 
 ```ts
-// src/routes/api/rss[.]xml.ts
+// src/routes/api/rss[.]xml.ts — served at /rss.xml (path set in createAPIFileRoute)
 import { createAPIFileRoute } from '@tanstack/start/api'
 import { listPosts } from '../../features/blog/lib'
 import { generateRss } from '../../features/feeds/lib/rss'
@@ -1660,7 +1757,7 @@ export const APIRoute = createAPIFileRoute('/rss.xml')({
 - [ ] **Step 4: Create `src/routes/api/sitemap[.]xml.ts`**
 
 ```ts
-// src/routes/api/sitemap[.]xml.ts
+// src/routes/api/sitemap[.]xml.ts — served at /sitemap.xml
 import { createAPIFileRoute } from '@tanstack/start/api'
 import { listPosts } from '../../features/blog/lib'
 import { generateSitemap } from '../../features/feeds/lib/sitemap'
@@ -1679,7 +1776,7 @@ export const APIRoute = createAPIFileRoute('/sitemap.xml')({
 - [ ] **Step 5: Create `src/routes/api/robots[.]txt.ts`**
 
 ```ts
-// src/routes/api/robots[.]txt.ts
+// src/routes/api/robots[.]txt.ts — served at /robots.txt
 import { createAPIFileRoute } from '@tanstack/start/api'
 
 export const APIRoute = createAPIFileRoute('/robots.txt')({
@@ -1691,20 +1788,26 @@ export const APIRoute = createAPIFileRoute('/robots.txt')({
 })
 ```
 
-- [ ] **Step 6: Verify feeds render**
+- [ ] **Step 6: Start dev server and verify all three feeds**
 
 ```bash
-pnpm dev
+pnpm dev &
+sleep 5
+curl -s http://localhost:3000/rss.xml | head -5
+curl -s http://localhost:3000/sitemap.xml | head -5
+curl -s http://localhost:3000/robots.txt
 ```
-Then `curl http://localhost:3000/rss.xml` — verify XML with post entries.
-`curl http://localhost:3000/sitemap.xml` — verify XML with all routes.
-`curl http://localhost:3000/robots.txt` — verify text response.
+
+Expected:
+- `/rss.xml` → `<?xml version="1.0" ...` with `<rss` tag
+- `/sitemap.xml` → `<?xml version="1.0" ...` with `<urlset` tag
+- `/robots.txt` → `User-agent: *`
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/features/feeds/ src/routes/api/
-git commit -m "feat: add RSS, sitemap, and robots.txt feed routes"
+git add src/features/feeds/ src/routes/api/rss* src/routes/api/sitemap* src/routes/api/robots*
+git commit -m "feat: add RSS, sitemap, and robots.txt feed routes at correct URL paths"
 ```
 
 ---
@@ -1713,126 +1816,162 @@ git commit -m "feat: add RSS, sitemap, and robots.txt feed routes"
 
 ### Task 12: Sentry + E2E Tests + Deployment
 
-**Files:**
-- Modify: `src/lib/sentry.ts`
-- Modify: `playwright.config.ts`
-- Modify: `tests/simple.spec.ts`
-
-- [ ] **Step 1: Wire Sentry into root layout**
-
-Update `src/routes/__root.tsx` to initialize Sentry using the Cloudflare env. TanStack Start's Cloudflare adapter exposes the env via a server-side context. Add to the route loader:
-
-```tsx
-// In src/routes/__root.tsx
-export const Route = createRootRoute({
-  loader: async ({ context }) => {
-    const dsn = (context as any)?.cloudflare?.env?.SENTRY_DSN
-    if (dsn) initSentry(dsn)
-  },
-  // ... rest unchanged
-})
-```
-
-- [ ] **Step 2: Update `playwright.config.ts` for Vinxi dev server**
+- [ ] **Step 1: Update `playwright.config.ts` for Vinxi dev server**
 
 ```ts
-// playwright.config.ts
+// playwright.config.ts — update these two values
 webServer: {
   command: 'pnpm dev',
-  url: 'http://localhost:3000',   // Vinxi default port
+  url: 'http://localhost:3000',    // Vinxi default (was 4321)
   reuseExistingServer: !process.env.CI,
   timeout: 120 * 1000,
 },
 use: {
-  baseURL: 'http://localhost:3000',  // update from 4322
+  baseURL: 'http://localhost:3000', // was 4322
 },
 ```
 
-- [ ] **Step 3: Update `tests/simple.spec.ts` for React structure**
-
-Read the current `tests/simple.spec.ts` and update any selectors that targeted Astro-specific attributes or structure. Key changes:
-- Remove tests for OG image routes (dropped)
-- Remove tests for newsletter form (dropped)
-- Keep: navigation tests, blog listing, blog post rendering, theme toggle, contact form
+- [ ] **Step 2: Delete OG-image spec files (testing dropped features)**
 
 ```bash
-cat tests/simple.spec.ts
+rm tests/og-image.spec.ts
+rm tests/og-image-api.spec.ts
+rm tests/og-image-performance.spec.ts
+rm tests/og-image-visual.spec.ts
+rm tests/og-image-unit.spec.ts
+rm tests/command-palette.spec.ts   # if it references dropped components
 ```
-Update selectors as needed. Drop any test that references `/api/og/`, `/api/newsletter`, or `og-showcase`.
 
-- [ ] **Step 4: Run E2E tests against dev server**
+Verify what remains:
+```bash
+ls tests/
+```
+Expected remaining: `code-blocks.spec.ts`, `integration.spec.ts`, `reading-progress.spec.ts`, `related-posts.spec.ts`, `simple.spec.ts`
+
+- [ ] **Step 3: Update remaining test files for React structure**
+
+Read each remaining test file and remove or update:
+- Any selector targeting `/api/og/` or `/api/newsletter` — these routes no longer exist
+- Any selector using Astro-specific attributes (none expected, but verify)
+- Any test importing or navigating to dropped pages (`/og-showcase`, `/offline`)
+
+```bash
+grep -rn "og-showcase\|/offline\|/api/og\|api/newsletter" tests/
+```
+Expected: No matches. If any found, delete those test cases.
+
+- [ ] **Step 4: Configure Sentry for Cloudflare Workers**
+
+`@sentry/cloudflare` wraps the Worker fetch handler at the entry point — NOT via `Sentry.init()` in a loader. Locate the Vinxi Cloudflare adapter's generated entry file path after build, then add Sentry wrapping.
+
+In `app.config.ts`, add Sentry config for the server:
+```ts
+// In app.config.ts — add to defineConfig
+server: {
+  preset: 'cloudflare-workers',
+},
+```
+
+Then create a custom entry wrapper at `src/entry.server.ts` if supported by the Vinxi Cloudflare preset:
+```ts
+// src/entry.server.ts (check if Vinxi Cloudflare preset supports a custom entry)
+import * as Sentry from '@sentry/cloudflare'
+import { createRequestHandler } from '@tanstack/start/server'
+
+export default {
+  async fetch(request: Request, env: Record<string, unknown>, ctx: ExecutionContext) {
+    return Sentry.withSentry(
+      () => ({
+        dsn: (env.SENTRY_DSN as string) ?? '',
+        tracesSampleRate: 0.1,
+      }),
+      async () => {
+        const handler = createRequestHandler({ /* TanStack Start handler */ })
+        return handler(request, env, ctx)
+      }
+    )(request, env, ctx)
+  },
+}
+```
+
+**Note:** The exact Vinxi Cloudflare entry wrapping API may differ — check `@sentry/cloudflare` docs for the current Cloudflare Workers integration pattern before implementing. If a custom entry is not supported, instrument Sentry in the route loader context as a fallback (with the caveat that init is per-request).
+
+- [ ] **Step 5: Run E2E tests**
 
 ```bash
 pnpm dev &
-sleep 5
+sleep 8
 pnpm test
 ```
-Expected: All kept tests pass. Fix any failing tests before proceeding.
+Expected: All remaining tests pass. Fix any failing tests before proceeding.
 
-- [ ] **Step 5: Full production build**
+- [ ] **Step 6: Full production build**
 
 ```bash
 pnpm build
 ```
 Expected: Clean build, `.output/` contains `server/index.mjs` and `public/`.
 
-- [ ] **Step 6: Preview with Wrangler (local Cloudflare simulation)**
+- [ ] **Step 7: Preview with Wrangler (local Cloudflare simulation)**
 
 ```bash
 pnpm preview
 ```
 Visit `http://localhost:8787` and verify:
-- Homepage loads
-- Blog listing shows all published posts
-- A blog post with MDX components renders
-- Contact form is visible (full submission requires real secrets)
-- `/rss.xml` returns XML
-- `/sitemap.xml` returns XML
-- Theme switching works
+- [ ] Homepage renders with correct dark theme
+- [ ] Theme toggle switches between dark → light → high-contrast
+- [ ] Blog listing shows published posts
+- [ ] Blog post (`/blog/bloom-filters`) renders with interactive components
+- [ ] `/rss.xml` returns valid XML
+- [ ] `/sitemap.xml` returns valid XML
+- [ ] `/robots.txt` returns text
+- [ ] Contact form is visible at `/contact-me`
 
-- [ ] **Step 7: Login to Cloudflare and set secrets**
+- [ ] **Step 8: Set Cloudflare secrets and deploy**
 
 ```bash
 wrangler login
 wrangler secret put RESEND_API_KEY
 wrangler secret put GITHUB_TOKEN
-wrangler secret put SENTRY_DSN   # optional
-```
-
-- [ ] **Step 8: Deploy to Cloudflare Workers**
-
-```bash
+wrangler secret put SENTRY_DSN
 pnpm deploy
 ```
-Expected: Deployment URL printed. Visit and verify site is live.
+Expected: Deployment URL printed.
 
-- [ ] **Step 9: Final commit and merge PR**
+- [ ] **Step 9: Verify security headers on live site**
 
 ```bash
-git add -A
-git commit -m "feat: production hardening — Sentry, E2E tests, Cloudflare deployment"
+curl -sI https://piyushmehta.com | grep -iE "x-frame|content-security|strict-transport"
+```
+Expected: `X-Frame-Options: DENY`, `Content-Security-Policy: ...`, `Strict-Transport-Security: ...` all present.
 
-# Open PR
+- [ ] **Step 10: Final commit and PR**
+
+```bash
+git add playwright.config.ts tests/
+git commit -m "feat: production hardening — delete OG test files, update E2E for Vinxi, Sentry setup"
+
 git push origin tanstack-migration
-gh pr create --title "feat: migrate from Astro 5 to TanStack Start + Cloudflare Workers" --body "Full rewrite per spec docs/superpowers/specs/2026-03-19-tanstack-start-migration-design.md"
+gh pr create --title "feat: migrate from Astro 5 to TanStack Start + Cloudflare Workers" \
+  --body "Full rewrite per docs/superpowers/specs/2026-03-19-tanstack-start-migration-design.md. Core pages preserved, CSS/theme system unchanged, MDX compiled at build time."
 ```
 
 ---
 
-## Verification Checklist
+## Final Verification Checklist
 
-After all tasks:
-
-- [ ] `pnpm build` succeeds cleanly
+- [ ] `pnpm build` succeeds cleanly (no TypeScript errors)
 - [ ] `pnpm test` — all E2E tests pass
-- [ ] Homepage renders with correct theme (dark by default)
-- [ ] Theme switching works (dark → light → high-contrast → back)
-- [ ] Blog listing shows all 20 published posts
-- [ ] Blog post with MDX components (`/blog/bloom-filters`) renders interactive components
-- [ ] Projects page loads (with or without GitHub token)
-- [ ] Contact form submits and shows success message
-- [ ] `/rss.xml` returns valid RSS XML
-- [ ] `/sitemap.xml` returns valid sitemap XML
-- [ ] `/robots.txt` returns correct robots text
-- [ ] Security headers present in Cloudflare deployment (check with `curl -I https://piyushmehta.com`)
-- [ ] No `process.env` references in server-side code (use `validateEnv(cfEnv)` instead)
+- [ ] Homepage renders with correct dark theme by default
+- [ ] Theme switching: dark → light → high-contrast → back works
+- [ ] Blog listing shows all published posts (20+)
+- [ ] Blog post with MDX interactive components (`/blog/bloom-filters`) renders — components visible, no console errors
+- [ ] Projects page loads with project cards
+- [ ] Contact form visible at `/contact-me`
+- [ ] `/rss.xml` — valid RSS XML with post entries
+- [ ] `/sitemap.xml` — valid sitemap XML with all routes
+- [ ] `/robots.txt` — `User-agent: *` present
+- [ ] Security headers present on deployed site: `X-Frame-Options`, `Content-Security-Policy`, `Strict-Transport-Security`
+- [ ] No `process.env` references in any server-side code
+- [ ] No `client:load` or `client:visible` attributes in MDX files
+- [ ] No `import.meta.env` in `src/features/projects/lib/github.ts`
