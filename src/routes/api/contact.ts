@@ -5,14 +5,15 @@ import { validateEnv } from '../../lib/env'
 
 export const APIRoute = createAPIFileRoute('/api/contact')({
   POST: async ({ request }) => {
-    // In Cloudflare module workers env is injected by the Nitro adapter.
-    // Fall back to process.env for local dev / other runtimes.
-    const cfEnv = (typeof globalThis !== 'undefined' && (globalThis as Record<string, unknown>).__cloudflareEnv)
-      ? (globalThis as Record<string, unknown>).__cloudflareEnv
+    // In Cloudflare module workers, Nitro sets globalThis.__env__ = env before dispatching
+    // each request (see nitropack cloudflare-module preset: _module-handler.mjs).
+    // Fall back to process.env for local dev / Node runtimes.
+    const cfEnv = (typeof globalThis !== 'undefined' && (globalThis as Record<string, unknown>).__env__)
+      ? (globalThis as Record<string, unknown>).__env__
       : process.env
     const env = validateEnv(cfEnv)
 
-    const rateLimiter = (cfEnv as { RATE_LIMITER?: { limit: (o: { key: string }) => Promise<{ success: boolean }> } }).RATE_LIMITER
+    const rateLimiter = (cfEnv as { RATE_LIMITER?: { limit: (o: { key: string }) => Promise<{ success: boolean }> } } | undefined)?.RATE_LIMITER
 
     const body = await request.json().catch(() => null)
     if (!body) {
