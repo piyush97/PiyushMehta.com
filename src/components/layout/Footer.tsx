@@ -120,18 +120,6 @@ export function Footer() {
             </div>
 
             <div className="flex items-center gap-6 text-sm footer-meta">
-              <a
-                href="/privacy-policy/"
-                className="footer-link text-text-secondary hover:text-text-primary"
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="/terms-of-service/"
-                className="footer-link text-text-secondary hover:text-text-primary"
-              >
-                Terms of Service
-              </a>
               <span className="text-text-secondary">Built with love in Toronto, Canada</span>
             </div>
           </div>

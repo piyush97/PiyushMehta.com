@@ -13,6 +13,7 @@ globs = ["**/*.mjs"]
 # Cloudflare Rate Limiting API (stable — NOT [[unsafe.bindings]])
 [[rate_limiting]]
 binding = "RATE_LIMITER"
+# TODO: Replace with real namespace_id from: wrangler rate-limit create
 namespace_id = "1"
 simple = { limit = 5, period = 60 }
 

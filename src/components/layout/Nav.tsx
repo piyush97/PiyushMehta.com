@@ -6,10 +6,8 @@ const links = [
   { href: '/about/', label: 'About' },
   { href: '/blog/', label: 'Blog' },
   { href: '/projects/', label: 'Projects' },
-  { href: '/services/', label: 'Services' },
   { href: '/uses/', label: 'Uses' },
   { href: '/contact-me/', label: 'Contact' },
-  { href: '/resume/', label: 'Resume' },
 ]
 
 export function Nav() {

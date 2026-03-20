@@ -11,7 +11,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/PiyushMehta.com',
     tags: ['Astro', 'TypeScript', 'Tailwind CSS', 'MDX'],
     color: '#667EEA',
-    logo: '/src/images/Piyush.svg',
+    logo: '',
   },
   {
     id: 'ai-code-reviewer',
@@ -22,7 +22,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/ai-code-reviewer',
     tags: ['Python', 'TensorFlow', 'GitHub API', 'Docker'],
     color: '#10B981',
-    logo: 'https://via.placeholder.com/64x64/10B981/ffffff?text=AI',
+    logo: '',
   },
   {
     id: 'realtime-chat',
@@ -33,7 +33,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/realtime-chat',
     tags: ['Node.js', 'Socket.io', 'React', 'MongoDB', 'WebRTC'],
     color: '#3B82F6',
-    logo: 'https://via.placeholder.com/64x64/3B82F6/ffffff?text=%F0%9F%92%AC',
+    logo: '',
   },
   {
     id: 'netflix-react-clone',
@@ -44,7 +44,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/Netflix-React-Clone',
     tags: ['TypeScript', 'React', 'Netflix API', 'Firebase'],
     color: '#E50914',
-    logo: '/src/images/NTC.svg',
+    logo: '',
   },
   {
     id: 'ecommerce-analytics',
@@ -55,7 +55,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/ecommerce-analytics',
     tags: ['Vue.js', 'D3.js', 'Node.js', 'PostgreSQL'],
     color: '#8B5CF6',
-    logo: 'https://via.placeholder.com/64x64/8B5CF6/ffffff?text=%F0%9F%93%8A',
+    logo: '',
   },
   {
     id: 'blockchain-voting',
@@ -66,7 +66,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/blockchain-voting',
     tags: ['Solidity', 'Web3.js', 'React', 'Truffle', 'MetaMask'],
     color: '#F59E0B',
-    logo: 'https://via.placeholder.com/64x64/F59E0B/ffffff?text=%F0%9F%97%B3%EF%B8%8F',
+    logo: '',
   },
   {
     id: 'gonuclei-com',
@@ -76,7 +76,7 @@ export const fallbackProjects: Project[] = [
     url: 'https://gonuclei.com/',
     tags: ['Gatsby', 'GraphQL', 'Contentful', 'React'],
     color: '#0092EB',
-    logo: '/src/images/Nuclei.svg',
+    logo: '',
   },
   {
     id: 'microservices-task-manager',
@@ -87,7 +87,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/microservices-task-manager',
     tags: ['Docker', 'Kubernetes', 'Node.js', 'Redis', 'RabbitMQ'],
     color: '#06B6D4',
-    logo: 'https://via.placeholder.com/64x64/06B6D4/ffffff?text=%E2%9A%99%EF%B8%8F',
+    logo: '',
   },
   {
     id: 'meaww-influencers-dashboard',
@@ -97,7 +97,7 @@ export const fallbackProjects: Project[] = [
     url: 'https://meaww.com/',
     tags: ['React', 'Redux', 'D3.js', 'Analytics API'],
     color: '#000',
-    logo: '/src/images/Meaww.svg',
+    logo: '',
   },
   {
     id: 'gogitter',
@@ -108,7 +108,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/GoGitter',
     tags: ['React', 'GitHub API', 'Firebase', 'PWA'],
     color: '#EF9B0F',
-    logo: '/src/images/GoGitter.svg',
+    logo: '',
   },
   {
     id: 'zapify-ui',
@@ -119,7 +119,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/zapify-ui/zapify',
     tags: ['React', 'TypeScript', 'Storybook', 'SASS'],
     color: '#6C2478',
-    logo: '/src/images/Zapify.svg',
+    logo: '',
   },
   {
     id: 'ml-deployment-platform',
@@ -130,7 +130,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/ml-deployment-platform',
     tags: ['Python', 'FastAPI', 'Docker', 'MLflow', 'Kubernetes'],
     color: '#DC2626',
-    logo: 'https://via.placeholder.com/64x64/DC2626/ffffff?text=%F0%9F%A4%96',
+    logo: '',
   },
   {
     id: 'devops-pipeline',
@@ -141,7 +141,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/devops-pipeline',
     tags: ['Jenkins', 'Terraform', 'AWS', 'Docker', 'Helm'],
     color: '#059669',
-    logo: 'https://via.placeholder.com/64x64/059669/ffffff?text=%F0%9F%94%A7',
+    logo: '',
   },
   {
     id: 'gitapp',
@@ -152,7 +152,7 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/GitApp',
     tags: ['React', 'Elasticsearch', 'GitHub API', 'SASS'],
     color: '#00CDCD',
-    logo: '/src/images/GitApp.svg',
+    logo: '',
   },
   {
     id: 'saledrive-smart-crm',
@@ -162,7 +162,7 @@ export const fallbackProjects: Project[] = [
     url: 'https://play.google.com/store/apps/details?id=com.aidapp.saledrive&hl=en_GB',
     tags: ['Ionic', 'Angular', 'Node.js', 'MongoDB'],
     color: '#4F46E5',
-    logo: '/src/images/Aidapp.svg',
+    logo: '',
   },
   {
     id: 'quickstagram',
@@ -216,6 +216,6 @@ export const fallbackProjects: Project[] = [
     github: 'https://github.com/piyush97/cloud-monitor',
     tags: ['Python', 'AWS', 'Prometheus', 'Grafana', 'Terraform'],
     color: '#0EA5E9',
-    logo: 'https://via.placeholder.com/64x64/0EA5E9/ffffff?text=%E2%98%81%EF%B8%8F',
+    logo: '',
   },
 ]

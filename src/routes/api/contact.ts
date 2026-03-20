@@ -11,7 +11,16 @@ export const APIRoute = createAPIFileRoute('/api/contact')({
     const cfEnv = (typeof globalThis !== 'undefined' && (globalThis as Record<string, unknown>).__env__)
       ? (globalThis as Record<string, unknown>).__env__
       : process.env
-    const env = validateEnv(cfEnv)
+
+    let env: ReturnType<typeof validateEnv>
+    try {
+      env = validateEnv(cfEnv)
+    } catch {
+      return Response.json(
+        { error: 'Service configuration error' },
+        { status: 500 }
+      )
+    }
 
     const rateLimiter = (cfEnv as { RATE_LIMITER?: { limit: (o: { key: string }) => Promise<{ success: boolean }> } } | undefined)?.RATE_LIMITER
 
@@ -27,8 +36,16 @@ export const APIRoute = createAPIFileRoute('/api/contact')({
     const result = await submitContact(body, env, rateLimiter, ip)
 
     if (!result.ok) {
-      const status = result.error.type === 'rate_limited' ? 429
-        : result.error.type === 'validation' ? 400 : 500
+      if (result.error.type === 'rate_limited') {
+        return Response.json(
+          { ok: false, error: result.error },
+          {
+            status: 429,
+            headers: { 'Retry-After': String(result.error.retryAfter ?? 60) }
+          }
+        )
+      }
+      const status = result.error.type === 'validation' ? 400 : 500
       return Response.json({ ok: false, error: result.error }, { status })
     }
 
