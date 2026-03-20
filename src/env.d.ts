@@ -1,4 +1,4 @@
-/// <reference path="../.astro/types.d.ts" />
+/// <reference types="@cloudflare/workers-types" />
 
 declare namespace NodeJS {
   interface ProcessEnv {
