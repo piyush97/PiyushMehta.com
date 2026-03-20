@@ -10,7 +10,7 @@ const handler = createStartHandler({ createRouter })(defaultStreamHandler)
 export default Sentry.withSentry(
   (env: Record<string, string>) => ({
     dsn: env.SENTRY_DSN,
-    tracesSampleRate: 1.0,
+    tracesSampleRate: 0.1,
   }),
   handler,
 )
