@@ -146,7 +146,7 @@
       }
     },
     {
-      "include": ["**/*.config.*", "**/astro.config.*"],
+      "include": ["**/*.config.*"],
       "linter": {
         "rules": {
           "style": {
