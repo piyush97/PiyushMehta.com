@@ -6,8 +6,10 @@ import { generateRss } from '../../features/feeds/lib/rss'
 export const APIRoute = createAPIFileRoute('/rss.xml')({
   GET: async () => {
     const result = listPosts()
-    const posts = result.ok ? result.data : []
-    const xml = generateRss(posts)
+    if (!result.ok) {
+      return new Response('Internal Server Error', { status: 500 })
+    }
+    const xml = generateRss(result.data)
     return new Response(xml, {
       headers: {
         'Content-Type': 'application/rss+xml; charset=utf-8',

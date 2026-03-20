@@ -1,16 +1,12 @@
 // src/features/feeds/lib/rss.ts
+import { SITE_URL } from '@/lib/config'
 import type { Post } from '../../blog/types'
 
-const SITE_URL = 'https://piyushmehta.com'
-
 export function generateRss(posts: Post[]): string {
-  const sorted = [...posts].sort(
-    (a, b) => b.frontmatter.date.getTime() - a.frontmatter.date.getTime()
-  )
-
-  const items = sorted
+  // listPosts() returns posts sorted by date descending
+  const items = posts
     .map((post) => {
-      const url = `${SITE_URL}/blog/${post.slug}`
+      const url = `${SITE_URL}/blog/${encodeURIComponent(post.slug)}`
       const pubDate = post.frontmatter.date.toUTCString()
       return `    <item>
       <title><![CDATA[${post.frontmatter.title}]]></title>

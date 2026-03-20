@@ -1,7 +1,6 @@
 // src/features/feeds/lib/sitemap.ts
+import { SITE_URL } from '@/lib/config'
 import type { Post } from '../../blog/types'
-
-const SITE_URL = 'https://piyushmehta.com'
 
 const STATIC_PAGES = ['/', '/about', '/blog', '/projects', '/contact-me', '/uses']
 
@@ -19,7 +18,7 @@ export function generateSitemap(posts: Post[]): string {
     .map((post) => {
       const lastmod = post.frontmatter.date.toISOString().split('T')[0]
       return `  <url>
-    <loc>${SITE_URL}/blog/${post.slug}</loc>
+    <loc>${SITE_URL}/blog/${encodeURIComponent(post.slug)}</loc>
     <lastmod>${lastmod}</lastmod>
   </url>`
     })
