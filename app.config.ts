@@ -3,6 +3,7 @@ import { defineConfig } from '@tanstack/start/config'
 import mdx from '@mdx-js/rollup'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
+import { resolve } from 'node:path'
 
 export default defineConfig({
   server: {
@@ -56,6 +57,16 @@ export default defineConfig({
         },
       },
     ],
+    resolve: {
+      alias: {
+        '@': resolve(import.meta.dirname, 'src'),
+        '@/components': resolve(import.meta.dirname, 'src/components'),
+        '@/features': resolve(import.meta.dirname, 'src/features'),
+        '@/lib': resolve(import.meta.dirname, 'src/lib'),
+        '@/styles': resolve(import.meta.dirname, 'src/styles'),
+        '@/content': resolve(import.meta.dirname, 'src/content'),
+      },
+    },
     build: {
       rollupOptions: {
         external: ['node:async_hooks'],
