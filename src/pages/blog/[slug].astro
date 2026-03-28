@@ -12,37 +12,41 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
+  const toPostSlug = (id: string) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: toPostSlug(post.id) },
     props: { post },
   }));
 }
 
 const { post } = Astro.props;
-const { Content, headings } = await render(post);
+const currentSlug = Astro.params.slug ?? post.id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
+const postBody = post.body ?? '';
+const { Content } = await render(post);
 
 const { title, description, date, author, tags, image, banner, ogTemplate, ogTheme } = post.data;
+const typedTags: string[] = tags ?? [];
 
 // Import enhanced OG generator
 import { generateBlogOGImage, getRecommendedTemplate } from '../../utils/seo-optimization';
 
 // Calculate reading time (rough estimate)
-const readingTime = Math.ceil(post.body.split(' ').length / 200);
+const readingTime = Math.ceil(postBody.split(' ').length / 200);
 
 // Generate enhanced OG image
-const recommendedTemplate = getRecommendedTemplate('article', tags);
+const recommendedTemplate = getRecommendedTemplate('article', typedTags);
 const enhancedOGImage = generateBlogOGImage({
   title,
   description,
   publishedDate: date,
-  tags,
+  tags: typedTags,
   readingTime: readingTime.toString(),
   template: (ogTemplate as string) || recommendedTemplate,
   baseUrl: Astro.site?.toString() || 'https://piyushmehta.com',
 });
 
 // Generate canonical URL
-const canonicalUrl = new URL(`/blog/${post.slug}`, Astro.site).toString();
+const canonicalUrl = new URL(`/blog/${currentSlug}`, Astro.site).toString();
 
 // Create structured data for the article
 const articleSchema = {
@@ -59,8 +63,8 @@ const articleSchema = {
   datePublished: date.toISOString(),
   dateModified: date.toISOString(),
   url: canonicalUrl,
-  keywords: tags?.join(', ') || '',
-  wordCount: post.body.split(' ').length,
+  keywords: typedTags.join(', '),
+  wordCount: postBody.split(' ').length,
   timeRequired: `PT${readingTime}M`,
   inLanguage: 'en-US',
   isAccessibleForFree: true,
@@ -93,7 +97,7 @@ const articleSchema = {
   author={author}
   publishedTime={date}
   modifiedTime={date}
-  tags={tags}
+  tags={typedTags}
   canonical={canonicalUrl}
   image={image || banner || enhancedOGImage}
   schema={articleSchema}
@@ -143,7 +147,7 @@ const articleSchema = {
           <div data-pagefind-meta="author" class="hidden">{author || 'Piyush Mehta'}</div>
           <div data-pagefind-meta="date" class="hidden">{date.toISOString()}</div>
           <div data-pagefind-meta="type" class="hidden">blog</div>
-          {tags && tags.map(tag => <div data-pagefind-meta="tag" class="hidden">{tag}</div>)}
+          {typedTags.map((tag) => <div data-pagefind-meta="tag" class="hidden">{tag}</div>)}
 
           <div
             class="flex flex-wrap items-center justify-center gap-6 mb-6 text-light-400"
@@ -215,9 +219,9 @@ const articleSchema = {
           </div>
 
           {
-            tags && tags.length > 0 && (
+            typedTags.length > 0 && (
               <div class="flex flex-wrap justify-center gap-2">
-                {tags.map((tag) => (
+                {typedTags.map((tag) => (
                   <span
                     class="px-3 py-1 text-sm font-medium rounded-full bg-light-800 text-light-200"
                     itemprop="keywords"
@@ -257,7 +261,7 @@ const articleSchema = {
           title={title}
           readingTime={readingTime}
           date={date}
-          tags={tags}
+          tags={typedTags}
           url={canonicalUrl}
         />
 
@@ -302,7 +306,7 @@ const articleSchema = {
 
       <!-- Post Reactions -->
       <PostReactions 
-        postId={post.slug}
+        postId={currentSlug}
         title="Was this post helpful?"
         showCount={true}
         size="md"
@@ -311,8 +315,8 @@ const articleSchema = {
 
       <!-- Related Posts -->
       <RelatedPosts 
-        currentSlug={post.slug}
-        currentTags={tags}
+        currentSlug={currentSlug}
+        currentTags={typedTags}
         maxPosts={3}
       />
 

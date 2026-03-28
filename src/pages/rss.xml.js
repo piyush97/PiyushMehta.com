@@ -4,6 +4,7 @@ import rss from '@astrojs/rss';
 export async function GET(context) {
   try {
     const posts = await getCollection('blog');
+    const toPostSlug = (id) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
     const publishedPosts = posts
       .filter((post) => !post.data.draft)
       .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -20,8 +21,7 @@ export async function GET(context) {
         'Thoughts on software development, technology, and the art of building great products. Articles about React, Node.js, DevOps, and modern web development.',
       site: siteUrl,
       items: publishedPosts.map((post) => {
-        // Ensure the slug is properly formatted
-        const slug = post.slug.replace(/^\/+|\/+$/g, '');
+        const slug = toPostSlug(post.id).replace(/^\/+|\/+$/g, '');
         const postUrl = `${siteUrlString}/blog/${slug}/`;
 
         // Extract image for the post if available
