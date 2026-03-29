@@ -52,9 +52,6 @@ class CriticalCSSExtractor {
       // Generate critical CSS files
       await this.generateCriticalCSSFiles();
 
-      // Update layout with critical CSS
-      await this.updateLayoutWithCriticalCSS();
-
       console.log("✅ Critical CSS extraction completed!");
     } catch (error) {
       console.error("❌ Critical CSS extraction failed:", error);
@@ -261,53 +258,6 @@ class CriticalCSSExtractor {
     const combinedPath = path.join(criticalDir, "combined.css");
     await fs.writeFile(combinedPath, combinedCSS, "utf8");
     console.log(`    ✓ Generated combined.css (${combinedCSS.length} bytes)`);
-  }
-
-  async updateLayoutWithCriticalCSS() {
-    console.log("  🔧 Updating layout with critical CSS...");
-
-    const layoutPath = path.join(this.srcDir, "layouts", "Layout.astro");
-
-    try {
-      let layoutContent = await fs.readFile(layoutPath, "utf8");
-
-      // Check if critical CSS is already integrated
-      if (layoutContent.includes("<!-- Critical CSS -->")) {
-        console.log("    ⚠️  Critical CSS already integrated in layout");
-        return;
-      }
-
-      // Find the head section and inject critical CSS
-      const headInsertPoint = layoutContent.indexOf("</head>");
-
-      if (headInsertPoint === -1) {
-        throw new Error("Could not find </head> tag in Layout.astro");
-      }
-
-      const criticalCSSInsertion = `
-    <!-- Critical CSS -->
-    <style>
-      /* Critical above-the-fold CSS inlined for performance */
-      ${this.criticalCSS.get("homepage") || ""}
-    </style>
-    
-    <!-- Preload main stylesheet -->
-    <link rel="preload" href="/src/styles/global.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/src/styles/global.css"></noscript>
-    
-`;
-
-      layoutContent =
-        layoutContent.slice(0, headInsertPoint) +
-        criticalCSSInsertion +
-        layoutContent.slice(headInsertPoint);
-
-      await fs.writeFile(layoutPath, layoutContent, "utf8");
-      console.log("    ✓ Layout updated with critical CSS");
-    } catch (error) {
-      console.error("    ❌ Failed to update layout:", error.message);
-      // Don't throw - this is not critical for the build
-    }
   }
 
   // Utility method to analyze CSS usage
