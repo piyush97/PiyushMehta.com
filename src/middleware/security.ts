@@ -176,7 +176,9 @@ export function getSecurityHeaders(options: SecurityOptions = {}): Record<string
   // CSP Report-Only mode for testing
   if (options.csp?.reportOnly) {
     headers['Content-Security-Policy-Report-Only'] = headers['Content-Security-Policy'];
-    headers['Content-Security-Policy'] = undefined;
+    return Object.fromEntries(
+      Object.entries(headers).filter(([name]) => name !== 'Content-Security-Policy')
+    );
   }
 
   return headers;

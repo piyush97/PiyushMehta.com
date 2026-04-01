@@ -5,9 +5,11 @@ import * as Sentry from "@sentry/astro";
 
 // Initialize Sentry for client-side error tracking
 export function initSentry() {
-  if (typeof window !== "undefined" && process.env.PUBLIC_SENTRY_DSN) {
+  const dsn = import.meta.env.PUBLIC_SENTRY_DSN;
+
+  if (typeof window !== "undefined" && dsn) {
     Sentry.init({
-      dsn: process.env.PUBLIC_SENTRY_DSN,
+      dsn,
       environment: import.meta.env.MODE || "production",
       integrations: [
         Sentry.browserTracingIntegration(),
