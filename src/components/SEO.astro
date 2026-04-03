@@ -31,7 +31,7 @@ export interface Props {
 
 const {
   title,
-  description = 'Piyush Mehta - Senior Software Engineer, Tech Speaker, and Open Source Contributor. React Developer in Canada specializing in React.js, Node.js, DevOps, and modern web development.',
+  description = 'Piyush Mehta is a senior software engineer in Canada building reliable web platforms, enterprise AI workflows, and scalable product systems.',
   type = 'website',
   image,
   url = Astro.url.toString(),
@@ -42,7 +42,17 @@ const {
   canonical,
   noindex = false,
   schema,
-  keywords = ['Piyush Mehta', 'React Developer', 'Software Engineer', 'Software Engineer in Canada', 'Software Consultant in Canada', 'ReactJS', 'ReactJS Developer', 'React Developer', 'Software Engineer', 'Toronto Developer', 'Canadian Software Engineer', 'Tech Speaker', 'Open Source Contributor'],
+  keywords = [
+    'Piyush Mehta',
+    'Senior Software Engineer',
+    'TypeScript',
+    'React',
+    'Node.js',
+    'Astro',
+    'Software Architecture',
+    'AI Workflows',
+    'Technical Writing',
+  ],
   ogTemplate = 'default',
   ogTheme = 'dark',
 } = Astro.props;
@@ -204,12 +214,13 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
 <!-- Structured Data -->
-<script type="application/ld+json" set:html={JSON.stringify(schemaData)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData)} />
 
 <!-- Additional structured data for articles -->
 {
   type === 'article' && (
     <script
+      is:inline
       type="application/ld+json"
       set:html={JSON.stringify({
         '@context': 'https://schema.org',
@@ -243,15 +254,16 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 {
   type === 'website' && (
     <script
+      is:inline
       type="application/ld+json"
       set:html={JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'Person',
         name: 'Piyush Mehta',
         url: 'https://www.piyushmehta.com',
-        jobTitle: ['Senior Software Engineer', 'Full Stack Developer', 'Software Architect', 'Technical Consultant'],
+        jobTitle: 'Senior Software Engineer',
         description:
-          'Senior Software Engineer and Full Stack Developer with 5+ years of experience in Canada. Expert in React.js, Node.js, TypeScript, cloud technologies, and enterprise software development. Available for software consulting, technical architecture, and startup MVP development.',
+          'Senior software engineer in Canada building reliable web platforms, enterprise AI workflows, and scalable product systems.',
         image: 'https://www.piyushmehta.com/images/piyush-profile.jpg',
         sameAs: [
           'https://github.com/piyush97',
@@ -274,73 +286,21 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
         },
         knowsAbout: [
           'Software Engineering',
-          'Full Stack Development', 
-          'React.js',
+          'Full Stack Development',
           'Node.js',
+          'React',
           'TypeScript',
-          'JavaScript',
-          'Python',
-          'Java',
-          'Cloud Computing',
-          'AWS',
-          'Azure',
-          'DevOps',
-          'Kubernetes',
-          'Docker',
-          'Microservices',
-          'API Development',
-          'Database Design',
+          'Astro',
+          'Enterprise AI Workflows',
           'Software Architecture',
-          'System Design',
-          'Performance Optimization',
-          'Security',
-          'CI/CD',
-          'Agile Development',
-          'Technical Leadership',
-          'Code Review',
-          'Testing',
-          'GraphQL',
-          'REST APIs',
-          'MongoDB',
+          'Azure',
+          'AWS',
           'PostgreSQL',
-          'Redis',
-          'Enterprise Software',
-          'Startup Development',
-          'MVP Development',
-          'Technical Consulting',
-          'Software Project Management'
-        ],
-        hasSkill: [
-          {
-            '@type': 'Skill',
-            'name': 'Software Engineering',
-            'proficiencyLevel': 'Expert'
-          },
-          {
-            '@type': 'Skill', 
-            'name': 'React.js',
-            'proficiencyLevel': 'Expert'
-          },
-          {
-            '@type': 'Skill',
-            'name': 'Node.js', 
-            'proficiencyLevel': 'Expert'
-          },
-          {
-            '@type': 'Skill',
-            'name': 'TypeScript',
-            'proficiencyLevel': 'Expert'
-          },
-          {
-            '@type': 'Skill',
-            'name': 'Cloud Computing',
-            'proficiencyLevel': 'Advanced'
-          },
-          {
-            '@type': 'Skill',
-            'name': 'System Architecture',
-            'proficiencyLevel': 'Expert'
-          }
+          'Microservices',
+          'Security',
+          'Technical Leadership',
+          'Developer Education',
+          'Technical Writing',
         ],
         hasOccupation: {
           '@type': 'Occupation',
@@ -348,144 +308,13 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
           'occupationLocation': {
             '@type': 'Country',
             'name': 'Canada'
-          },
-          'estimatedSalary': {
-            '@type': 'MonetaryAmountDistribution',
-            'name': 'Senior Software Engineer Salary',
-            'currency': 'CAD',
-            'duration': 'P1Y',
-            'percentile10': 90000,
-            'percentile25': 110000, 
-            'median': 130000,
-            'percentile75': 150000,
-            'percentile90': 180000
           }
         },
         awards: [
-          'Tech Speaker at Multiple Conferences',
-          'Open Source Contributor',
-          '5+ Years Software Engineering Experience',
-          'Enterprise Software Development Expert'
+          'Tech speaker and workshop lead',
+          'Google Developer Student Clubs mentor',
+          '5+ years building production software',
         ],
-      })}
-    />
-  )
-}
-
-<!-- FAQPage Schema for Homepage -->
-{
-  url === 'https://www.piyushmehta.com/' && (
-    <script
-      type="application/ld+json"
-      set:html={JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: [
-          {
-            '@type': 'Question',
-            name: 'Who is Piyush Mehta?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Piyush Mehta is a Senior Software Engineer and Full Stack Developer based in Canada with 5+ years of experience. He specializes in React.js, Node.js, TypeScript, cloud technologies, and enterprise software development. He is also a tech speaker, open source contributor, and provides software consulting services.'
-            }
-          },
-          {
-            '@type': 'Question',
-            name: 'What technologies and programming languages does Piyush Mehta work with?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Piyush Mehta works with React.js, Node.js, TypeScript, JavaScript, Python, Java, AWS, Azure, Docker, Kubernetes, PostgreSQL, MongoDB, GraphQL, REST APIs, and modern web development frameworks. He has expertise in full stack development, cloud computing, DevOps, and system architecture.'
-            }
-          },
-          {
-            '@type': 'Question', 
-            name: 'Is Piyush Mehta available for hire as a software engineer in Canada?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Yes, Piyush Mehta is a Senior Software Engineer based in Canada and is available for software consulting, technical architecture, enterprise software development, startup MVP development, and full stack development projects. You can contact him through his website for project inquiries.'
-            }
-          },
-          {
-            '@type': 'Question',
-            name: 'How many years of software engineering experience does Piyush Mehta have?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Piyush Mehta has 5+ years of professional software engineering experience. He has worked on enterprise software solutions, startup projects, and has expertise in scalable web application development, technical leadership, and software architecture.'
-            }
-          },
-          {
-            '@type': 'Question',
-            name: 'What services does Piyush Mehta offer as a software engineer?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Piyush Mehta offers enterprise web application development, startup MVP development, technical strategy and architecture consulting, performance optimization, API development, code audits, team training, and full stack development services. He specializes in React.js, Node.js, and cloud-based solutions.'
-            }
-          },
-          {
-            '@type': 'Question',
-            name: 'Where is Piyush Mehta located and does he work with international clients?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Piyush Mehta is located in Canada and works with clients both locally in Canada and internationally. He has experience with remote collaboration and can work across different time zones for software development projects.'
-            }
-          },
-          {
-            '@type': 'Question',
-            name: 'What makes Piyush Mehta different from other software engineers?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Piyush Mehta combines deep technical expertise with business understanding, having worked in both enterprise environments and with startups. He focuses on building solutions that drive business results, has 5+ years of experience, and specializes in modern technologies like React.js, Node.js, and cloud platforms.'
-            }
-          },
-          {
-            '@type': 'Question',
-            name: 'Does Piyush Mehta provide software consulting services?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Yes, Piyush Mehta provides comprehensive software consulting services including technical strategy, architecture reviews, code audits, performance optimization, and CTO-level guidance for startups and enterprises. He offers both project-based work and ongoing consulting relationships.'
-            }
-          }
-        ]
-      })}
-    />
-  )
-}
-
-<!-- Professional Service Schema -->
-{
-  type === 'website' && (
-    <script
-      type="application/ld+json"
-      set:html={JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'ProfessionalService',
-        'name': 'Piyush Mehta Software Engineering Services',
-        'description': 'Professional software engineering and development services specializing in React.js, Node.js, full stack development, and enterprise solutions.',
-        'provider': {
-          '@type': 'Person',
-          'name': 'Piyush Mehta',
-          'jobTitle': 'Senior Software Engineer'
-        },
-        'areaServed': ['Canada', 'North America', 'Global'],
-        'serviceType': [
-          'Software Engineering',
-          'Full Stack Development',
-          'React.js Development', 
-          'Node.js Development',
-          'Technical Consulting',
-          'Software Architecture',
-          'Enterprise Software Development',
-          'Startup MVP Development',
-          'Performance Optimization',
-          'Code Review Services'
-        ],
-        'priceRange': '$150-$300 per hour',
-        'url': 'https://www.piyushmehta.com/services',
-        'address': {
-          '@type': 'PostalAddress',
-          'addressCountry': 'Canada',
-          'addressRegion': 'Ontario'
-        }
       })}
     />
   )

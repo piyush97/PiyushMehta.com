@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { captureError, captureMessage } from '../utils/sentry-client';
+import { captureError } from '../utils/sentry-client';
 
 interface ContactFormProps {
   className?: string;
@@ -57,18 +57,18 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
     setSubmitStatus('idle');
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const body = [
+        `Name: ${formData.name}`,
+        `Email: ${formData.email}`,
+        '',
+        formData.message,
+      ].join('\n');
 
-      // In a real app, you would send the data to your backend
-      console.log('Form submitted:', formData);
+      window.location.href = `mailto:contact@piyushmehta.com?subject=${encodeURIComponent(
+        formData.subject
+      )}&body=${encodeURIComponent(body)}`;
 
       setSubmitStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
-      setErrors({});
-
-      // Reset success message after 5 seconds
-      setTimeout(() => setSubmitStatus('idle'), 5000);
     } catch (error) {
       setSubmitStatus('error');
       
@@ -230,10 +230,10 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              Sending...
+              Opening draft...
             </span>
           ) : (
-            'Send Message'
+            'Open Email Draft'
           )}
         </button>
       </div>
@@ -253,10 +253,10 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
                 clipRule="evenodd"
               />
             </svg>
-            <span className="font-medium">Message sent successfully!</span>
+            <span className="font-medium">Email draft opened.</span>
           </div>
           <p className="mt-1 text-sm">
-            Thank you for reaching out. I'll get back to you soon.
+            Your mail app should open with subject and message prefilled.
           </p>
         </div>
       )}

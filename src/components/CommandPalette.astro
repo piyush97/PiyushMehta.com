@@ -192,7 +192,7 @@
   </div>
 </div>
 
-<script>
+<script is:inline>
   // Enhanced Command Palette
   const commandPalette = {
     modal: null,
@@ -477,19 +477,19 @@
         {
           url: '/',
           title: 'Home - Piyush Mehta',
-          excerpt: 'Senior Software Engineer & React Developer in Canada.',
+          excerpt: 'Senior software engineer in Canada building reliable platforms and AI workflows.',
           type: 'content'
         },
         {
           url: '/about/',
           title: 'About Piyush Mehta',
-          excerpt: 'Senior Software Engineer with 5+ years of experience.',
+          excerpt: 'Background, technical interests, writing, speaking, and engineering focus.',
           type: 'content'
         },
         {
           url: '/projects/',
-          title: 'Projects & Portfolio',
-          excerpt: 'Showcase of software engineering projects and technical work.',
+          title: 'Work - Piyush Mehta',
+          excerpt: 'Curated case studies with problems, tradeoffs, outcomes, and migration notes.',
           type: 'content'
         },
         {
@@ -744,27 +744,11 @@
         navigator.clipboard.writeText(url).then(() => {
           this.showToast('URL copied to clipboard');
         }).catch(() => {
-          this.fallbackCopyUrl(url);
+          this.showToast('Failed to copy URL');
         });
       } else {
-        this.fallbackCopyUrl(url);
-      }
-    },
-
-    fallbackCopyUrl(url) {
-      const textArea = document.createElement('textarea');
-      textArea.value = url;
-      document.body.appendChild(textArea);
-      textArea.select();
-      
-      try {
-        document.execCommand('copy');
-        this.showToast('URL copied to clipboard');
-      } catch (err) {
         this.showToast('Failed to copy URL');
       }
-      
-      document.body.removeChild(textArea);
     },
 
     showToast(message) {

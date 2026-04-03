@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { captureError, captureMessage } from '../utils/sentry-client';
+import { captureError } from '../utils/sentry-client';
 
 interface NewsletterSubscriptionProps {
   className?: string;
