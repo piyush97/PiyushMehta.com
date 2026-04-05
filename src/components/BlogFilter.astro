@@ -1,0 +1,271 @@
+---
+interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  slug: string;
+  categories: string[];
+  readingTime: number;
+}
+
+interface Props {
+  posts: BlogPost[];
+  class?: string;
+}
+
+const { posts = [], class: className = '' } = Astro.props;
+const categories = [
+  'all',
+  ...Array.from(new Set(posts.flatMap((post) => post.categories))).sort(),
+];
+
+const formatDate = (dateString: string) =>
+  new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+---
+
+<div class={`blog-filter ${className}`} data-blog-filter>
+  <div class="filter-panel">
+    <div class="filter-panel__search">
+      <label for="blog-search">Search writing</label>
+      <input
+        type="search"
+        id="blog-search"
+        name="search"
+        placeholder="Architecture, Astro, migration, React..."
+        data-filter-search
+      />
+    </div>
+
+    <label>
+      Theme
+      <select data-filter-category>
+        {categories.map((category) => (
+          <option value={category}>
+            {category === 'all' ? 'All themes' : category}
+          </option>
+        ))}
+      </select>
+    </label>
+
+    <label>
+      Sort
+      <select data-filter-sort>
+        <option value="date">Date</option>
+        <option value="title">Title</option>
+        <option value="readingTime">Read time</option>
+      </select>
+    </label>
+
+    <label>
+      Direction
+      <select data-filter-order>
+        <option value="desc">Newest first</option>
+        <option value="asc">Oldest first</option>
+      </select>
+    </label>
+
+    <button type="button" data-filter-reset>Reset</button>
+  </div>
+
+  <div class="results-bar" aria-live="polite">
+    <p>
+      Showing <strong data-result-count>{posts.length}</strong> of <strong>{posts.length}</strong>
+      pieces
+    </p>
+    <div data-active-filters hidden></div>
+  </div>
+
+  <div class="empty-state" data-empty-state hidden>
+    <h3>No matching writing found.</h3>
+    <p>Try a broader query or reset the filters.</p>
+  </div>
+
+  <div class="writing-list" data-writing-list>
+    {posts.map((post) => (
+      <article
+        data-post-card
+        data-title={post.title.toLowerCase()}
+        data-excerpt={post.excerpt.toLowerCase()}
+        data-categories={post.categories.join('|').toLowerCase()}
+        data-category-values={post.categories.join('|')}
+        data-date={new Date(post.date).getTime()}
+        data-reading-time={post.readingTime}
+      >
+        <div class="writing-list__meta">
+          <time datetime={post.date}>{formatDate(post.date)}</time>
+          <span>{post.readingTime} min read</span>
+        </div>
+        <h3>
+          <a href={`/blog/${post.slug}/`}>{post.title}</a>
+        </h3>
+        <p>{post.excerpt}</p>
+        <div class="writing-list__footer">
+          <div>
+            {post.categories.slice(0, 4).map((category) => (
+              <span>{category}</span>
+            ))}
+          </div>
+          <a href={`/blog/${post.slug}/`}>Read</a>
+        </div>
+      </article>
+    ))}
+  </div>
+</div>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>('[data-blog-filter]');
+
+  for (const root of roots) {
+    const search = root.querySelector<HTMLInputElement>('[data-filter-search]');
+    const category = root.querySelector<HTMLSelectElement>('[data-filter-category]');
+    const sort = root.querySelector<HTMLSelectElement>('[data-filter-sort]');
+    const order = root.querySelector<HTMLSelectElement>('[data-filter-order]');
+    const reset = root.querySelector<HTMLButtonElement>('[data-filter-reset]');
+    const list = root.querySelector<HTMLElement>('[data-writing-list]');
+    const resultCount = root.querySelector<HTMLElement>('[data-result-count]');
+    const activeFilters = root.querySelector<HTMLElement>('[data-active-filters]');
+    const emptyState = root.querySelector<HTMLElement>('[data-empty-state]');
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-post-card]'));
+
+    if (!search || !category || !sort || !order || !reset || !list || !resultCount || !activeFilters || !emptyState) {
+      continue;
+    }
+
+    const hasOption = (select: HTMLSelectElement, value: string) =>
+      Array.from(select.options).some((option) => option.value === value);
+
+    const queryParams = new URLSearchParams(window.location.search);
+    const initialQuery = queryParams.get('q');
+    const initialCategory = queryParams.get('theme');
+    const initialSort = queryParams.get('sort');
+    const initialOrder = queryParams.get('order');
+
+    if (initialQuery) {
+      search.value = initialQuery;
+    }
+    if (initialCategory && hasOption(category, initialCategory)) {
+      category.value = initialCategory;
+    }
+    if (initialSort && hasOption(sort, initialSort)) {
+      sort.value = initialSort;
+    }
+    if (initialOrder && hasOption(order, initialOrder)) {
+      order.value = initialOrder;
+    }
+
+    const applyFilters = () => {
+      const query = search.value.trim().toLowerCase();
+      const selectedCategory = category.value;
+      const sortKey = sort.value;
+      const direction = order.value === 'asc' ? 1 : -1;
+
+      const sortedCards = [...cards].sort((a, b) => {
+        const aValue = getSortValue(a, sortKey);
+        const bValue = getSortValue(b, sortKey);
+
+        if (aValue < bValue) return -1 * direction;
+        if (aValue > bValue) return 1 * direction;
+        return 0;
+      });
+
+      let visibleCount = 0;
+
+      for (const card of sortedCards) {
+        const searchable = `${card.dataset.title ?? ''} ${card.dataset.excerpt ?? ''} ${card.dataset.categories ?? ''}`;
+        const categoryValues = (card.dataset.categoryValues ?? '').split('|');
+        const matchesSearch = !query || searchable.includes(query);
+        const matchesCategory = selectedCategory === 'all' || categoryValues.includes(selectedCategory);
+        const isVisible = matchesSearch && matchesCategory;
+
+        card.hidden = !isVisible;
+        list.append(card);
+
+        if (isVisible) {
+          visibleCount += 1;
+        }
+      }
+
+      resultCount.textContent = String(visibleCount);
+      emptyState.hidden = visibleCount > 0;
+      list.hidden = visibleCount === 0;
+      renderActiveFilters(activeFilters, query, selectedCategory);
+      syncFiltersToUrl(query, selectedCategory, sortKey, order.value);
+    };
+
+    search.addEventListener('input', applyFilters);
+    category.addEventListener('change', applyFilters);
+    sort.addEventListener('change', applyFilters);
+    order.addEventListener('change', applyFilters);
+    reset.addEventListener('click', () => {
+      search.value = '';
+      category.value = 'all';
+      sort.value = 'date';
+      order.value = 'desc';
+      applyFilters();
+      search.focus();
+    });
+
+    applyFilters();
+  }
+
+  function getSortValue(card: HTMLElement, sortKey: string) {
+    if (sortKey === 'title') return card.dataset.title ?? '';
+    if (sortKey === 'readingTime') return Number(card.dataset.readingTime ?? 0);
+    return Number(card.dataset.date ?? 0);
+  }
+
+  function renderActiveFilters(container: HTMLElement, query: string, category: string) {
+    container.replaceChildren();
+
+    if (query) {
+      const searchPill = document.createElement('span');
+      searchPill.textContent = `Search: ${query}`;
+      container.append(searchPill);
+    }
+
+    if (category !== 'all') {
+      const categoryPill = document.createElement('span');
+      categoryPill.textContent = `Theme: ${category}`;
+      container.append(categoryPill);
+    }
+
+    container.hidden = !query && category === 'all';
+  }
+
+  function syncFiltersToUrl(query: string, category: string, sort: string, order: string) {
+    const params = new URLSearchParams(window.location.search);
+
+    if (query) {
+      params.set('q', query);
+    } else {
+      params.delete('q');
+    }
+
+    if (category !== 'all') {
+      params.set('theme', category);
+    } else {
+      params.delete('theme');
+    }
+
+    if (sort !== 'date') {
+      params.set('sort', sort);
+    } else {
+      params.delete('sort');
+    }
+
+    if (order !== 'desc') {
+      params.set('order', order);
+    } else {
+      params.delete('order');
+    }
+
+    const queryString = params.toString();
+    const nextUrl = `${window.location.pathname}${queryString ? `?${queryString}` : ''}${window.location.hash}`;
+    window.history.replaceState({}, '', nextUrl);
+  }
+</script>
