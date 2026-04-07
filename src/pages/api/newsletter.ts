@@ -26,7 +26,26 @@ export const prerender = false;
 // Production-ready rate limiting with Redis/Database persistence
 let rateLimitStore: Map<string, { count: number; resetTime: number }> | null = null;
 let failedAttempts: Map<string, { count: number; resetTime: number }> | null = null;
-let redis: unknown = null;
+type RedisMulti = {
+  incr: (key: string) => RedisMulti;
+  expire: (key: string, seconds: number) => RedisMulti;
+  exec: () => Promise<number[]>;
+};
+
+type RedisLike = {
+  lrange?: (key: string, start: number, stop: number) => Promise<string[]>;
+  lpush?: (key: string, value: string) => Promise<unknown>;
+  ltrim?: (key: string, start: number, stop: number) => Promise<unknown>;
+  incr?: (key: string) => Promise<number>;
+  expire?: (key: string, seconds: number) => Promise<unknown>;
+  multi?: () => RedisMulti;
+};
+
+let redis: RedisLike | null = null;
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
 
 // Initialize persistent storage
 async function initializeStorage() {
@@ -39,7 +58,7 @@ async function initializeStorage() {
       redis = new Redis({
         url: process.env.UPSTASH_REDIS_REST_URL,
         token: process.env.UPSTASH_REDIS_REST_TOKEN,
-      });
+      }) as RedisLike;
       console.log('Using Upstash Redis for rate limiting');
       return redis;
     }
@@ -47,7 +66,7 @@ async function initializeStorage() {
     // Try traditional Redis if available
     if (process.env.REDIS_URL) {
       const { Redis } = await import('ioredis');
-      redis = new Redis(process.env.REDIS_URL);
+      redis = new Redis(process.env.REDIS_URL) as unknown as RedisLike;
       console.log('Using traditional Redis for rate limiting');
       return redis;
     }
@@ -128,7 +147,7 @@ interface NewsletterRequest {
 }
 
 // Monitoring and alerting system
-class SecurityMonitor {
+export class SecurityMonitor {
   private static instance: SecurityMonitor;
   private alertCounts = new Map<string, number>();
   
@@ -232,7 +251,7 @@ class SecurityMonitor {
   async getSecurityMetrics() {
     try {
       const redis = await initializeStorage();
-      if (!redis) return null;
+      if (!redis?.lrange) return null;
 
       const events = await redis.lrange('newsletter:security_events', 0, -1);
       const parsed = events.map((e: string) => JSON.parse(e));
@@ -283,10 +302,7 @@ async function isRateLimited(ip: string): Promise<boolean> {
   if (redis) {
     try {
       // Use Redis for persistent rate limiting
-      const _multi = (redis as Record<string, unknown>).multi ? 
-        ((redis as Record<string, () => unknown>).multi()) : redis; // Handle different Redis clients
-      
-      const redisClient = redis as Record<string, unknown>;
+      const redisClient = redis;
       
       if (redisClient.incr) {
         // Traditional Redis or ioredis
@@ -299,11 +315,14 @@ async function isRateLimited(ip: string): Promise<boolean> {
         return count > SECURITY_CONFIG.RATE_LIMIT.MAX_REQUESTS;
       } else {
         // Upstash Redis
-        const multiClient = redisClient.multi as () => Record<string, unknown>;
-        const [count] = await (multiClient()
+        if (!redisClient.multi) {
+          return false;
+        }
+
+        const [count] = await redisClient.multi()
           .incr(key)
           .expire(key, Math.ceil(SECURITY_CONFIG.RATE_LIMIT.WINDOW_MS / 1000))
-          .exec as () => Promise<number[]>)();
+          .exec();
         return count > SECURITY_CONFIG.RATE_LIMIT.MAX_REQUESTS;
       }
     } catch (error) {
@@ -313,15 +332,16 @@ async function isRateLimited(ip: string): Promise<boolean> {
   }
   
   // Fallback to in-memory rate limiting
-  const ipData = rateLimitStore?.get(ip);
+  const store = rateLimitStore ?? (rateLimitStore = new Map());
+  const ipData = store.get(ip);
   
   if (!ipData) {
-    rateLimitStore?.set(ip, { count: 1, resetTime: now + SECURITY_CONFIG.RATE_LIMIT.WINDOW_MS });
+    store.set(ip, { count: 1, resetTime: now + SECURITY_CONFIG.RATE_LIMIT.WINDOW_MS });
     return false;
   }
   
   if (now > ipData.resetTime) {
-    rateLimitStore?.set(ip, { count: 1, resetTime: now + SECURITY_CONFIG.RATE_LIMIT.WINDOW_MS });
+    store.set(ip, { count: 1, resetTime: now + SECURITY_CONFIG.RATE_LIMIT.WINDOW_MS });
     return false;
   }
   
@@ -334,13 +354,14 @@ async function isRateLimited(ip: string): Promise<boolean> {
 }
 
 function isFailureBlocked(ip: string): boolean {
+  const store = failedAttempts ?? (failedAttempts = new Map());
   const now = Date.now();
-  const failData = failedAttempts.get(ip);
+  const failData = store.get(ip);
   
   if (!failData) return false;
   
   if (now > failData.resetTime) {
-    failedAttempts.delete(ip);
+    store.delete(ip);
     return false;
   }
   
@@ -348,13 +369,14 @@ function isFailureBlocked(ip: string): boolean {
 }
 
 function recordFailedAttempt(ip: string): void {
+  const store = failedAttempts ?? (failedAttempts = new Map());
   const now = Date.now();
-  const failData = failedAttempts.get(ip);
+  const failData = store.get(ip);
   
   if (!failData) {
-    failedAttempts.set(ip, { count: 1, resetTime: now + SECURITY_CONFIG.RATE_LIMIT.FAILED_ATTEMPT_BLOCK_MS });
+    store.set(ip, { count: 1, resetTime: now + SECURITY_CONFIG.RATE_LIMIT.FAILED_ATTEMPT_BLOCK_MS });
   } else if (now > failData.resetTime) {
-    failedAttempts.set(ip, { count: 1, resetTime: now + SECURITY_CONFIG.RATE_LIMIT.FAILED_ATTEMPT_BLOCK_MS });
+    store.set(ip, { count: 1, resetTime: now + SECURITY_CONFIG.RATE_LIMIT.FAILED_ATTEMPT_BLOCK_MS });
   } else {
     failData.count++;
   }
@@ -557,8 +579,8 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Check if IP is blocked due to failed attempts
-    if (await isFailureBlocked(clientIP)) {
-      await recordFailedAttempt(clientIP);
+    if (isFailureBlocked(clientIP)) {
+      recordFailedAttempt(clientIP);
       await monitor.logSecurityEvent({
         type: 'rate_limit',
         ip: clientIP,
@@ -577,7 +599,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Rate limiting check with Redis persistence
     if (await isRateLimited(clientIP)) {
-      await recordFailedAttempt(clientIP);
+      recordFailedAttempt(clientIP);
       await monitor.logSecurityEvent({
         type: 'rate_limit',
         ip: clientIP,
@@ -649,7 +671,7 @@ export const POST: APIRoute = async ({ request }) => {
     // Enhanced security validation
     const securityValidation = await validateRequestSecurity(request, data);
     if (!securityValidation.valid) {
-      await recordFailedAttempt(clientIP);
+      recordFailedAttempt(clientIP);
       await monitor.logSecurityEvent({
         type: 'bot_detected',
         ip: clientIP,
@@ -686,7 +708,7 @@ export const POST: APIRoute = async ({ request }) => {
     // Enhanced email security validation
     const emailValidation = validateEmailSecurity(sanitizedEmail);
     if (!emailValidation.valid) {
-      await recordFailedAttempt(clientIP);
+      recordFailedAttempt(clientIP);
       await monitor.logSecurityEvent({
         type: 'blocked_email',
         ip: clientIP,
@@ -725,7 +747,7 @@ export const POST: APIRoute = async ({ request }) => {
         { status: 200, headers: securityHeaders }
       );
     } catch (substackError) {
-      console.error('Substack subscription failed:', substackError.message);
+      console.error('Substack subscription failed:', getErrorMessage(substackError));
 
       // Try database fallback only if we have database credentials
       if (process.env.POSTGRES_URL) {
@@ -742,7 +764,7 @@ export const POST: APIRoute = async ({ request }) => {
             { status: 200, headers: securityHeaders }
           );
         } catch (dbError) {
-          console.error('Database fallback also failed:', dbError.message);
+          console.error('Database fallback also failed:', getErrorMessage(dbError));
           // Final fallback: log to file or console for manual processing
           await logEmailForManualProcessing(sanitizedEmail);
         }
@@ -834,7 +856,7 @@ async function storeInDatabase(email: string) {
     client.release();
     console.log('Subscriber stored in database:', email);
   } catch (dbError) {
-    console.error('Database error:', dbError.message);
+    console.error('Database error:', getErrorMessage(dbError));
     
     // Log database error to Sentry
     Sentry.captureException(dbError, {
@@ -844,7 +866,7 @@ async function storeInDatabase(email: string) {
       },
     });
     
-    throw new Error(`Database storage failed: ${dbError.message}`);
+    throw new Error(`Database storage failed: ${getErrorMessage(dbError)}`);
   } finally {
     await pool.end();
   }
@@ -853,7 +875,6 @@ async function storeInDatabase(email: string) {
 // Final fallback: log email for manual processing
 async function logEmailForManualProcessing(email: string) {
   const timestamp = new Date().toISOString();
-  const _logEntry = `${timestamp} - MANUAL_PROCESSING_NEEDED: ${email}`;
 
   // In production, you might want to:
   // 1. Send to a monitoring service like Sentry
@@ -912,7 +933,7 @@ async function subscribeToSubstack(email: string) {
       console.log('Substack subscription successful via method:', method.name);
       return result;
     } catch (error) {
-      console.warn('Substack method failed:', method.name, error.message);
+      console.warn('Substack method failed:', method.name, getErrorMessage(error));
       lastError = error;
     }
   }

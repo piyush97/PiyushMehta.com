@@ -1,6 +1,5 @@
 import fs from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+import { join } from "path";
 import { Resvg } from "@resvg/resvg-js";
 import * as Sentry from "@sentry/node";
 import type { APIRoute } from "astro";
@@ -8,9 +7,6 @@ import React from "react";
 import satori from "satori";
 
 export const prerender = false;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Enhanced template configurations inspired by Syntax FM
 const TEMPLATE_CONFIGS = {
@@ -90,13 +86,13 @@ export const GET: APIRoute = async ({ params, url, site }) => {
     // Enhanced parameter extraction (inspired by Syntax FM's URL structure)
     const title = searchParams.get("title") || decodeURIComponent(pathParams[0] || "Piyush Mehta");
     const template = (searchParams.get("template") || pathParams[1] || "syntax") as keyof typeof TEMPLATE_CONFIGS;
-    const _theme = searchParams.get("theme") || "dark";
+    searchParams.get("theme") || "dark";
     const description = searchParams.get("description") || "Software Engineer & Tech Speaker";
     const type = searchParams.get("type") || "website";
     const date = searchParams.get("date");
     const tags = searchParams.get("tags");
     const episode = searchParams.get("episode"); // For podcast-style templates
-    const _readingTime = searchParams.get("readingTime");
+    searchParams.get("readingTime");
     const language = searchParams.get("lang") || "javascript";
 
     // Dynamic font sizing based on content length
@@ -867,7 +863,7 @@ export const GET: APIRoute = async ({ params, url, site }) => {
     const pngData = resvg.render();
     const pngBuffer = pngData.asPng();
 
-    return new Response(pngBuffer, {
+    return new Response(new Uint8Array(pngBuffer), {
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": "public, max-age=31536000, s-maxage=31536000, immutable",
@@ -882,16 +878,8 @@ export const GET: APIRoute = async ({ params, url, site }) => {
     Sentry.captureException(error, {
       tags: {
         endpoint: "enhanced_og_image",
-        template,
-        theme,
       },
       extra: {
-        title,
-        description,
-        type,
-        date,
-        tags,
-        episode,
         url: url.toString(),
       },
     });

@@ -1,15 +1,11 @@
 import fs from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+import { join } from "path";
 import { Resvg } from "@resvg/resvg-js";
 import type { APIRoute } from 'astro';
 import React from "react";
 import satori from "satori";
 
 export const prerender = false;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export const GET: APIRoute = async ({ url }) => {
   try {
@@ -66,7 +62,7 @@ export const GET: APIRoute = async ({ url }) => {
     const pngData = resvg.render();
     const pngBuffer = pngData.asPng();
 
-    return new Response(pngBuffer, {
+    return new Response(new Uint8Array(pngBuffer), {
       headers: {
         'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=3600',
@@ -74,6 +70,7 @@ export const GET: APIRoute = async ({ url }) => {
     });
   } catch (error) {
     console.error('Error generating simple OG image:', error);
-    return new Response(`Error generating simple OG image: ${error.message}`, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    return new Response(`Error generating simple OG image: ${message}`, { status: 500 });
   }
 };
