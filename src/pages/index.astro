@@ -1,736 +1,455 @@
 ---
-import { getCollection } from 'astro:content';
-import BlogCard from '../components/BlogCard.astro';
-import Hero from '../components/Hero.astro';
 import Layout from '../layouts/Layout.astro';
+import {
+  caseStudies,
+  portfolioMetrics,
+  socialLinks,
+  writingHighlights,
+} from '../data/portfolio';
+import speakerPhoto from '../images/piyush-devfest.jpg';
+import socialCard from '../images/social.jpg';
 
-// Get all blog posts
-const allPosts = await getCollection('blog');
-const latestPosts = allPosts
-  .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
-
-// Advanced SEO keywords for maximum search visibility and ranking dominance
-const keywords = [
-  // Primary Identity & Name
-  'Piyush Mehta', 'Piyush Mehta Software Engineer', 'Piyush Mehta Developer', 'Piyush Mehta Canada',
-  
-  // Core Job Titles & Variations
-  'Software Engineer', 'Senior Software Engineer', 'Full Stack Developer', 'Full Stack Engineer',
-  'Software Developer', 'Web Developer', 'Frontend Engineer', 'Backend Engineer',
-  'JavaScript Developer', 'TypeScript Developer', 'React Developer', 'Node.js Developer',
-  
-  // Location-Based SEO (Canada Focus)
-  'Software Engineer Canada', 'Software Developer Canada', 'Full Stack Developer Canada',
-  'Software Engineer Toronto', 'Software Engineer Vancouver', 'Software Engineer Montreal',
-  'Software Engineer Ottawa', 'Software Engineer Calgary', 'Tech Consultant Canada',
-  'Canadian Software Engineer', 'Canada Tech Expert', 'Remote Software Engineer Canada',
-  
-  // Technology Expertise
-  'React.js Expert', 'JavaScript Expert', 'TypeScript Specialist', 'Node.js Developer',
-  'Next.js Developer', 'React Native Developer', 'GraphQL Developer', 'API Developer',
-  'Cloud Developer', 'AWS Developer', 'Azure Developer', 'DevOps Engineer',
-  
-  // Service-Based Keywords
-  'Custom Software Development', 'Web Application Development', 'Enterprise Software Solutions',
-  'Startup MVP Development', 'Software Consulting', 'Technical Architecture',
-  'Code Review Services', 'Performance Optimization', 'Database Design',
-  
-  // Industry & Experience
-  'Senior Developer 5+ Years', 'Enterprise Software Engineer', 'Startup CTO',
-  'Technical Lead', 'Software Architect', 'System Design Expert',
-  'Scalable Applications', 'High Performance Software', 'Modern Web Development',
-  
-  // Competitive SEO
-  'Best Software Engineer Canada', 'Top Developer Canada', 'Expert Software Consultant',
-  'Professional Software Development', 'Reliable Software Engineer', 'Experienced Developer',
-  
-  // Long-tail Keywords
-  'hire software engineer canada', 'freelance software developer canada',
-  'custom web application development', 'react developer for hire',
-  'full stack developer portfolio', 'software engineer portfolio canada',
-  'technical consultant canada', 'enterprise software development services'
-];
+const featuredCaseStudies = caseStudies.slice(0, 3);
 ---
 
 <Layout
-   title="Piyush Mehta - Senior Software Engineer & Full Stack Developer in Canada | 5+ Years Experience"
-   description="Piyush Mehta is a Senior Software Engineer and Full Stack Developer in Canada with 5+ years of experience. Expert in React.js, Node.js, TypeScript, and cloud technologies. Specializing in enterprise software development, startup MVPs, and scalable web applications. Available for software consulting and technical architecture projects across Canada and globally."
-   keywords={keywords}
-   type="website"
-   ogTemplate="modern"
-   ogTheme="dark"
- >
-  <!-- Hero Section -->
-  <Hero>
-    <div class="py-16 text-center md:py-24">
-      <div class="hero-content-wrapper">
-        <p class="hero-intro">
-          <span class="intro-icon">👋</span>
-          <span class="intro-text">Hello, my name is</span>
-        </p>
-        <h1 class="hero-title">
-          <span class="title-primary">Piyush</span>
-          <strong class="title-accent">Mehta</strong>
-          <div class="title-underline"></div>
-        </h1>
-        <p class="hero-teaser">
-          <span class="highlight">Senior Software Engineer with 5+ years experience in Canada 🇨🇦</span>,
-          <span class="highlight">Full Stack Developer</span>, 
-          <span class="highlight">React.js & Node.js Expert</span>, 
-          <span class="highlight">Tech Speaker</span>, and
-          <span class="highlight">Open Source Contributor</span>. I architect and build
-          scalable web applications using cutting-edge technologies like <strong>React.js</strong>, <strong>Node.js</strong>, <strong>TypeScript</strong>, and <strong>cloud platforms</strong>. 
-          Specializing in enterprise systems, startup MVPs, and high-performance solutions that drive measurable business growth. 
-          Available for software consulting and technical architecture projects across <strong>Canada</strong> and globally.
-        </p>
-
-        <div class="hero-cta">
-          <a href="/blog/" class="btn-primary btn-enhanced">
-            <span class="btn-content">
-              <svg
-                class="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                ></path>
-              </svg>
-              Read My Blog
-              <svg
-                class="w-4 h-4 ml-2 transition-transform btn-arrow"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-              </svg>
-            </span>
-            <div class="btn-bg-effect"></div>
-          </a>
-          <a href="/contact-me/" class="btn-secondary btn-enhanced">
-            <span class="btn-content">
-              <svg
-                class="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                ></path>
-              </svg>
-              Get In Touch
-              <svg
-                class="w-4 h-4 ml-2 transition-transform btn-arrow"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                ></path>
-              </svg>
-            </span>
-            <div class="btn-bg-effect"></div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Stats Section -->
-      <div class="hero-stats">
-        <div class="stat-item">
-          <span class="stat-number">50+</span>
-          <span class="stat-label">Projects Built</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">25+</span>
-          <span class="stat-label">Tech Talks</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">10K+</span>
-          <span class="stat-label">GitHub Stars</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">5+</span>
-          <span class="stat-label">Years Experience</span>
-        </div>
-      </div>
-    </div>
-  </Hero>
-
-  <!-- Latest Articles Section -->
-  <section class="py-16 container-base">
-    <h2 class="mb-12 text-3xl font-bold text-center md:text-4xl">
-      Latest Articles
-    </h2>
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {
-        latestPosts.map((post) => (
-          <BlogCard
-            title={post.data.title}
-            description={post.data.description}
-            date={post.data.date.toISOString()}
-            slug={post.slug}
-            tags={post.data.tags}
-          />
-        ))
-      }
-    </div>
-
-    <div class="mt-12 text-center">
-      <a
-        href="/blog/"
-        class="inline-flex items-center gap-2 font-medium transition-colors text-accent hover:text-accent/80 duration-base"
-      >
-        View All Articles
-        <svg
-          class="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 5l7 7-7 7"></path>
-        </svg>
-      </a>
-    </div>
-  </section>
-
-  <!-- SEO-Optimized Content Section -->
-  <section class="seo-content-section py-16 container-base" itemscope itemtype="https://schema.org/Person">
-    <div class="max-w-4xl mx-auto">
-      <header class="mb-12 text-center">
-        <h2 class="text-3xl md:text-4xl font-bold mb-6">
-          About <span class="text-accent" itemprop="name">Piyush Mehta</span> - Senior Software Engineer in Canada
-        </h2>
-        <p class="text-lg text-text-secondary" itemprop="description">
-          Professional software engineering services specializing in React.js, Node.js, and modern web development technologies
-        </p>
-      </header>
-
-      <div class="grid md:grid-cols-2 gap-8 mb-12">
-        <article class="seo-card p-6 rounded-lg bg-surface-100/10">
-          <h3 class="text-xl font-bold mb-4 text-accent">Software Engineering Expertise</h3>
-          <p class="text-text-secondary leading-relaxed mb-4">
-            As a <strong>Senior Software Engineer</strong> with <span itemprop="experienceYears">5+ years of experience</span>, 
-            I specialize in building scalable web applications using modern technologies. My expertise includes 
-            <strong>React.js development</strong>, <strong>Node.js backend solutions</strong>, <strong>TypeScript</strong>, 
-            and <strong>cloud computing platforms</strong> like AWS and Azure.
-          </p>
-          <ul class="list-disc list-inside space-y-2 text-sm text-text-secondary">
-            <li itemprop="knowsAbout">React.js & Next.js Development</li>
-            <li itemprop="knowsAbout">Node.js & Express.js Backend</li>
-            <li itemprop="knowsAbout">TypeScript & JavaScript ES6+</li>
-            <li itemprop="knowsAbout">Database Design (PostgreSQL, MongoDB)</li>
-          </ul>
-        </article>
-
-        <article class="seo-card p-6 rounded-lg bg-surface-100/10">
-          <h3 class="text-xl font-bold mb-4 text-accent">Services & Consulting</h3>
-          <p class="text-text-secondary leading-relaxed mb-4">
-            I provide comprehensive <strong>software consulting services</strong> for businesses across 
-            <span itemprop="workLocation">Canada</span> and internationally. From <strong>enterprise web application development</strong> 
-            to <strong>startup MVP creation</strong>, I help organizations build robust, scalable software solutions.
-          </p>
-          <ul class="list-disc list-inside space-y-2 text-sm text-text-secondary">
-            <li>Enterprise Software Development</li>
-            <li>Startup MVP Development</li>
-            <li>Technical Architecture & Consulting</li>
-            <li>Performance Optimization & Code Review</li>
-          </ul>
-        </article>
-      </div>
-
-      <div class="mb-12">
-        <h3 class="text-2xl font-bold mb-6 text-center">Technology Stack & Skills</h3>
-        <div class="skills-grid grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
-            <h4 class="font-bold text-accent" itemprop="knowsAbout">React.js</h4>
-            <p class="text-sm text-text-secondary">Expert Level</p>
-          </div>
-          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
-            <h4 class="font-bold text-accent" itemprop="knowsAbout">Node.js</h4>
-            <p class="text-sm text-text-secondary">Expert Level</p>
-          </div>
-          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
-            <h4 class="font-bold text-accent" itemprop="knowsAbout">TypeScript</h4>
-            <p class="text-sm text-text-secondary">Advanced</p>
-          </div>
-          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
-            <h4 class="font-bold text-accent" itemprop="knowsAbout">Cloud Computing</h4>
-            <p class="text-sm text-text-secondary">Advanced</p>
-          </div>
-          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
-            <h4 class="font-bold text-accent" itemprop="knowsAbout">Python</h4>
-            <p class="text-sm text-text-secondary">Intermediate</p>
-          </div>
-          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
-            <h4 class="font-bold text-accent" itemprop="knowsAbout">DevOps</h4>
-            <p class="text-sm text-text-secondary">Intermediate</p>
-          </div>
-          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
-            <h4 class="font-bold text-accent" itemprop="knowsAbout">GraphQL</h4>
-            <p class="text-sm text-text-secondary">Advanced</p>
-          </div>
-          <div class="skill-item p-4 rounded-lg bg-accent/10 text-center">
-            <h4 class="font-bold text-accent" itemprop="knowsAbout">System Design</h4>
-            <p class="text-sm text-text-secondary">Expert Level</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="text-center">
-        <h3 class="text-2xl font-bold mb-4">Hire a Senior Software Engineer in Canada</h3>
-        <p class="text-lg text-text-secondary mb-6 max-w-2xl mx-auto">
-          Looking for an experienced <strong>software engineer in Canada</strong>? I'm available for consulting projects, 
-          technical architecture reviews, and full-stack development work. Let's discuss how I can help bring your software ideas to life.
-        </p>
-        <div class="flex flex-wrap justify-center gap-4">
-          <a href="/services/" class="btn-secondary inline-flex items-center gap-2">
-            View Services
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
-          </a>
-          <a href="/contact-me/" class="btn-secondary inline-flex items-center gap-2">
-            Get In Touch
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-            </svg>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Hidden SEO Content for Search Engines -->
-    <div class="sr-only">
-      <h2>Piyush Mehta - Software Engineer Portfolio Canada</h2>
-      <p>
-        Piyush Mehta is a senior software engineer and full stack developer based in Canada with extensive experience 
-        in React.js, Node.js, TypeScript, and cloud technologies. Specializing in enterprise software development, 
-        startup MVP creation, technical consulting, and software architecture. Available for hire across Canada 
-        including Toronto, Vancouver, Montreal, Calgary, Ottawa, and Edmonton. Expert in modern web development, 
-        scalable applications, performance optimization, and technical leadership.
+  title="Piyush Mehta - Senior Software Engineer"
+  description="Piyush Mehta is a senior software engineer in Canada building reliable web platforms, AI workflows, and scalable product systems with TypeScript, React, Node.js, Astro, and cloud infrastructure."
+  image={socialCard.src}
+  keywords={[
+    'Piyush Mehta',
+    'Senior Software Engineer',
+    'TypeScript',
+    'React',
+    'Node.js',
+    'Astro',
+    'Software Architecture',
+    'AI Workflows',
+  ]}
+  type="website"
+  ogTemplate="tech"
+  ogTheme="dark"
+>
+  <section class="home-hero" data-reveal>
+    <span
+      class="home-hero__accent home-hero__accent--north"
+      aria-hidden="true"
+      data-parallax
+      data-parallax-speed="0.11"
+    ></span>
+    <span
+      class="home-hero__accent home-hero__accent--east"
+      aria-hidden="true"
+      data-parallax
+      data-parallax-speed="0.18"
+    ></span>
+    <div class="home-hero__copy" data-reveal data-reveal-delay="40">
+      <p class="eyebrow" data-hero-eyebrow>Senior Software Engineer · Canada</p>
+      <h1 data-hero-title>Software that holds up after the demo.</h1>
+      <p class="lede">
+        I work across product engineering, enterprise AI workflows, platform reliability, and
+        developer education. This portfolio is for engineering leaders who want to inspect
+        judgment: what shipped, which constraints mattered, and how tradeoffs were handled.
       </p>
-      <ul>
-        <li>Senior Software Engineer Canada</li>
-        <li>Full Stack Developer Toronto</li>
-        <li>React.js Developer Vancouver</li>
-        <li>Node.js Developer Montreal</li>
-        <li>Software Consultant Calgary</li>
-        <li>Technical Architect Ottawa</li>
-        <li>Startup CTO Services Canada</li>
-        <li>Enterprise Software Development</li>
-        <li>Custom Web Application Development</li>
-        <li>Software Engineering Consulting</li>
-      </ul>
+      <div class="hero-actions" aria-label="Primary actions">
+        <a class="btn-primary" href="/projects/">Inspect the work</a>
+        <a class="btn-secondary" href="/resume/">Read the resume</a>
+      </div>
+      <div class="social-row" aria-label="Professional links">
+        {socialLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
+    </div>
+
+    <figure class="hero-portrait" data-reveal data-reveal-delay="120" data-parallax data-parallax-speed="0.08">
+      <img src={speakerPhoto.src} alt="Piyush Mehta speaking at a developer event" />
+      <figcaption>
+        Developer education, production systems, and hands-on infrastructure practice.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="metrics-band" aria-label="Selected impact" data-reveal data-reveal-delay="80">
+    {portfolioMetrics.map((metric, index) => (
+      <article data-reveal data-reveal-stagger={String(index * 70)}>
+        <strong>{metric.value}</strong>
+        <span>{metric.label}</span>
+        <p>{metric.detail}</p>
+      </article>
+    ))}
+  </section>
+
+  <section class="section-block" data-reveal>
+    <div class="section-heading" data-reveal data-reveal-delay="40">
+      <p class="eyebrow">Case Studies</p>
+      <h2>Evidence over adjectives.</h2>
+      <p>
+        Strong engineering portfolios are not walls of technologies. They are decisions made under
+        pressure, with constraints and outcomes attached.
+      </p>
+    </div>
+
+    <div class="case-grid">
+      {featuredCaseStudies.map((study, index) => (
+        <article class="case-card" data-reveal data-reveal-stagger={String(index * 90)}>
+          <div>
+            <p class="case-card__eyebrow">{study.eyebrow}</p>
+            <h3>{study.title}</h3>
+            <p>{study.summary}</p>
+          </div>
+          <dl>
+            <div>
+              <dt>Role</dt>
+              <dd>{study.role}</dd>
+            </div>
+            <div>
+              <dt>Stack</dt>
+              <dd>{study.stack.slice(0, 4).join(' · ')}</dd>
+            </div>
+          </dl>
+          <a href="/projects/">Read the case study</a>
+        </article>
+      ))}
     </div>
   </section>
 
-  <style>
-    /* Enhanced Hero Content Styling */
-    .hero-content-wrapper {
-      position: relative;
-      z-index: 10;
-    }
+  <section class="section-block" data-reveal>
+    <div class="section-heading" data-reveal data-reveal-delay="40">
+      <p class="eyebrow">Writing</p>
+      <h2>How I explain systems.</h2>
+      <p>
+        Writing is part of the work: it shows how I decompose ambiguity, name tradeoffs, and help
+        other engineers build mental models.
+      </p>
+    </div>
 
-    .hero-intro {
-      font-family: var(--font-mono);
-      font-size: 1rem;
-      color: var(--color-accent);
-      margin: 0 0 1.5rem 0;
-      opacity: 0;
-      animation: slideInUp 0.8s ease-out 0.2s forwards;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-    }
+    <div class="writing-grid">
+      {writingHighlights.map((post, index) => (
+        <article data-reveal data-reveal-stagger={String(index * 90)}>
+          <span>{post.theme}</span>
+          <h3><a href={post.href}>{post.title}</a></h3>
+          <p>{post.description}</p>
+        </article>
+      ))}
+    </div>
+  </section>
 
-    .intro-icon {
-      font-size: 1.5rem;
-      animation: wave 2s ease-in-out infinite;
-    }
-
-    .intro-text {
-      position: relative;
-    }
-
-    .intro-text::before {
-      position: absolute;
-      left: -20px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 12px;
-      height: 2px;
-      background: var(--color-accent);
-      animation: lineExpand 0.8s ease-out 0.6s forwards;
-      transform-origin: left;
-      scale: 0 1;
-    }
-
-    .hero-title {
-      font-size: clamp(3rem, 10vw, 6rem);
-      font-weight: 700;
-      margin: 0 0 2rem 0;
-      line-height: 1.1;
-      opacity: 0;
-      animation: slideInUp 0.8s ease-out 0.4s forwards;
-      position: relative;
-    }
-
-    .title-primary {
-      display: block;
-      background: linear-gradient(
-        135deg,
-        var(--color-text-primary) 0%,
-        var(--color-accent) 50%,
-        var(--color-text-primary) 100%
-      );
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-size: 200% 100%;
-      animation: gradientShift 4s ease-in-out infinite;
-    }
-
-    .title-accent {
-      display: block;
-      background: linear-gradient(
-        135deg,
-        var(--color-accent) 0%,
-        var(--color-text-primary) 50%,
-        var(--color-accent) 100%
-      );
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-size: 200% 100%;
-      animation: gradientShift 3s ease-in-out infinite reverse;
-      position: relative;
-    }
-
-    .title-underline {
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 4px;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        var(--color-accent),
-        transparent
-      );
-      border-radius: 2px;
-      animation: underlineExpand 1s ease-out 1s forwards;
-      width: 0;
-    }
-
-    .hero-teaser {
-      font-size: 1.25rem;
-      max-width: 700px;
-      margin: 0 auto 3rem;
-      color: var(--color-text-secondary);
-      line-height: 1.7;
-      opacity: 0;
-      animation: slideInUp 0.8s ease-out 0.6s forwards;
-    }
-
-    .highlight {
-      color: var(--color-accent);
-      font-weight: 600;
-      position: relative;
-      display: inline-block;
-    }
-
-    .highlight::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        var(--color-accent),
-        transparent
-      );
-      transform: scaleX(0);
-      animation: highlightExpand 0.6s ease-out 1.5s forwards;
-    }
-
-    .highlight:nth-child(2)::after {
-      animation-delay: 1.7s;
-    }
-
-    .highlight:nth-child(3)::after {
-      animation-delay: 1.9s;
-    }
-
-    .hero-cta {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      opacity: 0;
-      animation: slideInUp 0.8s ease-out 0.8s forwards;
-      margin-bottom: 4rem;
-    }
-
-    /* Enhanced Button Styles */
-    .btn-enhanced {
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      transform: translateY(0);
-    }
-
-    .btn-enhanced:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(var(--color-accent-rgb), 0.2);
-    }
-
-    .btn-enhanced:active {
-      transform: translateY(-1px);
-    }
-
-    .btn-content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      transition: all 0.3s ease;
-    }
-
-    .btn-enhanced:hover .btn-content {
-      transform: translateX(2px);
-    }
-
-    .btn-enhanced:hover .btn-arrow {
-      transform: translateX(4px);
-    }
-
-    .btn-bg-effect {
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.1),
-        transparent
-      );
-      transition: left 0.5s ease;
-    }
-
-    .btn-enhanced:hover .btn-bg-effect {
-      left: 100%;
-    }
-
-    /* Enhanced Stats Section */
-    .hero-stats {
-      margin-top: 4rem;
-      display: flex;
-      gap: 3rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      opacity: 0;
-      animation: slideInUp 0.8s ease-out 1s forwards;
-    }
-
-    .stat-item {
-      text-align: center;
-      padding: 1.5rem;
-      border-radius: 16px;
-      background: rgba(var(--color-accent-rgb), 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(var(--color-accent-rgb), 0.1);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(var(--color-accent-rgb), 0.1),
-        transparent
-      );
-      transition: left 0.6s ease;
-    }
-
-    .stat-item:hover::before {
-      left: 100%;
-    }
-
-    .stat-item:hover {
-      transform: translateY(-8px);
-      background: rgba(var(--color-accent-rgb), 0.1);
-      border-color: rgba(var(--color-accent-rgb), 0.2);
-      box-shadow: 0 15px 35px rgba(var(--color-accent-rgb), 0.15);
-    }
-
-    .stat-number {
-      display: block;
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--color-accent);
-      line-height: 1;
-      animation: counterUp 1s ease-out 1.2s forwards;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-      font-size: 0.875rem;
-      color: var(--color-text-secondary);
-      font-weight: 500;
-      letter-spacing: 0.05em;
-    }
-
-    /* Animations */
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes wave {
-      0%,
-      100% {
-        transform: rotate(0deg);
-      }
-      25% {
-        transform: rotate(20deg);
-      }
-      75% {
-        transform: rotate(-10deg);
-      }
-    }
-
-    @keyframes lineExpand {
-      to {
-        scale: 1 1;
-      }
-    }
-
-    @keyframes gradientShift {
-      0%,
-      100% {
-        background-position: 0% 0%;
-      }
-      50% {
-        background-position: 100% 0%;
-      }
-    }
-
-    @keyframes underlineExpand {
-      to {
-        width: 80%;
-      }
-    }
-
-    @keyframes highlightExpand {
-      to {
-        transform: scaleX(1);
-      }
-    }
-
-    @keyframes counterUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .hero-intro {
-        font-size: 0.875rem;
-        gap: 0.5rem;
-      }
-
-      .intro-icon {
-        font-size: 1.25rem;
-      }
-
-      .hero-teaser {
-        font-size: 1.125rem;
-        max-width: 90%;
-        margin-bottom: 2.5rem;
-      }
-
-      .hero-cta {
-        gap: 1rem;
-        margin-bottom: 3rem;
-      }
-
-      .hero-stats {
-        gap: 2rem;
-        margin-top: 3rem;
-      }
-
-      .stat-item {
-        padding: 1rem;
-      }
-
-      .stat-number {
-        font-size: 2rem;
-      }
-    }
-
-    /* Light mode adjustments */
-    :root.light .stat-item {
-      background: rgba(var(--color-accent-rgb), 0.03);
-      border-color: rgba(var(--color-accent-rgb), 0.08);
-    }
-
-    :root.light .stat-item:hover {
-      background: rgba(var(--color-accent-rgb), 0.08);
-      border-color: rgba(var(--color-accent-rgb), 0.15);
-    }
-
-    :root.light .btn-enhanced:hover {
-      box-shadow: 0 10px 25px rgba(var(--color-accent-rgb), 0.1);
-    }
-  </style>
+  <section class="closing-cta" data-reveal>
+    <p class="eyebrow">Available for focused engineering conversations</p>
+    <h2>Bring me a hard product constraint, a messy system, or a team that needs technical clarity.</h2>
+    <div class="hero-actions">
+      <a class="btn-primary" href="/contact-me/">Start a conversation</a>
+      <a class="btn-secondary" href="/blog/">Read the technical writing</a>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .home-hero,
+  .section-block,
+  .metrics-band,
+  .closing-cta {
+    width: min(1120px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .home-hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+    min-height: 76vh;
+    padding-block: clamp(4rem, 7vw, 5.5rem);
+  }
+
+  .home-hero__accent {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 999px;
+    opacity: 0.42;
+    filter: blur(0.4px);
+    z-index: 0;
+  }
+
+  .home-hero__accent--north {
+    top: clamp(-2.2rem, -3vw, -1.2rem);
+    left: clamp(0.5rem, 10vw, 7rem);
+    width: clamp(7rem, 16vw, 12rem);
+    height: clamp(7rem, 16vw, 12rem);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.35);
+    background:
+      radial-gradient(circle at 32% 35%, rgba(var(--color-accent-rgb), 0.26), transparent 62%),
+      rgba(var(--color-accent-rgb), 0.08);
+  }
+
+  .home-hero__accent--east {
+    right: clamp(-1.4rem, 2vw, 0.5rem);
+    bottom: clamp(1.2rem, 5vw, 4rem);
+    width: clamp(6rem, 14vw, 10rem);
+    height: clamp(6rem, 14vw, 10rem);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.28);
+    background: rgba(var(--color-accent-rgb), 0.12);
+    box-shadow: 0 20px 48px rgba(var(--color-accent-rgb), 0.18);
+  }
+
+  .home-hero h1 {
+    max-width: 12ch;
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 5.6rem;
+    line-height: 0.98;
+    letter-spacing: 0;
+  }
+
+  .lede {
+    max-width: 42rem;
+    margin: 1.5rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 1.25rem;
+    line-height: 1.75;
+  }
+
+  .eyebrow {
+    margin: 0 0 1rem;
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .hero-actions,
+  .social-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .social-row {
+    margin-top: 1rem;
+  }
+
+  .social-row a {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .social-row a:hover {
+    color: var(--color-accent);
+  }
+
+  .hero-portrait {
+    margin: 0;
+    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-portrait img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .hero-portrait figcaption {
+    padding: 1rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .metrics-band {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--color-card-border);
+    background: var(--color-card-border);
+  }
+
+  .metrics-band article {
+    min-height: 15rem;
+    padding: 1.4rem;
+    background: var(--color-surface-raised);
+  }
+
+  .metrics-band strong {
+    display: block;
+    color: var(--color-accent);
+    font-size: 3.6rem;
+    line-height: 1;
+  }
+
+  .metrics-band span {
+    display: block;
+    margin-top: 0.8rem;
+    color: var(--color-text-primary);
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  .metrics-band p,
+  .case-card p,
+  .section-heading p,
+  .writing-grid p {
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+
+  .section-block {
+    padding-block: clamp(4.5rem, 9vw, 7rem);
+  }
+
+  .section-heading {
+    max-width: 48rem;
+  }
+
+  .section-heading h2,
+  .closing-cta h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 3.75rem;
+    line-height: 1.05;
+  }
+
+  .case-grid,
+  .writing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .case-card,
+  .writing-grid article {
+    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
+  }
+
+  .case-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 28rem;
+    padding: 1.4rem;
+  }
+
+  .case-card__eyebrow,
+  .writing-grid span {
+    color: var(--color-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .case-card h3,
+  .writing-grid h3 {
+    margin: 0.7rem 0 0;
+    color: var(--color-text-primary);
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .case-card dl {
+    display: grid;
+    gap: 0.85rem;
+    margin: 1.5rem 0;
+  }
+
+  .case-card dt {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .case-card dd {
+    margin: 0.2rem 0 0;
+    color: var(--color-text-primary);
+  }
+
+  .case-card a,
+  .writing-grid a {
+    color: var(--color-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .writing-grid article {
+    padding: 1.3rem;
+  }
+
+  .closing-cta {
+    padding-block: clamp(5rem, 10vw, 8rem);
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  @media (max-width: 920px) {
+    .home-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .home-hero h1 {
+      font-size: 4.2rem;
+    }
+
+    .lede {
+      font-size: 1.15rem;
+    }
+
+    .metrics-band strong {
+      font-size: 2.8rem;
+    }
+
+    .section-heading h2,
+    .closing-cta h2 {
+      font-size: 2.9rem;
+    }
+
+    .metrics-band,
+    .case-grid,
+    .writing-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+  }
+
+  @media (max-width: 620px) {
+    .home-hero h1 {
+      max-width: 10ch;
+      font-size: 3rem;
+    }
+
+    .lede {
+      font-size: 1.05rem;
+    }
+
+    .metrics-band strong {
+      font-size: 2.2rem;
+    }
+
+    .section-heading h2,
+    .closing-cta h2 {
+      font-size: 2.1rem;
+    }
+
+    .metrics-band,
+    .case-grid,
+    .writing-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .metrics-band article,
+    .case-card {
+      min-height: 0;
+    }
+  }
+</style>
