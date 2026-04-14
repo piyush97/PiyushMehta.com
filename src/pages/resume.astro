@@ -1,972 +1,419 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import {
+  portfolioMetrics,
+  resumeAchievements,
+  resumeEducation,
+  resumeQuickFacts,
+  resumeRoles,
+  resumeSkillGroups,
+} from '../data/portfolio';
 ---
 
 <Layout
-   title="Resume - Piyush Mehta"
-   description="Professional resume of Piyush Mehta - Senior Software Developer, Tech Mentor, and Hackathon Winner"
-   type="website"
-   ogTemplate="professional"
-   ogTheme="dark"
- >
-  <!-- Hero Section -->
-  <section class="resume-hero-section">
-    <!-- Animated background elements -->
-    <div class="resume-hero-bg-pattern"></div>
-    <div class="resume-hero-bg-gradient"></div>
-    <div class="resume-hero-particle-field">
-      <div class="particle particle-1"></div>
-      <div class="particle particle-2"></div>
-      <div class="particle particle-3"></div>
-      <div class="particle particle-4"></div>
-    </div>
-    <div class="resume-hero-floating-elements">
-      <div class="resume-floating-element resume-element-1">
-        <div class="floating-icon">📄</div>
-        <div class="floating-pulse"></div>
-      </div>
-      <div class="resume-floating-element resume-element-2">
-        <div class="floating-icon">💼</div>
-        <div class="floating-pulse"></div>
-      </div>
-      <div class="resume-floating-element resume-element-3">
-        <div class="floating-icon">🔧</div>
-        <div class="floating-pulse"></div>
-      </div>
-    </div>
-
-    <!-- Content container -->
-    <div class="relative z-10 container-base">
-      <div class="py-16 text-center md:py-24">
-        <div class="hero-content-wrapper">
-          <p class="resume-hero-intro">
-            <span class="intro-icon">📝</span>
-            <span class="intro-text">My Professional Journey</span>
-          </p>
-          <h1 class="resume-hero-title">
-            <span class="title-primary">My</span>
-            <strong class="title-accent">Resume</strong>
-            <div class="title-underline"></div>
-          </h1>
-          <p class="resume-hero-teaser">
-            Senior Software Developer with expertise in
-            <span class="highlight">full-stack development</span>,
-            <span class="highlight">AI integration</span>, and
-            <span class="highlight">secure system architecture</span>
-          </p>
-          <div class="flex justify-center mt-8 space-x-4">
-            <a
-              href="/contact-me"
-              class="btn-primary"
-              aria-label="Contact Piyush Mehta"
-            >
-              Get in Touch
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Main Resume Content -->
-  <section class="py-16 resume-content">
-    <div class="container-base">
-      <!-- Profile Summary -->
-      <div class="mb-16 resume-section">
-        <h2 class="section-title">
-          <span class="section-icon">👨‍💻</span>
-          Profile Summary
-        </h2>
-        <div class="resume-card">
-          <p class="text-lg leading-relaxed text-light-200">
-            Senior Software Engineer with over 5 years of experience
-            architecting scalable, secure, and maintainable full-stack
-            solutions. Expert in designing robust system architectures,
-            implementing secure coding practices, and leading cross-functional
-            teams in Agile environments. Proven ability to translate complex
-            requirements into efficient, user-friendly applications while
-            optimizing performance and reducing technical debt. Currently
-            driving innovation and AI solutions at Tundra Technical Solutions.
-          </p>
-        </div>
-      </div>
-
-      <!-- Work Experience -->
-      <div class="mb-16 resume-section">
-        <h2 class="section-title">
-          <span class="section-icon">💼</span>
-          Work Experience
-        </h2>
-
-        <!-- Job 1 -->
-        <div class="mb-8 resume-card">
-          <div class="card-header">
-            <h3 class="job-title">Senior Software Engineer</h3>
-            <div class="company-details">
-              <span class="company-name"
-                >Tundra Technical Solutions, Remote</span
-              >
-              <span class="job-duration">Jul 2025 - Present</span>
-            </div>
-          </div>
-          <div class="card-content">
-            <ul class="job-responsibilities">
-              <li>
-                Driving innovation and AI solutions development using cutting-edge technologies to deliver scalable and efficient systems.
-              </li>
-              <li>
-                Leading cross-functional teams in the design and implementation of enterprise-grade software solutions.
-              </li>
-              <li>
-                Architecting and developing AI-powered applications and integrations to optimize business processes.
-              </li>
-              <li>
-                Mentoring junior developers and establishing best practices for secure, maintainable code development.
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Job 2 -->
-        <div class="mb-8 resume-card">
-          <div class="card-header">
-            <h3 class="job-title">Senior Software Consultant</h3>
-            <div class="company-details">
-              <span class="company-name"
-                >BDO Canada LLP, Oakville, ON, Canada</span
-              >
-              <span class="job-duration">Jan 2023 - Jun 2025</span>
-            </div>
-          </div>
-          <div class="card-content">
-            <ul class="job-responsibilities">
-              <li>
-                Architected AI-driven dashboards and chatbots using Azure Bot
-                SDK, Open AI, GPT SDK, Node.js, TypeScript, and PostgreSQL,
-                improving client workflow efficiency by 30%.
-              </li>
-              <li>
-                Implemented secure coding practices and conducted vulnerability
-                assessments with SonarQube, reducing application vulnerabilities
-                by 35%.
-              </li>
-              <li>
-                Led Agile teams for clients like OPG, GreenShield Canada, and
-                BDO USA, automating processes and saving significant resources.
-              </li>
-              <li>
-                Refactored legacy codebases to enhance maintainability and
-                performance, addressing technical debt in enterprise
-                applications.
-              </li>
-              <li>
-                Mentored teams on secure software development and AI
-                integration, fostering knowledge sharing and best practices.
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Job 3 -->
-        <div class="mb-8 resume-card">
-          <div class="card-header">
-            <h3 class="job-title">Full Stack Developer</h3>
-            <div class="company-details">
-              <span class="company-name">Nuclei, Bangalore, India</span>
-              <span class="job-duration">Jan 2020 - Dec 2021</span>
-            </div>
-          </div>
-          <div class="card-content">
-            <ul class="job-responsibilities">
-              <li>
-                Designed a scalable progressive web application using React,
-                NodeJS, and SQL, leveraging design patterns to ensure
-                maintainability.
-              </li>
-              <li>
-                Enhanced system security with data protection protocols,
-                reducing vulnerabilities by 40%.
-              </li>
-              <li>
-                Automated analytics infrastructure with AWS microservices,
-                cutting operating costs by 25%.
-              </li>
-              <li>
-                Conducted code reviews and collaborated with cross-functional
-                teams, improving UX and increasing user retention by 62%.
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Job 4 -->
-        <div class="resume-card">
-          <div class="card-header">
-            <h3 class="job-title">DSC Lead Intern</h3>
-            <div class="company-details">
-              <span class="company-name">Google, Bangalore, India</span>
-              <span class="job-duration">Dec 2018 - May 2020</span>
-            </div>
-          </div>
-          <div class="card-content">
-            <ul class="job-responsibilities">
-              <li>
-                Mentored 1500+ developers in secure coding, system architecture,
-                and Agile methodologies, aiding 200+ job placements.
-              </li>
-              <li>
-                Organized Google DevFests (2018-2019), promoting collaboration
-                among developers.
-              </li>
-              <li>
-                Coached students in JavaScript and web development, securing job
-                offers from top companies.
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Education -->
-      <div class="mb-16 resume-section">
-        <h2 class="section-title">
-          <span class="section-icon">🎓</span>
-          Education
-        </h2>
-
-        <!-- Degree 1 -->
-        <div class="mb-8 resume-card">
-          <div class="card-header">
-            <h3 class="degree-title">Masters of Applied Computing</h3>
-            <div class="university-details">
-              <span class="university-name"
-                >University of Windsor, Windsor, ON, Canada</span
-              >
-              <span class="education-duration">Jan 2022 - Jan 2023</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Degree 2 -->
-        <div class="resume-card">
-          <div class="card-header">
-            <h3 class="degree-title">
-              Bachelor of Engineering in Information Science & Engineering
-            </h3>
-            <div class="university-details">
-              <span class="university-name"
-                >Ramaiah Institute of Technology, Bangalore, India</span
-              >
-              <span class="education-duration">Jan 2016 - Jan 2020</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Skills -->
-      <div class="mb-16 resume-section">
-        <h2 class="section-title">
-          <span class="section-icon">🔧</span>
-          Technical Skills
-        </h2>
-
-        <div class="skills-container">
-          <!-- Languages -->
-          <div class="skills-category">
-            <h3 class="skills-category-title">Programming Languages</h3>
-            <div class="skills-tags">
-              <span class="skill-tag">JavaScript</span>
-              <span class="skill-tag">TypeScript</span>
-              <span class="skill-tag">Java</span>
-              <span class="skill-tag">Python</span>
-              <span class="skill-tag">C++</span>
-              <span class="skill-tag">Golang</span>
-            </div>
-          </div>
-
-          <!-- Frameworks -->
-          <div class="skills-category">
-            <h3 class="skills-category-title">Frameworks & Libraries</h3>
-            <div class="skills-tags">
-              <span class="skill-tag">React</span>
-              <span class="skill-tag">NextJS</span>
-              <span class="skill-tag">NodeJS</span>
-              <span class="skill-tag">NestJS</span>
-              <span class="skill-tag">Springboot</span>
-            </div>
-          </div>
-
-          <!-- Cloud & DevOps -->
-          <div class="skills-category">
-            <h3 class="skills-category-title">Cloud & DevOps</h3>
-            <div class="skills-tags">
-              <span class="skill-tag">AWS</span>
-              <span class="skill-tag">Google Cloud</span>
-              <span class="skill-tag">Vercel</span>
-              <span class="skill-tag">Kubernetes</span>
-              <span class="skill-tag">Docker</span>
-              <span class="skill-tag">Jenkins</span>
-              <span class="skill-tag">Terraform</span>
-              <span class="skill-tag">Azure DevOps</span>
-            </div>
-          </div>
-
-          <!-- Databases -->
-          <div class="skills-category">
-            <h3 class="skills-category-title">Databases</h3>
-            <div class="skills-tags">
-              <span class="skill-tag">PostgreSQL</span>
-              <span class="skill-tag">MySQL</span>
-              <span class="skill-tag">MongoDB</span>
-              <span class="skill-tag">Redis</span>
-              <span class="skill-tag">Oracle</span>
-            </div>
-          </div>
-
-          <!-- Tools & Methodologies -->
-          <div class="skills-category">
-            <h3 class="skills-category-title">Tools & Methodologies</h3>
-            <div class="skills-tags">
-              <span class="skill-tag">Jira</span>
-              <span class="skill-tag">Confluence</span>
-              <span class="skill-tag">Agile</span>
-              <span class="skill-tag">Code Reviews</span>
-              <span class="skill-tag">Microservices</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Projects -->
-      <div class="mb-16 resume-section">
-        <h2 class="section-title">
-          <span class="section-icon">🚀</span>
-          Key Projects
-        </h2>
-
-        <div class="projects-container">
-          <!-- Project 1 -->
-          <div class="mb-8 resume-card">
-            <div class="card-header">
-              <h3 class="project-title">Pool It Up</h3>
-            </div>
-            <div class="card-content">
-              <p class="project-description">
-                Architected a secure, scalable carpooling app for iOS using
-                React Native, Redux, PostgreSQL, and AWS.
-              </p>
-              <div class="project-technologies">
-                <span class="tech-tag">React Native</span>
-                <span class="tech-tag">Redux</span>
-                <span class="tech-tag">PostgreSQL</span>
-                <span class="tech-tag">AWS</span>
-              </div>
-              <a
-                href="http://bit.ly/pool-it-up"
-                target="_blank"
-                class="project-link">View Project</a
-              >
-            </div>
-          </div>
-
-          <!-- Project 2 -->
-          <div class="mb-8 resume-card">
-            <div class="card-header">
-              <h3 class="project-title">Divvy</h3>
-            </div>
-            <div class="card-content">
-              <p class="project-description">
-                Designed a secure NFT marketplace using ReactJS, Redux, Polygon,
-                and Ethereum. Won $10,000 at Polygon Hackathon.
-              </p>
-              <div class="project-technologies">
-                <span class="tech-tag">ReactJS</span>
-                <span class="tech-tag">Redux</span>
-                <span class="tech-tag">Polygon</span>
-                <span class="tech-tag">Ethereum</span>
-              </div>
-              <a
-                href="https://github.com/piyush97/divvy"
-                target="_blank"
-                class="project-link">View Project</a
-              >
-            </div>
-          </div>
-
-          <!-- Project 3 -->
-          <div class="resume-card">
-            <div class="card-header">
-              <h3 class="project-title">K2BK</h3>
-            </div>
-            <div class="card-content">
-              <p class="project-description">
-                Developed a user-friendly app for autistic children using
-                Flutter and SQLite, adopted by 5 schools.
-              </p>
-              <div class="project-technologies">
-                <span class="tech-tag">Flutter</span>
-                <span class="tech-tag">SQLite</span>
-              </div>
-              <a
-                href="https://github.com/piyush97/khel-ke-baat-karen"
-                target="_blank"
-                class="project-link">View Project</a
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Certifications -->
-      <div class="mb-16 resume-section">
-        <h2 class="section-title">
-          <span class="section-icon">🏆</span>
-          Certifications
-        </h2>
-
-        <div class="certifications-container">
-          <div class="resume-card">
-            <div class="card-header">
-              <h3 class="certification-title">
-                Microsoft Certified: Azure AI Engineer Associate
-              </h3>
-              <span class="certification-date"
-                >Credential ID: A7694B155AFA9F38</span
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Awards -->
-      <div class="resume-section">
-        <h2 class="section-title">
-          <span class="section-icon">🌟</span>
-          Awards
-        </h2>
-
-        <div class="awards-container">
-          <div class="mb-8 resume-card">
-            <div class="card-header">
-              <h3 class="award-title">Polygon Hackathon Winner</h3>
-              <span class="award-details">$10,000 Prize, 2021</span>
-            </div>
-          </div>
-          <div class="mb-8 resume-card">
-            <div class="card-header">
-              <h3 class="award-title">Unilever Hackathon Winner</h3>
-              <span class="award-details">$2,000 Prize, 2019</span>
-            </div>
-          </div>
-          <div class="mb-8 resume-card">
-            <div class="card-header">
-              <h3 class="award-title">Smart India Hackathon Winner</h3>
-              <span class="award-details"
-                >Awarded by Chief Minister of Odisha, 2018</span
-              >
-            </div>
-          </div>
-          <div class="resume-card">
-            <div class="card-header">
-              <h3 class="award-title">Golden Recognition Award</h3>
-              <span class="award-details"
-                >BDO Canada, for exceptional performance</span
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Call To Action -->
-  <section class="py-16 resume-cta bg-light-900">
-    <div class="text-center container-base">
-      <h2 class="mb-6 text-3xl font-bold">Let's Connect</h2>
-      <p class="max-w-2xl mx-auto mb-8 text-lg">
-        Interested in working together or have a project in mind? I'm always
-        open to discussing new opportunities and challenges.
+  title="Resume - Piyush Mehta"
+  description="Resume of Piyush Mehta, senior software engineer focused on enterprise AI workflows, web platforms, system design, and developer education."
+  type="website"
+  ogTemplate="professional"
+  ogTheme="dark"
+>
+  <section class="resume-hero">
+    <div class="resume-hero__copy">
+      <p class="eyebrow" data-hero-eyebrow>Resume</p>
+      <h1 data-hero-title>Senior software engineer for AI workflows, web platforms, and durable systems.</h1>
+      <p class="lede">
+        This page is written for engineering leaders doing a quick diligence pass. It keeps the
+        signal high: scope, outcomes, stack judgment, and the kinds of systems I like owning.
       </p>
-      <div class="flex justify-center space-x-4">
-        <a href="/contact-me" class="btn-primary" aria-label="Contact Me">
-          Contact Me
-        </a>
-        <a
-          href="https://linkedin.com/in/piyushmehta"
-          target="_blank"
-          class="btn-secondary"
-          aria-label="View LinkedIn Profile"
-        >
-          LinkedIn
-        </a>
-        <a
-          href="https://github.com/piyush97"
-          target="_blank"
-          class="btn-secondary"
-          aria-label="View GitHub Profile"
-        >
-          GitHub
-        </a>
+      <div class="resume-actions">
+        <a class="btn-primary" href="/projects/">Review case studies</a>
+        <a class="btn-secondary" href="/contact-me/">Start a conversation</a>
       </div>
+    </div>
+
+    <aside class="resume-summary" aria-label="Resume quick facts">
+      <dl>
+        {resumeQuickFacts.map((fact) => (
+          <div>
+            <dt>{fact.label}</dt>
+            <dd>{fact.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </aside>
+  </section>
+
+  <section class="metrics-band" aria-label="Selected impact">
+    {portfolioMetrics.map((metric) => (
+      <article>
+        <strong>{metric.value}</strong>
+        <span>{metric.label}</span>
+        <p>{metric.detail}</p>
+      </article>
+    ))}
+  </section>
+
+  <section class="resume-section">
+    <div class="section-heading">
+      <p class="eyebrow">Experience</p>
+      <h2>Roles with outcomes attached.</h2>
+      <p>Work history trimmed toward delivery signal, not keyword density.</p>
+    </div>
+
+    <div class="timeline">
+      {resumeRoles.map((role) => (
+        <article class="timeline-card">
+          <div class="timeline-card__meta">
+            <span>{role.timeframe}</span>
+            <p>{role.location}</p>
+          </div>
+          <div class="timeline-card__body">
+            <h3>{role.title}</h3>
+            <p class="timeline-card__company">{role.company}</p>
+            <p class="timeline-card__summary">{role.summary}</p>
+            <ul>
+              {role.highlights.map((highlight) => <li>{highlight}</li>)}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="resume-section split-grid">
+    <div>
+      <div class="section-heading">
+        <p class="eyebrow">Skills</p>
+        <h2>Tools I actually use to ship.</h2>
+      </div>
+      <div class="skills-grid">
+        {resumeSkillGroups.map((group) => (
+          <article class="info-card">
+            <h3>{group.title}</h3>
+            <p>{group.items.join(' · ')}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <div class="section-heading">
+        <p class="eyebrow">Education</p>
+        <h2>Formal training, kept compact.</h2>
+      </div>
+      <div class="stack-list">
+        {resumeEducation.map((item) => (
+          <article class="info-card">
+            <h3>{item.degree}</h3>
+            <p>{item.school}</p>
+            <span>{item.location} · {item.timeframe}</span>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="resume-section">
+    <div class="section-heading">
+      <p class="eyebrow">Recognition</p>
+      <h2>Signals beyond job titles.</h2>
+    </div>
+    <div class="achievement-grid">
+      {resumeAchievements.map((item) => (
+        <article class="info-card">
+          <h3>{item.title}</h3>
+          <p>{item.detail}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="resume-cta">
+    <p class="eyebrow">Best next step</p>
+    <h2>If you need technical judgment, product delivery, or AI workflow help, let’s talk.</h2>
+    <div class="resume-actions">
+      <a class="btn-primary" href="/contact-me/">Contact Piyush</a>
+      <a class="btn-secondary" href="/blog/">Read technical writing</a>
     </div>
   </section>
 </Layout>
 
 <style>
-  /* Hero Section Styles */
-  .resume-hero-section {
-    position: relative;
-    min-height: 70vh;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-text-primary);
-    background-color: var(--color-bg);
+  .resume-hero,
+  .resume-section,
+  .metrics-band,
+  .resume-cta {
+    width: min(1120px, calc(100% - 2rem));
+    margin-inline: auto;
   }
 
-  .resume-hero-bg-pattern {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: radial-gradient(
-      var(--color-light-800) 1px,
-      transparent 1px
-    );
-    background-size: 30px 30px;
-    opacity: 0.3;
+  .resume-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: start;
+    padding-block: clamp(4rem, 8vw, 6rem) 3rem;
   }
 
-  .resume-hero-bg-gradient {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(
-      circle at 50% 50%,
-      var(--color-light-800) 0%,
-      var(--color-bg) 70%
-    );
-    opacity: 0.4;
-  }
-
-  /* Particle animations */
-  .resume-hero-particle-field {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .particle {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: var(--color-accent);
-    opacity: 0.5;
-    animation: float 15s infinite ease-in-out;
-  }
-
-  .particle-1 {
-    top: 20%;
-    left: 10%;
-    animation-delay: 0s;
-  }
-
-  .particle-2 {
-    top: 70%;
-    left: 20%;
-    animation-delay: 2s;
-  }
-
-  .particle-3 {
-    top: 30%;
-    left: 80%;
-    animation-delay: 4s;
-  }
-
-  .particle-4 {
-    top: 60%;
-    left: 70%;
-    animation-delay: 6s;
-  }
-
-  @keyframes float {
-    0% {
-      transform: translate(0, 0);
-    }
-    25% {
-      transform: translate(20px, 15px);
-    }
-    50% {
-      transform: translate(0, 30px);
-    }
-    75% {
-      transform: translate(-20px, 15px);
-    }
-    100% {
-      transform: translate(0, 0);
-    }
-  }
-
-  /* Floating elements */
-  .resume-hero-floating-elements {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-
-  .resume-floating-element {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: var(--color-light-800);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-    animation: float 15s infinite ease-in-out;
-  }
-
-  .resume-element-1 {
-    top: 20%;
-    left: 15%;
-    animation-delay: 1s;
-  }
-
-  .resume-element-2 {
-    top: 70%;
-    left: 80%;
-    animation-delay: 3s;
-  }
-
-  .resume-element-3 {
-    top: 30%;
-    left: 70%;
-    animation-delay: 5s;
-  }
-
-  .floating-icon {
-    font-size: 24px;
-  }
-
-  .floating-pulse {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background-color: transparent;
-    border: 2px solid var(--color-accent);
-    animation: pulse 3s infinite;
-  }
-
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-      opacity: 0.8;
-    }
-    50% {
-      transform: scale(1.4);
-      opacity: 0;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 0.8;
-    }
-  }
-
-  /* Hero content */
-  .resume-hero-intro {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
+  .eyebrow {
+    margin: 0 0 0.9rem;
     color: var(--color-accent);
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
-  .intro-icon {
-    margin-right: 0.5rem;
-    font-size: 1.4rem;
-  }
-
-  .resume-hero-title {
-    font-size: 3rem;
-    font-weight: 800;
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-    position: relative;
-    display: inline-block;
-  }
-
-  .title-primary {
+  .resume-hero h1,
+  .section-heading h2,
+  .resume-cta h2 {
+    margin: 0;
     color: var(--color-text-primary);
+    line-height: 1.02;
+    letter-spacing: 0;
   }
 
-  .title-accent {
-    color: var(--color-accent);
-    margin-left: 0.5rem;
+  .resume-hero h1 {
+    max-width: 11ch;
+    font-size: clamp(3rem, 7vw, 5.25rem);
   }
 
-  .title-underline {
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background-color: var(--color-accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    animation: slide-in 1s forwards ease-out;
-  }
-
-  @keyframes slide-in {
-    to {
-      transform: scaleX(1);
-    }
-  }
-
-  .resume-hero-teaser {
-    font-size: 1.25rem;
-    max-width: 700px;
-    margin: 0 auto;
+  .lede,
+  .section-heading p,
+  .timeline-card__summary,
+  .info-card p,
+  .resume-cta p + h2 {
     color: var(--color-text-secondary);
   }
 
-  .highlight {
-    color: var(--color-accent);
-    font-weight: 600;
+  .lede {
+    max-width: 44rem;
+    margin: 1.35rem 0 0;
+    font-size: 1.15rem;
+    line-height: 1.8;
   }
 
-  /* Button styles */
-  .btn-primary {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background-color: var(--color-accent);
-    color: var(--color-light-900);
-    font-weight: 600;
-    border-radius: 0.375rem;
-    transition: all 0.3s ease;
-    text-decoration: none;
+  .resume-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 2rem;
   }
 
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 204, 104, 0.3);
+  .resume-summary {
+    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
+    padding: 1.25rem;
   }
 
-  .btn-secondary {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background-color: transparent;
-    border: 2px solid var(--color-accent);
-    color: var(--color-accent);
-    font-weight: 600;
-    border-radius: 0.375rem;
-    transition: all 0.3s ease;
-    text-decoration: none;
+  .resume-summary dl {
+    margin: 0;
   }
 
-  .btn-secondary:hover {
-    background-color: rgba(255, 204, 104, 0.1);
-    transform: translateY(-2px);
+  .resume-summary div + div {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-card-border);
   }
 
-  /* Resume content styles */
-  .resume-content {
-    background-color: var(--color-bg);
+  .resume-summary dt {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .resume-summary dd {
+    margin: 0.35rem 0 0;
     color: var(--color-text-primary);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .metrics-band {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--color-card-border);
+    background: var(--color-card-border);
+  }
+
+  .metrics-band article {
+    min-height: 13.5rem;
+    padding: 1.5rem;
+    background: var(--color-surface-raised);
+  }
+
+  .metrics-band strong {
+    display: block;
+    color: var(--color-text-primary);
+    font-size: 2.4rem;
+    line-height: 1;
+  }
+
+  .metrics-band span {
+    display: block;
+    margin-top: 0.75rem;
+    color: var(--color-accent);
+    font-size: 0.92rem;
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  .metrics-band p {
+    margin: 0.85rem 0 0;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
   }
 
   .resume-section {
-    margin-bottom: 4rem;
+    padding-block: clamp(3rem, 7vw, 5rem) 0;
   }
 
-  .section-title {
-    display: flex;
-    align-items: center;
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 2rem;
-    color: var(--color-text-primary);
-    position: relative;
+  .section-heading {
+    max-width: 44rem;
+    margin-bottom: 1.75rem;
   }
 
-  .section-icon {
-    margin-right: 0.75rem;
-    font-size: 1.75rem;
+  .section-heading h2,
+  .resume-cta h2 {
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
   }
 
-  .resume-card {
-    background: linear-gradient(
-      145deg,
-      var(--color-card-gradient-light),
-      var(--color-card-gradient-dark)
-    );
-    border: 1px solid var(--color-card-border);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  .section-heading p {
+    margin: 0.9rem 0 0;
+    line-height: 1.7;
   }
 
-  .resume-card:hover {
-    border-color: var(--color-card-border-hover);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-  }
-
-  .card-header {
-    margin-bottom: 1rem;
-  }
-
-  .job-title,
-  .degree-title,
-  .certification-title,
-  .project-title,
-  .award-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--color-text-primary);
-    margin-bottom: 0.5rem;
-  }
-
-  .company-details,
-  .university-details,
-  .award-details {
-    display: flex;
-    justify-content: space-between;
-    color: var(--color-accent);
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .job-responsibilities {
-    list-style-type: disc;
-    padding-left: 1.5rem;
-    color: var(--color-text);
-  }
-
-  .job-responsibilities li {
-    margin-bottom: 0.5rem;
-  }
-
-  /* Skills section */
-  .skills-container {
+  .timeline {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
+    gap: 1rem;
   }
 
-  .skills-category {
-    margin-bottom: 1.5rem;
+  .timeline-card,
+  .info-card {
+    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
   }
 
-  .skills-category-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
+  .timeline-card {
+    display: grid;
+    grid-template-columns: minmax(170px, 220px) minmax(0, 1fr);
+  }
+
+  .timeline-card__meta,
+  .timeline-card__body {
+    padding: 1.35rem;
+  }
+
+  .timeline-card__meta {
+    border-right: 1px solid var(--color-card-border);
+  }
+
+  .timeline-card__meta span {
+    display: block;
+    color: var(--color-accent);
+    font-weight: 800;
+  }
+
+  .timeline-card__meta p,
+  .info-card span {
+    margin: 0.5rem 0 0;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  .timeline-card__body h3,
+  .info-card h3 {
+    margin: 0;
     color: var(--color-text-primary);
+    font-size: 1.2rem;
   }
 
-  .skills-tags,
-  .project-technologies {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .skill-tag,
-  .tech-tag {
-    background-color: var(--color-light-800);
+  .timeline-card__company {
+    margin: 0.45rem 0 0;
     color: var(--color-accent);
-    padding: 0.5rem 1rem;
-    border-radius: 2rem;
-    font-size: 0.875rem;
-    transition: all 0.3s ease;
+    font-weight: 700;
   }
 
-  .skill-tag:hover,
-  .tech-tag:hover {
-    background-color: var(--color-light-700);
-    transform: translateY(-2px);
+  .timeline-card__summary {
+    margin: 0.9rem 0 0;
+    line-height: 1.7;
   }
 
-  /* Project section */
-  .project-description {
-    margin-bottom: 1rem;
-    color: var(--color-text);
+  .timeline-card ul {
+    margin: 1rem 0 0;
+    padding-left: 1.2rem;
+    color: var(--color-text-secondary);
   }
 
-  .project-link {
-    display: inline-block;
-    margin-top: 0.5rem;
-    color: var(--color-accent);
-    text-decoration: none;
-    font-weight: 600;
+  .timeline-card li + li {
+    margin-top: 0.55rem;
   }
 
-  .project-link:hover {
-    text-decoration: underline;
+  .split-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
   }
 
-  /* Responsive */
-  @media (max-width: 768px) {
-    .resume-hero-title {
-      font-size: 2.5rem;
-    }
+  .skills-grid,
+  .achievement-grid,
+  .stack-list {
+    display: grid;
+    gap: 1rem;
+  }
 
-    .skills-container {
+  .skills-grid,
+  .achievement-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .info-card {
+    padding: 1.2rem;
+  }
+
+  .info-card p {
+    margin: 0.7rem 0 0;
+    line-height: 1.7;
+  }
+
+  .resume-cta {
+    padding-block: clamp(3rem, 7vw, 5rem);
+  }
+
+  .resume-cta h2 {
+    max-width: 18ch;
+    margin-top: 0.2rem;
+  }
+
+  @media (max-width: 960px) {
+    .resume-hero,
+    .split-grid,
+    .timeline-card {
       grid-template-columns: 1fr;
     }
 
-    .company-details,
-    .university-details,
-    .award-details {
-      flex-direction: column;
-      align-items: flex-start;
+    .timeline-card__meta {
+      border-right: 0;
+      border-bottom: 1px solid var(--color-card-border);
     }
 
-    .job-duration,
-    .education-duration,
-    .award-details {
-      margin-top: 0.25rem;
+    .metrics-band,
+    .skills-grid,
+    .achievement-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  @media (max-width: 480px) {
-    .resume-hero-title {
-      font-size: 2rem;
+  @media (max-width: 640px) {
+    .metrics-band,
+    .skills-grid,
+    .achievement-grid {
+      grid-template-columns: 1fr;
     }
-
-    .section-title {
-      font-size: 1.75rem;
-    }
-
-    .job-title,
-    .degree-title,
-    .certification-title,
-    .project-title,
-    .award-title {
-      font-size: 1.25rem;
-    }
-  }
-
-  /* Container base class */
-  .container-base {
-    width: 100%;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
   }
 </style>
