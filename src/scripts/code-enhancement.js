@@ -269,7 +269,7 @@ class CodeEnhancer {
         if (navigator.clipboard) {
           await navigator.clipboard.writeText(code);
         } else {
-          this.fallbackCopy(code);
+          throw new Error('Clipboard API is unavailable');
         }
         this.showFeedback(copyBtn, 'Copied!', 'success');
       } catch (err) {
@@ -277,23 +277,6 @@ class CodeEnhancer {
         this.showFeedback(copyBtn, 'Copy failed', 'error');
       }
     });
-  }
-
-  fallbackCopy(text) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    textArea.style.top = '-999999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-      document.execCommand('copy');
-    } finally {
-      document.body.removeChild(textArea);
-    }
   }
 
   showFeedback(button, message, type) {
@@ -368,5 +351,5 @@ if (document.readyState === 'loading') {
 
 // Export for external use
 if (typeof window !== 'undefined') {
-  window.CodeEnhancer = CodeEnhancer;
+  window['CodeEnhancer'] = CodeEnhancer;
 }
