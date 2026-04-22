@@ -12,7 +12,7 @@ export default defineConfig({
     ["list"],
   ],
   use: {
-    baseURL: "http://localhost:4322",
+    baseURL: "http://localhost:4321",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
