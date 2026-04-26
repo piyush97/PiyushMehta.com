@@ -72,6 +72,6 @@ jobs:
           persist-credentials: false
 
       - name: Dependency Review
-        uses: actions/dependency-review-action@da3192ba8b2ca4e4e43e96d27b622f4ffa2f9fd1 # v4.7.1
+        uses: actions/dependency-review-action@v4
         with:
           config-file: '.github/dependency-review-config.yml'
