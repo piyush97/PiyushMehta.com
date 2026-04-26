@@ -596,11 +596,8 @@ export function optimizeKeywords(keywords: string[], tags: string[] = []): strin
  * Validate and sanitize meta description
  */
 export function sanitizeDescription(description: string, maxLength: number = 160): string {
-  // Remove HTML tags and extra whitespace
-  const cleaned = description
-    .replace(/<[^>]*>/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  // Strip angle brackets (prevents HTML injection via incomplete tag regexes)
+  const cleaned = description.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim();
 
   if (cleaned.length <= maxLength) {
     return cleaned;
