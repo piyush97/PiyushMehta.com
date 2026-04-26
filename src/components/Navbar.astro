@@ -9,8 +9,7 @@ const navItems = [
   { href: '/contact-me/', label: 'Contact' },
 ];
 
-const isActive = (href: string) =>
-  href === '/' ? pathname === '/' : pathname.startsWith(href);
+const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
 ---
 
 <nav class="site-nav" aria-label="Primary navigation" data-reveal>

@@ -1,7 +1,7 @@
-import fs from 'fs';
-import { join } from 'path';
 import { Resvg } from '@resvg/resvg-js';
 import type { APIRoute } from 'astro';
+import fs from 'fs';
+import { join } from 'path';
 import React from 'react';
 import satori from 'satori';
 
@@ -52,7 +52,8 @@ export const GET: APIRoute = async ({ url, site }) => {
     };
 
     const currentTheme = themes[theme as keyof typeof themes] || themes.dark;
-    const titleFontSize = title.length > 60 ? 36 : title.length > 40 ? 46 : title.length > 20 ? 56 : 66;
+    const titleFontSize =
+      title.length > 60 ? 36 : title.length > 40 ? 46 : title.length > 20 ? 56 : 66;
 
     // Twitter-optimized template with better readability
     const twitterTemplate = React.createElement(
@@ -264,7 +265,7 @@ export const GET: APIRoute = async ({ url, site }) => {
         value: size.width,
       },
     });
-    
+
     const pngData = resvg.render();
     const pngBuffer = pngData.asPng();
 

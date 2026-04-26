@@ -1,13 +1,11 @@
-import fs from "fs";
-import { join } from "path";
-import { Resvg } from "@resvg/resvg-js";
+import { Resvg } from '@resvg/resvg-js';
 import type { APIRoute } from 'astro';
-import React from "react";
-import satori from "satori";
+import fs from 'fs';
+import { join } from 'path';
+import React from 'react';
+import satori from 'satori';
 
 export const prerender = false;
-
-
 
 export const GET: APIRoute = async ({ url, request }): Promise<Response> => {
   const searchParams = new URL(url).searchParams;
@@ -16,54 +14,55 @@ export const GET: APIRoute = async ({ url, request }): Promise<Response> => {
   const template = searchParams.get('template') || 'modern';
 
   try {
-
     // Check if this is a social media crawler
     const userAgent = request.headers.get('user-agent') || '';
-    const isSocialCrawler = /facebook|twitter|linkedin|whatsapp|telegram|discord|slack/i.test(userAgent);
+    const isSocialCrawler = /facebook|twitter|linkedin|whatsapp|telegram|discord|slack/i.test(
+      userAgent
+    );
 
     // For social media crawlers, add extra delay to ensure proper rendering
     if (isSocialCrawler) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     // Load fonts
-    const fontPath = join(process.cwd(), "InterVariable.ttf");
+    const fontPath = join(process.cwd(), 'InterVariable.ttf');
     const interRegular = fs.readFileSync(fontPath);
 
     // Template configurations matching website theme
     const getThemeColors = (template: string) => {
       const themes = {
         modern: {
-          gradient: "linear-gradient(135deg, #1f2347 0%, #282e5e 50%, #2e3360 100%)",
-          primaryColor: "#f9fafb",
-          secondaryColor: "#d1d5db",
-          accentColor: "#60a5fa",
-          cardBg: "rgba(40, 46, 94, 0.8)",
-          shadowColor: "rgba(96, 165, 250, 0.3)",
+          gradient: 'linear-gradient(135deg, #1f2347 0%, #282e5e 50%, #2e3360 100%)',
+          primaryColor: '#f9fafb',
+          secondaryColor: '#d1d5db',
+          accentColor: '#60a5fa',
+          cardBg: 'rgba(40, 46, 94, 0.8)',
+          shadowColor: 'rgba(96, 165, 250, 0.3)',
         },
         tech: {
-          gradient: "linear-gradient(135deg, #1a1f3a 0%, #24283b 50%, #2d3748 100%)",
-          primaryColor: "#f9fafb",
-          secondaryColor: "#e2e8f0",
-          accentColor: "#60a5fa",
-          cardBg: "rgba(26, 31, 58, 0.9)",
-          shadowColor: "rgba(96, 165, 250, 0.25)",
+          gradient: 'linear-gradient(135deg, #1a1f3a 0%, #24283b 50%, #2d3748 100%)',
+          primaryColor: '#f9fafb',
+          secondaryColor: '#e2e8f0',
+          accentColor: '#60a5fa',
+          cardBg: 'rgba(26, 31, 58, 0.9)',
+          shadowColor: 'rgba(96, 165, 250, 0.25)',
         },
         blog: {
-          gradient: "linear-gradient(135deg, #1f2347 0%, #282e5e 50%, #343c7a 100%)",
-          primaryColor: "#f9fafb",
-          secondaryColor: "#d1d5db",
-          accentColor: "#60a5fa",
-          cardBg: "rgba(40, 46, 94, 0.85)",
-          shadowColor: "rgba(96, 165, 250, 0.3)",
+          gradient: 'linear-gradient(135deg, #1f2347 0%, #282e5e 50%, #343c7a 100%)',
+          primaryColor: '#f9fafb',
+          secondaryColor: '#d1d5db',
+          accentColor: '#60a5fa',
+          cardBg: 'rgba(40, 46, 94, 0.85)',
+          shadowColor: 'rgba(96, 165, 250, 0.3)',
         },
         minimal: {
-          gradient: "linear-gradient(135deg, #efeff5 0%, #e6e8f5 50%, #f5f5f5 100%)",
-          primaryColor: "#363b65",
-          secondaryColor: "#4b547d",
-          accentColor: "#b54909",
-          cardBg: "rgba(255, 255, 255, 0.9)",
-          shadowColor: "rgba(181, 73, 9, 0.2)",
+          gradient: 'linear-gradient(135deg, #efeff5 0%, #e6e8f5 50%, #f5f5f5 100%)',
+          primaryColor: '#363b65',
+          secondaryColor: '#4b547d',
+          accentColor: '#b54909',
+          cardBg: 'rgba(255, 255, 255, 0.9)',
+          shadowColor: 'rgba(181, 73, 9, 0.2)',
         },
       };
 
@@ -78,166 +77,168 @@ export const GET: APIRoute = async ({ url, request }): Promise<Response> => {
 
     // Enhanced template with website branding
     const templateElement = React.createElement(
-      "div",
+      'div',
       {
         style: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          height: "100%",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          height: '100%',
           background: theme.gradient,
-          fontFamily: "Inter",
-          position: "relative",
-          textAlign: "center",
-          padding: "80px",
+          fontFamily: 'Inter',
+          position: 'relative',
+          textAlign: 'center',
+          padding: '80px',
         },
       },
       [
         // Background decorative elements
-        React.createElement("div", {
-          key: "bg-decoration",
+        React.createElement('div', {
+          key: 'bg-decoration',
           style: {
-            position: "absolute",
-            top: "60px",
-            right: "80px",
-            width: "120px",
-            height: "120px",
-            borderRadius: "50%",
+            position: 'absolute',
+            top: '60px',
+            right: '80px',
+            width: '120px',
+            height: '120px',
+            borderRadius: '50%',
             background: theme.accentColor,
             opacity: 0.1,
-            filter: "blur(60px)",
+            filter: 'blur(60px)',
           },
         }),
 
         // Main content card
         React.createElement(
-          "div",
+          'div',
           {
-            key: "main-card",
+            key: 'main-card',
             style: {
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
               background: theme.cardBg,
-              borderRadius: "24px",
-              padding: "60px",
+              borderRadius: '24px',
+              padding: '60px',
               border: `2px solid ${theme.accentColor}30`,
-              backdropFilter: "blur(20px)",
+              backdropFilter: 'blur(20px)',
               boxShadow: `0 20px 40px ${theme.shadowColor}`,
-              maxWidth: "900px",
-              position: "relative",
-              zIndex: "2",
+              maxWidth: '900px',
+              position: 'relative',
+              zIndex: '2',
             },
           },
           [
             // Logo/Branding
             React.createElement(
-              "div",
+              'div',
               {
-                key: "logo",
+                key: 'logo',
                 style: {
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   background: theme.cardBg,
-                  padding: "12px 24px",
-                  borderRadius: "25px",
+                  padding: '12px 24px',
+                  borderRadius: '25px',
                   border: `1px solid ${theme.accentColor}30`,
-                  backdropFilter: "blur(10px)",
-                  marginBottom: "20px",
+                  backdropFilter: 'blur(10px)',
+                  marginBottom: '20px',
                 },
               },
               [
                 React.createElement(
-                  "div",
+                  'div',
                   {
-                    key: "logo-circle",
+                    key: 'logo-circle',
                     style: {
-                      width: "40px",
-                      height: "40px",
+                      width: '40px',
+                      height: '40px',
                       background: theme.accentColor,
-                      borderRadius: "50%",
-                      marginRight: "15px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "18px",
-                      fontWeight: "bold",
-                      color: "white",
+                      borderRadius: '50%',
+                      marginRight: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      color: 'white',
                       boxShadow: `0 4px 20px ${theme.shadowColor}`,
                     },
                   },
-                  "PM"
+                  'PM'
                 ),
                 React.createElement(
-                  "span",
+                  'span',
                   {
-                    key: "logo-text",
+                    key: 'logo-text',
                     style: {
                       color: theme.primaryColor,
-                      fontSize: "18px",
-                      fontWeight: "600",
+                      fontSize: '18px',
+                      fontWeight: '600',
                     },
                   },
-                  "Piyush Mehta"
+                  'Piyush Mehta'
                 ),
               ]
             ),
 
             // Title
             React.createElement(
-              "h1",
+              'h1',
               {
-                key: "title",
+                key: 'title',
                 style: {
                   fontSize: titleSize,
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                   color: theme.primaryColor,
                   lineHeight: 1.1,
-                  marginBottom: "24px",
+                  marginBottom: '24px',
                   textShadow: `0 2px 10px ${theme.shadowColor}`,
-                  textAlign: "center",
+                  textAlign: 'center',
                 },
               },
               title
             ),
 
             // Description
-            description ? React.createElement(
-              "p",
-              {
-                key: "description",
-                style: {
-                  fontSize: descriptionSize,
-                  color: theme.secondaryColor,
-                  lineHeight: 1.4,
-                  marginBottom: "30px",
-                  opacity: 0.9,
-                  maxWidth: "700px",
-                  textAlign: "center",
-                },
-              },
-              description
-            ) : null,
+            description
+              ? React.createElement(
+                  'p',
+                  {
+                    key: 'description',
+                    style: {
+                      fontSize: descriptionSize,
+                      color: theme.secondaryColor,
+                      lineHeight: 1.4,
+                      marginBottom: '30px',
+                      opacity: 0.9,
+                      maxWidth: '700px',
+                      textAlign: 'center',
+                    },
+                  },
+                  description
+                )
+              : null,
 
             // Website URL
             React.createElement(
-              "div",
+              'div',
               {
-                key: "url",
+                key: 'url',
                 style: {
-                  position: "absolute",
-                  bottom: "30px",
-                  right: "40px",
+                  position: 'absolute',
+                  bottom: '30px',
+                  right: '40px',
                   color: theme.secondaryColor,
-                  fontSize: "16px",
+                  fontSize: '16px',
                   opacity: 0.7,
                 },
               },
-              "piyushmehta.com"
+              'piyushmehta.com'
             ),
           ].filter(Boolean)
         ),
@@ -250,10 +251,10 @@ export const GET: APIRoute = async ({ url, request }): Promise<Response> => {
       height: 630,
       fonts: [
         {
-          name: "Inter",
+          name: 'Inter',
           data: interRegular,
           weight: 400,
-          style: "normal",
+          style: 'normal',
         },
       ],
     });
@@ -261,7 +262,7 @@ export const GET: APIRoute = async ({ url, request }): Promise<Response> => {
     // Convert SVG to PNG with resvg-js
     const resvg = new Resvg(svg, {
       fitTo: {
-        mode: "width",
+        mode: 'width',
         value: 1200,
       },
     });
@@ -286,7 +287,7 @@ export const GET: APIRoute = async ({ url, request }): Promise<Response> => {
         // Additional headers for social media crawlers
         ...(isSocialCrawler && {
           'X-Crawler-Friendly': 'true',
-          'Link': `<${url}>; rel="canonical"`,
+          Link: `<${url}>; rel="canonical"`,
         }),
       },
     });
@@ -295,7 +296,7 @@ export const GET: APIRoute = async ({ url, request }): Promise<Response> => {
 
     // Return a fallback static image for social media crawlers
     try {
-      const fallbackImagePath = join(process.cwd(), "public/images/social.jpg");
+      const fallbackImagePath = join(process.cwd(), 'public/images/social.jpg');
       const fallbackImage = fs.readFileSync(fallbackImagePath);
 
       return new Response(fallbackImage, {

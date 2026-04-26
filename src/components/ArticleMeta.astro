@@ -7,13 +7,7 @@ export interface Props {
   url?: string;
 }
 
-const {
-  title,
-  readingTime,
-  date,
-  tags = [],
-  url = Astro.url.toString(),
-} = Astro.props;
+const { title, readingTime, date, tags = [], url = Astro.url.toString() } = Astro.props;
 
 const shareLinks = [
   {

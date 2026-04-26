@@ -311,8 +311,7 @@ export const resumeRoles: ResumeRole[] = [
     company: 'Google',
     location: 'Bangalore, India',
     timeframe: 'Dec 2018 - May 2020',
-    summary:
-      'Focused on developer education, workshops, and community leadership at scale.',
+    summary: 'Focused on developer education, workshops, and community leadership at scale.',
     highlights: [
       'Mentored 1,500+ developers in web engineering and system design topics.',
       'Supported 200+ job placements through teaching and coaching.',
@@ -399,7 +398,8 @@ export const contactTopics: ContactTopic[] = [
   },
   {
     title: 'AI workflow work',
-    detail: 'Internal tools, enterprise copilots, retrieval flows, and operationalizing model-backed features.',
+    detail:
+      'Internal tools, enterprise copilots, retrieval flows, and operationalizing model-backed features.',
   },
   {
     title: 'Speaking and workshops',
@@ -407,7 +407,8 @@ export const contactTopics: ContactTopic[] = [
   },
   {
     title: 'Product and platform builds',
-    detail: 'TypeScript-heavy web systems, content platforms, and reliability-focused product work.',
+    detail:
+      'TypeScript-heavy web systems, content platforms, and reliability-focused product work.',
   },
 ];
 
@@ -476,12 +477,14 @@ export const usesCategories: ToolCategory[] = [
   },
   {
     title: 'Data and backend',
-    description: 'Default toolbox for services, API work, persistence, and internal workflow systems.',
+    description:
+      'Default toolbox for services, API work, persistence, and internal workflow systems.',
     items: ['PostgreSQL', 'Redis', 'MongoDB', 'REST APIs', 'GraphQL'],
   },
   {
     title: 'Writing and teaching',
-    description: 'Tools that turn engineering work into material other people can inspect and reuse.',
+    description:
+      'Tools that turn engineering work into material other people can inspect and reuse.',
     items: ['MDX', 'Figma', 'CleanShot X', 'Notion', 'GitHub', 'YouTube'],
   },
 ];
@@ -503,7 +506,8 @@ export const videoHighlights: VideoHighlight[] = [
   {
     id: 'UUYPYPLYkWI',
     title: 'TypeScript Crash Course',
-    description: 'A single-session intro to TypeScript language features developers use most often.',
+    description:
+      'A single-session intro to TypeScript language features developers use most often.',
     topic: 'TypeScript',
   },
   {

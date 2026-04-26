@@ -1,11 +1,7 @@
 ---
 import ContactForm from '../components/ContactForm';
+import { contactChannels, contactPrompts, contactTopics } from '../data/portfolio';
 import Layout from '../layouts/Layout.astro';
-import {
-  contactChannels,
-  contactPrompts,
-  contactTopics,
-} from '../data/portfolio';
 ---
 
 <Layout
@@ -73,10 +69,9 @@ import {
     <div>
       <div class="section-heading">
         <p class="eyebrow">Form</p>
-        <h2>Prefer structured outreach.</h2>
+        <h2>Send a message directly.</h2>
         <p>
-          Form opens an email draft with your details prefilled. Nothing gets silently “submitted”
-          behind scenes.
+          Goes straight to my inbox. Reply hits the email you provide. Rate-limited and spam-filtered.
         </p>
       </div>
       <div class="form-shell">

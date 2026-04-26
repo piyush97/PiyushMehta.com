@@ -3,18 +3,15 @@ import { Resend } from 'resend';
 
 export const prerender = false;
 
-// Simple in-memory rate limit: 5 submissions per IP per hour
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const entry = rateLimitMap.get(ip);
-
   if (!entry || now > entry.resetAt) {
     rateLimitMap.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
     return false;
   }
-
   if (entry.count >= 5) return true;
   entry.count += 1;
   return false;
@@ -27,64 +24,103 @@ function json(data: unknown, status = 200) {
   });
 }
 
+function escapeHtml(s: string) {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 export const POST: APIRoute = async ({ request, clientAddress }) => {
-  const ip = clientAddress ?? 'unknown';
-
-  if (isRateLimited(ip)) {
-    return json({ error: 'Too many requests. Try again later.' }, 429);
-  }
-
-  let body: unknown;
   try {
-    body = await request.json();
-  } catch {
-    return json({ error: 'Invalid request body.' }, 400);
+    const ip = (() => {
+      try {
+        return clientAddress ?? 'unknown';
+      } catch {
+        return 'unknown';
+      }
+    })();
+
+    if (isRateLimited(ip)) {
+      return json({ error: 'Too many requests. Try again in an hour.' }, 429);
+    }
+
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return json({ error: 'Invalid request body.' }, 400);
+    }
+
+    const { name, email, subject, message } = (body ?? {}) as Record<string, unknown>;
+
+    if (
+      typeof name !== 'string' ||
+      !name.trim() ||
+      typeof email !== 'string' ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+      typeof subject !== 'string' ||
+      !subject.trim() ||
+      typeof message !== 'string' ||
+      message.trim().length < 10
+    ) {
+      return json({ error: 'All fields are required and must be valid.' }, 422);
+    }
+
+    const apiKey = process.env.RESEND_API_KEY ?? import.meta.env.RESEND_API_KEY;
+    const fromAddress =
+      process.env.CONTACT_FROM_EMAIL ??
+      import.meta.env.CONTACT_FROM_EMAIL ??
+      'onboarding@resend.dev';
+    const toAddress =
+      process.env.CONTACT_TO_EMAIL ?? import.meta.env.CONTACT_TO_EMAIL ?? 'contact@piyushmehta.com';
+
+    if (!apiKey) {
+      console.error('[contact] RESEND_API_KEY missing');
+      return json({ error: 'Email service not configured.' }, 503);
+    }
+
+    const resend = new Resend(apiKey);
+
+    const cleanName = name.trim();
+    const cleanEmail = email.trim();
+    const cleanSubject = subject.trim();
+    const cleanMessage = message.trim();
+
+    let result: Awaited<ReturnType<typeof resend.emails.send>>;
+    try {
+      result = await resend.emails.send({
+        from: `Contact Form <${fromAddress}>`,
+        to: toAddress,
+        replyTo: cleanEmail,
+        subject: `[Portfolio] ${cleanSubject}`,
+        text: [
+          `From: ${cleanName} <${cleanEmail}>`,
+          `Subject: ${cleanSubject}`,
+          '',
+          cleanMessage,
+        ].join('\n'),
+        html: `
+          <p><strong>From:</strong> ${escapeHtml(cleanName)} &lt;${escapeHtml(cleanEmail)}&gt;</p>
+          <p><strong>Subject:</strong> ${escapeHtml(cleanSubject)}</p>
+          <hr />
+          <p style="white-space:pre-wrap">${escapeHtml(cleanMessage)}</p>
+        `,
+      });
+    } catch (err) {
+      console.error('[contact] resend.send threw:', err);
+      return json({ error: 'Failed to send. Try again or email directly.' }, 502);
+    }
+
+    if (result.error) {
+      console.error('[contact] resend error:', result.error);
+      return json({ error: 'Failed to send. Try again or email directly.' }, 502);
+    }
+
+    return json({ ok: true });
+  } catch (err) {
+    console.error('[contact] unhandled:', err);
+    return json({ error: 'Unexpected server error.' }, 500);
   }
-
-  const { name, email, subject, message } = body as Record<string, unknown>;
-
-  if (
-    typeof name !== 'string' ||
-    !name.trim() ||
-    typeof email !== 'string' ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-    typeof subject !== 'string' ||
-    !subject.trim() ||
-    typeof message !== 'string' ||
-    message.trim().length < 10
-  ) {
-    return json({ error: 'All fields are required and must be valid.' }, 422);
-  }
-
-  const apiKey = import.meta.env.RESEND_API_KEY;
-  if (!apiKey) {
-    return json({ error: 'Email service not configured.' }, 503);
-  }
-
-  const resend = new Resend(apiKey);
-
-  const { error } = await resend.emails.send({
-    from: 'Contact Form <contact@piyushmehta.com>',
-    to: 'contact@piyushmehta.com',
-    replyTo: email.trim(),
-    subject: `[Contact] ${subject.trim()}`,
-    text: [
-      `From: ${name.trim()} <${email.trim()}>`,
-      `Subject: ${subject.trim()}`,
-      '',
-      message.trim(),
-    ].join('\n'),
-    html: `
-      <p><strong>From:</strong> ${name.trim()} &lt;${email.trim()}&gt;</p>
-      <p><strong>Subject:</strong> ${subject.trim()}</p>
-      <hr />
-      <p style="white-space:pre-wrap">${message.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
-    `,
-  });
-
-  if (error) {
-    return json({ error: 'Failed to send message. Please try again.' }, 500);
-  }
-
-  return json({ ok: true });
 };

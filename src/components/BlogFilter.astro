@@ -15,10 +15,7 @@ interface Props {
 }
 
 const { posts = [], class: className = '' } = Astro.props;
-const categories = [
-  'all',
-  ...Array.from(new Set(posts.flatMap((post) => post.categories))).sort(),
-];
+const categories = ['all', ...Array.from(new Set(posts.flatMap((post) => post.categories))).sort()];
 
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString('en-US', {

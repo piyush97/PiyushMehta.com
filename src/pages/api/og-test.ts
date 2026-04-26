@@ -1,37 +1,37 @@
-import fs from "fs";
-import { join } from "path";
-import { Resvg } from "@resvg/resvg-js";
-import type { APIRoute } from "astro";
-import React from "react";
-import satori from "satori";
+import { Resvg } from '@resvg/resvg-js';
+import type { APIRoute } from 'astro';
+import fs from 'fs';
+import { join } from 'path';
+import React from 'react';
+import satori from 'satori';
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ url }) => {
   try {
     const searchParams = new URL(url).searchParams;
-    const title = searchParams.get("title") || "Test Image";
+    const title = searchParams.get('title') || 'Test Image';
 
     // Load fonts from local files
-    const fontPath = join(process.cwd(), "InterVariable.ttf");
+    const fontPath = join(process.cwd(), 'InterVariable.ttf');
     const interRegular = fs.readFileSync(fontPath);
 
     // Create simple template
     const template = React.createElement(
-      "div",
+      'div',
       {
         style: {
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          height: "100%",
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          color: "white",
-          fontSize: "48px",
-          fontWeight: "bold",
-          textAlign: "center",
-          fontFamily: "Inter",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          height: '100%',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          fontSize: '48px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          fontFamily: 'Inter',
         },
       },
       title
@@ -43,10 +43,10 @@ export const GET: APIRoute = async ({ url }) => {
       height: 630,
       fonts: [
         {
-          name: "Inter",
+          name: 'Inter',
           data: interRegular,
           weight: 400,
-          style: "normal",
+          style: 'normal',
         },
       ],
     });
@@ -54,7 +54,7 @@ export const GET: APIRoute = async ({ url }) => {
     // Convert SVG to PNG with resvg-js
     const resvg = new Resvg(svg, {
       fitTo: {
-        mode: "width",
+        mode: 'width',
         value: 1200,
       },
     });
@@ -64,12 +64,14 @@ export const GET: APIRoute = async ({ url }) => {
 
     return new Response(new Uint8Array(pngBuffer), {
       headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "public, max-age=3600",
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, max-age=3600',
       },
     });
   } catch (error) {
-    console.error("Error generating test OG image:", error);
-    return new Response(`Error generating test OG image: ${(error as Error).message}`, { status: 500 });
+    console.error('Error generating test OG image:', error);
+    return new Response(`Error generating test OG image: ${(error as Error).message}`, {
+      status: 500,
+    });
   }
 };

@@ -37,7 +37,7 @@ source = ~/.config/hypr/monitors.conf
 source = ~/.config/hypr/input.conf
 source = ~/.config/hypr/bindings.conf
 source = ~/.config/hypr/envs.conf
-source = ~/.config/hypr/autostart.conf`
+source = ~/.config/hypr/autostart.conf`,
     },
     {
       id: 'bindings',
@@ -72,7 +72,7 @@ bindd = SUPER, X, X, exec, $webapp="https://x.com/"
 # Screenshot and clipboard bindings
 bindd = , Print, Screenshot (full), exec, copy-image --screenshot
 bindd = SHIFT, Home, Screenshot (select), exec, copy-image --select
-bindd = SUPER, Home, Save clipboard image, exec, paste-image`
+bindd = SUPER, Home, Save clipboard image, exec, paste-image`,
     },
     {
       id: 'alacritty',
@@ -100,7 +100,7 @@ opacity = 0.98
 [keyboard]
 bindings = [
   { key = "F11", action = "ToggleFullscreen" }
-]`
+]`,
     },
     {
       id: 'zshrc',
@@ -149,7 +149,7 @@ alias docker-logs='lazydocker'
 alias k='kubectl'
 
 # Load additional configs
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh`
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh`,
     },
     {
       id: 'packages',
@@ -194,11 +194,11 @@ yay -S nerd-fonts-cascadia-code
 pacman -S bitwarden
 pacman -S networkmanager
 pacman -S pipewire pipewire-pulse
-pacman -S bluez bluez-utils`
-    }
+pacman -S bluez bluez-utils`,
+    },
   ];
 
-  const selectedFile = configFiles.find(f => f.id === selectedConfig)!;
+  const selectedFile = configFiles.find((f) => f.id === selectedConfig)!;
 
   const copyToClipboard = (content: string) => {
     navigator.clipboard.writeText(content);
@@ -246,17 +246,13 @@ pacman -S bluez bluez-utils`
               Copy
             </button>
           </div>
-          <p className="text-sm text-text-secondary mt-2">
-            {selectedFile.description}
-          </p>
+          <p className="text-sm text-text-secondary mt-2">{selectedFile.description}</p>
         </div>
 
         {/* Code Content */}
         <div className="overflow-x-auto">
           <pre className="p-4 text-sm text-text-primary bg-surface-1">
-            <code className={`language-${selectedFile.language}`}>
-              {selectedFile.content}
-            </code>
+            <code className={`language-${selectedFile.language}`}>{selectedFile.content}</code>
           </pre>
         </div>
       </div>

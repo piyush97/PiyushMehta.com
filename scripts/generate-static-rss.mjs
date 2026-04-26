@@ -12,12 +12,12 @@ const __dirname = dirname(__filename);
 async function generateStaticRss() {
   try {
     console.log('Generating static RSS file...');
-    
+
     const { itemsXml, latestDate } = await getBlogPostItems();
     const buildDate = latestDate || new Date();
     const currentDate = buildDate.toUTCString();
     const year = new Date().getFullYear();
-    
+
     // Create a basic RSS XML structure
     const rssContent = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
@@ -43,10 +43,7 @@ ${itemsXml}
 </rss>`;
 
     const projectRoot = dirname(__dirname);
-    const outputDirs = [
-      path.join(projectRoot, 'public'),
-      path.join(__dirname, 'public'),
-    ];
+    const outputDirs = [path.join(projectRoot, 'public'), path.join(__dirname, 'public')];
 
     for (const outputDir of outputDirs) {
       if (!fs.existsSync(outputDir)) {
@@ -55,7 +52,7 @@ ${itemsXml}
 
       fs.writeFileSync(path.join(outputDir, 'rss.xml'), rssContent);
     }
-    
+
     console.log('Static RSS file generated successfully.');
   } catch (error) {
     console.error('Error generating static RSS file:', error);
@@ -69,7 +66,7 @@ async function getBlogPostItems() {
   try {
     const projectRoot = dirname(__dirname);
     const contentDir = path.join(projectRoot, 'src', 'content', 'blog');
-    
+
     // Check if directory exists
     if (!fs.existsSync(contentDir)) {
       console.warn('Blog content directory not found:', contentDir);
@@ -79,7 +76,7 @@ async function getBlogPostItems() {
         latestDate: fallbackDate,
       };
     }
-    
+
     const entries = fs.readdirSync(contentDir).flatMap((entry) => {
       const entryPath = path.join(contentDir, entry);
       const stats = fs.statSync(entryPath);
@@ -94,7 +91,7 @@ async function getBlogPostItems() {
 
       return [];
     });
-    
+
     if (entries.length === 0) {
       console.warn('No blog posts found in:', contentDir);
       const fallbackDate = new Date();
@@ -103,39 +100,39 @@ async function getBlogPostItems() {
         latestDate: fallbackDate,
       };
     }
-    
+
     const posts = [];
-    
+
     for (const entry of entries) {
       if (!fs.existsSync(entry.filePath)) {
         continue;
       }
-      
+
       try {
         const content = fs.readFileSync(entry.filePath, 'utf-8');
-        
+
         // Extract frontmatter
         const frontmatterMatch = content.match(/---\n([\s\S]*?)\n---/);
-        
+
         if (frontmatterMatch && frontmatterMatch[1]) {
           const frontmatter = frontmatterMatch[1];
-          
+
           // Extract title
           const titleMatch = frontmatter.match(/title:\s*['"](.+)['"]/);
           const title = titleMatch && titleMatch[1] ? titleMatch[1] : entry.slug.replace(/-/g, ' ');
-          
+
           // Extract description
           const descMatch = frontmatter.match(/description:\s*['"](.+)['"]/);
           const description = descMatch && descMatch[1] ? descMatch[1] : '';
-          
+
           // Extract date
           const dateMatch = frontmatter.match(/date:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/);
           const date = dateMatch && dateMatch[1] ? new Date(dateMatch[1]) : new Date();
-          
+
           // Extract tags
           const tagsSection = frontmatter.match(/tags:\s*\n([\s\S]*?)(\n\w|\n---)/);
           const tags = [];
-          
+
           if (tagsSection && tagsSection[1]) {
             const tagLines = tagsSection[1].split('\n');
             for (const line of tagLines) {
@@ -145,10 +142,11 @@ async function getBlogPostItems() {
               }
             }
           }
-          
-          const categories = tags.length > 0
-            ? `\n      ${tags.map(tag => `<category>${escapeXml(tag)}</category>`).join('\n      ')}`
-            : '';
+
+          const categories =
+            tags.length > 0
+              ? `\n      ${tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join('\n      ')}`
+              : '';
 
           // Create item XML
           const item = `    <item>
@@ -158,14 +156,14 @@ async function getBlogPostItems() {
       <description>${escapeXml(description)}</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>${categories}
     </item>`;
-          
+
           posts.push({ date, item });
         }
       } catch (err) {
         console.warn(`Error processing blog post ${entry.slug}:`, err.message);
       }
     }
-    
+
     if (posts.length === 0) {
       const fallbackDate = new Date();
       return {

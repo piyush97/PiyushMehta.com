@@ -2,8 +2,8 @@
 import { getCollection } from 'astro:content';
 import BlogFilter from '../components/BlogFilter.astro';
 import { writingHighlights } from '../data/portfolio';
-import Layout from '../layouts/Layout.astro';
 import socialCard from '../images/social.jpg';
+import Layout from '../layouts/Layout.astro';
 
 const allPosts = await getCollection('blog');
 const toPostSlug = (id: string) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
@@ -55,7 +55,9 @@ const postsForFilter = publishedPosts.map((post) => ({
 }));
 
 const avgReadingTime = postsForFilter.length
-  ? Math.round(postsForFilter.reduce((total, post) => total + post.readingTime, 0) / postsForFilter.length)
+  ? Math.round(
+      postsForFilter.reduce((total, post) => total + post.readingTime, 0) / postsForFilter.length
+    )
   : 0;
 const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).size;
 ---

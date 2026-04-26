@@ -37,48 +37,51 @@ export function generateOgImageUrl(params: {
     tags,
     template = 'default',
     theme = 'dark',
-    baseUrl
+    baseUrl,
   } = params;
-  
+
   // Ensure we have a baseUrl
   if (!baseUrl) {
     throw new Error('baseUrl is required for generateOgImageUrl');
   }
-  
-   // Map legacy templates to enhanced templates
-   const templateMapping = {
-     'default': 'modern',
-     'minimal': 'minimal',
-     'tech': 'tech',
-     'blog': 'blog'
-   } as const;
-  
+
+  // Map legacy templates to enhanced templates
+  const templateMapping = {
+    default: 'modern',
+    minimal: 'minimal',
+    tech: 'tech',
+    blog: 'blog',
+  } as const;
+
   // Map legacy themes to enhanced themes
   const themeMapping = {
-    'dark': 'dark',
-    'light': 'light',
-    'retro': 'retro'
+    dark: 'dark',
+    light: 'light',
+    retro: 'retro',
   } as const;
-  
+
   const searchParams = new URLSearchParams();
   searchParams.set('title', title);
-  searchParams.set('template', templateMapping[template as keyof typeof templateMapping] || 'syntax');
+  searchParams.set(
+    'template',
+    templateMapping[template as keyof typeof templateMapping] || 'syntax'
+  );
   searchParams.set('theme', themeMapping[theme as keyof typeof themeMapping] || 'dark');
   searchParams.set('showLogo', 'true');
   searchParams.set('showBadge', 'true');
-  
+
   if (description) {
     searchParams.set('description', description);
   }
-  
+
   if (type) {
     searchParams.set('type', type);
   }
-  
+
   if (publishedTime) {
     searchParams.set('date', publishedTime.toISOString());
   }
-  
+
   if (tags && tags.length > 0) {
     searchParams.set('tags', tags.join(','));
   }
@@ -102,53 +105,57 @@ export function generateTwitterImageUrl(params: {
   theme?: 'dark' | 'light';
   baseUrl?: string;
 }): string {
-  const { 
-    title, 
-    description, 
-    type, 
-    publishedTime, 
-    tags, 
+  const {
+    title,
+    description,
+    type,
+    publishedTime,
+    tags,
     template = 'twitter',
     theme = 'dark',
-    baseUrl
+    baseUrl,
   } = params;
-  
+
   // Ensure we have a baseUrl
   if (!baseUrl) {
     throw new Error('baseUrl is required for generateTwitterImageUrl');
   }
-  
-   // Map legacy templates to enhanced templates
-   const templateMapping = {
-     'default': 'modern',
-     'minimal': 'minimal',
-     'tech': 'tech',
-     'blog': 'blog',
-     'twitter': 'modern'
-   } as const;
-  
+
+  // Map legacy templates to enhanced templates
+  const templateMapping = {
+    default: 'modern',
+    minimal: 'minimal',
+    tech: 'tech',
+    blog: 'blog',
+    twitter: 'modern',
+  } as const;
+
   // Use the enhanced OG generator for better Twitter optimization
   const searchParams = new URLSearchParams();
   searchParams.set('title', title);
-  searchParams.set('template', templateMapping[template as keyof typeof templateMapping] || 'modern');
+  searchParams.set(
+    'template',
+    templateMapping[template as keyof typeof templateMapping] || 'modern'
+  );
   searchParams.set('theme', theme);
   searchParams.set('showLogo', 'false'); // Twitter crops logos
   searchParams.set('showBadge', 'true');
-  
+
   if (description) {
     // Twitter prefers shorter descriptions
-    const twitterDescription = description.length > 125 ? `${description.substring(0, 125)}...` : description;
+    const twitterDescription =
+      description.length > 125 ? `${description.substring(0, 125)}...` : description;
     searchParams.set('description', twitterDescription);
   }
-  
+
   if (type) {
     searchParams.set('type', type);
   }
-  
+
   if (publishedTime) {
     searchParams.set('date', publishedTime.toISOString());
   }
-  
+
   if (tags && tags.length > 0) {
     searchParams.set('tags', tags.join(','));
   }
@@ -182,7 +189,7 @@ export function generateStructuredData(params: {
     publishedTime,
     modifiedTime,
     tags = [],
-    image
+    image,
   } = params;
 
   const baseSchema = {
@@ -244,11 +251,9 @@ export function optimizeKeywords(keywords: string[], tags: string[] = []): strin
 
   // Combine all keywords and remove duplicates (case-insensitive)
   const allKeywords = [...defaultKeywords, ...keywords, ...tags];
-  const uniqueKeywords = Array.from(
-    new Set(allKeywords.map(k => k.toLowerCase()))
-  ).map(k => {
+  const uniqueKeywords = Array.from(new Set(allKeywords.map((k) => k.toLowerCase()))).map((k) => {
     // Find the original casing from the first occurrence
-    return allKeywords.find(original => original.toLowerCase() === k) || k;
+    return allKeywords.find((original) => original.toLowerCase() === k) || k;
   });
 
   return uniqueKeywords.join(', ');
@@ -266,12 +271,12 @@ export function generateCanonicalUrl(path: string = '', baseUrl?: string): strin
   }
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${baseUrl}${cleanPath}`;
-  
+
   // Ensure consistent trailing slash handling
   if (cleanPath !== '/' && url.endsWith('/')) {
     return url.slice(0, -1);
   }
-  
+
   return url;
 }
 
@@ -287,19 +292,19 @@ export function sanitizeDescription(description: string, maxLength: number = 160
     .replace(/<[^>]*>/g, '')
     .replace(/\s+/g, ' ')
     .trim();
-  
+
   if (cleaned.length <= maxLength) {
     return cleaned;
   }
-  
+
   // Truncate at word boundary
   const truncated = cleaned.slice(0, maxLength);
   const lastSpace = truncated.lastIndexOf(' ');
-  
+
   if (lastSpace > maxLength * 0.8) {
     return `${truncated.slice(0, lastSpace)}...`;
   }
-  
+
   return `${truncated}...`;
 }
 
@@ -314,12 +319,12 @@ export function resolveImageUrl(imageUrl: string, baseUrl: string): string {
   if (!baseUrl) {
     throw new Error('baseUrl is required for resolveImageUrl');
   }
-  
+
   // Already absolute URL
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
     return imageUrl;
   }
-  
+
   // Convert relative URL to absolute
   const cleanPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
   const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
@@ -360,15 +365,27 @@ export function getRecommendedTemplate(type: string, tags: string[] = []): strin
     // Check tags for specific template recommendations
     const tagString = tags.join(' ').toLowerCase();
 
-    if (tagString.includes('react') || tagString.includes('javascript') || tagString.includes('frontend')) {
+    if (
+      tagString.includes('react') ||
+      tagString.includes('javascript') ||
+      tagString.includes('frontend')
+    ) {
       return 'modern';
     }
 
-    if (tagString.includes('docker') || tagString.includes('kubernetes') || tagString.includes('devops')) {
+    if (
+      tagString.includes('docker') ||
+      tagString.includes('kubernetes') ||
+      tagString.includes('devops')
+    ) {
       return 'tech';
     }
 
-    if (tagString.includes('ai') || tagString.includes('machine learning') || tagString.includes('data')) {
+    if (
+      tagString.includes('ai') ||
+      tagString.includes('machine learning') ||
+      tagString.includes('data')
+    ) {
       return 'modern';
     }
 
@@ -401,7 +418,7 @@ export function generateBlogOGImage(params: {
     tags = [],
     readingTime,
     template = 'blog',
-    baseUrl
+    baseUrl,
   } = params;
 
   // Ensure we have a baseUrl
@@ -445,7 +462,10 @@ export function generateBlogOGImage(params: {
  * @returns Complete image metadata
  */
 export function extractImageMetadata(
-  image: { url: string; alt?: string; width?: number; height?: number; type?: string } | string | null,
+  image:
+    | { url: string; alt?: string; width?: number; height?: number; type?: string }
+    | string
+    | null,
   baseUrl?: string,
   fallbackParams?: {
     title: string;
@@ -461,7 +481,7 @@ export function extractImageMetadata(
   if (!baseUrl) {
     throw new Error('baseUrl is required for extractImageMetadata');
   }
-  
+
   // If we have a specific image, use it
   if (image) {
     if (typeof image === 'string') {
@@ -474,10 +494,10 @@ export function extractImageMetadata(
         height: getDefaultImageHeight(resolvedUrl),
       };
     }
-    
+
     const resolvedUrl = resolveImageUrl(image.url, baseUrl);
     const secureUrl = generateSecureImageUrl(resolvedUrl);
-    
+
     return {
       url: resolvedUrl,
       secureUrl: secureUrl,
@@ -487,7 +507,7 @@ export function extractImageMetadata(
       type: image.type || getImageTypeFromUrl(resolvedUrl),
     };
   }
-  
+
   // Fallback to generated OG image
   if (fallbackParams) {
     const ogImageUrl = generateOgImageUrl({ ...fallbackParams, baseUrl });
@@ -521,7 +541,7 @@ export function extractImageMetadata(
  */
 function getImageTypeFromUrl(imageUrl: string): string {
   const extension = imageUrl.split('.').pop()?.toLowerCase();
-  
+
   switch (extension) {
     case 'jpg':
     case 'jpeg':
@@ -578,31 +598,31 @@ export function validateImageForSocialSharing(imageMetadata: ImageMetadata): {
 } {
   const warnings: string[] = [];
   let isValid = true;
-  
+
   // Check URL
   if (!imageMetadata.url) {
     warnings.push('Image URL is required');
     isValid = false;
   }
-  
+
   // Check dimensions
   if (imageMetadata.width && imageMetadata.width < 200) {
     warnings.push('Image width should be at least 200px for optimal social sharing');
   }
-  
+
   if (imageMetadata.height && imageMetadata.height < 200) {
     warnings.push('Image height should be at least 200px for optimal social sharing');
   }
-  
+
   // Check alt text
   if (!imageMetadata.alt) {
     warnings.push('Alt text is recommended for accessibility and SEO');
   }
-  
+
   // Check secure URL
   if (!imageMetadata.secureUrl || !imageMetadata.secureUrl.startsWith('https://')) {
     warnings.push('HTTPS image URL is recommended for social sharing');
   }
-  
+
   return { isValid, warnings };
 }

@@ -145,8 +145,7 @@ export const generateServicesSchema = () => {
           itemOffered: {
             '@type': 'Service',
             name: 'Frontend Architecture',
-            description:
-              'Designing scalable frontend architectures for modern web applications.',
+            description: 'Designing scalable frontend architectures for modern web applications.',
           },
         },
         {
@@ -208,8 +207,7 @@ export const generateReactDeveloperSchema = () => {
           itemOffered: {
             '@type': 'Service',
             name: 'React Architecture Consultation',
-            description:
-              'Expert guidance on React application architecture and state management.',
+            description: 'Expert guidance on React application architecture and state management.',
           },
         },
       ],

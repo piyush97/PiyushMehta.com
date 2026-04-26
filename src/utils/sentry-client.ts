@@ -1,20 +1,17 @@
 /**
  * Client-side Sentry configuration for browser error tracking
  */
-import * as Sentry from "@sentry/astro";
+import * as Sentry from '@sentry/astro';
 
 // Initialize Sentry for client-side error tracking
 export function initSentry() {
   const dsn = import.meta.env.PUBLIC_SENTRY_DSN;
 
-  if (typeof window !== "undefined" && dsn) {
+  if (typeof window !== 'undefined' && dsn) {
     Sentry.init({
       dsn,
-      environment: import.meta.env.MODE || "production",
-      integrations: [
-        Sentry.browserTracingIntegration(),
-        Sentry.replayIntegration(),
-      ],
+      environment: import.meta.env.MODE || 'production',
+      integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
 
       // Performance monitoring
       tracesSampleRate: 0.1,
@@ -31,14 +28,14 @@ export function initSentry() {
         // Filter out extension errors
         if (
           event.exception?.values?.[0]?.stacktrace?.frames?.some((frame) =>
-            frame.filename?.includes("extension://")
+            frame.filename?.includes('extension://')
           )
         ) {
           return null;
         }
 
         // Filter out network errors from ad blockers
-        if (event.message?.includes("Non-Error promise rejection captured")) {
+        if (event.message?.includes('Non-Error promise rejection captured')) {
           return null;
         }
 
@@ -51,10 +48,10 @@ export function initSentry() {
 // Utility function to capture errors with context
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export function captureError(error: Error, context?: Record<string, any>) {
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     Sentry.captureException(error, {
       tags: {
-        component: "client",
+        component: 'client',
       },
       extra: context,
     });
@@ -64,15 +61,15 @@ export function captureError(error: Error, context?: Record<string, any>) {
 // Utility function to capture messages
 export function captureMessage(
   message: string,
-  level: "info" | "warning" | "error" = "info",
+  level: 'info' | 'warning' | 'error' = 'info',
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   context?: Record<string, any>
 ) {
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     Sentry.captureMessage(message, {
       level,
       tags: {
-        component: "client",
+        component: 'client',
       },
       extra: context,
     });

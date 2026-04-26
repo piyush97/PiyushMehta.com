@@ -101,7 +101,7 @@ export function generateOGImageUrl(options: OGImageOptions): string {
   if (tags.length > 0) params.set('tags', tags.join(','));
   if (readingTime) params.set('readingTime', readingTime);
   if (language) params.set('language', language);
-  
+
   // UI options
   params.set('showLogo', showLogo.toString());
   params.set('showBadge', showBadge.toString());
@@ -275,9 +275,9 @@ export function generateCacheOptimizedOGUrl(options: OGImageOptions): string {
     type: options.type,
     theme: options.theme,
   });
-  
+
   const hash = btoa(cacheKey).replace(/[+/=]/g, '').substring(0, 8);
-  
+
   return `${generateOGImageUrl(options)}&cache=${hash}`;
 }
 
@@ -304,7 +304,7 @@ export function generateABTestOGImages(options: OGImageOptions): {
   variant: OGImageResult;
 } {
   const primary = generateOGImageMetadata(options);
-  
+
   // Generate variant with different template
   const variantTemplate = options.template === 'modern' ? 'tech' : 'modern';
   const variant = generateOGImageMetadata({
@@ -331,7 +331,10 @@ export interface ImageMetadata {
  * Extract image metadata for OG Protocol compliance with @vercel/og fallback
  */
 export function extractImageMetadata(
-  image: { url: string; alt?: string; width?: number; height?: number; type?: string } | string | null,
+  image:
+    | { url: string; alt?: string; width?: number; height?: number; type?: string }
+    | string
+    | null,
   baseUrl?: string,
   fallbackParams?: {
     title: string;
@@ -384,7 +387,7 @@ export function extractImageMetadata(
       theme: (fallbackParams.theme as 'dark' | 'light' | 'auto') || 'dark',
       date: fallbackParams.publishedTime,
       tags: fallbackParams.tags,
-      baseUrl
+      baseUrl,
     });
     return {
       url: ogImageUrl,
@@ -450,7 +453,7 @@ export function generateStructuredData(params: {
     publishedTime,
     modifiedTime,
     tags = [],
-    image
+    image,
   } = params;
 
   const baseSchema = {
@@ -515,7 +518,7 @@ export function generateTwitterImageUrl(options: {
     tags = [],
     template = 'twitter',
     theme = 'dark',
-    baseUrl
+    baseUrl,
   } = options;
 
   // Ensure we have a baseUrl
@@ -525,24 +528,28 @@ export function generateTwitterImageUrl(options: {
 
   // Map legacy templates to enhanced templates
   const templateMapping = {
-    'default': 'modern',
-    'minimal': 'minimal',
-    'tech': 'tech',
-    'blog': 'blog',
-    'twitter': 'modern'
+    default: 'modern',
+    minimal: 'minimal',
+    tech: 'tech',
+    blog: 'blog',
+    twitter: 'modern',
   } as const;
 
   // Use the enhanced OG generator for better Twitter optimization
   const searchParams = new URLSearchParams();
   searchParams.set('title', title);
-  searchParams.set('template', templateMapping[template as keyof typeof templateMapping] || 'modern');
+  searchParams.set(
+    'template',
+    templateMapping[template as keyof typeof templateMapping] || 'modern'
+  );
   searchParams.set('theme', theme);
   searchParams.set('showLogo', 'false'); // Twitter crops logos
   searchParams.set('showBadge', 'true');
 
   if (description) {
     // Twitter prefers shorter descriptions
-    const twitterDescription = description.length > 125 ? `${description.substring(0, 125)}...` : description;
+    const twitterDescription =
+      description.length > 125 ? `${description.substring(0, 125)}...` : description;
     searchParams.set('description', twitterDescription);
   }
 
@@ -577,11 +584,9 @@ export function optimizeKeywords(keywords: string[], tags: string[] = []): strin
 
   // Combine all keywords and remove duplicates (case-insensitive)
   const allKeywords = [...defaultKeywords, ...keywords, ...tags];
-  const uniqueKeywords = Array.from(
-    new Set(allKeywords.map(k => k.toLowerCase()))
-  ).map(k => {
+  const uniqueKeywords = Array.from(new Set(allKeywords.map((k) => k.toLowerCase()))).map((k) => {
     // Find the original casing from the first occurrence
-    return allKeywords.find(original => original.toLowerCase() === k) || k;
+    return allKeywords.find((original) => original.toLowerCase() === k) || k;
   });
 
   return uniqueKeywords.join(', ');

@@ -53,8 +53,7 @@ const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: title,
-  description:
-    description || `${title} - A blog post by ${author || 'Piyush Mehta'}`,
+  description: description || `${title} - A blog post by ${author || 'Piyush Mehta'}`,
   author: {
     '@type': 'Person',
     name: author || 'Piyush Mehta',

@@ -1,8 +1,8 @@
-import { readdir } from "node:fs/promises";
-import { spawn } from "node:child_process";
-import { join } from "node:path";
+import { spawn } from 'node:child_process';
+import { readdir } from 'node:fs/promises';
+import { join } from 'node:path';
 
-const siteDir = "dist/client";
+const siteDir = 'dist/client';
 
 async function hasHtmlFiles(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -16,7 +16,7 @@ async function hasHtmlFiles(dir) {
       continue;
     }
 
-    if (entry.isFile() && entry.name.endsWith(".html")) {
+    if (entry.isFile() && entry.name.endsWith('.html')) {
       return true;
     }
   }
@@ -32,18 +32,18 @@ try {
     process.exit(0);
   }
 
-  const child = spawn("npx", ["pagefind", "--site", siteDir], { stdio: "inherit" });
+  const child = spawn('npx', ['pagefind', '--site', siteDir], { stdio: 'inherit' });
   await new Promise((resolve, reject) => {
-    child.on("exit", (code) => {
+    child.on('exit', (code) => {
       if (code === 0) {
         resolve();
         return;
       }
       reject(new Error(`pagefind exited with code ${code}`));
     });
-    child.on("error", reject);
+    child.on('error', reject);
   });
 } catch (error) {
-  console.error("[pagefind] Failed to run:", error);
+  console.error('[pagefind] Failed to run:', error);
   process.exit(1);
 }

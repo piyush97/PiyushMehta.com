@@ -31,9 +31,7 @@ export default function GitHubProjectIsland({
 
   // Get unique categories and technologies
   const categories = useMemo(() => {
-    const cats = Array.from(
-      new Set(projects.map((p) => p.category || 'uncategorized'))
-    );
+    const cats = Array.from(new Set(projects.map((p) => p.category || 'uncategorized')));
     return ['all', ...cats];
   }, [projects]);
 
@@ -54,11 +52,8 @@ export default function GitHubProjectIsland({
     const filtered = projects.filter((project) => {
       const matchesCategory =
         selectedCategory === 'all' ||
-        (project.category &&
-          project.category.toLowerCase() === selectedCategory.toLowerCase());
-      const matchesTech =
-        selectedTech === 'all' ||
-        (project.technologies?.includes(selectedTech));
+        (project.category && project.category.toLowerCase() === selectedCategory.toLowerCase());
+      const matchesTech = selectedTech === 'all' || project.technologies?.includes(selectedTech);
       const matchesFeatured = !showFeaturedOnly || project.featured;
 
       return matchesCategory && matchesTech && matchesFeatured;
@@ -69,7 +64,7 @@ export default function GitHubProjectIsland({
       if (sortBy === 'title') {
         return a.title.localeCompare(b.title);
       }
-        return b.year - a.year; // Most recent first
+      return b.year - a.year; // Most recent first
     });
 
     return filtered;
@@ -98,7 +93,7 @@ export default function GitHubProjectIsland({
       let color = '#';
       for (let i = 0; i < 3; i++) {
         const value = (hash >> (i * 8)) & 0xff;
-        color += (`00${value.toString(16)}`).slice(-2);
+        color += `00${value.toString(16)}`.slice(-2);
       }
       return color;
     };
@@ -137,10 +132,7 @@ export default function GitHubProjectIsland({
           loading="lazy"
           onError={(e) => {
             // If image fails to load, replace with default image
-            console.log(
-              'Image failed to load, using fallback for:',
-              project.title
-            );
+            console.log('Image failed to load, using fallback for:', project.title);
             const target = e.target as HTMLImageElement;
             if (target.src !== getDefaultImageUrl(project)) {
               target.src = getDefaultImageUrl(project);
@@ -158,12 +150,8 @@ export default function GitHubProjectIsland({
             </h3>
             <div className="flex items-center mt-1 text-sm text-text-secondary">
               {project.year && <span>{project.year}</span>}
-              {project.year && project.category && (
-                <span className="mx-2">•</span>
-              )}
-              {project.category && (
-                <span className="capitalize">{project.category}</span>
-              )}
+              {project.year && project.category && <span className="mx-2">•</span>}
+              {project.category && <span className="capitalize">{project.category}</span>}
               {project.featured && (
                 <>
                   <span className="mx-2">•</span>
@@ -176,30 +164,28 @@ export default function GitHubProjectIsland({
           </div>
         </div>
 
-        <p className="mb-4 text-text-secondary line-clamp-3">
-          {project.description}
-        </p>
+        <p className="mb-4 text-text-secondary line-clamp-3">{project.description}</p>
 
         {/* Technologies */}
         <div className="flex flex-wrap gap-2 mb-4">
           {project.technologies?.map((tech) => (
-              <span
-                key={tech}
-                className="px-2 py-1 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent"
-                onClick={() => setSelectedTech(tech)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setSelectedTech(tech);
-                  }
-                }}
-                tabIndex={0}
-                role="button"
-                aria-label={`Filter projects by ${tech}`}
-              >
-                {tech}
-              </span>
-            ))}
+            <span
+              key={tech}
+              className="px-2 py-1 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent"
+              onClick={() => setSelectedTech(tech)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedTech(tech);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label={`Filter projects by ${tech}`}
+            >
+              {tech}
+            </span>
+          ))}
         </div>
 
         {/* Action Buttons */}
@@ -212,12 +198,7 @@ export default function GitHubProjectIsland({
               className="flex-1 px-4 py-2 font-medium text-center text-white transition-colors duration-200 rounded-lg bg-accent hover:bg-accent/90"
             >
               <span className="flex items-center justify-center">
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -238,11 +219,7 @@ export default function GitHubProjectIsland({
               className="flex-1 px-4 py-2 font-medium text-center transition-colors duration-200 border rounded-lg border-card-border text-text-primary hover:bg-surface-primary"
             >
               <span className="flex items-center justify-center">
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
@@ -268,10 +245,7 @@ export default function GitHubProjectIsland({
           loading="lazy"
           onError={(e) => {
             // If image fails to load, replace with default image
-            console.log(
-              'List view image failed to load, using fallback for:',
-              project.title
-            );
+            console.log('List view image failed to load, using fallback for:', project.title);
             const target = e.target as HTMLImageElement;
             if (target.src !== getDefaultImageUrl(project)) {
               target.src = getDefaultImageUrl(project);
@@ -287,17 +261,11 @@ export default function GitHubProjectIsland({
             <h3 className="text-lg font-semibold truncate transition-colors duration-200 text-text-primary hover:text-accent">
               {project.title}
             </h3>
-            <p className="mt-1 text-text-secondary line-clamp-2">
-              {project.description}
-            </p>
+            <p className="mt-1 text-text-secondary line-clamp-2">{project.description}</p>
             <div className="flex items-center mt-2 text-sm text-text-secondary">
               {project.year && <span>{project.year}</span>}
-              {project.year && project.category && (
-                <span className="mx-2">•</span>
-              )}
-              {project.category && (
-                <span className="capitalize">{project.category}</span>
-              )}
+              {project.year && project.category && <span className="mx-2">•</span>}
+              {project.category && <span className="capitalize">{project.category}</span>}
               {project.featured && (
                 <>
                   <span className="mx-2">•</span>
@@ -318,12 +286,7 @@ export default function GitHubProjectIsland({
                 className="p-2 text-text-secondary hover:text-accent"
                 aria-label="Live Demo"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -342,11 +305,7 @@ export default function GitHubProjectIsland({
                 className="p-2 text-text-secondary hover:text-accent"
                 aria-label="GitHub Repository"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
@@ -360,23 +319,23 @@ export default function GitHubProjectIsland({
 
         <div className="flex flex-wrap gap-2 mt-2">
           {project.technologies?.map((tech) => (
-              <span
-                key={tech}
-                className="px-2 py-0.5 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent"
-                onClick={() => setSelectedTech(tech)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setSelectedTech(tech);
-                  }
-                }}
-                tabIndex={0}
-                role="button"
-                aria-label={`Filter projects by ${tech}`}
-              >
-                {tech}
-              </span>
-            ))}
+            <span
+              key={tech}
+              className="px-2 py-0.5 text-xs transition-colors duration-200 rounded-md cursor-pointer bg-surface-primary text-text-secondary hover:bg-accent/20 hover:text-accent"
+              onClick={() => setSelectedTech(tech)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedTech(tech);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label={`Filter projects by ${tech}`}
+            >
+              {tech}
+            </span>
+          ))}
         </div>
       </div>
     </div>
@@ -391,12 +350,8 @@ export default function GitHubProjectIsland({
         <div className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:justify-between">
           {/* Title and Reset Button */}
           <div>
-            <h2 className="mb-1 text-3xl font-bold text-text-primary">
-              Projects
-            </h2>
-            <p className="text-text-secondary">
-              Explore my recent work and contributions
-            </p>
+            <h2 className="mb-1 text-3xl font-bold text-text-primary">Projects</h2>
+            <p className="text-text-secondary">Explore my recent work and contributions</p>
           </div>
 
           <button
@@ -412,10 +367,7 @@ export default function GitHubProjectIsland({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Category Filter */}
           <div>
-            <label
-              htmlFor="category"
-              className="block mb-2 text-sm font-medium text-text-primary"
-            >
+            <label htmlFor="category" className="block mb-2 text-sm font-medium text-text-primary">
               Category
             </label>
             <div className="relative">
@@ -469,11 +421,7 @@ export default function GitHubProjectIsland({
                 className="w-full px-4 py-2 pr-10 transition-all duration-200 border rounded-lg appearance-none cursor-pointer bg-surface-primary border-card-border text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent hover:border-accent/50"
               >
                 {technologies.map((tech) => (
-                  <option
-                    key={tech}
-                    value={tech}
-                    className="bg-surface-primary text-text-primary"
-                  >
+                  <option key={tech} value={tech} className="bg-surface-primary text-text-primary">
                     {tech === 'all' ? 'All Technologies' : tech}
                   </option>
                 ))}
@@ -498,10 +446,7 @@ export default function GitHubProjectIsland({
 
           {/* Sort By */}
           <div>
-            <label
-              htmlFor="sortBy"
-              className="block mb-2 text-sm font-medium text-text-primary"
-            >
+            <label htmlFor="sortBy" className="block mb-2 text-sm font-medium text-text-primary">
               Sort By
             </label>
             <div className="relative">
@@ -511,16 +456,10 @@ export default function GitHubProjectIsland({
                 onChange={(e) => setSortBy(e.target.value as 'year' | 'title')}
                 className="w-full px-4 py-2 pr-10 transition-all duration-200 border rounded-lg appearance-none cursor-pointer bg-surface-primary border-card-border text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent hover:border-accent/50"
               >
-                <option
-                  value="year"
-                  className="bg-surface-primary text-text-primary"
-                >
+                <option value="year" className="bg-surface-primary text-text-primary">
                   Year
                 </option>
-                <option
-                  value="title"
-                  className="bg-surface-primary text-text-primary"
-                >
+                <option value="title" className="bg-surface-primary text-text-primary">
                   Title
                 </option>
               </select>
@@ -563,9 +502,7 @@ export default function GitHubProjectIsland({
 
             {/* View Mode Toggle */}
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-text-primary">
-                View:
-              </span>
+              <span className="text-sm font-medium text-text-primary">View:</span>
               <div className="flex overflow-hidden border rounded-lg border-card-border">
                 <button
                   type="button"
@@ -575,11 +512,7 @@ export default function GitHubProjectIsland({
                   }`}
                   aria-label="Grid View"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                   </svg>
                 </button>
@@ -591,11 +524,7 @@ export default function GitHubProjectIsland({
                   }`}
                   aria-label="List View"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
@@ -611,11 +540,7 @@ export default function GitHubProjectIsland({
 
       {/* Project Grid/List */}
       <div
-        className={
-          viewMode === 'grid'
-            ? 'grid gap-8 md:grid-cols-2 lg:grid-cols-3'
-            : 'space-y-6'
-        }
+        className={viewMode === 'grid' ? 'grid gap-8 md:grid-cols-2 lg:grid-cols-3' : 'space-y-6'}
       >
         {filteredProjects.length === 0 ? (
           <div className="py-10 text-center col-span-full">
@@ -632,12 +557,8 @@ export default function GitHubProjectIsland({
                 d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <h3 className="mt-2 text-lg font-medium text-text-primary">
-              No matching projects
-            </h3>
-            <p className="mt-1 text-text-secondary">
-              Try changing your filters or clearing them.
-            </p>
+            <h3 className="mt-2 text-lg font-medium text-text-primary">No matching projects</h3>
+            <p className="mt-1 text-text-secondary">Try changing your filters or clearing them.</p>
           </div>
         ) : (
           <>

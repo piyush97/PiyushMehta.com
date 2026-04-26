@@ -54,7 +54,9 @@ test.describe('portfolio smoke', () => {
 
     await page.goto('/projects/', { waitUntil: 'networkidle' });
 
-    await expect(page.getByRole('heading', { name: /Case studies for engineering leaders/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /Case studies for engineering leaders/i })
+    ).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Enterprise AI Workflows' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Scalable Product Platform' })).toBeVisible();
     await expect(page.getByText('Want the short version?')).toBeVisible();
