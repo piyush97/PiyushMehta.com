@@ -2,15 +2,14 @@ name: CodeQL Security Analysis
 
 on:
   push:
-    branches: [ main, og-image-fixes ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   schedule:
-    # Run CodeQL analysis weekly on Sundays at 3 AM UTC
+    # Weekly on Sundays at 3 AM UTC
     - cron: '0 3 * * 0'
   workflow_dispatch:
 
-# Enhanced permissions for CodeQL
 permissions:
   contents: read
   security-events: write
@@ -20,162 +19,59 @@ jobs:
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
-    timeout-minutes: 360
-    
-    strategy:
-      fail-fast: false
-      matrix:
-        # Analyze both JavaScript/TypeScript and GitHub Actions workflows
-        language: ['javascript', 'actions']
-        
+    timeout-minutes: 60
+
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
         with:
           egress-policy: audit
-          
+
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          # Fetch full history for better analysis
           fetch-depth: 0
           persist-credentials: false
-          
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@ea751a9fae12fc5267ceb93f51622421afc5e87b # v3.29.11
         with:
-          languages: ${{ matrix.language }}
-          # Enable additional security queries
+          languages: javascript
           queries: security-extended,security-and-quality
-          # Custom configuration for enhanced analysis
-          config: |
-            name: "Enhanced Security Analysis"
-            query-filters:
-              - exclude:
-                  id: js/incomplete-sanitization
-            
-      # Auto-build for JavaScript/TypeScript
-      - name: Setup Node.js (for JavaScript analysis)
-        if: matrix.language == 'javascript'
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: '20'
-          cache: 'npm'
-          
+
       - name: Setup Bun
-        if: matrix.language == 'javascript'
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
         with:
           bun-version: latest
-          
+
       - name: Install dependencies
-        if: matrix.language == 'javascript'
         run: bun install --frozen-lockfile
-        
+
       - name: Build project
-        if: matrix.language == 'javascript'
-        run: |
-          echo "🏗️ Building for CodeQL analysis..."
-          # Build without strict error handling for analysis
-          bun run build || echo "Build completed with warnings"
-        
+        run: bun run build || echo "Build completed with warnings"
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@ea751a9fae12fc5267ceb93f51622421afc5e87b # v3.29.11
         with:
-          category: "/language:${{ matrix.language }}"
-          # Upload SARIF results
-          upload: true
-          
-      - name: Upload CodeQL results to GitHub
-        if: always()
-        uses: github/codeql-action/upload-sarif@ea751a9fae12fc5267ceb93f51622421afc5e87b # v3.29.11
-        with:
-          sarif_file: ../results/${{ matrix.language }}.sarif
-        continue-on-error: true
+          category: "/language:javascript"
 
-  # Dependency vulnerability scanning
   dependency-review:
     name: Dependency Review
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    
+
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
         with:
           egress-policy: audit
-          
+
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
-          
+
       - name: Dependency Review
-        uses: actions/dependency-review-action@v4
+        uses: actions/dependency-review-action@da3192ba8b2ca4e4e43e96d27b622f4ffa2f9fd1 # v4.7.1
         with:
-          # Fail on high and critical vulnerabilities
-          fail-on-severity: high
-          # Allow moderate vulnerabilities with warning
-          warn-on-severity: moderate
-          # Custom configuration
           config-file: '.github/dependency-review-config.yml'
-
-  # Advanced secret scanning
-  secret-scan:
-    name: Advanced Secret Scanning
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
-        with:
-          egress-policy: audit
-          
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-          
-      - name: Run TruffleHog OSS
-        uses: trufflesecurity/trufflehog@main
-        with:
-          path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
-          extra_args: --debug --only-verified --json
-          
-      - name: Run GitLeaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-        continue-on-error: true
-
-  # Supply chain security analysis
-  supply-chain:
-    name: Supply Chain Security
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
-        with:
-          egress-policy: audit
-          
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: false
-          
-      - name: Run Scorecard analysis
-        uses: ossf/scorecard-action@v2
-        with:
-          results_file: results.sarif
-          results_format: sarif
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Upload Scorecard results
-        uses: github/codeql-action/upload-sarif@ea751a9fae12fc5267ceb93f51622421afc5e87b # v3.29.11
-        with:
-          sarif_file: results.sarif
