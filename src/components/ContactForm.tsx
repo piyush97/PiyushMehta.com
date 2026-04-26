@@ -1,287 +1,178 @@
 import { useState } from 'react';
-import { captureError } from '../utils/sentry-client';
 
-interface ContactFormProps {
-  className?: string;
+type Status = 'idle' | 'sending' | 'success' | 'error';
+
+interface Field {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
 }
 
-export default function ContactForm({ className = '' }: ContactFormProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
+const EMPTY: Field = { name: '', email: '', subject: '', message: '' };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    'idle' | 'success' | 'error'
-  >('idle');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+export default function ContactForm({ className = '' }: { className?: string }) {
+  const [fields, setFields] = useState<Field>(EMPTY);
+  const [errors, setErrors] = useState<Partial<Field>>({});
+  const [status, setStatus] = useState<Status>('idle');
+  const [serverError, setServerError] = useState('');
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+  function validate(): boolean {
+    const e: Partial<Field> = {};
+    if (!fields.name.trim()) e.name = 'Required';
+    if (!fields.email.trim()) e.email = 'Required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) e.email = 'Invalid email';
+    if (!fields.subject.trim()) e.subject = 'Required';
+    if (!fields.message.trim()) e.message = 'Required';
+    else if (fields.message.trim().length < 10) e.message = 'At least 10 characters';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  }
 
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    if (!formData.subject.trim()) {
-      newErrors.subject = 'Subject is required';
-    }
-
-    if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Message must be at least 10 characters long';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!validate()) return;
 
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
+    setStatus('sending');
+    setServerError('');
 
     try {
-      const body = [
-        `Name: ${formData.name}`,
-        `Email: ${formData.email}`,
-        '',
-        formData.message,
-      ].join('\n');
-
-      window.location.href = `mailto:contact@piyushmehta.com?subject=${encodeURIComponent(
-        formData.subject
-      )}&body=${encodeURIComponent(body)}`;
-
-      setSubmitStatus('success');
-    } catch (error) {
-      setSubmitStatus('error');
-      
-      // Log error to Sentry
-      captureError(error as Error, {
-        component: 'ContactForm',
-        formData: {
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          messageLength: formData.message.length,
-        },
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fields),
       });
-    } finally {
-      setIsSubmitting(false);
+
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+
+      if (!res.ok || !data.ok) {
+        setServerError(data.error ?? 'Something went wrong.');
+        setStatus('error');
+        return;
+      }
+
+      setStatus('success');
+      setFields(EMPTY);
+    } catch {
+      setServerError('Network error. Check your connection and try again.');
+      setStatus('error');
     }
-  };
+  }
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Clear error when user starts typing
-    if (errors[name]) {
+    setFields((prev) => ({ ...prev, [name]: value }));
+    if (errors[name as keyof Field]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
-  };
+  }
 
-  return (
-    <form onSubmit={handleSubmit} className={`space-y-6 ${className}`}>
-      {/* Name Field */}
-      <div>
-        <label
-          htmlFor="name"
-          className="block text-sm font-medium text-text-primary mb-2"
-        >
-          Name *
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          className={`w-full px-4 py-3 bg-surface-secondary border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200 ${
-            errors.name ? 'border-red-500' : 'border-card-border'
-          }`}
-          placeholder="Your full name"
-        />
-        {errors.name && (
-          <p className="mt-1 text-sm text-red-500">{errors.name}</p>
-        )}
-      </div>
-
-      {/* Email Field */}
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-text-primary mb-2"
-        >
-          Email *
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          className={`w-full px-4 py-3 bg-surface-secondary border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200 ${
-            errors.email ? 'border-red-500' : 'border-card-border'
-          }`}
-          placeholder="your.email@example.com"
-        />
-        {errors.email && (
-          <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-        )}
-      </div>
-
-      {/* Subject Field */}
-      <div>
-        <label
-          htmlFor="subject"
-          className="block text-sm font-medium text-text-primary mb-2"
-        >
-          Subject *
-        </label>
-        <input
-          type="text"
-          id="subject"
-          name="subject"
-          value={formData.subject}
-          onChange={handleChange}
-          className={`w-full px-4 py-3 bg-surface-secondary border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200 ${
-            errors.subject ? 'border-red-500' : 'border-card-border'
-          }`}
-          placeholder="What is this about?"
-        />
-        {errors.subject && (
-          <p className="mt-1 text-sm text-red-500">{errors.subject}</p>
-        )}
-      </div>
-
-      {/* Message Field */}
-      <div>
-        <label
-          htmlFor="message"
-          className="block text-sm font-medium text-text-primary mb-2"
-        >
-          Message *
-        </label>
-        <textarea
-          id="message"
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          rows={6}
-          className={`w-full px-4 py-3 bg-surface-secondary border rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200 resize-vertical ${
-            errors.message ? 'border-red-500' : 'border-card-border'
-          }`}
-          placeholder="Tell me about your project, question, or just say hello..."
-        />
-        {errors.message && (
-          <p className="mt-1 text-sm text-red-500">{errors.message}</p>
-        )}
-      </div>
-
-      {/* Submit Button */}
-      <div>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`w-full py-3 px-6 rounded-lg font-medium text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-primary ${
-            isSubmitting
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-accent hover:bg-accent/90 transform hover:scale-[1.02] active:scale-[0.98]'
-          }`}
-        >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center">
-              <svg
-                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              Opening draft...
-            </span>
-          ) : (
-            'Open Email Draft'
-          )}
+  if (status === 'success') {
+    return (
+      <div className={`contact-success ${className}`}>
+        <div className="contact-success__icon" aria-hidden="true">
+          ✓
+        </div>
+        <h3>Message sent.</h3>
+        <p>Got it — I'll get back to you shortly.</p>
+        <button type="button" className="contact-success__reset" onClick={() => setStatus('idle')}>
+          Send another
         </button>
       </div>
+    );
+  }
 
-      {/* Status Messages */}
-      {submitStatus === 'success' && (
-        <div className="p-4 bg-green-100 border border-green-300 text-green-700 rounded-lg">
-          <div className="flex items-center">
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="font-medium">Email draft opened.</span>
-          </div>
-          <p className="mt-1 text-sm">
-            Your mail app should open with subject and message prefilled.
-          </p>
+  return (
+    <form onSubmit={handleSubmit} noValidate className={`contact-form ${className}`}>
+      <div className="contact-form__row">
+        <div className="contact-form__field">
+          <label htmlFor="cf-name">Name</label>
+          <input
+            id="cf-name"
+            name="name"
+            type="text"
+            autoComplete="name"
+            placeholder="Your name"
+            value={fields.name}
+            onChange={handleChange}
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? 'cf-name-err' : undefined}
+          />
+          {errors.name && (
+            <span id="cf-name-err" className="contact-form__error">
+              {errors.name}
+            </span>
+          )}
         </div>
+
+        <div className="contact-form__field">
+          <label htmlFor="cf-email">Email</label>
+          <input
+            id="cf-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={fields.email}
+            onChange={handleChange}
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? 'cf-email-err' : undefined}
+          />
+          {errors.email && (
+            <span id="cf-email-err" className="contact-form__error">
+              {errors.email}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="contact-form__field">
+        <label htmlFor="cf-subject">Subject</label>
+        <input
+          id="cf-subject"
+          name="subject"
+          type="text"
+          placeholder="What's this about?"
+          value={fields.subject}
+          onChange={handleChange}
+          aria-invalid={!!errors.subject}
+          aria-describedby={errors.subject ? 'cf-subject-err' : undefined}
+        />
+        {errors.subject && (
+          <span id="cf-subject-err" className="contact-form__error">
+            {errors.subject}
+          </span>
+        )}
+      </div>
+
+      <div className="contact-form__field">
+        <label htmlFor="cf-message">Message</label>
+        <textarea
+          id="cf-message"
+          name="message"
+          rows={6}
+          placeholder="Tell me about the project, constraints, and what good looks like."
+          value={fields.message}
+          onChange={handleChange}
+          aria-invalid={!!errors.message}
+          aria-describedby={errors.message ? 'cf-message-err' : undefined}
+        />
+        {errors.message && (
+          <span id="cf-message-err" className="contact-form__error">
+            {errors.message}
+          </span>
+        )}
+      </div>
+
+      {status === 'error' && (
+        <p className="contact-form__server-error" role="alert">
+          {serverError}
+        </p>
       )}
 
-      {submitStatus === 'error' && (
-        <div className="p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
-          <div className="flex items-center">
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="font-medium">Failed to send message</span>
-          </div>
-          <p className="mt-1 text-sm">
-            Please try again or email me directly at contact@piyushmehta.com
-          </p>
-        </div>
-      )}
+      <button type="submit" className="contact-form__submit" disabled={status === 'sending'}>
+        {status === 'sending' ? 'Sending…' : 'Send message'}
+      </button>
     </form>
   );
 }
