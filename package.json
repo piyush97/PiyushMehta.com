@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "node scripts/extract-critical-css.mjs && node scripts/migrate-images-to-public.mjs && astro build && node scripts/run-pagefind.mjs && node scripts/generate-enhanced-sitemap.mjs && node scripts/generate-static-rss.mjs",
+    "build": "concurrently --kill-others-on-fail \"node scripts/extract-critical-css.mjs\" \"node scripts/migrate-images-to-public.mjs\" && astro build && concurrently --kill-others-on-fail \"node scripts/run-pagefind.mjs\" \"node scripts/generate-enhanced-sitemap.mjs\" \"node scripts/generate-static-rss.mjs\"",
     "preview": "astro preview",
     "astro": "astro",
     "migrate:images": "node scripts/migrate-images-to-public.mjs",
@@ -59,9 +59,11 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
+    "@axe-core/playwright": "^4.11.2",
     "@biomejs/biome": "2.4.13",
     "@playwright/test": "^1.59.1",
     "@tailwindcss/typography": "^0.5.19",
+    "concurrently": "^9.2.1",
     "lefthook": "^2.1.6",
     "pagefind": "^1.5.2",
     "typescript": "^6.0.3"

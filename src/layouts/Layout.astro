@@ -1,9 +1,9 @@
 ---
-import { ClientRouter } from "astro:transitions";
+import { ClientRouter } from 'astro:transitions';
+import favicon from '../assets/favicon.svg';
 import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
 import SEO from '../components/SEO.astro';
-import favicon from '../assets/favicon.svg';
 import type { JsonLdData } from '../types/schema';
 import '../styles/global.css';
 
@@ -203,15 +203,33 @@ const {
           return;
         }
 
+        // Track scroll velocity so fast scrolling skips animation delays.
+        let fastScroll = false;
+        let fastScrollTimer = 0;
+        let lastScrollY = window.scrollY;
+        const onScrollVelocity = () => {
+          const delta = Math.abs(window.scrollY - lastScrollY);
+          lastScrollY = window.scrollY;
+          if (delta > 60) {
+            fastScroll = true;
+            clearTimeout(fastScrollTimer);
+            fastScrollTimer = window.setTimeout(() => { fastScroll = false; }, 200);
+          }
+        };
+        window.addEventListener("scroll", onScrollVelocity, { passive: true });
+
         state.revealObserver = new IntersectionObserver(
           (entries) => {
             for (const entry of entries) {
               if (!entry.isIntersecting) continue;
+              if (fastScroll) {
+                entry.target.style.setProperty("--reveal-delay", "0ms");
+              }
               entry.target.classList.add("is-visible");
               state.revealObserver?.unobserve(entry.target);
             }
           },
-          { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+          { threshold: 0.05, rootMargin: "0px 0px 0px 0px" }
         );
 
         revealElements.forEach((element, index) => {
@@ -220,8 +238,8 @@ const {
           const staggerDelay = Number(element.getAttribute("data-reveal-stagger") || "");
           const delay = hasCustomDelay && Number.isFinite(customDelay) && customDelay >= 0
             ? customDelay
-            : index * 55;
-          element.style.setProperty("--reveal-delay", `${delay + staggerDelay}ms`);
+            : index * 20;
+          element.style.setProperty("--reveal-delay", `${Math.min(delay + staggerDelay, 120)}ms`);
           state.revealObserver.observe(element);
         });
       };
@@ -273,18 +291,22 @@ const {
 
           if (reducedMotion) return;
 
-          const words = text.split(/\s+/);
-          el.innerHTML = words
-            .map((word, i) => {
-              const delay = 120 + i * 55;
-              return (
-                `<span class="hw-clip">` +
-                `<span class="hw-inner" style="animation-delay:${delay}ms">${word}</span>` +
-                `</span>` +
-                (i < words.length - 1 ? " " : "")
-              );
-            })
-            .join("");
+          const startDelay = 60;
+          const perChar = 28;
+
+          const charsHtml = text.split("").map((char, i) => {
+            const delay = startDelay + i * perChar;
+            const escaped = char.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            return `<span class="tw-char" style="animation-delay:${delay}ms">${escaped}</span>`;
+          }).join("");
+
+          const totalDuration = startDelay + text.length * perChar;
+          el.innerHTML = charsHtml + `<span class="tw-cursor"></span>`;
+
+          const cursor = el.querySelector(".tw-cursor");
+          if (cursor) {
+            setTimeout(() => cursor.classList.add("is-done"), totalDuration + 900);
+          }
         });
       };
 

@@ -17,7 +17,7 @@ export default defineConfig({
   output: "server",
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: "viewport",
+    defaultStrategy: "hover",
   },
   integrations: [
     sentry({

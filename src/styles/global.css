@@ -161,10 +161,10 @@ main {
 
 [data-reveal] {
   opacity: 0;
-  transform: translate3d(0, calc(1.2rem + var(--parallax-offset, 0px)), 0) scale(0.985);
+  transform: translate3d(0, calc(0.6rem + var(--parallax-offset, 0px)), 0) scale(0.992);
   transition:
-    opacity var(--motion-slow, 560ms) var(--motion-spring, cubic-bezier(0.2, 0.9, 0.2, 1)),
-    transform calc(var(--motion-slow, 560ms) + 80ms)
+    opacity var(--motion-base, 240ms) var(--motion-spring, cubic-bezier(0.2, 0.9, 0.2, 1)),
+    transform calc(var(--motion-base, 240ms) + 40ms)
       var(--motion-spring, cubic-bezier(0.2, 0.9, 0.2, 1));
   transition-delay: var(--reveal-delay, 0ms);
   will-change: opacity, transform;
@@ -267,9 +267,17 @@ main {
 
 /* ─── Hero Typography Animation System ─── */
 
-@keyframes hero-line-up {
-  from { transform: translateY(108%); }
-  to   { transform: translateY(0); }
+@keyframes tw-char-in {
+  to { opacity: 1; }
+}
+
+@keyframes tw-cursor-blink {
+  0%, 49.9% { opacity: 1; }
+  50%, 100%  { opacity: 0; }
+}
+
+@keyframes tw-cursor-out {
+  to { opacity: 0; }
 }
 
 @keyframes hero-eyebrow-fade {
@@ -286,19 +294,24 @@ main {
   overflow: visible;
 }
 
-/* Each word is wrapped in an overflow:hidden clip box */
-[data-hero-title] .hw-clip {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: bottom;
-  /* matches parent leading so clip box is tight */
-  line-height: inherit;
+[data-hero-title] .tw-char {
+  opacity: 0;
+  animation: tw-char-in 1ms linear both;
 }
 
-[data-hero-title] .hw-inner {
+[data-hero-title] .tw-cursor {
   display: inline-block;
-  animation: hero-line-up 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform;
+  width: 0.055em;
+  height: 0.85em;
+  background: var(--color-accent);
+  vertical-align: middle;
+  margin-left: 0.08em;
+  border-radius: 1px;
+  animation: tw-cursor-blink 530ms step-start infinite;
+}
+
+[data-hero-title] .tw-cursor.is-done {
+  animation: tw-cursor-out 250ms ease forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -306,9 +319,12 @@ main {
     opacity: 1;
     animation: none;
   }
-  [data-hero-title] .hw-inner {
+  [data-hero-title] .tw-char {
+    opacity: 1;
     animation: none;
-    transform: none;
+  }
+  [data-hero-title] .tw-cursor {
+    display: none;
   }
 }
 
