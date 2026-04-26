@@ -3,6 +3,7 @@
 
 fail-on-severity: 'critical'
 
+# Whitelist of acceptable licenses. Anything else fails the check.
 allow-licenses:
   - 'MIT'
   - 'Apache-2.0'
@@ -11,12 +12,6 @@ allow-licenses:
   - 'ISC'
   - 'Unlicense'
   - 'CC0-1.0'
-
-deny-licenses:
-  - 'GPL-2.0'
-  - 'GPL-3.0'
-  - 'AGPL-1.0'
-  - 'AGPL-3.0'
 
 vulnerability-check: true
 license-check: true
