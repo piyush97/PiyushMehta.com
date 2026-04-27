@@ -5,7 +5,13 @@ import { join } from 'node:path';
 const siteDir = 'dist/client';
 
 async function hasHtmlFiles(dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
+  let entries;
+  try {
+    entries = await readdir(dir, { withFileTypes: true });
+  } catch (err) {
+    if (err.code === 'ENOENT') return false;
+    throw err;
+  }
 
   for (const entry of entries) {
     const fullPath = join(dir, entry.name);

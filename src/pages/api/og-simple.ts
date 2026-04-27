@@ -7,14 +7,20 @@ import satori from 'satori';
 
 export const prerender = false;
 
+let cachedFont: Buffer | null = null;
+function getFont(): Buffer {
+  if (!cachedFont) {
+    cachedFont = fs.readFileSync(join(process.cwd(), 'InterVariable.ttf'));
+  }
+  return cachedFont;
+}
+
 export const GET: APIRoute = async ({ url }) => {
   try {
     const searchParams = new URL(url).searchParams;
     const title = searchParams.get('title') || 'Test Image';
 
-    // Load fonts from local files
-    const fontPath = join(process.cwd(), 'InterVariable.ttf');
-    const interRegular = fs.readFileSync(fontPath);
+    const interRegular = getFont();
 
     // Create simple template
     const template = React.createElement(

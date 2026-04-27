@@ -25,6 +25,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
   class={`post-reactions mt-8 p-6 bg-surface-100 rounded-lg border border-card-border ${orientation === 'vertical' ? 'text-center' : ''}`}
   data-post-id={postId}
   data-component-id={componentId}
+  data-share-title={title}
   aria-labelledby={`${componentId}-title`}
 >
   <!-- Title -->
@@ -334,7 +335,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
     private handleShare() {
       const url = window.location.href;
-      const title = document.title;
+      const title = this.container.dataset.shareTitle || document.title;
       
       if (navigator.share) {
         // Use native sharing if available

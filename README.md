@@ -7,7 +7,7 @@ A modern, fast, and SEO-optimized personal website built with Astro 6.x, showcas
 ## 🚀 Features
 
 - **Lightning Fast**: Built with Astro 6.x for optimal performance with server-side rendering
-- **PWA Ready**: Full-featured Progressive Web App with offline support and app-like features
+- **Installable**: Web App Manifest for add-to-home-screen support
 - **Interactive Components**: Glass morphism UI with hover effects and smooth animations
 - **Command Palette**: Global search and navigation with ⌘+K keyboard shortcuts
 - **Full-Text Search**: Fast, client-side search powered by Pagefind
@@ -227,13 +227,9 @@ Integrated comment system powered by GitHub Discussions:
 - **Reactions**: GitHub-style emoji reactions on comments
 - **Email Notifications**: Automatic notifications for new comments
 
-### Progressive Web App (PWA)
+### Web App Manifest
 
-The website is a fully-featured PWA with:
-- **Service Worker**: For offline caching, background sync, and push notifications.
-- **Web App Manifest**: Allows users to install the site on their devices.
-- **Offline Support**: A dedicated offline page ensures a good user experience without a connection.
-- **App-like Experience**: Includes app shortcuts, standalone display mode, and seamless updates.
+The site ships a `manifest.json` allowing users to install it on their devices. The legacy service worker (`sw.js`) has been retired and is actively unregistered on load to avoid stale caches.
 
 ### Full-Text Search
 
@@ -398,7 +394,7 @@ NEWSLETTER_ADMIN_TOKEN=your_secure_admin_token
 ## 📊 Performance & Features
 
 - **Lighthouse Score**: 100/100 across all metrics
-- **PWA-Ready**: Installable, offline-capable, and app-like.
+- **Installable**: Web App Manifest with app shortcuts and standalone display mode
 - **Interactive Components**: Glass morphism UI with smooth animations
 - **Command Palette**: Universal search and navigation with ⌘+K
 - **Enhanced Code Blocks**: Syntax highlighting with copy functionality

@@ -34,6 +34,13 @@ function escapeHtml(s: string) {
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   try {
+    // CSRF: only accept requests from our own origin
+    const origin = request.headers.get('origin') ?? request.headers.get('referer') ?? '';
+    const allowed = ['https://piyushmehta.com', 'http://localhost:4321', 'http://localhost:3000'];
+    if (!allowed.some((o) => origin.startsWith(o))) {
+      return json({ error: 'Forbidden.' }, 403);
+    }
+
     const ip = (() => {
       try {
         return clientAddress ?? 'unknown';

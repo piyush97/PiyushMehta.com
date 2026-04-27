@@ -82,11 +82,18 @@ async function getBlogPostItems() {
       const stats = fs.statSync(entryPath);
 
       if (stats.isDirectory()) {
-        return [{ slug: entry, filePath: path.join(entryPath, 'index.mdx') }];
+        const mdxIndex = path.join(entryPath, 'index.mdx');
+        const mdIndex = path.join(entryPath, 'index.md');
+        const filePath = fs.existsSync(mdxIndex) ? mdxIndex : mdIndex;
+        return [{ slug: entry, filePath }];
       }
 
       if (stats.isFile() && entry.endsWith('.mdx')) {
         return [{ slug: entry.replace(/\.mdx$/, ''), filePath: entryPath }];
+      }
+
+      if (stats.isFile() && entry.endsWith('.md')) {
+        return [{ slug: entry.replace(/\.md$/, ''), filePath: entryPath }];
       }
 
       return [];
