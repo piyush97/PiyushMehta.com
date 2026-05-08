@@ -1,10 +1,16 @@
 import mdx from "@astrojs/mdx";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
-import tailwind from "@astrojs/tailwind";
 import vercel from "@astrojs/vercel";
 import sentry from "@sentry/astro";
+import tailwindcss from "@tailwindcss/vite";
+import varlock from "@varlock/astro-integration";
 import { defineConfig } from "astro/config";
+
+const isProductionBuild = process.env.NODE_ENV === "production";
+const hasSentryAuth = Boolean(process.env.SENTRY_AUTH_TOKEN);
+const hasClientSentryDsn = Boolean(process.env.PUBLIC_SENTRY_DSN);
+const hasServerSentryDsn = Boolean(process.env.SENTRY_DSN || process.env.PUBLIC_SENTRY_DSN);
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,21 +18,22 @@ export default defineConfig({
   output: "server",
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: "viewport",
+    defaultStrategy: "hover",
   },
   integrations: [
+    varlock(),
     sentry({
-      dsn: process.env.SENTRY_DSN,
-      environment: process.env.NODE_ENV || "production",
-      tracesSampleRate: 1.0,
-      release: process.env.npm_package_version,
-      telemetry: false,
+      enabled: {
+        client: hasClientSentryDsn,
+        server: hasServerSentryDsn,
+      },
       sourceMapsUploadOptions: {
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        org: process.env.SENTRY_ORG,
-        project: process.env.SENTRY_PROJECT,
-        // Only upload source maps in production builds
-        enabled: process.env.NODE_ENV === "production" && !!process.env.SENTRY_AUTH_TOKEN,
+        enabled: isProductionBuild && hasSentryAuth,
+        telemetry: false,
+        ...(isProductionBuild && {
+          assets: ["dist/_astro/**/*.js", "dist/_astro/**/*.mjs"],
+          filesToDeleteAfterUpload: ["dist/_astro/**/*.map"],
+        }),
       },
     }),
     mdx(),
@@ -48,7 +55,6 @@ export default defineConfig({
         "https://piyushmehta.com/services/",
       ],
     }),
-    tailwind(),
     react(),
   ],
   markdown: {
@@ -58,6 +64,10 @@ export default defineConfig({
     },
   },
   vite: {
+    plugins: [tailwindcss()],
+    build: {
+      sourcemap: isProductionBuild ? "hidden" : false,
+    },
     assetsInclude: [
       "**/*.png",
       "**/*.jpg",
@@ -113,9 +123,6 @@ export default defineConfig({
             if (id.includes('satori') || id.includes('@resvg') || id.includes('@vercel/og')) {
               return 'vendor-images';
             }
-            if (id.includes('workbox')) {
-              return 'vendor-pwa';
-            }
             // Other third-party packages
             return 'vendor-libs';
           }
@@ -140,7 +147,7 @@ export default defineConfig({
 
   adapter: vercel({
     webAnalytics: {
-      enabled: true,
+      enabled: process.env.NODE_ENV === "production",
     },
     imageService: true,
     imagesConfig: {

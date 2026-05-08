@@ -7,13 +7,7 @@ export interface Props {
   url?: string;
 }
 
-const {
-  title,
-  readingTime,
-  date,
-  tags = [],
-  url = Astro.url.toString(),
-} = Astro.props;
+const { title, readingTime, date, tags = [], url = Astro.url.toString() } = Astro.props;
 
 const shareLinks = [
   {
@@ -159,13 +153,6 @@ const shareLinks = [
           }, 2000);
         } catch (err) {
           console.error('Failed to copy:', err);
-          // Fallback for older browsers
-          const textArea = document.createElement('textarea');
-          textArea.value = window.location.href;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
         }
       });
     }

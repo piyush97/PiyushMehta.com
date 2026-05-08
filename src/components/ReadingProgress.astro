@@ -38,7 +38,7 @@
   </div>
 </div>
 
-<script>
+<script is:inline>
   // Reading Progress Functionality
   class ReadingProgress {
     constructor() {
@@ -182,7 +182,6 @@
 
       const articleRect = this.articleContent.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
       // Calculate progress based on article content

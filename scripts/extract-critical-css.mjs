@@ -5,28 +5,25 @@
  * Extracts critical above-the-fold CSS for improved performance
  */
 
-import path from "path";
-import { fileURLToPath } from "url";
-import fs from "fs/promises";
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Add Sentry error monitoring for build scripts
 let Sentry = null;
 try {
-  const sentryModule = await import("@sentry/node");
+  const sentryModule = await import('@sentry/node');
   Sentry = sentryModule;
   if (process.env.SENTRY_DSN) {
     Sentry.init({
       dsn: process.env.SENTRY_DSN,
-      environment: process.env.NODE_ENV || "development",
+      environment: process.env.NODE_ENV || 'development',
       tracesSampleRate: 0.1,
     });
   }
 } catch (e) {
   // Sentry not available, continue without monitoring
-  console.warn(
-    "Sentry not initialized for build scripts. Continuing without monitoring.",
-    e
-  );
+  console.warn('Sentry not initialized for build scripts. Continuing without monitoring.', e);
 }
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,14 +31,14 @@ const __dirname = path.dirname(__filename);
 
 class CriticalCSSExtractor {
   constructor() {
-    this.projectRoot = path.resolve(__dirname, "..");
-    this.distDir = path.join(this.projectRoot, "dist");
-    this.srcDir = path.join(this.projectRoot, "src");
+    this.projectRoot = path.resolve(__dirname, '..');
+    this.distDir = path.join(this.projectRoot, 'dist');
+    this.srcDir = path.join(this.projectRoot, 'src');
     this.criticalCSS = new Map();
   }
 
   async extract() {
-    console.log("🎨 Extracting critical CSS...");
+    console.log('🎨 Extracting critical CSS...');
 
     try {
       // Extract critical CSS for different page types
@@ -52,19 +49,16 @@ class CriticalCSSExtractor {
       // Generate critical CSS files
       await this.generateCriticalCSSFiles();
 
-      // Update layout with critical CSS
-      await this.updateLayoutWithCriticalCSS();
-
-      console.log("✅ Critical CSS extraction completed!");
+      console.log('✅ Critical CSS extraction completed!');
     } catch (error) {
-      console.error("❌ Critical CSS extraction failed:", error);
+      console.error('❌ Critical CSS extraction failed:', error);
 
       // Log to Sentry if available
       if (Sentry) {
         Sentry.captureException(error, {
           tags: {
-            script: "extract_critical_css",
-            operation: "extract",
+            script: 'extract_critical_css',
+            operation: 'extract',
           },
         });
       }
@@ -74,7 +68,7 @@ class CriticalCSSExtractor {
   }
 
   async extractHomePageCSS() {
-    console.log("  📄 Extracting homepage critical CSS...");
+    console.log('  📄 Extracting homepage critical CSS...');
 
     const criticalRules = [
       // Layout fundamentals
@@ -138,15 +132,15 @@ class CriticalCSSExtractor {
       `.transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; }`,
     ];
 
-    this.criticalCSS.set("homepage", criticalRules.join("\n"));
+    this.criticalCSS.set('homepage', criticalRules.join('\n'));
   }
 
   async extractBlogPageCSS() {
-    console.log("  📝 Extracting blog page critical CSS...");
+    console.log('  📝 Extracting blog page critical CSS...');
 
     const criticalRules = [
       // Include homepage critical CSS
-      ...(this.criticalCSS.get("homepage")?.split("\n") || []),
+      ...(this.criticalCSS.get('homepage')?.split('\n') || []),
 
       // Blog-specific above-the-fold
       `.grid { display: grid; }`,
@@ -177,15 +171,15 @@ class CriticalCSSExtractor {
       }`,
     ];
 
-    this.criticalCSS.set("blog", criticalRules.join("\n"));
+    this.criticalCSS.set('blog', criticalRules.join('\n'));
   }
 
   async extractBlogPostCSS() {
-    console.log("  📖 Extracting blog post critical CSS...");
+    console.log('  📖 Extracting blog post critical CSS...');
 
     const criticalRules = [
       // Include homepage critical CSS
-      ...(this.criticalCSS.get("homepage")?.split("\n") || []),
+      ...(this.criticalCSS.get('homepage')?.split('\n') || []),
 
       // Reading progress (above fold)
       `#reading-progress-container { position: fixed; top: 0; left: 0; right: 0; z-index: 40; }`,
@@ -218,21 +212,18 @@ class CriticalCSSExtractor {
       }`,
     ];
 
-    this.criticalCSS.set("blogpost", criticalRules.join("\n"));
+    this.criticalCSS.set('blogpost', criticalRules.join('\n'));
   }
 
   async generateCriticalCSSFiles() {
-    console.log("  💾 Generating critical CSS files...");
+    console.log('  💾 Generating critical CSS files...');
 
-    const criticalDir = path.join(this.srcDir, "styles", "critical");
+    const criticalDir = path.join(this.srcDir, 'styles', 'critical');
 
     try {
       await fs.mkdir(criticalDir, { recursive: true });
     } catch (error) {
-      console.error(
-        "    ❌ Failed to create critical CSS directory:",
-        error.message
-      );
+      console.error('    ❌ Failed to create critical CSS directory:', error.message);
       // Directory might already exist
     }
 
@@ -242,92 +233,40 @@ class CriticalCSSExtractor {
 
       // Minify CSS (basic minification)
       const minifiedCSS = css
-        .replace(/\/\*[\s\S]*?\*\//g, "") // Remove comments
-        .replace(/\s+/g, " ") // Collapse whitespace
-        .replace(/;\s*}/g, "}") // Remove unnecessary semicolons
-        .replace(/\s*{\s*/g, "{") // Clean up braces
-        .replace(/\s*}\s*/g, "}")
-        .replace(/\s*;\s*/g, ";")
+        .replace(/\/\*[\s\S]*?\*\//g, '') // Remove comments
+        .replace(/\s+/g, ' ') // Collapse whitespace
+        .replace(/;\s*}/g, '}') // Remove unnecessary semicolons
+        .replace(/\s*{\s*/g, '{') // Clean up braces
+        .replace(/\s*}\s*/g, '}')
+        .replace(/\s*;\s*/g, ';')
         .trim();
 
-      await fs.writeFile(filePath, minifiedCSS, "utf8");
-      console.log(
-        `    ✓ Generated ${pageType}.css (${minifiedCSS.length} bytes)`
-      );
+      await fs.writeFile(filePath, minifiedCSS, 'utf8');
+      console.log(`    ✓ Generated ${pageType}.css (${minifiedCSS.length} bytes)`);
     }
 
     // Generate combined critical CSS
-    const combinedCSS = Array.from(this.criticalCSS.values()).join("\n");
-    const combinedPath = path.join(criticalDir, "combined.css");
-    await fs.writeFile(combinedPath, combinedCSS, "utf8");
+    const combinedCSS = Array.from(this.criticalCSS.values()).join('\n');
+    const combinedPath = path.join(criticalDir, 'combined.css');
+    await fs.writeFile(combinedPath, combinedCSS, 'utf8');
     console.log(`    ✓ Generated combined.css (${combinedCSS.length} bytes)`);
-  }
-
-  async updateLayoutWithCriticalCSS() {
-    console.log("  🔧 Updating layout with critical CSS...");
-
-    const layoutPath = path.join(this.srcDir, "layouts", "Layout.astro");
-
-    try {
-      let layoutContent = await fs.readFile(layoutPath, "utf8");
-
-      // Check if critical CSS is already integrated
-      if (layoutContent.includes("<!-- Critical CSS -->")) {
-        console.log("    ⚠️  Critical CSS already integrated in layout");
-        return;
-      }
-
-      // Find the head section and inject critical CSS
-      const headInsertPoint = layoutContent.indexOf("</head>");
-
-      if (headInsertPoint === -1) {
-        throw new Error("Could not find </head> tag in Layout.astro");
-      }
-
-      const criticalCSSInsertion = `
-    <!-- Critical CSS -->
-    <style>
-      /* Critical above-the-fold CSS inlined for performance */
-      ${this.criticalCSS.get("homepage") || ""}
-    </style>
-    
-    <!-- Preload main stylesheet -->
-    <link rel="preload" href="/src/styles/global.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/src/styles/global.css"></noscript>
-    
-`;
-
-      layoutContent =
-        layoutContent.slice(0, headInsertPoint) +
-        criticalCSSInsertion +
-        layoutContent.slice(headInsertPoint);
-
-      await fs.writeFile(layoutPath, layoutContent, "utf8");
-      console.log("    ✓ Layout updated with critical CSS");
-    } catch (error) {
-      console.error("    ❌ Failed to update layout:", error.message);
-      // Don't throw - this is not critical for the build
-    }
   }
 
   // Utility method to analyze CSS usage
   async analyzeCSSUsage() {
-    console.log("  📊 Analyzing CSS usage...");
+    console.log('  📊 Analyzing CSS usage...');
 
     try {
-      const globalCSSPath = path.join(this.srcDir, "styles", "global.css");
-      const globalCSS = await fs.readFile(globalCSSPath, "utf8");
+      const globalCSSPath = path.join(this.srcDir, 'styles', 'global.css');
+      const globalCSS = await fs.readFile(globalCSSPath, 'utf8');
 
       const stats = {
         totalRules: (globalCSS.match(/[{}]/g) || []).length / 2,
         totalSize: globalCSS.length,
-        criticalSize: Array.from(this.criticalCSS.values()).join("").length,
+        criticalSize: Array.from(this.criticalCSS.values()).join('').length,
       };
 
-      stats.criticalPercentage = (
-        (stats.criticalSize / stats.totalSize) *
-        100
-      ).toFixed(1);
+      stats.criticalPercentage = ((stats.criticalSize / stats.totalSize) * 100).toFixed(1);
 
       console.log(`    📈 CSS Analysis:`);
       console.log(`      Total CSS size: ${stats.totalSize} bytes`);
@@ -336,7 +275,7 @@ class CriticalCSSExtractor {
 
       return stats;
     } catch (error) {
-      console.error("    ❌ CSS analysis failed:", error.message);
+      console.error('    ❌ CSS analysis failed:', error.message);
       return null;
     }
   }
@@ -350,15 +289,13 @@ async function main() {
     await extractor.extract();
     await extractor.analyzeCSSUsage();
 
-    console.log("\n🎉 Critical CSS extraction completed successfully!");
-    console.log("\nNext steps:");
-    console.log(
-      "  1. Review generated critical CSS files in src/styles/critical/"
-    );
-    console.log("  2. Test page load performance");
-    console.log("  3. Adjust critical CSS rules as needed");
+    console.log('\n🎉 Critical CSS extraction completed successfully!');
+    console.log('\nNext steps:');
+    console.log('  1. Review generated critical CSS files in src/styles/critical/');
+    console.log('  2. Test page load performance');
+    console.log('  3. Adjust critical CSS rules as needed');
   } catch (error) {
-    console.error("\n💥 Critical CSS extraction failed:", error);
+    console.error('\n💥 Critical CSS extraction failed:', error);
     process.exit(1);
   }
 }

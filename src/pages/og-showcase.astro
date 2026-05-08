@@ -3,12 +3,13 @@ import Layout from '../layouts/Layout.astro';
 import { OG_TEMPLATES } from '../utils/og-generator';
 
 const title = 'OG Image Showcase';
-const description = 'Explore all the amazing OG image templates available on this site';
+const description = 'Explore the Open Graph image templates available on this site';
 
 // Sample data for demonstrations
 const samplePost = {
   title: 'Building Modern Web Applications with React and TypeScript',
-  description: 'Learn how to create scalable, maintainable web applications using React, TypeScript, and modern development practices.',
+  description:
+    'Learn how to create scalable, maintainable web applications using React, TypeScript, and modern development practices.',
   tags: ['React', 'TypeScript', 'Web Development', 'Frontend'],
   date: new Date('2024-01-15'),
   readingTime: '8',
@@ -16,15 +17,17 @@ const samplePost = {
 
 const sampleTalk = {
   title: 'The Future of Web Development',
-  description: 'A deep dive into emerging technologies and trends shaping the future of web development.',
+  description:
+    'A deep dive into emerging technologies and trends shaping the future of web development.',
   eventName: 'TechConf 2024',
   tags: ['Web Dev', 'Technology', 'Future'],
   date: new Date('2024-01-10'),
 };
 
 const sampleProject = {
-  title: 'React Developer Portfolio',
-  description: 'A modern, responsive portfolio website built with React, TypeScript, and Tailwind CSS.',
+  title: 'Software Engineer Portfolio',
+  description:
+    'A focused portfolio website built with Astro, TypeScript, MDX, and selective React islands.',
   tags: ['React', 'Portfolio', 'Design', 'Open Source'],
 };
 
@@ -44,7 +47,7 @@ const baseUrl = Astro.site?.toString() || 'https://piyushmehta.com';
         OG Image Showcase
       </h1>
       <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-        Explore all the amazing OG image templates available on this site. Each template is optimized for different content types and social media platforms.
+        Explore the Open Graph image templates available on this site. Each template is optimized for different content types and social media platforms.
       </p>
     </div>
 
@@ -193,7 +196,7 @@ import { generateOGImageMetadata } from '../utils/og-generator';
 
 const ogImage = generateOGImageMetadata({
   title: 'My Blog Post',
-  description: 'An amazing blog post',
+  description: 'A concise blog post summary',
   type: 'article',
   template: 'blog',
   tags: ['javascript', 'web-dev']

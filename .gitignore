@@ -65,3 +65,7 @@ examples/**/env.d.ts
 .claudedocs/
 *.md
 tests/*.ts-snapshots
+.agents/*
+.omx/*
+.playwright-mcp/*env.d.ts
+src/varlock.env.d.ts

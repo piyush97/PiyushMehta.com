@@ -31,7 +31,7 @@ const {
 } = Astro.props;
 
 // Generate unique ID for this comment section
-const commentId = `giscus-${Math.random().toString(36).substr(2, 9)}`;
+const commentId = `giscus-${Math.random().toString(36).slice(2, 11)}`;
 ---
 
 <!-- Giscus Comments Section -->
@@ -108,9 +108,13 @@ const commentId = `giscus-${Math.random().toString(36).substr(2, 9)}`;
 </section>
 
 <script>
+  type AnalyticsWindow = Window &
+    typeof globalThis & {
+      gtag?: (command: string, eventName: string, properties?: Record<string, unknown>) => void;
+    };
+
   // Giscus Comments Manager
   class GiscusManager {
-    private commentId: string;
     private config: any;
     private loadingElement: HTMLElement | null;
     private fallbackElement: HTMLElement | null;
@@ -120,7 +124,6 @@ const commentId = `giscus-${Math.random().toString(36).substr(2, 9)}`;
     private maxRetries = 3;
 
     constructor(commentId: string) {
-      this.commentId = commentId;
       this.container = document.getElementById(commentId);
       this.loadingElement = document.getElementById(`${commentId}-loading`);
       this.fallbackElement = document.getElementById(`${commentId}-fallback`);
@@ -289,7 +292,7 @@ const commentId = `giscus-${Math.random().toString(36).substr(2, 9)}`;
     }
 
     private setupThemeListener() {
-      document.addEventListener('themechange', (event: any) => {
+      document.addEventListener('themechange', () => {
         if (this.isLoaded && this.container) {
           const newTheme = this.getCurrentTheme();
           
@@ -334,8 +337,9 @@ const commentId = `giscus-${Math.random().toString(36).substr(2, 9)}`;
 
     private trackEvent(eventName: string, properties: any = {}) {
       // Track analytics event
-      if (typeof gtag !== 'undefined') {
-        gtag('event', eventName, properties);
+      const analyticsWindow = window as AnalyticsWindow;
+      if (typeof analyticsWindow.gtag === 'function') {
+        analyticsWindow.gtag('event', eventName, properties);
       }
 
       // Console log for development

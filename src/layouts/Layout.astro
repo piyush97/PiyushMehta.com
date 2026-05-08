@@ -1,21 +1,17 @@
 ---
-import CommandPalette from '../components/CommandPalette.astro';
+import { ClientRouter } from 'astro:transitions';
+import favicon from '../assets/favicon.svg';
 import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
-import ReadingProgress from '../components/ReadingProgress.astro';
 import SEO from '../components/SEO.astro';
-import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration.astro';
-import SmartPrefetch from '../components/SmartPrefetch.astro';
-import '../styles/global.css';
-import SpeedInsights from "@vercel/speed-insights/astro"
-import favicon from "../assets/favicon.svg";
 import type { JsonLdData } from '../types/schema';
+import '../styles/global.css';
 
 export interface Props {
   title: string;
   description?: string;
   type?: 'website' | 'article';
-  image?: string;
+  image?: string | { url: string; alt?: string; width?: number; height?: number; type?: string };
   author?: string;
   publishedTime?: Date;
   modifiedTime?: Date;
@@ -24,11 +20,13 @@ export interface Props {
   noindex?: boolean;
   schema?: JsonLdData;
   keywords?: string[];
+  ogTemplate?: 'default' | 'minimal' | 'tech' | 'blog' | 'modern' | 'professional';
+  ogTheme?: 'dark' | 'light' | 'retro';
 }
 
 const {
   title,
-  description = 'Piyush Mehta - Senior Software Engineer & React Developer in Canada. Expert in React.js, Node.js, and modern web development technologies.',
+  description = 'Piyush Mehta is a senior software engineer building reliable web platforms, AI workflows, and scalable product systems.',
   type = 'website',
   image,
   author,
@@ -39,6 +37,8 @@ const {
   noindex,
   schema,
   keywords,
+  ogTemplate = 'default',
+  ogTheme = 'dark',
 } = Astro.props;
 ---
 
@@ -57,8 +57,7 @@ const {
     />
     <link rel="manifest" href="/manifest.json" />
     <meta name="generator" content={Astro.generator} />
-    <SpeedInsights />
-    <!-- SEO Component (includes OpenGraph functionality) -->
+    <ClientRouter />
     <SEO
       title={title}
       description={description}
@@ -72,446 +71,257 @@ const {
       noindex={noindex}
       schema={schema}
       keywords={keywords}
+      ogTemplate={ogTemplate === 'modern' || ogTemplate === 'professional' ? 'tech' : ogTemplate}
+      ogTheme={ogTheme}
     />
-
-    <script>
-      // Initialize Sentry for client-side error tracking
-      import { initSentry } from '../utils/sentry-client';
-      initSentry();
-      
-      // Enhanced theme detection and setting for multiple themes
-      const getThemePreference = (): string => {
-        if (
-          typeof localStorage !== 'undefined' &&
-          localStorage.getItem('theme')
-        ) {
-          return localStorage.getItem('theme') || 'professional-dark';
-        }
-        return window.matchMedia('(prefers-color-scheme: light)').matches
+    <script is:inline>
+      const savedTheme = localStorage.getItem('theme');
+      const preferredTheme =
+        savedTheme ||
+        (window.matchMedia('(prefers-color-scheme: light)').matches
           ? 'professional-light'
-          : 'professional-dark';
-      };
-
-      // Disable transitions during theme initialization to prevent flash
-      document.documentElement.classList.add('no-transition');
-
-      // Get the saved theme
-      const savedTheme = getThemePreference();
-      
-      // Clear any existing theme classes
-      document.documentElement.classList.remove(
-        'professional-dark',
-        'professional-light',
-        'retro-tech',
-        'minimalist',
-        'high-contrast',
-        'custom-theme',
-        'light',
-        'dark'
-      );
-      
-      // Set the theme class
-      document.documentElement.classList.add(savedTheme);
-      
-      // For backward compatibility with existing code
-      const lightThemes = ['professional-light', 'minimalist'];
-      if (lightThemes.includes(savedTheme)) {
+          : 'professional-dark');
+      document.documentElement.classList.add(preferredTheme);
+      if (preferredTheme === 'professional-light') {
         document.documentElement.classList.add('light');
       }
-      
-      // If there's a custom theme, apply the saved accent color
-      if (savedTheme === 'custom-theme' && localStorage.getItem('custom-accent-color')) {
-        const accentColor = localStorage.getItem('custom-accent-color');
-        if (accentColor) {
-          document.documentElement.style.setProperty('--color-accent', accentColor);
-          
-          // Try to create shadow color from accent
-          try {
-            const hexToRgb = (hex: string) => {
-              const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-              return result ? {
-                r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-              } : null;
-            };
-            
-            const rgb = hexToRgb(accentColor);
-            if (rgb) {
-              document.documentElement.style.setProperty(
-                '--color-shadow',
-                `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`
-              );
-            }
-          } catch (e) {
-            console.error('Error setting custom theme:', e);
-          }
-        }
-      }
-
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('theme', savedTheme);
-      }
-
-      // Re-enable transitions after a brief delay
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          document.documentElement.classList.remove('no-transition');
-        });
-      });
     </script>
-    
-    <!-- Code Enhancement Script -->
-    <script>
-      // Simple code block enhancement
-      document.addEventListener('DOMContentLoaded', function() {
-        const codeBlocks = document.querySelectorAll('pre > code');
-        
-        codeBlocks.forEach(function(code) {
-          const pre = code.parentElement;
-          if (!pre || pre.classList.contains('enhanced')) return;
-          
-          pre.classList.add('enhanced');
-          
-          // Create wrapper
-          const wrapper = document.createElement('div');
-          wrapper.className = 'code-block-container group relative my-6 overflow-hidden rounded-lg border border-card-border bg-code-bg';
-          
-          // Create content wrapper
-          const contentWrapper = document.createElement('div');
-          contentWrapper.className = 'relative';
-          
-          // Style pre
-          pre.className = 'code-content overflow-x-auto p-4 text-sm leading-relaxed m-0';
-          
-          // Create copy button
-          const copyButton = document.createElement('button');
-          copyButton.className = 'copy-code-btn absolute top-3 right-3 flex items-center space-x-1 px-2 py-1 text-xs font-medium text-light-400 bg-light-800/80 hover:bg-light-700 hover:text-light-100 transition-all duration-200 rounded border border-light-600 hover:border-accent/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-accent/30';
-          copyButton.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>';
-          copyButton.title = 'Copy to clipboard';
-          
-          copyButton.addEventListener('click', function() {
-            const text = code.textContent || '';
-            navigator.clipboard.writeText(text).then(function() {
-              copyButton.innerHTML = '<svg class="w-3 h-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
-              setTimeout(function() {
-                copyButton.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>';
-              }, 2000);
-            });
-          });
-          
-          contentWrapper.appendChild(copyButton);
-          contentWrapper.appendChild(pre);
-          wrapper.appendChild(contentWrapper);
-          
-          pre.parentElement.replaceChild(wrapper, pre);
+    <script is:inline>
+      const portfolioCacheNames = [
+        'workbox-',
+        'pages-cache',
+        'critical-css-cache',
+        'google-fonts-stylesheets',
+        'google-fonts-webfonts',
+        'images-cache',
+        'static-resources',
+        'astro-assets',
+        'api-cache',
+        'cdn-cache',
+      ];
+
+      const isPortfolioCache = (cacheName) =>
+        portfolioCacheNames.some((cachePrefix) => cacheName.startsWith(cachePrefix));
+
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .getRegistrations()
+            .then((registrations) =>
+              Promise.all(registrations.map((registration) => registration.unregister()))
+            )
+            .then(() => {
+              if (!('caches' in window)) {
+                return [];
+              }
+
+              return caches
+                .keys()
+                .then((cacheNames) =>
+                  Promise.all(
+                    cacheNames
+                      .filter((cacheName) => isPortfolioCache(cacheName))
+                      .map((cacheName) => caches.delete(cacheName))
+                  )
+                );
+            })
+            .catch(() => {});
         });
-      });
+      }
     </script>
-    
-    <!-- Code Enhancement Styles -->
-    <style>
-      /* Code Block Enhancement Styles */
-      .code-block-container {
-        --code-bg: #1a1b26;
-        --code-header: #24283b;
-        --code-text: #a9b1d6;
-        --code-comment: #565f89;
-        --code-string: #9ece6a;
-        --code-number: #ff9e64;
-        --code-keyword: #7aa2f7;
-      }
-
-      .professional-light .code-block-container {
-        --code-bg: #f8fafc;
-        --code-header: #f1f5f9;
-        --code-text: #334155;
-        --code-comment: #64748b;
-        --code-string: #059669;
-        --code-number: #dc2626;
-        --code-keyword: #3b82f6;
-      }
-
-      .code-block-container {
-        background-color: var(--code-bg);
-      }
-
-      .bg-code-bg {
-        background-color: var(--code-bg);
-      }
-
-      .bg-code-header {
-        background-color: var(--code-header);
-      }
-
-      .code-content {
-        color: var(--code-text);
-        font-family: 'SF Mono', Monaco, 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace;
-        font-size: 0.875rem;
-        line-height: 1.5;
-      }
-
-      .code-content code {
-        font-family: inherit;
-        font-size: inherit;
-        background: none;
-        padding: 0;
-        border-radius: 0;
-      }
-
-      .token.comment {
-        color: var(--code-comment);
-        font-style: italic;
-      }
-
-      .token.string {
-        color: var(--code-string);
-      }
-
-      .token.number {
-        color: var(--code-number);
-      }
-
-      .token.keyword {
-        color: var(--code-keyword);
-        font-weight: 600;
-      }
-
-      .token.operator {
-        color: #f7768e;
-      }
-
-      .token.selector {
-        color: #7dcfff;
-      }
-
-      .token.property {
-        color: #73daca;
-      }
-
-      .copy-code-btn {
-        transition: all 0.2s ease;
-      }
-
-      .copy-code-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-2px); }
-        75% { transform: translateX(2px); }
-      }
-
-      .shake {
-        animation: shake 0.3s ease-in-out;
-      }
-
-      .code-content::-webkit-scrollbar {
-        height: 8px;
-      }
-
-      .code-content::-webkit-scrollbar-track {
-        background: var(--code-header);
-        border-radius: 4px;
-      }
-
-      .code-content::-webkit-scrollbar-thumb {
-        background: #4a5568;
-        border-radius: 4px;
-      }
-
-      .code-content::-webkit-scrollbar-thumb:hover {
-        background: #718096;
-      }
-
-      @media (max-width: 768px) {
-        .code-content {
-          font-size: 0.8rem;
-          padding: 1rem;
-        }
-        
-        .copy-code-btn {
-          font-size: 0.75rem;
-          padding: 0.375rem 0.75rem;
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .copy-code-btn,
-        .shake {
-          transition: none;
-          animation: none;
-        }
-      }
-    </style>
-  
-    <!-- Critical CSS -->
-    <style>
-      /* Critical above-the-fold CSS inlined for performance */
-      html, body { margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-.min-h-screen { min-height: 100vh; }
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.flex-1 { flex: 1 1 0%; }
-.fixed { position: fixed; }
-.top-0 { top: 0; }
-.left-0 { left: 0; }
-.right-0 { right: 0; }
-.z-50 { z-index: 50; }
-.h-16 { height: 4rem; }
-.pt-16 { padding-top: 4rem; }
-.text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-.text-5xl { font-size: 3rem; line-height: 1; }
-.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-.font-bold { font-weight: 700; }
-.font-semibold { font-weight: 600; }
-:root {
-        --color-text-primary: #1f2937;
-        --color-text-secondary: #6b7280;
-        --color-accent: #3b82f6;
-        --color-surface-100: #f9fafb;
-        --color-card-border: #e5e7eb;
-      }
-.professional-dark {
-        --color-text-primary: #f9fafb;
-        --color-text-secondary: #d1d5db;
-        --color-accent: #60a5fa;
-        --color-surface-100: #1f2937;
-        --color-card-border: #374151;
-      }
-.no-transition * { transition: none !important; }
-.container-base { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
-.mb-4 { margin-bottom: 1rem; }
-.mb-6 { margin-bottom: 1.5rem; }
-.mb-8 { margin-bottom: 2rem; }
-.mt-8 { margin-top: 2rem; }
-.px-4 { padding-left: 1rem; padding-right: 1rem; }
-.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-.opacity-0 { opacity: 0; }
-.invisible { visibility: hidden; }
-.transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; }
-    </style>
-    
-    <!-- Preload main stylesheet -->
-    <link rel="preload" href="/src/styles/global.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/src/styles/global.css"></noscript>
-    
-</head>
-  <body class="min-h-screen flex flex-col">
-    
+  </head>
+  <body>
+    <a href="#main-content" class="skip-to-main">Skip to main content</a>
     <Navbar />
-    <CommandPalette />
-    <ReadingProgress />
-    <SmartPrefetch />
-    <ServiceWorkerRegistration />
-    <main class="flex-1 pt-16" data-pagefind-body>
+    <main id="main-content" data-pagefind-body transition:animate="none">
       <slot />
     </main>
     <Footer />
-
-    <script src="/src/scripts/enhanced-navbar.js"></script>
-    
-    <script>
-      // Enhanced theme toggle functionality for multi-theme support
-      function toggleTheme() {
-        const element = document.documentElement;
-        
-        // Disable transitions during theme change
-        element.classList.add('no-transition');
-        
-        // Determine current theme
-        const currentTheme = getCurrentTheme();
-        
-        // Check if it's a light theme
-        const isLightTheme = currentTheme.includes('light') || currentTheme === 'minimalist';
-        
-        // Toggle between professional light and dark themes
-        const newTheme = isLightTheme ? 'professional-dark' : 'professional-light';
-        
-        // Remove all theme classes
-        element.classList.remove(
-          'professional-dark',
-          'professional-light',
-          'retro-tech',
-          'minimalist',
-          'high-contrast',
-          'custom-theme',
-          'light',
-          'dark'
-        );
-        
-        // Add the new theme class
-        element.classList.add(newTheme);
-        
-        // For backward compatibility
-        if (newTheme === 'professional-light') {
-          element.classList.add('light');
+    <script is:inline>
+      const getMotionState = () => {
+        if (!window.__portfolioMotionState) {
+          window.__portfolioMotionState = {
+            revealObserver: null,
+            parallaxFrame: 0,
+            parallaxHandler: null,
+          };
         }
-        
-        // Store the theme preference
-        localStorage.setItem('theme', newTheme);
-        
-        // Dispatch theme change event
-        const event = new CustomEvent('themechange', { detail: { theme: newTheme } });
-        document.dispatchEvent(event);
+        return window.__portfolioMotionState;
+      };
 
-        // Re-enable transitions after a brief delay
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            element.classList.remove('no-transition');
-          });
+      const normalizePath = (value) => {
+        if (!value) return "/";
+        const clean = value.replace(/\/+$/, "");
+        return clean === "" ? "/" : clean;
+      };
+
+      const getRouteWeight = (pathname) => {
+        const routeOrder = {
+          "/": 0,
+          "/projects": 10,
+          "/blog": 20,
+          "/resume": 30,
+          "/services": 40,
+          "/react-developer": 50,
+          "/uses": 60,
+          "/videos": 70,
+          "/about": 80,
+          "/contact-me": 90,
+        };
+
+        const normalizedPath = normalizePath(pathname);
+        const segments = normalizedPath.split("/").filter(Boolean);
+        const topLevel = segments.length ? `/${segments[0]}` : "/";
+        return routeOrder[topLevel] ?? 50;
+      };
+
+      const initRouteDirection = () => {
+        document.addEventListener("astro:before-preparation", (event) => {
+          const from = event.from;
+          const to = event.to;
+          if (!from || !to) return;
+
+          const fromDepth = normalizePath(from.pathname).split("/").filter(Boolean).length;
+          const toDepth = normalizePath(to.pathname).split("/").filter(Boolean).length;
+          const fromWeight = getRouteWeight(from.pathname);
+          const toWeight = getRouteWeight(to.pathname);
+
+          const direction =
+            toDepth < fromDepth || (toDepth === fromDepth && toWeight < fromWeight)
+              ? "backward"
+              : "forward";
+
+          document.documentElement.setAttribute("data-route-direction", direction);
         });
-      }
-      
-      // Get the current theme
-      function getCurrentTheme() {
-        const root = document.documentElement;
-        const possibleThemes = [
-          'professional-dark',
-          'professional-light',
-          'retro-tech',
-          'minimalist',
-          'high-contrast',
-          'custom-theme'
-        ];
-        
-        // For backwards compatibility
-        if (root.classList.contains('light') && !hasAnySpecificTheme()) {
-          return 'professional-light';
-        } else if (!root.classList.contains('light') && !hasAnySpecificTheme()) {
-          return 'professional-dark';
-        }
-        
-        for (const theme of possibleThemes) {
-          if (root.classList.contains(theme)) {
-            return theme;
-          }
-        }
-        
-        return 'professional-dark';
-      }
-      
-      // Check if any specific theme is applied
-      function hasAnySpecificTheme() {
-        const root = document.documentElement;
-        const themes = [
-          'professional-dark',
-          'professional-light',
-          'retro-tech',
-          'minimalist',
-          'high-contrast',
-          'custom-theme'
-        ];
-        
-        return themes.some(theme => root.classList.contains(theme));
-      }
+      };
 
-      // Expose toggle function globally
-      (window as any).toggleTheme = toggleTheme;
-      (window as any).getCurrentTheme = getCurrentTheme;
+      const initReveal = (reducedMotion, state) => {
+        state.revealObserver?.disconnect();
+        const revealElements = Array.from(document.querySelectorAll("[data-reveal]"));
+
+        if (reducedMotion || !("IntersectionObserver" in window)) {
+          revealElements.forEach((element) => element.classList.add("is-visible"));
+          return;
+        }
+
+        // Track scroll velocity so fast scrolling skips animation delays.
+        let fastScroll = false;
+        let fastScrollTimer = 0;
+        let lastScrollY = window.scrollY;
+        const onScrollVelocity = () => {
+          const delta = Math.abs(window.scrollY - lastScrollY);
+          lastScrollY = window.scrollY;
+          if (delta > 60) {
+            fastScroll = true;
+            clearTimeout(fastScrollTimer);
+            fastScrollTimer = window.setTimeout(() => { fastScroll = false; }, 200);
+          }
+        };
+        window.addEventListener("scroll", onScrollVelocity, { passive: true });
+
+        state.revealObserver = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              if (fastScroll) {
+                entry.target.style.setProperty("--reveal-delay", "0ms");
+              }
+              entry.target.classList.add("is-visible");
+              state.revealObserver?.unobserve(entry.target);
+            }
+          },
+          { threshold: 0.05, rootMargin: "0px 0px 0px 0px" }
+        );
+
+        revealElements.forEach((element, index) => {
+          const hasCustomDelay = element.hasAttribute("data-reveal-delay");
+          const customDelay = Number(element.getAttribute("data-reveal-delay") || "0");
+          const staggerDelay = Number(element.getAttribute("data-reveal-stagger") || "");
+          const delay = hasCustomDelay && Number.isFinite(customDelay) && customDelay >= 0
+            ? customDelay
+            : index * 20;
+          element.style.setProperty("--reveal-delay", `${Math.min(delay + staggerDelay, 120)}ms`);
+          state.revealObserver.observe(element);
+        });
+      };
+
+      const initParallax = (reducedMotion, state) => {
+        if (state.parallaxHandler) {
+          window.removeEventListener("scroll", state.parallaxHandler);
+          window.removeEventListener("resize", state.parallaxHandler);
+          cancelAnimationFrame(state.parallaxFrame);
+        }
+
+        const parallaxElements = Array.from(document.querySelectorAll("[data-parallax]"));
+        if (reducedMotion || parallaxElements.length === 0) {
+          parallaxElements.forEach((element) => {
+            element.style.removeProperty("--parallax-offset");
+          });
+          return;
+        }
+
+        const updateParallax = () => {
+          const viewportHeight = window.innerHeight;
+          for (const element of parallaxElements) {
+            const rect = element.getBoundingClientRect();
+            const speed = Number(element.getAttribute("data-parallax-speed") || "0.12");
+            const progress = (viewportHeight * 0.5 - (rect.top + rect.height * 0.5)) * speed;
+            element.style.setProperty("--parallax-offset", `${progress.toFixed(2)}px`);
+          }
+          state.parallaxFrame = 0;
+        };
+
+        const onScroll = () => {
+          if (state.parallaxFrame) return;
+          state.parallaxFrame = requestAnimationFrame(updateParallax);
+        };
+
+        state.parallaxHandler = onScroll;
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onScroll);
+        onScroll();
+      };
+
+      const initHeroTypography = (reducedMotion) => {
+        const titles = document.querySelectorAll("[data-hero-title]");
+        titles.forEach((el) => {
+          if (el.getAttribute("data-hero-split") === "done") return;
+          el.setAttribute("data-hero-split", "done");
+
+          const text = (el.textContent || "").trim();
+
+          if (reducedMotion) return;
+
+          const startDelay = 60;
+          const perChar = 28;
+
+          const charsHtml = text.split("").map((char, i) => {
+            const delay = startDelay + i * perChar;
+            const escaped = char.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            return `<span class="tw-char" style="animation-delay:${delay}ms">${escaped}</span>`;
+          }).join("");
+
+          const totalDuration = startDelay + text.length * perChar;
+          el.innerHTML = charsHtml + `<span class="tw-cursor"></span>`;
+
+          const cursor = el.querySelector(".tw-cursor");
+          if (cursor) {
+            setTimeout(() => cursor.classList.add("is-done"), totalDuration + 900);
+          }
+        });
+      };
+
+      const initSiteMotion = () => {
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const state = getMotionState();
+        initRouteDirection();
+        initHeroTypography(reducedMotion);
+        initReveal(reducedMotion, state);
+        initParallax(reducedMotion, state);
+      };
+
+      document.addEventListener("astro:page-load", initSiteMotion);
+      initSiteMotion();
     </script>
   </body>
 </html>

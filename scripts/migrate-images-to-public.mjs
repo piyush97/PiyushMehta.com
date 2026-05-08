@@ -109,9 +109,7 @@ async function migrateImages() {
   console.log('📊 Stats:');
   console.log(`   - ${totalMoved} blog(s) with images processed`);
   console.log(`   - ${totalUpdated} MDX file(s) updated`);
-  console.log(
-    '\n💡 Images are now served from the public directory and should load correctly!'
-  );
+  console.log('\n💡 Images are now served from the public directory and should load correctly!');
 }
 
 // Run the migration

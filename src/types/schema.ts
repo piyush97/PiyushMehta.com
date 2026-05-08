@@ -103,7 +103,7 @@ export interface Answer extends SchemaOrgBase {
 }
 
 // Union type for all supported schema types
-export type Schema = 
+export type Schema =
   | Article
   | Person
   | Organization

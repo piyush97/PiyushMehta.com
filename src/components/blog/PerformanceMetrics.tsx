@@ -26,36 +26,36 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
       label: 'Boot Time',
       unit: 'seconds',
       description: 'Time from power on to desktop',
-      lowerIsBetter: true
+      lowerIsBetter: true,
     },
     {
       key: 'memoryUsage' as keyof PerformanceData,
       label: 'Memory Usage',
       unit: 'GB',
       description: 'Idle system memory consumption',
-      lowerIsBetter: true
+      lowerIsBetter: true,
     },
     {
       key: 'dockerBuild' as keyof PerformanceData,
       label: 'Docker Build',
       unit: 'seconds',
       description: 'Average build time for medium project',
-      lowerIsBetter: true
+      lowerIsBetter: true,
     },
     {
       key: 'ideStartup' as keyof PerformanceData,
       label: 'IDE Startup',
       unit: 'seconds',
       description: 'VS Code with extensions loaded',
-      lowerIsBetter: true
+      lowerIsBetter: true,
     },
     {
       key: 'fileSearch' as keyof PerformanceData,
       label: 'File Search',
       unit: 'seconds',
       description: 'Find files in large project',
-      lowerIsBetter: true
-    }
+      lowerIsBetter: true,
+    },
   ];
 
   const calculateImprovement = (macos: number, arch: number, lowerIsBetter: boolean) => {
@@ -70,7 +70,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
     return Math.max((value / max) * 100, 5); // Minimum 5% width for visibility
   };
 
-  const selectedMetricData = metrics.find(m => m.key === selectedMetric)!;
+  const selectedMetricData = metrics.find((m) => m.key === selectedMetric)!;
   const macosValue = data[selectedMetric].macos;
   const archValue = data[selectedMetric].arch;
   const improvement = calculateImprovement(macosValue, archValue, selectedMetricData.lowerIsBetter);
@@ -106,9 +106,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
           <h4 className="text-lg font-semibold text-text-primary mb-1">
             {selectedMetricData.label}
           </h4>
-          <p className="text-text-secondary text-sm">
-            {selectedMetricData.description}
-          </p>
+          <p className="text-text-secondary text-sm">{selectedMetricData.description}</p>
         </div>
 
         <div className="space-y-4">
@@ -147,18 +145,21 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
 
         {/* Improvement Badge */}
         <div className="mt-4 text-center">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${
-            improvement > 0
-              ? 'bg-green-500/10 border border-green-500/20'
-              : 'bg-red-500/10 border border-red-500/20'
-          }`}>
-            <div className={`w-2 h-2 rounded-full ${
-              improvement > 0 ? 'bg-green-500' : 'bg-red-500'
-            }`} />
-            <span className={`font-semibold ${
-              improvement > 0 ? 'text-green-600' : 'text-red-600'
-            }`}>
-              {improvement > 0 ? '+' : ''}{improvement}% improvement
+          <div
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${
+              improvement > 0
+                ? 'bg-green-500/10 border border-green-500/20'
+                : 'bg-red-500/10 border border-red-500/20'
+            }`}
+          >
+            <div
+              className={`w-2 h-2 rounded-full ${improvement > 0 ? 'bg-green-500' : 'bg-red-500'}`}
+            />
+            <span
+              className={`font-semibold ${improvement > 0 ? 'text-green-600' : 'text-red-600'}`}
+            >
+              {improvement > 0 ? '+' : ''}
+              {improvement}% improvement
             </span>
           </div>
         </div>
@@ -172,7 +173,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
             data[metric.key].arch,
             metric.lowerIsBetter
           );
-          
+
           return (
             <div
               key={metric.key}
@@ -193,13 +194,14 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
               aria-label={`Select ${metric.label} metric`}
             >
               <div className="text-center">
-                <div className="text-sm text-text-secondary mb-1">
-                  {metric.label}
-                </div>
-                <div className={`text-lg font-bold ${
-                  metricImprovement > 0 ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {metricImprovement > 0 ? '+' : ''}{metricImprovement}%
+                <div className="text-sm text-text-secondary mb-1">{metric.label}</div>
+                <div
+                  className={`text-lg font-bold ${
+                    metricImprovement > 0 ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
+                  {metricImprovement > 0 ? '+' : ''}
+                  {metricImprovement}%
                 </div>
                 <div className="text-xs text-text-secondary mt-1">
                   {data[metric.key].arch} {metric.unit}
@@ -213,9 +215,9 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
       <div className="mt-6 text-sm text-text-secondary bg-surface-1 border border-border rounded-lg p-4">
         <h5 className="font-medium text-text-primary mb-2">Methodology</h5>
         <p>
-          All benchmarks were performed on identical hardware (Intel NUC13ANKi7) with the same applications and workloads. 
-          Tests were averaged over 10 runs with system caches cleared between tests. 
-          macOS version: 14.6, Arch Linux with Zen kernel 6.16.3.
+          All benchmarks were performed on identical hardware (Intel NUC13ANKi7) with the same
+          applications and workloads. Tests were averaged over 10 runs with system caches cleared
+          between tests. macOS version: 14.6, Arch Linux with Zen kernel 6.16.3.
         </p>
       </div>
     </div>

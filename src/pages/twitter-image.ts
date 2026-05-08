@@ -1,7 +1,7 @@
-import fs from 'fs';
-import { join } from 'path';
 import { Resvg } from '@resvg/resvg-js';
 import type { APIRoute } from 'astro';
+import fs from 'fs';
+import { join } from 'path';
 import React from 'react';
 import satori from 'satori';
 
@@ -20,7 +20,7 @@ export const GET: APIRoute = async ({ url, site }) => {
     const title = searchParams.get('title') || 'Piyush Mehta';
     const description = searchParams.get('description') || 'Software Engineer & Tech Speaker';
     const type = searchParams.get('type') || 'website';
-    const _template = searchParams.get('template') || 'twitter';
+    searchParams.get('template') || 'twitter';
     const date = searchParams.get('date');
     const tags = searchParams.get('tags');
     const theme = searchParams.get('theme') || 'dark';
@@ -52,7 +52,8 @@ export const GET: APIRoute = async ({ url, site }) => {
     };
 
     const currentTheme = themes[theme as keyof typeof themes] || themes.dark;
-    const titleFontSize = title.length > 60 ? 36 : title.length > 40 ? 46 : title.length > 20 ? 56 : 66;
+    const titleFontSize =
+      title.length > 60 ? 36 : title.length > 40 ? 46 : title.length > 20 ? 56 : 66;
 
     // Twitter-optimized template with better readability
     const twitterTemplate = React.createElement(
@@ -264,11 +265,11 @@ export const GET: APIRoute = async ({ url, site }) => {
         value: size.width,
       },
     });
-    
+
     const pngData = resvg.render();
     const pngBuffer = pngData.asPng();
 
-    return new Response(pngBuffer, {
+    return new Response(new Uint8Array(pngBuffer), {
       headers: {
         'Content-Type': contentType,
         'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',

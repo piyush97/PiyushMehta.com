@@ -9,18 +9,19 @@ export interface Props {
   highlight?: string;
 }
 
-const { 
-  code = '', 
-  language = 'text', 
-  title, 
-  filename, 
+const {
+  code = '',
+  language = 'text',
+  title,
+  filename,
   showLineNumbers = false,
-  highlight 
+  highlight,
 } = Astro.props;
 ---
 
 <!-- Enhanced Code Block Component -->
 <div class="code-block-container relative my-6 overflow-hidden rounded-lg border border-card-border bg-code-bg">
+  {highlight && <span class="sr-only">Highlighted lines: {highlight}</span>}
   <!-- Code Header -->
   {(title || filename || language) && (
     <div class="flex items-center justify-between px-4 py-3 bg-code-header border-b border-card-border">
@@ -93,7 +94,7 @@ const {
   </div>
 </div>
 
-<script>
+<script is:inline>
   // Enhanced Code Block Functionality
   class CodeBlockEnhancer {
     constructor() {
@@ -124,29 +125,11 @@ const {
           await navigator.clipboard.writeText(code);
           this.showFeedback(button, 'Copied!', 'success');
         } else {
-          this.fallbackCopy(code);
-          this.showFeedback(button, 'Copied!', 'success');
+          throw new Error('Clipboard API is unavailable');
         }
       } catch (err) {
         console.error('Failed to copy code:', err);
         this.showFeedback(button, 'Copy failed', 'error');
-      }
-    }
-
-    fallbackCopy(text) {
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      textArea.style.position = 'fixed';
-      textArea.style.left = '-999999px';
-      textArea.style.top = '-999999px';
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      
-      try {
-        document.execCommand('copy');
-      } finally {
-        document.body.removeChild(textArea);
       }
     }
 
@@ -251,6 +234,7 @@ const {
     }
 
     applyBasicHighlighting(code, language) {
+      if (!language) return;
       let content = code.innerHTML;
       
       // Common patterns
@@ -279,7 +263,7 @@ const {
       
       // Apply patterns in order
       Object.entries(patterns).forEach(([type, pattern]) => {
-        content = content.replace(pattern.regex, (match, ...groups) => {
+        content = content.replace(pattern.regex, (match) => {
           if (type === 'string') {
             return `<span class="${pattern.className}">${match}</span>`;
           }

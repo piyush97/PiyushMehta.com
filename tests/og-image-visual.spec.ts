@@ -1,6 +1,6 @@
+import { expect, test } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import { expect, test } from '@playwright/test';
 
 // Visual regression test configuration
 const visualTestConfig = {
@@ -78,7 +78,8 @@ const visualTestScenarios = [
     name: 'blog-template-article',
     params: {
       title: 'Building Modern Web Applications',
-      description: 'Learn how to create scalable, maintainable web applications using modern development practices.',
+      description:
+        'Learn how to create scalable, maintainable web applications using modern development practices.',
       template: 'blog',
       theme: 'dark',
       type: 'article',
@@ -92,8 +93,10 @@ const visualTestScenarios = [
   {
     name: 'long-title-handling',
     params: {
-      title: 'This is a Very Long Title That Should Test the Dynamic Sizing Feature of the OG Image Generation System',
-      description: 'Testing how the system handles extremely long titles and whether it adjusts font sizes appropriately for different content lengths.',
+      title:
+        'This is a Very Long Title That Should Test the Dynamic Sizing Feature of the OG Image Generation System',
+      description:
+        'Testing how the system handles extremely long titles and whether it adjusts font sizes appropriately for different content lengths.',
       template: 'modern',
       theme: 'dark',
       tags: 'Test,Long Content,Dynamic Sizing',
@@ -147,34 +150,34 @@ test.describe('OG Image Visual Regression Tests', () => {
     await page.setViewportSize({ width: 1200, height: 630 });
   });
 
-  visualTestScenarios.forEach(scenario => {
+  visualTestScenarios.forEach((scenario) => {
     test(`Visual regression test: ${scenario.name}`, async ({ page }) => {
       const params = new URLSearchParams(scenario.params);
       const url = `/api/og-image?${params}`;
-      
+
       // Navigate to the OG image URL
       const response = await page.goto(url);
-      
+
       // Ensure the request was successful
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
-      
+
       // Get the image data
       const imageBuffer = await response?.body();
       expect(imageBuffer).toBeTruthy();
-      
+
       // Save the image for visual comparison
       const testDir = path.join(process.cwd(), 'test-results', 'visual-regression');
       if (!fs.existsSync(testDir)) {
         fs.mkdirSync(testDir, { recursive: true });
       }
-      
+
       const imagePath = path.join(testDir, `${scenario.name}.png`);
       fs.writeFileSync(imagePath, imageBuffer!);
-      
+
       // Load the saved image in the browser for visual comparison
       await page.goto(`file://${imagePath}`);
-      
+
       // Take a screenshot for visual regression testing
       await expect(page).toHaveScreenshot(`${scenario.name}.png`, {
         fullPage: true,
@@ -185,9 +188,18 @@ test.describe('OG Image Visual Regression Tests', () => {
   });
 
   test.describe('Template Consistency Tests', () => {
-    const templates = ['modern', 'tech', 'cyber', 'minimal', 'terminal', 'gradient', 'professional', 'dark'];
-    
-    templates.forEach(template => {
+    const templates = [
+      'modern',
+      'tech',
+      'cyber',
+      'minimal',
+      'terminal',
+      'gradient',
+      'professional',
+      'dark',
+    ];
+
+    templates.forEach((template) => {
       test(`Template consistency: ${template}`, async ({ page }) => {
         const params = new URLSearchParams({
           title: `${template.charAt(0).toUpperCase() + template.slice(1)} Template Test`,
@@ -198,19 +210,19 @@ test.describe('OG Image Visual Regression Tests', () => {
           showLogo: 'true',
           showBadge: 'true',
         });
-        
+
         const response = await page.goto(`/api/og-image?${params}`);
-        
+
         expect(response?.status()).toBe(200);
         expect(response?.headers()['content-type']).toBe('image/png');
-        
+
         // Save image for comparison
         const imageBuffer = await response?.body();
         const testDir = path.join(process.cwd(), 'test-results', 'template-consistency');
         if (!fs.existsSync(testDir)) {
           fs.mkdirSync(testDir, { recursive: true });
         }
-        
+
         const imagePath = path.join(testDir, `template-${template}.png`);
         fs.writeFileSync(imagePath, imageBuffer!);
       });
@@ -219,8 +231,8 @@ test.describe('OG Image Visual Regression Tests', () => {
 
   test.describe('Theme Consistency Tests', () => {
     const themes = ['dark', 'light', 'auto'];
-    
-    themes.forEach(theme => {
+
+    themes.forEach((theme) => {
       test(`Theme consistency: ${theme}`, async ({ page }) => {
         const params = new URLSearchParams({
           title: `${theme.charAt(0).toUpperCase() + theme.slice(1)} Theme Test`,
@@ -231,19 +243,19 @@ test.describe('OG Image Visual Regression Tests', () => {
           showLogo: 'true',
           showBadge: 'true',
         });
-        
+
         const response = await page.goto(`/api/og-image?${params}`);
-        
+
         expect(response?.status()).toBe(200);
         expect(response?.headers()['content-type']).toBe('image/png');
-        
+
         // Save image for comparison
         const imageBuffer = await response?.body();
         const testDir = path.join(process.cwd(), 'test-results', 'theme-consistency');
         if (!fs.existsSync(testDir)) {
           fs.mkdirSync(testDir, { recursive: true });
         }
-        
+
         const imagePath = path.join(testDir, `theme-${theme}.png`);
         fs.writeFileSync(imagePath, imageBuffer!);
       });
@@ -272,7 +284,7 @@ test.describe('OG Image Visual Regression Tests', () => {
       },
     ];
 
-    contentTypes.forEach(contentType => {
+    contentTypes.forEach((contentType) => {
       test(`Content type visual: ${contentType.type}`, async ({ page }) => {
         const params = new URLSearchParams({
           title: contentType.title,
@@ -285,19 +297,19 @@ test.describe('OG Image Visual Regression Tests', () => {
           showBadge: 'true',
           ...contentType.extraParams,
         });
-        
+
         const response = await page.goto(`/api/og-image?${params}`);
-        
+
         expect(response?.status()).toBe(200);
         expect(response?.headers()['content-type']).toBe('image/png');
-        
+
         // Save image for comparison
         const imageBuffer = await response?.body();
         const testDir = path.join(process.cwd(), 'test-results', 'content-type-visual');
         if (!fs.existsSync(testDir)) {
           fs.mkdirSync(testDir, { recursive: true });
         }
-        
+
         const imagePath = path.join(testDir, `content-${contentType.type}.png`);
         fs.writeFileSync(imagePath, imageBuffer!);
       });
@@ -307,16 +319,16 @@ test.describe('OG Image Visual Regression Tests', () => {
   test.describe('Edge Cases Visual Tests', () => {
     test('Empty parameters visual test', async ({ page }) => {
       const response = await page.goto('/api/og-image');
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
-      
+
       const imageBuffer = await response?.body();
       const testDir = path.join(process.cwd(), 'test-results', 'edge-cases');
       if (!fs.existsSync(testDir)) {
         fs.mkdirSync(testDir, { recursive: true });
       }
-      
+
       const imagePath = path.join(testDir, 'empty-parameters.png');
       fs.writeFileSync(imagePath, imageBuffer!);
     });
@@ -331,18 +343,18 @@ test.describe('OG Image Visual Regression Tests', () => {
         showLogo: 'true',
         showBadge: 'true',
       });
-      
+
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
-      
+
       const imageBuffer = await response?.body();
       const testDir = path.join(process.cwd(), 'test-results', 'edge-cases');
       if (!fs.existsSync(testDir)) {
         fs.mkdirSync(testDir, { recursive: true });
       }
-      
+
       const imagePath = path.join(testDir, 'maximum-tags.png');
       fs.writeFileSync(imagePath, imageBuffer!);
     });
@@ -357,18 +369,18 @@ test.describe('OG Image Visual Regression Tests', () => {
         showLogo: 'true',
         showBadge: 'true',
       });
-      
+
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
-      
+
       const imageBuffer = await response?.body();
       const testDir = path.join(process.cwd(), 'test-results', 'edge-cases');
       if (!fs.existsSync(testDir)) {
         fs.mkdirSync(testDir, { recursive: true });
       }
-      
+
       const imagePath = path.join(testDir, 'special-characters.png');
       fs.writeFileSync(imagePath, imageBuffer!);
     });

@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 export async function GET(context) {
   try {
     const posts = await getCollection('blog');
+    const toPostSlug = (id) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
     const publishedPosts = posts.filter((post) => !post.data.draft);
 
     const siteUrl = context.site || 'https://piyushmehta.com';
@@ -38,7 +39,7 @@ ${staticPages
 ${publishedPosts
   .map(
     (post) => `  <url>
-    <loc>${siteUrl}/blog/${post.slug}/</loc>
+    <loc>${siteUrl}/blog/${toPostSlug(post.id)}/</loc>
     <lastmod>${post.data.date.toISOString()}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

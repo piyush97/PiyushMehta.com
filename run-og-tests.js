@@ -5,16 +5,16 @@
  * Executes Playwright tests for OG image generation and creates reports
  */
 
-import { execSync } from "child_process";
-import fs from "fs";
-import path from "path";
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
 const testDir = process.cwd();
-const reportDir = path.join(testDir, "test-reports");
-const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+const reportDir = path.join(testDir, 'test-reports');
+const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 
-console.log("🚀 Starting OG Image Test Suite...");
-console.log("═══════════════════════════════════════");
+console.log('🚀 Starting OG Image Test Suite...');
+console.log('═══════════════════════════════════════');
 
 // Ensure report directory exists
 if (!fs.existsSync(reportDir)) {
@@ -62,53 +62,44 @@ export default defineConfig({
 `;
 
 // Update playwright config
-fs.writeFileSync(path.join(testDir, "playwright.config.ts"), playwrightConfig);
+fs.writeFileSync(path.join(testDir, 'playwright.config.ts'), playwrightConfig);
 
 try {
-  console.log("📦 Installing Playwright dependencies...");
-  execSync("npx playwright install", { stdio: "inherit" });
+  console.log('📦 Installing Playwright dependencies...');
+  execSync('npx playwright install', { stdio: 'inherit' });
 
-  console.log("🧪 Running OG Image Tests...");
+  console.log('🧪 Running OG Image Tests...');
 
   // Run only the OG image tests
   const testCommand =
-    "npx playwright test og-image.spec.ts og-image-visual.spec.ts og-image-performance.spec.ts --reporter=html --reporter=json";
+    'npx playwright test og-image.spec.ts og-image-visual.spec.ts og-image-performance.spec.ts --reporter=html --reporter=json';
 
   try {
-    execSync(testCommand, { stdio: "inherit" });
-    console.log("✅ All tests completed successfully!");
+    execSync(testCommand, { stdio: 'inherit' });
+    console.log('✅ All tests completed successfully!');
   } catch (error) {
-    console.log(
-      "⚠️  Some tests may have failed. Check the reports for details.",
-      error
-    );
+    console.log('⚠️  Some tests may have failed. Check the reports for details.', error);
   }
 
   // Generate comprehensive report
-  console.log("📊 Generating comprehensive test report...");
+  console.log('📊 Generating comprehensive test report...');
 
   // Read Playwright results if available
   let playwrightResults = {};
-  const playwrightResultsPath = path.join(
-    testDir,
-    "test-reports",
-    "playwright-results.json"
-  );
+  const playwrightResultsPath = path.join(testDir, 'test-reports', 'playwright-results.json');
 
   if (fs.existsSync(playwrightResultsPath)) {
-    playwrightResults = JSON.parse(
-      fs.readFileSync(playwrightResultsPath, "utf-8")
-    );
+    playwrightResults = JSON.parse(fs.readFileSync(playwrightResultsPath, 'utf-8'));
   }
 
   // Create summary report
   const summaryReport = {
     timestamp: new Date().toISOString(),
-    testSuite: "OG Image Generation Tests",
+    testSuite: 'OG Image Generation Tests',
     environment: {
       node: process.version,
       platform: process.platform,
-      baseUrl: "http://localhost:4322",
+      baseUrl: 'http://localhost:4322',
     },
     results: {
       total: 0,
@@ -119,46 +110,43 @@ try {
     },
     coverage: {
       templates: [
-        "modern",
-        "tech",
-        "cyber",
-        "minimal",
-        "terminal",
-        "gradient",
-        "professional",
-        "dark",
-        "blog",
+        'modern',
+        'tech',
+        'cyber',
+        'minimal',
+        'terminal',
+        'gradient',
+        'professional',
+        'dark',
+        'blog',
       ],
-      themes: ["dark", "light", "auto"],
-      contentTypes: ["article", "project", "website"],
+      themes: ['dark', 'light', 'auto'],
+      contentTypes: ['article', 'project', 'website'],
     },
     recommendations: [
       {
-        type: "performance",
-        priority: "medium",
-        title: "Implement Real-time Monitoring",
+        type: 'performance',
+        priority: 'medium',
+        title: 'Implement Real-time Monitoring',
         description:
-          "Set up continuous monitoring for OG image generation performance and availability.",
+          'Set up continuous monitoring for OG image generation performance and availability.',
         solution:
-          "Use tools like New Relic, DataDog, or custom monitoring to track API response times and error rates.",
+          'Use tools like New Relic, DataDog, or custom monitoring to track API response times and error rates.',
       },
       {
-        type: "testing",
-        priority: "low",
-        title: "Expand Visual Regression Testing",
-        description:
-          "Implement automated visual regression testing in CI/CD pipeline.",
-        solution:
-          "Use tools like Percy, Chromatic, or GitHub Actions with visual diff tools.",
+        type: 'testing',
+        priority: 'low',
+        title: 'Expand Visual Regression Testing',
+        description: 'Implement automated visual regression testing in CI/CD pipeline.',
+        solution: 'Use tools like Percy, Chromatic, or GitHub Actions with visual diff tools.',
       },
       {
-        type: "caching",
-        priority: "high",
-        title: "Optimize Caching Strategy",
-        description:
-          "Implement advanced caching with CDN integration for better performance.",
+        type: 'caching',
+        priority: 'high',
+        title: 'Optimize Caching Strategy',
+        description: 'Implement advanced caching with CDN integration for better performance.',
         solution:
-          "Use Vercel Edge Functions, Cloudflare Workers, or AWS CloudFront for global caching.",
+          'Use Vercel Edge Functions, Cloudflare Workers, or AWS CloudFront for global caching.',
       },
     ],
   };
@@ -177,9 +165,9 @@ try {
             totalTests++;
             if (test.results && test.results.length > 0) {
               const result = test.results[0];
-              if (result.status === "passed") passedTests++;
-              else if (result.status === "failed") failedTests++;
-              else if (result.status === "skipped") skippedTests++;
+              if (result.status === 'passed') passedTests++;
+              else if (result.status === 'failed') failedTests++;
+              else if (result.status === 'skipped') skippedTests++;
             }
           });
         });
@@ -249,27 +237,19 @@ try {
         
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-value total">${
-                  summaryReport.results.total
-                }</div>
+                <div class="stat-value total">${summaryReport.results.total}</div>
                 <div>Total Tests</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value passed">${
-                  summaryReport.results.passed
-                }</div>
+                <div class="stat-value passed">${summaryReport.results.passed}</div>
                 <div>Passed</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value failed">${
-                  summaryReport.results.failed
-                }</div>
+                <div class="stat-value failed">${summaryReport.results.failed}</div>
                 <div>Failed</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value skipped">${
-                  summaryReport.results.skipped
-                }</div>
+                <div class="stat-value skipped">${summaryReport.results.skipped}</div>
                 <div>Skipped</div>
             </div>
         </div>
@@ -284,21 +264,16 @@ try {
                         <h4>Templates Tested</h4>
                         <div class="coverage-tags">
                             ${summaryReport.coverage.templates
-                              .map(
-                                (template) =>
-                                  `<span class="tag">${template}</span>`
-                              )
-                              .join("")}
+                              .map((template) => `<span class="tag">${template}</span>`)
+                              .join('')}
                         </div>
                     </div>
                     <div class="coverage-item">
                         <h4>Themes Tested</h4>
                         <div class="coverage-tags">
                             ${summaryReport.coverage.themes
-                              .map(
-                                (theme) => `<span class="tag">${theme}</span>`
-                              )
-                              .join("")}
+                              .map((theme) => `<span class="tag">${theme}</span>`)
+                              .join('')}
                         </div>
                     </div>
                     <div class="coverage-item">
@@ -306,7 +281,7 @@ try {
                         <div class="coverage-tags">
                             ${summaryReport.coverage.contentTypes
                               .map((type) => `<span class="tag">${type}</span>`)
-                              .join("")}
+                              .join('')}
                         </div>
                     </div>
                 </div>
@@ -347,14 +322,12 @@ try {
                         <div class="recommendation ${rec.priority}">
                             <h3>${rec.title}</h3>
                             <p><strong>Priority:</strong> ${rec.priority.toUpperCase()}</p>
-                            <p><strong>Description:</strong> ${
-                              rec.description
-                            }</p>
+                            <p><strong>Description:</strong> ${rec.description}</p>
                             <p><strong>Solution:</strong> ${rec.solution}</p>
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
             </div>
         </div>
@@ -373,39 +346,30 @@ try {
   `;
 
   // Save reports
-  const summaryPath = path.join(
-    reportDir,
-    `og-image-summary-${timestamp}.html`
-  );
+  const summaryPath = path.join(reportDir, `og-image-summary-${timestamp}.html`);
   fs.writeFileSync(summaryPath, htmlReport);
 
   const jsonPath = path.join(reportDir, `og-image-summary-${timestamp}.json`);
   fs.writeFileSync(jsonPath, JSON.stringify(summaryReport, null, 2));
 
-  console.log("✅ Test execution and reporting completed!");
-  console.log("═══════════════════════════════════════");
+  console.log('✅ Test execution and reporting completed!');
+  console.log('═══════════════════════════════════════');
   console.log(`📊 Summary Report: ${summaryPath}`);
   console.log(`📋 JSON Report: ${jsonPath}`);
   console.log(
-    `🎭 Playwright Report: ${path.join(
-      reportDir,
-      "playwright-html-report",
-      "index.html"
-    )}`
+    `🎭 Playwright Report: ${path.join(reportDir, 'playwright-html-report', 'index.html')}`
   );
 
-  console.log("\n🎯 Test Results:");
+  console.log('\n🎯 Test Results:');
   console.log(`Total: ${summaryReport.results.total}`);
   console.log(`Passed: ${summaryReport.results.passed}`);
   console.log(`Failed: ${summaryReport.results.failed}`);
   console.log(`Skipped: ${summaryReport.results.skipped}`);
 
   if (summaryReport.results.failed > 0) {
-    console.log(
-      "\n⚠️  Some tests failed. Review the detailed reports for more information."
-    );
+    console.log('\n⚠️  Some tests failed. Review the detailed reports for more information.');
   }
 } catch (error) {
-  console.error("❌ Error running tests:", error.message);
+  console.error('❌ Error running tests:', error.message);
   process.exit(1);
 }

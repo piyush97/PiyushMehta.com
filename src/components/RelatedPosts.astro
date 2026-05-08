@@ -9,6 +9,7 @@ export interface Props {
 }
 
 const { currentSlug, currentTags = [], maxPosts = 3 } = Astro.props;
+const toPostSlug = (id: string) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
 
 // Get all blog posts
 const allPosts = await getCollection('blog');
@@ -16,28 +17,26 @@ const allPosts = await getCollection('blog');
 // Calculate similarity scores for each post
 function calculateSimilarity(post: { data: { tags?: string[] } }, targetTags: string[]) {
   if (!post.data.tags || !targetTags.length) return 0;
-  
+
   const postTags = post.data.tags.map((tag: string) => tag.toLowerCase());
-  const normalizedTargetTags = targetTags.map(tag => tag.toLowerCase());
-  
+  const normalizedTargetTags = targetTags.map((tag) => tag.toLowerCase());
+
   // Count matching tags
-  const matchingTags = postTags.filter((tag: string) => 
-    normalizedTargetTags.includes(tag)
-  ).length;
-  
+  const matchingTags = postTags.filter((tag: string) => normalizedTargetTags.includes(tag)).length;
+
   // Calculate similarity score (Jaccard similarity)
   const unionSize = new Set([...postTags, ...normalizedTargetTags]).size;
   const similarity = matchingTags / unionSize;
-  
+
   return similarity;
 }
 
 // Get related posts
 const relatedPosts = allPosts
-  .filter(post => post.slug !== currentSlug) // Exclude current post
-  .map(post => ({
+  .filter((post) => toPostSlug(post.id) !== currentSlug) // Exclude current post
+  .map((post) => ({
     ...post,
-    similarity: calculateSimilarity(post, currentTags)
+    similarity: calculateSimilarity(post, currentTags),
   }))
   .sort((a, b) => {
     // Sort by similarity first, then by date
@@ -85,8 +84,9 @@ function calculateReadingTime(content: string) {
 
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {relatedPosts.map((post) => {
-        const readingTime = calculateReadingTime(post.body);
-        const postUrl = `/blog/${post.slug}`;
+        const postSlug = toPostSlug(post.id);
+        const readingTime = calculateReadingTime(post.body ?? '');
+        const postUrl = `/blog/${postSlug}`;
         const hasMatchingTags = post.similarity > 0;
         
         return (
@@ -142,7 +142,7 @@ function calculateReadingTime(content: string) {
                 <a 
                   href={postUrl}
                   class="stretched-link focus:outline-none focus:ring-2 focus:ring-accent/50 rounded"
-                  aria-describedby={`post-${post.slug}-description`}
+                  aria-describedby={`post-${postSlug}-description`}
                 >
                   {post.data.title}
                 </a>
@@ -151,7 +151,7 @@ function calculateReadingTime(content: string) {
               {/* Post Description */}
               {post.data.description && (
                 <p 
-                  id={`post-${post.slug}-description`}
+                  id={`post-${postSlug}-description`}
                   class="text-light-300 text-sm leading-relaxed mb-4 line-clamp-3"
                 >
                   {post.data.description}
@@ -223,7 +223,7 @@ function calculateReadingTime(content: string) {
   </section>
 )}
 
-<script>
+<script is:inline>
   // Related Posts Analytics and Interactions
   class RelatedPostsAnalytics {
     constructor() {

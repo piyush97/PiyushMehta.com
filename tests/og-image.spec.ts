@@ -4,26 +4,31 @@ import { expect, test } from '@playwright/test';
 const testData = {
   blogPost: {
     title: 'Building Modern Web Applications with React and TypeScript',
-    description: 'Learn how to create scalable, maintainable web applications using React, TypeScript, and modern development practices.',
+    description:
+      'Learn how to create scalable, maintainable web applications using React, TypeScript, and modern development practices.',
     tags: ['React', 'TypeScript', 'Web Development', 'Frontend'],
     type: 'article',
     readingTime: '8',
   },
   project: {
     title: 'React Developer Portfolio',
-    description: 'A modern, responsive portfolio website built with React, TypeScript, and Tailwind CSS.',
+    description:
+      'A modern, responsive portfolio website built with React, TypeScript, and Tailwind CSS.',
     tags: ['React', 'Portfolio', 'Design', 'Open Source'],
     type: 'project',
   },
   talk: {
     title: 'The Future of Web Development',
-    description: 'A deep dive into emerging technologies and trends shaping the future of web development.',
+    description:
+      'A deep dive into emerging technologies and trends shaping the future of web development.',
     tags: ['Web Dev', 'Technology', 'Future'],
     type: 'website',
   },
   longTitle: {
-    title: 'This is a Very Long Title That Should Test the Dynamic Sizing Feature of the OG Image Generation System',
-    description: 'Testing how the system handles extremely long titles and whether it adjusts font sizes appropriately.',
+    title:
+      'This is a Very Long Title That Should Test the Dynamic Sizing Feature of the OG Image Generation System',
+    description:
+      'Testing how the system handles extremely long titles and whether it adjusts font sizes appropriately.',
     tags: ['Test', 'Long Content'],
     type: 'article',
   },
@@ -37,8 +42,15 @@ const testData = {
 
 // Available templates to test
 const templates = [
-  'modern', 'tech', 'cyber', 'minimal', 'terminal', 
-  'gradient', 'professional', 'dark', 'blog'
+  'modern',
+  'tech',
+  'cyber',
+  'minimal',
+  'terminal',
+  'gradient',
+  'professional',
+  'dark',
+  'blog',
 ];
 
 // Available themes to test
@@ -53,10 +65,10 @@ test.describe('OG Image Generation', () => {
   test.describe('Basic OG Image Generation', () => {
     test('should generate OG image with default parameters', async ({ page }) => {
       const response = await page.goto('/api/og-image?title=Test%20Image');
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
-      
+
       // Check that the image has the expected dimensions
       const buffer = await response?.body();
       expect(buffer?.length).toBeGreaterThan(10000); // Should be a substantial image
@@ -74,10 +86,10 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
-      
+
       // Verify cache headers
       const cacheControl = response?.headers()['cache-control'];
       expect(cacheControl).toContain('max-age');
@@ -94,7 +106,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
@@ -110,14 +122,14 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
   });
 
   test.describe('Template Variations', () => {
-    templates.forEach(template => {
+    templates.forEach((template) => {
       test(`should generate OG image with ${template} template`, async ({ page }) => {
         const params = new URLSearchParams({
           title: 'Template Test',
@@ -128,10 +140,10 @@ test.describe('OG Image Generation', () => {
         });
 
         const response = await page.goto(`/api/og-image?${params}`);
-        
+
         expect(response?.status()).toBe(200);
         expect(response?.headers()['content-type']).toBe('image/png');
-        
+
         // Check image size is reasonable
         const buffer = await response?.body();
         expect(buffer?.length).toBeGreaterThan(5000);
@@ -141,7 +153,7 @@ test.describe('OG Image Generation', () => {
   });
 
   test.describe('Theme Variations', () => {
-    themes.forEach(theme => {
+    themes.forEach((theme) => {
       test(`should generate OG image with ${theme} theme`, async ({ page }) => {
         const params = new URLSearchParams({
           title: 'Theme Test',
@@ -152,7 +164,7 @@ test.describe('OG Image Generation', () => {
         });
 
         const response = await page.goto(`/api/og-image?${params}`);
-        
+
         expect(response?.status()).toBe(200);
         expect(response?.headers()['content-type']).toBe('image/png');
       });
@@ -170,7 +182,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
@@ -185,14 +197,15 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
 
     test('should handle long descriptions', async ({ page }) => {
-      const longDescription = 'This is a very long description that should test the dynamic sizing feature of the OG image generation system. It contains multiple sentences and should be properly truncated or sized to fit within the image boundaries while maintaining readability.';
-      
+      const longDescription =
+        'This is a very long description that should test the dynamic sizing feature of the OG image generation system. It contains multiple sentences and should be properly truncated or sized to fit within the image boundaries while maintaining readability.';
+
       const params = new URLSearchParams({
         title: 'Long Description Test',
         description: longDescription,
@@ -202,7 +215,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
@@ -217,7 +230,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
@@ -231,7 +244,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       // Should fallback to default template
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
@@ -246,7 +259,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       // Should fallback to default theme
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
@@ -261,7 +274,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
@@ -276,7 +289,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
@@ -292,15 +305,15 @@ test.describe('OG Image Generation', () => {
       });
 
       const url = `/api/og-image?${params}`;
-      
+
       // First request
       const response1 = await page.goto(url);
       expect(response1?.status()).toBe(200);
-      
+
       // Second request (should be cached)
       const response2 = await page.goto(url);
       expect(response2?.status()).toBe(200);
-      
+
       // Both should return the same content type
       expect(response1?.headers()['content-type']).toBe('image/png');
       expect(response2?.headers()['content-type']).toBe('image/png');
@@ -315,9 +328,9 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
-      
+
       const headers = response?.headers();
       expect(headers?.['cache-control']).toBeTruthy();
       expect(headers?.['content-type']).toBe('image/png');
@@ -325,7 +338,7 @@ test.describe('OG Image Generation', () => {
 
     test('should generate images within reasonable time', async ({ page }) => {
       const startTime = Date.now();
-      
+
       const params = new URLSearchParams({
         title: 'Performance Test',
         description: 'Testing generation performance',
@@ -335,10 +348,10 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       const endTime = Date.now();
       const duration = endTime - startTime;
-      
+
       expect(response?.status()).toBe(200);
       expect(duration).toBeLessThan(5000); // Should generate within 5 seconds
     });
@@ -356,7 +369,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
@@ -372,7 +385,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
@@ -387,7 +400,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
@@ -402,7 +415,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       expect(response?.status()).toBe(200);
       expect(response?.headers()['content-type']).toBe('image/png');
     });
@@ -420,7 +433,7 @@ test.describe('OG Image Generation', () => {
       });
 
       const response = await page.goto(`/api/og-image?${params}`);
-      
+
       // Should either succeed or return a proper error status
       expect([200, 400, 500]).toContain(response?.status());
     });
@@ -428,9 +441,9 @@ test.describe('OG Image Generation', () => {
     test('should handle malformed parameters', async ({ page }) => {
       // Test with malformed URL parameters
       const malformedUrl = '/api/og-image?title=%ZZ%ZZ&template=modern';
-      
+
       const response = await page.goto(malformedUrl);
-      
+
       // Should handle gracefully, either decode or use defaults
       expect([200, 400]).toContain(response?.status());
     });

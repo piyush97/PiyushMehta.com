@@ -8,13 +8,13 @@ const testUrls = [
   {
     name: 'Bloom Filters Blog Post',
     url: 'http://localhost:4321/blog/bloom-filters',
-    expectedImage: '/blog/bloom-filters/bloom-filter-hero.svg'
+    expectedImage: '/blog/bloom-filters/bloom-filter-hero.svg',
   },
   {
     name: 'OG Image API Direct',
     url: 'http://localhost:4321/api/og-enhanced?title=Test&description=Testing OG images',
-    expectedImage: null // This should return a generated image
-  }
+    expectedImage: null, // This should return a generated image
+  },
 ];
 
 async function testUrl(url, name) {
@@ -33,7 +33,9 @@ async function testUrl(url, name) {
 
       // Test if the OG image URL is accessible
       try {
-        const imageResponse = await fetch(ogImageUrl.startsWith('http') ? ogImageUrl : `http://localhost:4321${ogImageUrl}`);
+        const imageResponse = await fetch(
+          ogImageUrl.startsWith('http') ? ogImageUrl : `http://localhost:4321${ogImageUrl}`
+        );
         if (imageResponse.ok) {
           const contentType = imageResponse.headers.get('content-type');
           const contentLength = imageResponse.headers.get('content-length');
@@ -64,7 +66,6 @@ async function testUrl(url, name) {
 
     console.log(`Title: ${titleMatch ? titleMatch[1] : 'Not found'}`);
     console.log(`Description: ${descriptionMatch ? descriptionMatch[1] : 'Not found'}`);
-
   } catch (error) {
     console.log(`❌ Error testing URL: ${error.message}`);
   }

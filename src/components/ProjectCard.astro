@@ -10,16 +10,7 @@ export interface Props {
   position?: 'left' | 'right';
 }
 
-const {
-  title,
-  description,
-  url,
-  github,
-  tags,
-  logo,
-  color,
-  position = 'left',
-} = Astro.props;
+const { title, description, url, github, tags, logo, color, position = 'left' } = Astro.props;
 ---
 
 <article class={`project-card ${position}`}>
@@ -172,7 +163,6 @@ const {
   }
 
   .btn-primary.project-btn {
-    @apply text-white;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   }
 

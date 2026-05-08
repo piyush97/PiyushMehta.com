@@ -1,13 +1,16 @@
 # Piyush Mehta - Personal Website
-A modern, fast, and SEO-optimized personal website built with Astro, showcasing my work as a Senior Software Engineer, Tech Speaker, and Open Source Contributor.
+A modern, fast, and SEO-optimized personal website built with Astro 6.x, showcasing my work as a Senior Software Engineer, Tech Speaker, and Open Source Contributor.
 
 ![Screenshot of the application](/.github/demo.gif)
 
 
 ## 🚀 Features
 
-- **Lightning Fast**: Built with Astro 5.x for optimal performance with server-side rendering
-- **PWA Ready**: Full-featured Progressive Web App with offline support and app-like features
+- **Lightning Fast**: Built with Astro 6.x for optimal performance with server-side rendering
+- **Installable**: Web App Manifest for add-to-home-screen support (legacy service worker retired)
+- **Contact Form**: Secure contact API via Resend with CSRF protection and rate limiting
+- **Blog Filtering**: Client-side blog filter/search/sort with URL sync
+- **Custom 404**: Branded 404 page with recovery links
 - **Interactive Components**: Glass morphism UI with hover effects and smooth animations
 - **Command Palette**: Global search and navigation with ⌘+K keyboard shortcuts
 - **Full-Text Search**: Fast, client-side search powered by Pagefind
@@ -23,29 +26,36 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
 - **Responsive Design**: Mobile-first design that looks great on all devices
 - **Blog Support**: Full-featured blog with MDX support and article metadata
 - **Type Safe**: Built with TypeScript for better development experience
-- **Modern Stack**: Astro 5.x, TypeScript, Tailwind CSS, React, MDX
+- **Modern Stack**: Astro 6.x, TypeScript 6, Tailwind CSS v4, React 19, MDX
 - **ISR Support**: Incremental Static Regeneration for optimal performance
 - **Database Integration**: PostgreSQL integration for dynamic content
 - **Newsletter Security**: Enterprise-grade newsletter subscription with Redis-based rate limiting
 - **Web Analytics**: Built-in Vercel Web Analytics support
 - **Comprehensive Testing**: E2E tests with Playwright for all interactive components
+- **Error Monitoring**: Sentry integration for real-time error tracking and performance monitoring
+- **Speed Insights**: Built-in Vercel Speed Insights for real user performance metrics
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Astro 5.x](https://astro.build/) - Full-stack web framework with SSR support
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- **Language**: [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
-- **UI Components**: [React](https://react.dev/) - For interactive components
+- **Framework**: [Astro 6.x](https://astro.build/) - Full-stack web framework with SSR support
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) - Utility-first CSS framework
+- **Language**: [TypeScript 6](https://www.typescriptlang.org/) - Type-safe JavaScript
+- **UI Components**: [React 19](https://react.dev/) - For interactive components
 - **Content**: [MDX](https://mdxjs.com/) for enhanced blog posts and content
 - **Search**: [Pagefind](https://pagefind.app/) - Fully static search library
 - **Database**: [PostgreSQL](https://www.postgresql.org/) - For dynamic content and data
 - **Linting & Formatting**: [Biome](https://biomejs.dev/) - Fast formatter and linter for JavaScript, TypeScript, and more
-- **OG Images**: [@vercel/og](https://vercel.com/docs/functions/og-image-generation) - Dynamic Open Graph image generation
+- **OG Images**: [@vercel/og](https://vercel.com/docs/functions/og-image-generation) + [Satori](https://github.com/vercel/satori) + [resvg-js](https://github.com/yisibl/resvg-js) - Dynamic Open Graph image generation
+- **Email**: [Resend](https://resend.com/) - Transactional email delivery
 - **Redis**: [Upstash Redis](https://upstash.com/) - Serverless Redis for rate limiting and caching
+- **Error Monitoring**: [Sentry](https://sentry.io/) - Real-time error tracking and performance monitoring
 - **Deployment**: [Vercel](https://vercel.com/) - Optimized for Astro with ISR support
+- **Analytics**: [Vercel Web Analytics](https://vercel.com/analytics) + [Vercel Speed Insights](https://vercel.com/docs/speed-insights)
 - **SEO**: Custom SEO components with structured data and sitemap generation
 
 ## 📦 Installation
+
+> **Requirements**: Node.js 22.x or later
 
 1. **Clone the repository**
 
@@ -81,7 +91,19 @@ A modern, fast, and SEO-optimized personal website built with Astro, showcasing 
    ```env
    SITE_URL=https://piyushmehta.com
    DATABASE_URL=your_postgresql_connection_string
-   
+
+   # Contact Form (Resend - resend.com)
+   RESEND_API_KEY=re_your_api_key_here
+   CONTACT_FROM_EMAIL=contact@piyushmehta.com
+   CONTACT_TO_EMAIL=contact@piyushmehta.com
+
+   # Error Monitoring (optional)
+   SENTRY_DSN=your_sentry_dsn_here
+   PUBLIC_SENTRY_DSN=your_sentry_dsn_here
+   SENTRY_AUTH_TOKEN=your_sentry_auth_token_here
+   SENTRY_ORG=your_sentry_org_slug
+   SENTRY_PROJECT=your_sentry_project_slug
+
    # Newsletter Security (optional)
    UPSTASH_REDIS_REST_URL=your_upstash_redis_url
    UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
@@ -110,7 +132,7 @@ The site will be available at `http://localhost:4321`
 ### Available Scripts
 
 - `bun run dev` / `npm run dev` - Start development server
-- `bun run build` / `npm run build` - Build for production, including search indexing
+- `bun run build` / `npm run build` - Build for production (runs critical CSS extraction, image migration, Pagefind indexing, sitemap & RSS generation in parallel)
 - `bun run preview` / `npm run preview` - Preview production build locally
 - `bun run astro` / `npm run astro` - Run Astro CLI commands
 
@@ -122,26 +144,48 @@ The site will be available at `http://localhost:4321`
 - `bun run check` - Run comprehensive check (lint + format)
 - `bun run check:write` - Check and auto-fix all issues
 - `bun run ci` - CI-friendly check (no auto-fix)
-- `bun run test` - Run Playwright E2E tests for all components
+
+#### Testing Scripts
+
+- `bun run test` - Run all Playwright E2E tests
+- `bun run test:smoke` - Run smoke tests only
+- `bun run test:headed` - Run tests in headed (visible browser) mode
+- `bun run test:ui` - Open Playwright UI mode
+- `bun run test:report` - Show the latest test report
+
+#### Content & SEO Scripts
+
+- `bun run migrate:images` - Migrate images to public directory
+- `bun run enhance-sitemap` - Regenerate the enhanced sitemap
+- `bun run generate-rss` - Regenerate the static RSS feed
+- `bun run verify-rss` - Verify RSS feed integrity
+- `bun run test-seo` - Validate SEO meta files
+- `bun run test-rss` - Test RSS output
 
 ## 📁 Project Structure
 
 ```
 /
 ├── public/                 # Static assets, service worker, manifest.json
+├── scripts/                # Build, migration, and utility scripts
 ├── src/
 │   ├── app/               # Application logic and utilities
 │   ├── assets/            # Static assets (images, fonts, etc.)
 │   ├── components/        # Reusable UI components (Astro & React)
 │   ├── content/           # Content collections (blog posts, etc.)
+│   ├── data/              # Static data files
+│   ├── images/            # Source images
 │   ├── layouts/           # Page layouts
+│   ├── middleware/        # Astro middleware
 │   ├── pages/             # File-based routing
 │   │   ├── api/           # API routes
 │   │   ├── blog/          # Blog pages
 │   │   └── offline.astro  # Offline fallback page
+│   ├── scripts/           # Client-side scripts
 │   ├── styles/            # Global styles
 │   ├── types/             # TypeScript type definitions
 │   └── utils/             # Utility functions
+├── tests/                 # Playwright E2E tests
 ├── astro.config.mjs       # Astro configuration
 ├── tailwind.config.mjs    # Tailwind configuration
 ├── bun.lock               # Bun lockfile
@@ -198,13 +242,9 @@ Integrated comment system powered by GitHub Discussions:
 - **Reactions**: GitHub-style emoji reactions on comments
 - **Email Notifications**: Automatic notifications for new comments
 
-### Progressive Web App (PWA)
+### Web App Manifest
 
-The website is a fully-featured PWA with:
-- **Service Worker**: For offline caching, background sync, and push notifications.
-- **Web App Manifest**: Allows users to install the site on their devices.
-- **Offline Support**: A dedicated offline page ensures a good user experience without a connection.
-- **App-like Experience**: Includes app shortcuts, standalone display mode, and seamless updates.
+The site ships a `manifest.json` allowing users to install it on their devices. The legacy service worker (`sw.js`) has been retired and is actively unregistered on load to avoid stale caches.
 
 ### Full-Text Search
 
@@ -277,9 +317,14 @@ Create blog posts in the `src/content/` directory using MDX:
 ---
 title: 'Your Post Title'
 description: 'Post description for SEO'
-publishedTime: 2024-01-01
+date: 2024-01-01
+author: 'Piyush Mehta'
+ogTemplate: "blog"
+ogTheme: "dark"
 tags: ['react', 'javascript']
-image: '/path/to/image.jpg'
+image:
+  url: '/blog/your-post-slug/images/cover.svg'
+  alt: 'Cover image alt text'
 ---
 
 Your content here with MDX support for React components...
@@ -299,7 +344,7 @@ The site uses Astro's content collections for type-safe content management:
 Key configurations in `astro.config.mjs`:
 - **Server Output**: Configured for server-side rendering
 - **Site URL**: Set for canonical links and sitemap generation
-- **Integrations**: MDX, React, Sitemap, Tailwind CSS
+- **Integrations**: MDX, React, Sitemap; Tailwind CSS v4 via `@tailwindcss/vite` plugin
 - **Vercel Adapter**: With Web Analytics, Image Service, and ISR enabled
 - **Image Optimization**: Domains and formats configured for `astro:assets`.
 - **Prefetching**: Global prefetch configuration enabled.
@@ -337,14 +382,26 @@ npm run build
 npm run preview  # Preview the build locally
 ```
 
-The `build` script now runs the following commands:
-`node migrate-images-to-public.mjs && astro build && npx pagefind --site dist && node generate-enhanced-sitemap.mjs && node generate-static-rss.mjs`
+The `build` script uses `concurrently` to run tasks in parallel:
+`concurrently "node scripts/extract-critical-css.mjs" "node scripts/migrate-images-to-public.mjs" && astro build && concurrently "node scripts/run-pagefind.mjs" "node scripts/generate-enhanced-sitemap.mjs" "node scripts/generate-static-rss.mjs"`
 
 ### Environment Variables for Production
 
 ```env
 SITE_URL=https://your-domain.com
 DATABASE_URL=your_postgresql_connection_string
+
+# Contact Form
+RESEND_API_KEY=re_your_api_key_here
+CONTACT_FROM_EMAIL=contact@yourdomain.com
+CONTACT_TO_EMAIL=you@yourdomain.com
+
+# Error Monitoring (optional)
+SENTRY_DSN=your_sentry_dsn
+PUBLIC_SENTRY_DSN=your_sentry_dsn
+SENTRY_AUTH_TOKEN=your_sentry_auth_token
+SENTRY_ORG=your_org_slug
+SENTRY_PROJECT=your_project_slug
 
 # Newsletter Security (optional)
 UPSTASH_REDIS_REST_URL=your_upstash_redis_url
@@ -366,7 +423,7 @@ NEWSLETTER_ADMIN_TOKEN=your_secure_admin_token
 ## 📊 Performance & Features
 
 - **Lighthouse Score**: 100/100 across all metrics
-- **PWA-Ready**: Installable, offline-capable, and app-like.
+- **Installable**: Web App Manifest with app shortcuts and standalone display mode
 - **Interactive Components**: Glass morphism UI with smooth animations
 - **Command Palette**: Universal search and navigation with ⌘+K
 - **Enhanced Code Blocks**: Syntax highlighting with copy functionality
@@ -383,14 +440,24 @@ NEWSLETTER_ADMIN_TOKEN=your_secure_admin_token
 - **Database Integration**: PostgreSQL for dynamic content and analytics
 - **Web Analytics**: Built-in Vercel Web Analytics support
 - **E2E Testing**: Comprehensive Playwright test coverage for all components
+- **Error Monitoring**: Sentry for real-time error tracking and performance monitoring
+- **Speed Insights**: Vercel Speed Insights for real user performance metrics
 
 ## 🛠️ Development Tools & Scripts
 
-The project includes several utility scripts for content migration and maintenance:
+Build and maintenance scripts live under `scripts/`:
 
-- `migrate-blog-posts.mjs` - Script for migrating blog posts from other platforms
+- `migrate-images-to-public.mjs` - Image migration and optimization
+- `extract-critical-css.mjs` - Critical CSS extraction for performance
+- `run-pagefind.mjs` - Pagefind search index generation
+- `generate-enhanced-sitemap.mjs` - Enhanced sitemap generation
+- `generate-static-rss.mjs` - Static RSS feed generation
+- `verify-rss.mjs` - RSS feed integrity verification
+- `test-seo-files.mjs` - SEO meta file validation
+- `test-rss-output.mjs` - RSS output testing
+- `debug-rss-feed.mjs` - RSS feed debugging
+- `migrate-blog-posts.mjs` - Migrate blog posts from other platforms
 - `migrate-content.mjs` - General content migration utility
-- `migrate-images-to-public.mjs` - Image migration and optimization script
 - `fix-image-paths.mjs` - Fix image path references in content
 - `fix-images.mjs` - Batch image processing and optimization
 
@@ -423,6 +490,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Built with ❤️ by Piyush Mehta in Toronto, CA 🇨🇦**
 
-This website showcases modern web development practices with Astro 5.x, server-side rendering, and optimal performance. Feel free to reach out for collaborations, feedback, or just to say hi!
+This website showcases modern web development practices with Astro 6.x, server-side rendering, and optimal performance. Feel free to reach out for collaborations, feedback, or just to say hi!
 
-*Last updated: June 2025*
+*Last updated: May 2026*

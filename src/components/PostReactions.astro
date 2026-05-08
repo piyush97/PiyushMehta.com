@@ -1,5 +1,4 @@
 ---
-import type { GetStaticPaths } from "astro";
 // Post Reactions Component using localStorage
 export interface Props {
   postId: string;
@@ -14,7 +13,7 @@ const {
   title = 'How was this post?',
   showCount = true,
   size = 'md',
-  orientation = 'horizontal'
+  orientation = 'horizontal',
 } = Astro.props;
 
 // Generate unique IDs
@@ -26,6 +25,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
   class={`post-reactions mt-8 p-6 bg-surface-100 rounded-lg border border-card-border ${orientation === 'vertical' ? 'text-center' : ''}`}
   data-post-id={postId}
   data-component-id={componentId}
+  data-share-title={title}
   aria-labelledby={`${componentId}-title`}
 >
   <!-- Title -->
@@ -165,6 +165,11 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
 </section>
 
 <script>
+  type AnalyticsWindow = Window &
+    typeof globalThis & {
+      gtag?: (command: string, eventName: string, properties?: Record<string, unknown>) => void;
+    };
+
   // Post Reactions Manager
   class PostReactionsManager {
     private postId: string;
@@ -330,7 +335,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
     private handleShare() {
       const url = window.location.href;
-      const title = document.title;
+      const title = this.container.dataset.shareTitle || document.title;
       
       if (navigator.share) {
         // Use native sharing if available
@@ -357,7 +362,8 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
       navigator.clipboard.writeText(url).then(() => {
         this.trackEvent('post_shared', { 
           method: 'clipboard', 
-          postId: this.postId 
+          postId: this.postId,
+          title,
         });
         this.showFeedback('Link copied to clipboard!');
       }).catch(() => {
@@ -450,8 +456,9 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
     private trackEvent(eventName: string, properties: any = {}) {
       // Track analytics event
-      if (typeof gtag !== 'undefined') {
-        gtag('event', eventName, {
+      const analyticsWindow = window as AnalyticsWindow;
+      if (typeof analyticsWindow.gtag === 'function') {
+        analyticsWindow.gtag('event', eventName, {
           event_category: 'Post Reactions',
           ...properties
         });

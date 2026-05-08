@@ -1,9 +1,9 @@
 import fs from 'fs';
 import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
 import React from 'react';
 import satori from 'satori';
 import sharp from 'sharp';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -62,18 +62,15 @@ try {
   console.log('✅ SVG generated successfully');
 
   // Convert SVG to PNG with Sharp
-  const png = await sharp(Buffer.from(svg))
-    .png()
-    .toBuffer();
+  const png = await sharp(Buffer.from(svg)).png().toBuffer();
 
   console.log('✅ PNG converted successfully');
 
   // Save test image
   fs.writeFileSync('test-og-image.png', png);
-  
+
   console.log('🎉 Test completed successfully! Image saved as test-og-image.png');
   console.log('📊 Image size:', png.length, 'bytes');
-
 } catch (error) {
   console.error('❌ Error generating OG image:', error);
   process.exit(1);

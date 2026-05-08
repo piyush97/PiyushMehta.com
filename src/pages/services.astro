@@ -1,1131 +1,348 @@
 ---
+import {
+  caseStudies,
+  portfolioMetrics,
+  serviceEngagements,
+  technologyPrinciples,
+} from '../data/portfolio';
 import Layout from '../layouts/Layout.astro';
 
-// Define comprehensive SEO keywords for maximum reach
 const keywords = [
-  'Software Engineering Services', 
-  'Full Stack Developer Services', 
-  'Enterprise Web Development', 
-  'React Development Services', 
-  'JavaScript Consulting', 
-  'Software Architect Canada', 
-  'Cloud Solutions Developer',
-  'Technical Consulting Services',
-  'Startup CTO Services',
-  'Software Engineering Consultant',
-  'Modern Web Applications',
-  'Scalable Software Solutions',
-  'Digital Transformation',
-  'Technology Strategy',
-  'Software Development Partner',
-  'Custom Software Development',
-  'API Development Services',
-  'Database Architecture',
-  'DevOps Implementation',
-  'Code Review Services'
+  'Software Engineering',
+  'Technical Consulting',
+  'Enterprise AI Workflows',
+  'Web Platforms',
+  'Architecture Review',
+  'TypeScript',
+  'React',
+  'Node.js',
+  'Astro',
+  'Cloud Infrastructure',
 ];
+
+const proofPoints = caseStudies.slice(0, 4);
 ---
 
 <Layout
-   title="Professional Software Engineering & Development Services | Piyush Mehta"
-   description="Transform your business with expert software engineering services. Custom web applications, enterprise solutions, and technical consulting that drives growth. 5+ years of proven expertise."
-   keywords={keywords}
-   type="website"
-   ogTemplate="professional"
-   ogTheme="dark"
- >
-  <!-- Hero Section -->
-  <section class="hero-section relative overflow-hidden py-20 md:py-32" data-pagefind-body>
-    <div class="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent/10"></div>
-    <div class="container relative mx-auto px-4 text-center">
-      <div class="mx-auto max-w-4xl">
-        <div class="hero-badge inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-accent/10 text-accent text-sm font-medium">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-          </svg>
-          Trusted by 50+ Companies • 5+ Years Experience
-        </div>
-        
-        <!-- Hidden metadata for Pagefind -->
-        <div data-pagefind-meta="title" class="hidden">Software Engineering Services</div>
-        <div data-pagefind-meta="type" class="hidden">page</div>
-        <div data-pagefind-meta="description" class="hidden">Professional software development services including custom web applications, enterprise solutions, technical consulting, code reviews, and architecture design.</div>
-        
-        <h1 class="hero-title text-5xl md:text-7xl font-bold mb-8 leading-tight" data-pagefind-meta="title">
-          <span class="text-gradient bg-gradient-to-r from-text-primary via-accent to-text-primary bg-clip-text text-transparent">
-            Transform Your Vision
-          </span>
-          <br>
-          <span class="text-text-primary">Into Scalable Software</span>
-        </h1>
-        
-        <p class="hero-subtitle text-xl md:text-2xl text-text-secondary mb-12 max-w-3xl mx-auto leading-relaxed">
-          From startup MVPs to enterprise solutions, I architect and build software that drives business growth. 
-          <strong class="text-accent">Results-driven development</strong> with a focus on performance, scalability, and user experience.
-        </p>
-        
-        <div class="hero-cta flex flex-col sm:flex-row gap-6 justify-center items-center">
-          <a href="#consultation" class="cta-primary group inline-flex items-center gap-3 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl bg-accent text-darker">
-            <svg class="w-5 h-5 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-            Get Free Consultation
-            <span class="absolute inset-0 bg-white/20 rounded-xl scale-0 group-hover:scale-100 transition-transform duration-300"></span>
-          </a>
-          
-          <a href="#services" class="cta-secondary group inline-flex items-center gap-3 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 border-2 border-accent text-accent hover:bg-accent hover:text-darker">
-            View Services
-            <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
-          </a>
-        </div>
-        
-        <!-- Social Proof Stats -->
-        <div class="hero-stats grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 max-w-2xl mx-auto">
-          <div class="stat-item text-center">
-            <div class="stat-number text-3xl md:text-4xl font-bold text-accent mb-2">50+</div>
-            <div class="stat-label text-sm text-text-secondary">Happy Clients</div>
-          </div>
-          <div class="stat-item text-center">
-            <div class="stat-number text-3xl md:text-4xl font-bold text-accent mb-2">100+</div>
-            <div class="stat-label text-sm text-text-secondary">Projects Delivered</div>
-          </div>
-          <div class="stat-item text-center">
-            <div class="stat-number text-3xl md:text-4xl font-bold text-accent mb-2">5+</div>
-            <div class="stat-label text-sm text-text-secondary">Years Experience</div>
-          </div>
-          <div class="stat-item text-center">
-            <div class="stat-number text-3xl md:text-4xl font-bold text-accent mb-2">99%</div>
-            <div class="stat-label text-sm text-text-secondary">Client Satisfaction</div>
-          </div>
-        </div>
+  title="Software Engineering Consulting | Piyush Mehta"
+  description="Focused software engineering help for web platforms, AI workflows, architecture reviews, and technical delivery."
+  keywords={keywords}
+  type="website"
+  ogTemplate="professional"
+  ogTheme="dark"
+>
+  <section class="page-hero" data-pagefind-body>
+    <div class="page-hero__copy">
+      <p class="eyebrow" data-hero-eyebrow>Focused engineering help</p>
+      <h1 data-hero-title data-pagefind-meta="title">Technical clarity for real systems.</h1>
+      <p class="lede">
+        I help teams reason through architecture, ship web platforms, integrate AI workflows,
+        and improve reliability without adding unnecessary complexity.
+      </p>
+      <div class="actions">
+        <a class="btn-primary" href="/contact-me/">Start conversation</a>
+        <a class="btn-secondary" href="/projects/">Review case studies</a>
       </div>
+    </div>
+
+    <aside class="metric-panel" aria-label="Selected impact">
+      {portfolioMetrics.map((metric) => (
+        <article>
+          <strong>{metric.value}</strong>
+          <span>{metric.label}</span>
+        </article>
+      ))}
+    </aside>
+  </section>
+
+  <section class="page-section">
+    <div class="section-heading">
+      <p class="eyebrow">Engagements</p>
+      <h2>Useful work, scoped around decision.</h2>
+      <p>
+        Best consulting leaves a team with fewer mysteries: clearer tradeoffs, a working path
+        forward, and code or documentation that can survive review.
+      </p>
+    </div>
+    <div class="engagement-grid">
+      {serviceEngagements.map((engagement) => (
+        <article class="info-card">
+          <h3>{engagement.title}</h3>
+          <p>{engagement.summary}</p>
+          <ul>
+            {engagement.usefulFor.map((item) => <li>{item}</li>)}
+          </ul>
+        </article>
+      ))}
     </div>
   </section>
 
-  <!-- Services Section -->
-  <section id="services" class="services-section py-20 md:py-32">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="section-title text-4xl md:text-5xl font-bold mb-6">
-          <span class="text-accent">Services</span> That Scale Your Business
-        </h2>
-        <p class="section-subtitle text-xl text-text-secondary max-w-3xl mx-auto">
-          End-to-end software solutions designed to solve real business problems and drive measurable growth
-        </p>
-      </div>
-      
-      <div class="services-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Service 1: Enterprise Web Applications -->
-        <div class="service-card group relative p-8 rounded-2xl transition-all duration-500 hover:-translate-y-2">
-          <div class="service-icon-wrapper mb-6">
-            <div class="service-icon w-16 h-16 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center text-accent mb-4 group-hover:scale-110 transition-transform duration-300">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-              </svg>
-            </div>
-            <span class="service-tag inline-block px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium">MOST POPULAR</span>
-          </div>
-          <h3 class="service-title text-2xl font-bold mb-4">Enterprise Web Applications</h3>
-          <p class="service-description text-text-secondary mb-6 leading-relaxed">
-            Custom web applications built for scale. From complex dashboards to customer portals, I create solutions that handle millions of users while maintaining peak performance.
-          </p>
-          <ul class="service-features list-none space-y-2 mb-6">
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Scalable Architecture & Cloud Deployment
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Real-time Features & API Integration
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Security & Performance Optimization
-            </li>
-          </ul>
-          <div class="service-pricing text-sm text-text-secondary">
-            Starting from <span class="text-accent font-bold">$15,000</span>
-          </div>
-        </div>
-
-        <!-- Service 2: Startup MVP Development -->
-        <div class="service-card group relative p-8 rounded-2xl transition-all duration-500 hover:-translate-y-2">
-          <div class="service-icon-wrapper mb-6">
-            <div class="service-icon w-16 h-16 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center text-accent mb-4 group-hover:scale-110 transition-transform duration-300">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-              </svg>
-            </div>
-            <span class="service-tag inline-block px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-xs font-medium">FAST DELIVERY</span>
-          </div>
-          <h3 class="service-title text-2xl font-bold mb-4">Startup MVP Development</h3>
-          <p class="service-description text-text-secondary mb-6 leading-relaxed">
-            Rapid prototyping and MVP development to validate your ideas quickly. Perfect for startups ready to test the market and secure funding.
-          </p>
-          <ul class="service-features list-none space-y-2 mb-6">
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              2-4 Week Delivery Timeline
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              User Testing & Feedback Integration
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Investor-Ready Presentation
-            </li>
-          </ul>
-          <div class="service-pricing text-sm text-text-secondary">
-            Starting from <span class="text-accent font-bold">$8,000</span>
-          </div>
-        </div>
-
-        <!-- Service 3: Technical Strategy & Architecture -->
-        <div class="service-card group relative p-8 rounded-2xl transition-all duration-500 hover:-translate-y-2">
-          <div class="service-icon-wrapper mb-6">
-            <div class="service-icon w-16 h-16 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center text-accent mb-4 group-hover:scale-110 transition-transform duration-300">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-            <span class="service-tag inline-block px-3 py-1 rounded-full bg-purple-100 text-purple-600 text-xs font-medium">CTO LEVEL</span>
-          </div>
-          <h3 class="service-title text-2xl font-bold mb-4">Technical Strategy & Architecture</h3>
-          <p class="service-description text-text-secondary mb-6 leading-relaxed">
-            Strategic technical guidance for scaling teams and products. Architecture reviews, technology roadmaps, and hands-on CTO services.
-          </p>
-          <ul class="service-features list-none space-y-2 mb-6">
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Architecture Design & Code Reviews
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Team Mentoring & Process Setup
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Technology Roadmap Planning
-            </li>
-          </ul>
-          <div class="service-pricing text-sm text-text-secondary">
-            <span class="text-accent font-bold">$200/hour</span> or monthly retainer
-          </div>
-        </div>
-
-        <!-- Service 4: Performance Optimization -->
-        <div class="service-card group relative p-8 rounded-2xl transition-all duration-500 hover:-translate-y-2">
-          <div class="service-icon-wrapper mb-6">
-            <div class="service-icon w-16 h-16 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center text-accent mb-4 group-hover:scale-110 transition-transform duration-300">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-              </svg>
-            </div>
-            <span class="service-tag inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-600 text-xs font-medium">HIGH IMPACT</span>
-          </div>
-          <h3 class="service-title text-2xl font-bold mb-4">Performance & SEO Optimization</h3>
-          <p class="service-description text-text-secondary mb-6 leading-relaxed">
-            Transform slow applications into lightning-fast experiences. Comprehensive performance audits and optimization that directly impact your bottom line.
-          </p>
-          <ul class="service-features list-none space-y-2 mb-6">
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              50%+ Speed Improvements Guaranteed
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              SEO & Core Web Vitals Optimization
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Database & API Optimization
-            </li>
-          </ul>
-          <div class="service-pricing text-sm text-text-secondary">
-            Starting from <span class="text-accent font-bold">$5,000</span>
-          </div>
-        </div>
-
-        <!-- Service 5: API Development -->
-        <div class="service-card group relative p-8 rounded-2xl transition-all duration-500 hover:-translate-y-2">
-          <div class="service-icon-wrapper mb-6">
-            <div class="service-icon w-16 h-16 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center text-accent mb-4 group-hover:scale-110 transition-transform duration-300">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-              </svg>
-            </div>
-            <span class="service-tag inline-block px-3 py-1 rounded-full bg-green-100 text-green-600 text-xs font-medium">BACKEND</span>
-          </div>
-          <h3 class="service-title text-2xl font-bold mb-4">API & Backend Development</h3>
-          <p class="service-description text-text-secondary mb-6 leading-relaxed">
-            Robust, scalable APIs that power your applications. From RESTful APIs to GraphQL, with comprehensive documentation and monitoring.
-          </p>
-          <ul class="service-features list-none space-y-2 mb-6">
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              REST & GraphQL API Design
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Database Design & Optimization
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Security & Authentication
-            </li>
-          </ul>
-          <div class="service-pricing text-sm text-text-secondary">
-            Starting from <span class="text-accent font-bold">$10,000</span>
-          </div>
-        </div>
-
-        <!-- Service 6: Code Audits & Team Training -->
-        <div class="service-card group relative p-8 rounded-2xl transition-all duration-500 hover:-translate-y-2">
-          <div class="service-icon-wrapper mb-6">
-            <div class="service-icon w-16 h-16 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center text-accent mb-4 group-hover:scale-110 transition-transform duration-300">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-              </svg>
-            </div>
-            <span class="service-tag inline-block px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-medium">TRAINING</span>
-          </div>
-          <h3 class="service-title text-2xl font-bold mb-4">Code Audits & Team Training</h3>
-          <p class="service-description text-text-secondary mb-6 leading-relaxed">
-            Comprehensive code reviews and team upskilling programs. Improve code quality, establish best practices, and accelerate your team's growth.
-          </p>
-          <ul class="service-features list-none space-y-2 mb-6">
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Comprehensive Code Audits
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Custom Training Programs
-            </li>
-            <li class="flex items-center gap-3 text-sm">
-              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              Best Practices Implementation
-            </li>
-          </ul>
-          <div class="service-pricing text-sm text-text-secondary">
-            <span class="text-accent font-bold">$150/hour</span> or fixed project rates
-          </div>
-        </div>
-      </div>
+  <section class="page-section">
+    <div class="section-heading">
+      <p class="eyebrow">Proof</p>
+      <h2>Work should make argument.</h2>
+    </div>
+    <div class="proof-grid">
+      {proofPoints.map((study, index) => (
+        <article class="info-card">
+          <span>{study.eyebrow}</span>
+          <h3>{study.title}</h3>
+          <p>{study.summary}</p>
+          <a href={`/projects/#case-${index + 1}`}>Read case study</a>
+        </article>
+      ))}
     </div>
   </section>
 
-  <!-- Process Section -->
-  <section class="process-section py-20 md:py-32 bg-gradient-to-br from-bg-secondary/50 to-transparent">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="section-title text-4xl md:text-5xl font-bold mb-6">
-          My <span class="text-accent">Proven Process</span>
-        </h2>
-        <p class="section-subtitle text-xl text-text-secondary max-w-3xl mx-auto">
-          A battle-tested methodology that ensures project success and client satisfaction
-        </p>
-      </div>
-
-      <div class="process-timeline relative">
-        <!-- Process Step 1 -->
-        <div class="process-step flex flex-col lg:flex-row items-center gap-8 mb-16">
-          <div class="step-content lg:w-1/2 order-2 lg:order-1">
-            <div class="step-number-inline flex items-center gap-4 mb-4">
-              <div class="step-number w-12 h-12 rounded-full bg-accent text-darker font-bold text-xl flex items-center justify-center">1</div>
-              <h3 class="text-2xl font-bold">Discovery & Strategy</h3>
-            </div>
-            <p class="text-text-secondary mb-6 leading-relaxed">
-              Deep dive into your business goals, technical requirements, and user needs. I analyze your market, competition, and existing systems to create a comprehensive project strategy.
-            </p>
-            <ul class="list-none space-y-2">
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Business requirements analysis
-              </li>
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Technical architecture planning
-              </li>
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Timeline and budget planning
-              </li>
-            </ul>
-          </div>
-          <div class="step-visual lg:w-1/2 order-1 lg:order-2">
-            <div class="visual-card p-8 rounded-2xl bg-gradient-to-br from-accent/10 to-accent/5 backdrop-blur-sm">
-              <div class="flex items-center justify-center w-20 h-20 rounded-2xl bg-accent/20 mx-auto mb-4">
-                <svg class="w-10 h-10 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                </svg>
-              </div>
-              <p class="text-center text-sm text-text-secondary">Free consultation call to understand your vision</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Process Step 2 -->
-        <div class="process-step flex flex-col lg:flex-row items-center gap-8 mb-16">
-          <div class="step-visual lg:w-1/2">
-            <div class="visual-card p-8 rounded-2xl bg-gradient-to-br from-accent/10 to-accent/5 backdrop-blur-sm">
-              <div class="flex items-center justify-center w-20 h-20 rounded-2xl bg-accent/20 mx-auto mb-4">
-                <svg class="w-10 h-10 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                </svg>
-              </div>
-              <p class="text-center text-sm text-text-secondary">Interactive prototypes and detailed specifications</p>
-            </div>
-          </div>
-          <div class="step-content lg:w-1/2">
-            <div class="step-number-inline flex items-center gap-4 mb-4">
-              <div class="step-number w-12 h-12 rounded-full bg-accent text-darker font-bold text-xl flex items-center justify-center">2</div>
-              <h3 class="text-2xl font-bold">Design & Architecture</h3>
-            </div>
-            <p class="text-text-secondary mb-6 leading-relaxed">
-              Create detailed wireframes, user experience flows, and technical architecture. Every detail is planned before development begins to ensure smooth execution.
-            </p>
-            <ul class="list-none space-y-2">
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                UI/UX wireframes and mockups
-              </li>
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                System architecture diagrams
-              </li>
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Technology stack selection
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Process Step 3 -->
-        <div class="process-step flex flex-col lg:flex-row items-center gap-8 mb-16">
-          <div class="step-content lg:w-1/2 order-2 lg:order-1">
-            <div class="step-number-inline flex items-center gap-4 mb-4">
-              <div class="step-number w-12 h-12 rounded-full bg-accent text-darker font-bold text-xl flex items-center justify-center">3</div>
-              <h3 class="text-2xl font-bold">Agile Development</h3>
-            </div>
-            <p class="text-text-secondary mb-6 leading-relaxed">
-              Iterative development with regular demos and feedback cycles. You'll see progress every week and have opportunities to refine requirements as we build.
-            </p>
-            <ul class="list-none space-y-2">
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Weekly progress demos
-              </li>
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Automated testing & CI/CD
-              </li>
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Real-time collaboration tools
-              </li>
-            </ul>
-          </div>
-          <div class="step-visual lg:w-1/2 order-1 lg:order-2">
-            <div class="visual-card p-8 rounded-2xl bg-gradient-to-br from-accent/10 to-accent/5 backdrop-blur-sm">
-              <div class="flex items-center justify-center w-20 h-20 rounded-2xl bg-accent/20 mx-auto mb-4">
-                <svg class="w-10 h-10 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                </svg>
-              </div>
-              <p class="text-center text-sm text-text-secondary">Clean, tested code with continuous integration</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Process Step 4 -->
-        <div class="process-step flex flex-col lg:flex-row items-center gap-8">
-          <div class="step-visual lg:w-1/2">
-            <div class="visual-card p-8 rounded-2xl bg-gradient-to-br from-accent/10 to-accent/5 backdrop-blur-sm">
-              <div class="flex items-center justify-center w-20 h-20 rounded-2xl bg-accent/20 mx-auto mb-4">
-                <svg class="w-10 h-10 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-              </div>
-              <p class="text-center text-sm text-text-secondary">Launch and ongoing success monitoring</p>
-            </div>
-          </div>
-          <div class="step-content lg:w-1/2">
-            <div class="step-number-inline flex items-center gap-4 mb-4">
-              <div class="step-number w-12 h-12 rounded-full bg-accent text-darker font-bold text-xl flex items-center justify-center">4</div>
-              <h3 class="text-2xl font-bold">Launch & Optimization</h3>
-            </div>
-            <p class="text-text-secondary mb-6 leading-relaxed">
-              Smooth deployment to production with comprehensive monitoring and optimization. I provide post-launch support to ensure everything runs perfectly.
-            </p>
-            <ul class="list-none space-y-2">
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Production deployment
-              </li>
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                Performance monitoring
-              </li>
-              <li class="flex items-center gap-3 text-sm">
-                <svg class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-                30-day post-launch support
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  <section class="page-section split-grid">
+    <div class="section-heading">
+      <p class="eyebrow">How I work</p>
+      <h2>Boring in places that should be boring.</h2>
+    </div>
+    <div class="stack-list">
+      {technologyPrinciples.map((principle, index) => (
+        <article class="info-card">
+          <span>Principle {index + 1}</span>
+          <p>{principle}</p>
+        </article>
+      ))}
     </div>
   </section>
 
-  <!-- Technology Stack Section -->
-  <section class="tech-section py-20 md:py-32">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="section-title text-4xl md:text-5xl font-bold mb-6">
-          <span class="text-accent">Modern</span> Technology Stack
-        </h2>
-        <p class="section-subtitle text-xl text-text-secondary max-w-3xl mx-auto">
-          I work with cutting-edge technologies to build solutions that scale and perform
-        </p>
-      </div>
-
-      <div class="tech-categories grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Frontend Technologies -->
-        <div class="tech-category">
-          <h3 class="text-2xl font-bold mb-6 text-center">Frontend & UI</h3>
-          <div class="tech-grid grid grid-cols-2 gap-4">
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#61DAFB]">
-                  <path d="M12 13.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm0 8.5c6.628 0 12-5.372 12-12S18.628 0 12 0 0 5.372 0 12s5.372 12 12 12z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">React.js</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#3178C6]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">TypeScript</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#000000]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">Next.js</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#06B6D4]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">Tailwind</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#FF6B6B]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">Astro</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#4FC08D]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">Vue.js</h4>
-            </div>
-          </div>
-        </div>
-
-        <!-- Backend Technologies -->
-        <div class="tech-category">
-          <h3 class="text-2xl font-bold mb-6 text-center">Backend & APIs</h3>
-          <div class="tech-grid grid grid-cols-2 gap-4">
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#339933]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">Node.js</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#E10098]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">GraphQL</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#336791]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">PostgreSQL</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#47A248]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">MongoDB</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#DC382D]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">Redis</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#000000]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">Prisma</h4>
-            </div>
-          </div>
-        </div>
-
-        <!-- Cloud & DevOps -->
-        <div class="tech-category">
-          <h3 class="text-2xl font-bold mb-6 text-center">Cloud & DevOps</h3>
-          <div class="tech-grid grid grid-cols-2 gap-4">
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#FF9900]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">AWS</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#000000]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">Vercel</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#2496ED]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">Docker</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#181717]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">GitHub</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#FC6D26]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">GitLab CI</h4>
-            </div>
-            <div class="tech-item p-4 rounded-xl bg-gradient-to-br from-bg-secondary/50 to-transparent transition-transform hover:scale-105">
-              <div class="tech-icon w-8 h-8 mx-auto mb-2">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-[#326CE5]">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
-                </svg>
-              </div>
-              <h4 class="font-bold text-sm text-center">Kubernetes</h4>
-            </div>
-          </div>
-        </div>
-      </div>
+  <section class="accent-cta" id="consultation">
+    <div>
+      <p class="eyebrow">Available for focused conversations</p>
+      <h2>Bring hard constraint.</h2>
+      <p>
+        Share product goal, system pressure, and what already hurts. I will help turn it into a
+        practical engineering path.
+      </p>
     </div>
-  </section>
-
-  <!-- Testimonials Section -->
-  <section class="testimonials-section py-20 md:py-32 bg-gradient-to-br from-accent/5 via-transparent to-accent/10">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="section-title text-4xl md:text-5xl font-bold mb-6">
-          What <span class="text-accent">Clients Say</span>
-        </h2>
-        <p class="section-subtitle text-xl text-text-secondary max-w-3xl mx-auto">
-          Real feedback from companies that trusted me with their most important projects
-        </p>
-      </div>
-
-      <div class="testimonials-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Testimonial 1 -->
-        <div class="testimonial-card p-8 rounded-2xl bg-gradient-to-br from-bg-secondary/30 to-transparent backdrop-blur-sm border border-white/10 hover:border-accent/30 transition-all duration-300">
-          <div class="stars flex mb-4">
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-          </div>
-          <blockquote class="text-text-secondary mb-6 leading-relaxed">
-            "Piyush transformed our legacy system into a modern, scalable platform. The performance improvements were immediate and dramatic. His technical expertise and project management skills are exceptional."
-          </blockquote>
-          <div class="testimonial-author">
-            <div class="author-info">
-              <h4 class="font-bold text-text-primary">Sarah Johnson</h4>
-              <p class="text-sm text-text-secondary">CTO, TechFlow Solutions</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Testimonial 2 -->
-        <div class="testimonial-card p-8 rounded-2xl bg-gradient-to-br from-bg-secondary/30 to-transparent backdrop-blur-sm border border-white/10 hover:border-accent/30 transition-all duration-300">
-          <div class="stars flex mb-4">
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-          </div>
-          <blockquote class="text-text-secondary mb-6 leading-relaxed">
-            "Working with Piyush was a game-changer for our startup. He delivered our MVP in record time and helped us secure Series A funding. His technical insights were invaluable."
-          </blockquote>
-          <div class="testimonial-author">
-            <div class="author-info">
-              <h4 class="font-bold text-text-primary">Michael Chen</h4>
-              <p class="text-sm text-text-secondary">Founder, DataViz Pro</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Testimonial 3 -->
-        <div class="testimonial-card p-8 rounded-2xl bg-gradient-to-br from-bg-secondary/30 to-transparent backdrop-blur-sm border border-white/10 hover:border-accent/30 transition-all duration-300">
-          <div class="stars flex mb-4">
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-          </div>
-          <blockquote class="text-text-secondary mb-6 leading-relaxed">
-            "Piyush's performance optimization work increased our conversion rate by 40%. His attention to detail and deep technical knowledge make him a valuable partner for any serious project."
-          </blockquote>
-          <div class="testimonial-author">
-            <div class="author-info">
-              <h4 class="font-bold text-text-primary">Emma Rodriguez</h4>
-              <p class="text-sm text-text-secondary">Head of Product, E-commerce Plus</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Free Consultation Section -->
-  <section id="consultation" class="consultation-section py-20 md:py-32 bg-gradient-to-r from-accent to-accent/80">
-    <div class="container mx-auto px-4">
-      <div class="consultation-content max-w-4xl mx-auto text-center text-darker">
-        <h2 class="text-4xl md:text-6xl font-bold mb-6">
-          Ready to <span class="text-white">Scale Your Business?</span>
-        </h2>
-        <p class="text-xl md:text-2xl mb-8 opacity-90 leading-relaxed">
-          Get a free 30-minute consultation to discuss your project and explore how we can work together to achieve your goals.
-        </p>
-        
-        <div class="consultation-benefits grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <div class="benefit text-center">
-            <div class="benefit-icon w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold mb-2 text-white">Free Strategy Session</h3>
-            <p class="opacity-90">No-obligation consultation to understand your needs</p>
-          </div>
-          <div class="benefit text-center">
-            <div class="benefit-icon w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold mb-2 text-white">Instant Project Roadmap</h3>
-            <p class="opacity-90">Walk away with a clear plan and timeline</p>
-          </div>
-          <div class="benefit text-center">
-            <div class="benefit-icon w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold mb-2 text-white">Budget & ROI Analysis</h3>
-            <p class="opacity-90">Understanding of investment and potential returns</p>
-          </div>
-        </div>
-
-        <div class="consultation-cta">
-          <a href="/contact-me/" class="cta-large group inline-flex items-center gap-4 px-12 py-6 rounded-2xl text-xl font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl bg-white text-accent">
-            <svg class="w-6 h-6 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-            </svg>
-            Book Your Free Consultation
-            <svg class="w-6 h-6 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
-          </a>
-          <p class="mt-4 text-sm opacity-75">Usually responds within 2 hours • Available Monday-Friday</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ Section -->
-  <section class="faq-section py-20 md:py-32">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="section-title text-4xl md:text-5xl font-bold mb-6">
-          <span class="text-accent">Frequently</span> Asked Questions
-        </h2>
-        <p class="section-subtitle text-xl text-text-secondary max-w-3xl mx-auto">
-          Everything you need to know about working with me
-        </p>
-      </div>
-
-      <div class="faq-container max-w-4xl mx-auto">
-        <div class="faq-grid space-y-6">
-          <!-- FAQ 1 -->
-          <div class="faq-item p-8 rounded-2xl bg-gradient-to-br from-bg-secondary/30 to-transparent backdrop-blur-sm border border-white/10">
-            <h3 class="text-xl font-bold mb-4 text-accent">What's your typical project timeline?</h3>
-            <p class="text-text-secondary leading-relaxed">
-              Project timelines vary based on complexity. MVPs typically take 2-4 weeks, medium applications 6-12 weeks, and enterprise solutions 3-6 months. I provide detailed timelines after our initial consultation, with regular milestones and updates throughout the project.
-            </p>
-          </div>
-
-          <!-- FAQ 2 -->
-          <div class="faq-item p-8 rounded-2xl bg-gradient-to-br from-bg-secondary/30 to-transparent backdrop-blur-sm border border-white/10">
-            <h3 class="text-xl font-bold mb-4 text-accent">Do you work with international clients?</h3>
-            <p class="text-text-secondary leading-relaxed">
-              Yes, I work with clients globally! Based in Canada, I've successfully delivered projects for companies across North America, Europe, and Asia. I'm experienced with remote collaboration and adjust my schedule to accommodate different time zones for effective communication.
-            </p>
-          </div>
-
-          <!-- FAQ 3 -->
-          <div class="faq-item p-8 rounded-2xl bg-gradient-to-br from-bg-secondary/30 to-transparent backdrop-blur-sm border border-white/10">
-            <h3 class="text-xl font-bold mb-4 text-accent">What's included in your development services?</h3>
-            <p class="text-text-secondary leading-relaxed">
-              My services include full-stack development, UI/UX design consultation, database design, API development, testing, deployment, and documentation. I also provide post-launch support, performance monitoring, and can train your team on the codebase if needed.
-            </p>
-          </div>
-
-          <!-- FAQ 4 -->
-          <div class="faq-item p-8 rounded-2xl bg-gradient-to-br from-bg-secondary/30 to-transparent backdrop-blur-sm border border-white/10">
-            <h3 class="text-xl font-bold mb-4 text-accent">How do you handle project pricing?</h3>
-            <p class="text-text-secondary leading-relaxed">
-              I offer both fixed-price projects and hourly rates depending on the project scope. For well-defined projects, I prefer fixed pricing to give you budget certainty. For ongoing consultation or evolving requirements, hourly rates work better. All pricing is transparent with detailed proposals.
-            </p>
-          </div>
-
-          <!-- FAQ 5 -->
-          <div class="faq-item p-8 rounded-2xl bg-gradient-to-br from-bg-secondary/30 to-transparent backdrop-blur-sm border border-white/10">
-            <h3 class="text-xl font-bold mb-4 text-accent">Can you integrate with our existing systems?</h3>
-            <p class="text-text-secondary leading-relaxed">
-              Absolutely! I specialize in system integration and have experience working with various APIs, databases, and third-party services. Whether you need to connect to CRM systems, payment processors, or legacy databases, I can create seamless integrations that enhance your existing workflows.
-            </p>
-          </div>
-
-          <!-- FAQ 6 -->
-          <div class="faq-item p-8 rounded-2xl bg-gradient-to-br from-bg-secondary/30 to-transparent backdrop-blur-sm border border-white/10">
-            <h3 class="text-xl font-bold mb-4 text-accent">What makes you different from other developers?</h3>
-            <p class="text-text-secondary leading-relaxed">
-              I combine deep technical expertise with business understanding. Having worked in enterprise environments and with startups, I understand both scalability requirements and time-to-market pressures. I focus on building solutions that drive business results, not just technical achievements.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <a class="btn-dark" href="/contact-me/">Contact Piyush</a>
   </section>
 </Layout>
 
 <style>
-  /* Hero Section Styles */
-  .hero-section {
-    min-height: 90vh;
+  .page-hero,
+  .page-section,
+  .accent-cta {
+    width: min(1120px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .page-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: end;
+    padding-block: clamp(4rem, 8vw, 6rem) 3rem;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.9rem;
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    color: var(--color-text-primary);
+    letter-spacing: 0;
+  }
+
+  h1 {
+    max-width: 11ch;
+    font-size: clamp(3.2rem, 8vw, 5.5rem);
+    line-height: 1.02;
+  }
+
+  .section-heading h2,
+  .accent-cta h2 {
+    font-size: clamp(2.1rem, 4vw, 3.35rem);
+    line-height: 1.05;
+  }
+
+  .lede,
+  .section-heading p,
+  .info-card p,
+  .accent-cta p {
+    color: var(--color-text-secondary);
+    line-height: 1.75;
+  }
+
+  .lede {
+    max-width: 44rem;
+    margin: 1.35rem 0 0;
+    font-size: 1.15rem;
+  }
+
+  .actions {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 2rem;
   }
 
-  .hero-badge {
-    animation: slideInDown 0.8s ease-out;
+  .metric-panel,
+  .info-card {
+    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
   }
 
-  .hero-title {
-    animation: slideInUp 0.8s ease-out 0.2s both;
-  }
-
-  .hero-subtitle {
-    animation: slideInUp 0.8s ease-out 0.4s both;
-  }
-
-  .hero-cta {
-    animation: slideInUp 0.8s ease-out 0.6s both;
-  }
-
-  .hero-stats {
-    animation: slideInUp 0.8s ease-out 0.8s both;
-  }
-
-  .text-gradient {
-    background-size: 200% auto;
-    animation: gradientShift 3s ease-in-out infinite;
-  }
-
-  /* Service Cards */
-  .service-card {
-    background: linear-gradient(135deg, rgba(var(--color-bg-secondary-rgb), 0.4), rgba(var(--color-bg-secondary-rgb), 0.1));
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .service-card:hover {
-    background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.1), rgba(var(--color-accent-rgb), 0.05));
-    border-color: rgba(var(--color-accent-rgb), 0.3);
-    box-shadow: 0 25px 50px -12px rgba(var(--color-accent-rgb), 0.25);
-  }
-
-  /* CTA Buttons */
-  .cta-primary, .cta-secondary, .cta-large {
-    position: relative;
+  .metric-panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
     overflow: hidden;
+    background: var(--color-card-border);
   }
 
-  .cta-primary:hover, .cta-large:hover {
-    box-shadow: 0 20px 40px -12px rgba(var(--color-accent-rgb), 0.4);
+  .metric-panel article {
+    min-height: 10rem;
+    padding: 1.15rem;
+    background: var(--color-surface-raised);
   }
 
-  /* Process Timeline */
-  .process-timeline::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, var(--color-accent), transparent, var(--color-accent));
-    transform: translateX(-50%);
+  .metric-panel strong {
+    display: block;
+    color: var(--color-text-primary);
+    font-size: 2.2rem;
+    line-height: 1;
   }
 
-  @media (max-width: 1023px) {
-    .process-timeline::before {
-      display: none;
+  .metric-panel span,
+  .info-card span {
+    display: block;
+    margin-top: 0.75rem;
+    color: var(--color-accent);
+    font-weight: 800;
+    line-height: 1.5;
+  }
+
+  .page-section {
+    padding-block: clamp(3rem, 7vw, 5rem) 0;
+  }
+
+  .section-heading {
+    max-width: 44rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .engagement-grid,
+  .proof-grid,
+  .stack-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .engagement-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .proof-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .split-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 1.25rem;
+  }
+
+  .info-card {
+    padding: 1.2rem;
+  }
+
+  .info-card h3 {
+    font-size: 1.2rem;
+    line-height: 1.2;
+  }
+
+  .info-card p {
+    margin: 0.75rem 0 0;
+  }
+
+  .info-card ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .info-card li {
+    border: 1px solid var(--color-card-border);
+    padding: 0.35rem 0.55rem;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .info-card a {
+    display: inline-flex;
+    margin-top: 1rem;
+    color: var(--color-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .accent-cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.5rem;
+    align-items: end;
+    margin-block: clamp(3rem, 7vw, 5rem);
+    border: 1px solid var(--color-card-border);
+    background: var(--color-accent);
+    padding: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .accent-cta .eyebrow,
+  .accent-cta h2,
+  .accent-cta p {
+    color: var(--color-darker);
+  }
+
+  .btn-dark {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    background: var(--color-darker);
+    padding: 0.8rem 1.1rem;
+    color: white;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  @media (max-width: 1080px) {
+    .proof-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  /* Tech Items */
-  .tech-item {
-    transition: all 0.3s ease;
-  }
-
-  .tech-item:hover {
-    background: rgba(var(--color-accent-rgb), 0.1);
-    border-color: rgba(var(--color-accent-rgb), 0.3);
-  }
-
-  /* Testimonial Cards */
-  .testimonial-card {
-    transition: all 0.5s ease;
-  }
-
-  .testimonial-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 50px -12px rgba(var(--color-accent-rgb), 0.15);
-  }
-
-  /* FAQ Items */
-  .faq-item {
-    transition: all 0.3s ease;
-  }
-
-  .faq-item:hover {
-    background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.05), rgba(var(--color-accent-rgb), 0.02));
-    border-color: rgba(var(--color-accent-rgb), 0.2);
-  }
-
-  /* Animations */
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slideInDown {
-    from {
-      opacity: 0;
-      transform: translateY(-40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes gradientShift {
-    0%, 100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .hero-title {
-      font-size: 3rem;
-    }
-    
-    .hero-subtitle {
-      font-size: 1.125rem;
-    }
-
-    .services-grid {
+  @media (max-width: 960px) {
+    .page-hero,
+    .engagement-grid,
+    .split-grid,
+    .accent-cta {
       grid-template-columns: 1fr;
     }
+  }
 
-    .tech-categories {
+  @media (max-width: 640px) {
+    .metric-panel,
+    .proof-grid {
       grid-template-columns: 1fr;
     }
-
-    .testimonials-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* Light theme adjustments */
-  :root.light .service-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
-    border-color: rgba(var(--color-accent-rgb), 0.15);
-  }
-
-  :root.light .service-card:hover {
-    background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.08), rgba(var(--color-accent-rgb), 0.04));
-  }
-
-  :root.light .testimonial-card,
-  :root.light .faq-item {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
-    border-color: rgba(var(--color-accent-rgb), 0.15);
   }
 </style>

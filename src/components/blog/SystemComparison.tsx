@@ -16,22 +16,20 @@ const SystemComparison: React.FC<SystemComparisonProps> = ({ macosData, archData
   const [timeframe, setTimeframe] = useState<1 | 3 | 5>(3);
 
   const calculateTotal = (data: SystemData, years: number) => {
-    return data.hardware + (data.software * years) + data.maintenance + (data.yearly * (years - 1));
+    return data.hardware + data.software * years + data.maintenance + data.yearly * (years - 1);
   };
 
   const macosTotal = calculateTotal(macosData, timeframe);
   const archTotal = calculateTotal(archData, timeframe);
   const savings = macosTotal - archTotal;
-  const savingsPercent = Math.round(((savings / macosTotal) * 100));
+  const savingsPercent = Math.round((savings / macosTotal) * 100);
 
   const formatCurrency = (amount: number) => `$${amount.toLocaleString()}`;
 
   return (
     <div className="not-prose bg-surface-2 border border-border rounded-xl p-6 my-8">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-text-primary">
-          Total Cost Comparison
-        </h3>
+        <h3 className="text-xl font-semibold text-text-primary">Total Cost Comparison</h3>
         <div className="flex bg-surface-3 rounded-lg p-1">
           {[1, 3, 5].map((years) => (
             <button
@@ -57,7 +55,7 @@ const SystemComparison: React.FC<SystemComparisonProps> = ({ macosData, archData
             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
             <h4 className="font-semibold text-text-primary">macOS Setup</h4>
           </div>
-          
+
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-text-secondary">Hardware</span>
@@ -99,7 +97,7 @@ const SystemComparison: React.FC<SystemComparisonProps> = ({ macosData, archData
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             <h4 className="font-semibold text-text-primary">Arch Linux Setup</h4>
           </div>
-          
+
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-text-secondary">Hardware</span>
@@ -121,9 +119,7 @@ const SystemComparison: React.FC<SystemComparisonProps> = ({ macosData, archData
             </div>
             <div className="flex justify-between">
               <span className="text-text-secondary">Yearly costs</span>
-              <span className="font-mono text-text-primary">
-                {formatCurrency(archData.yearly)}
-              </span>
+              <span className="font-mono text-text-primary">{formatCurrency(archData.yearly)}</span>
             </div>
             <hr className="border-border" />
             <div className="flex justify-between font-semibold">
@@ -153,8 +149,8 @@ const SystemComparison: React.FC<SystemComparisonProps> = ({ macosData, archData
 
       <div className="mt-4 text-sm text-text-secondary">
         <p>
-          * macOS costs include hardware, software licenses, AppleCare, and yearly upgrades.
-          Arch Linux costs include hardware and minimal yearly expenses for premium services.
+          * macOS costs include hardware, software licenses, AppleCare, and yearly upgrades. Arch
+          Linux costs include hardware and minimal yearly expenses for premium services.
         </p>
       </div>
     </div>

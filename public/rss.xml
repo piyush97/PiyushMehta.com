@@ -5,9 +5,9 @@
     <link>https://piyushmehta.com</link>
     <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 13 Jul 2025 21:18:26 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 26 Aug 2025 00:00:00 GMT</lastBuildDate>
     <generator>Static RSS Generator</generator>
-    <copyright>Copyright 2025 Piyush Mehta. All rights reserved.</copyright>
+    <copyright>Copyright 2026 Piyush Mehta. All rights reserved.</copyright>
     <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
     <webMaster>hello@piyushmehta.com (Piyush Mehta)</webMaster>
     <atom:link href="https://piyushmehta.com/rss.xml" rel="self" type="application/rss+xml" />
@@ -17,38 +17,35 @@
       <title>Piyush Mehta - Blog</title>
       <link>https://piyushmehta.com</link>
     </image>
-    
-        <item>
-      <title>Will you be the Kubernetes to My Docker?</title>
-      <link>https://piyushmehta.com/blog/Kubenetes-Docker/</link>
-      <pubDate>Thu, 09 Apr 2020 00:00:00 GMT</pubDate>
-      <description>All about Kubernetes and Docker for a normal Man.</description>
+    <item>
+      <title>From macOS to Arch Linux with Omarchy: A Developer&apos;s Journey to True Productivity</title>
+      <link>https://piyushmehta.com/blog/macos-to-arch-linux-omarchy-developer-productivity/</link>
+      <pubDate>Tue, 26 Aug 2025 00:00:00 GMT</pubDate>
+      <description>How I switched from macOS to Arch Linux using Omarchy and dramatically improved my development productivity. Real configs, benchmarks, and honest insights from 6 months of daily use.</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      <category>kubernetes</category>
-      <category>docker</category>
-      <category>Web</category>
+    </item>
+        <item>
+      <title>Zero-Downtime Database Migration: Scaling from 10M to 100M Users</title>
+      <link>https://piyushmehta.com/blog/zero-downtime-database-migration-at-scale/</link>
+      <pubDate>Sun, 13 Jul 2025 00:00:00 GMT</pubDate>
+      <description>A comprehensive case study of migrating a 50TB PostgreSQL database to support 10x user growth with zero downtime, improved performance, and 40% cost reduction.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>database</category>
+      <category>postgresql</category>
+      <category>migration</category>
+      <category>scalability</category>
+      <category>architecture</category>
       <category>devops</category>
+      <category>performance</category>
+      <category>case study</category>
+      <category>zero downtime</category>
     </item>
         <item>
-      <title>The Silent S in HTTPS</title>
-      <link>https://piyushmehta.com/blog/The-Silent-S-in-HTTPS/</link>
-      <pubDate>Wed, 16 Oct 2019 00:00:00 GMT</pubDate>
-      <description>Why http(s) is not secure?</description>
+      <title>The 30-Year-Old &apos;Impossible&apos; Algorithm That Makes Netflix Instant (And Why Your Computer Still Sucks)</title>
+      <link>https://piyushmehta.com/blog/bloom-filters/</link>
+      <pubDate>Wed, 02 Jul 2025 00:00:00 GMT</pubDate>
+      <description>How Bloom Filters power Google, Netflix, and Instagram with 99.9% accuracy while using almost zero memory - and the shocking reason they can lie to you</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      <category>HTTPS</category>
-      <category>web</category>
-      <category>www</category>
-    </item>
-        <item>
-      <title>What is Event Loop in JavaScript</title>
-      <link>https://piyushmehta.com/blog/What-is-Event-Loop-in-JavaScript/</link>
-      <pubDate>Fri, 25 Sep 2020 00:00:00 GMT</pubDate>
-      <description>JavaScript Event Loop is one of the most fundamental concepts that every developer must aspire to understand. It is also one of the most frequently asked interview questions.</description>
-      <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      <category>Javascript</category>
-      <category>Js</category>
-      <category>event loop</category>
-      <category>programming</category>
     </item>
         <item>
       <title>AI Killed My Impostor Syndrome (And It Might Kill Yours Too)</title>
@@ -66,20 +63,45 @@
       <category>Self-Improvement</category>
     </item>
         <item>
+      <title>From Nginx Proxy Manager to SWAG: A Powerful Migration Journey</title>
+      <link>https://piyushmehta.com/blog/migrating-nginx-proxy-manager-to-swag/</link>
+      <pubDate>Sat, 21 Jun 2025 00:00:00 GMT</pubDate>
+      <description>Discover why I migrated from Nginx Proxy Manager to SWAG by LinuxServer.io, the challenges faced, and the transformative benefits that made this switch a game-changer for my self-hosted infrastructure.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>hosting</category>
+    </item>
+        <item>
+      <title>How to Stay Ahead by Leveraging AI in Your Coding Workflow</title>
+      <link>https://piyushmehta.com/blog/leveraging-ai-in-coding-workflow/</link>
+      <pubDate>Thu, 12 Jun 2025 00:00:00 GMT</pubDate>
+      <description>Discover practical strategies for integrating AI coding assistants into your development process to boost productivity, improve code quality, and accelerate learning while avoiding common pitfalls.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+    </item>
+        <item>
       <title>Astro 5.9: Revolutionizing Web Security with Built-in Content Security Policy Support</title>
       <link>https://piyushmehta.com/blog/astro-v5-9-content-security-policy/</link>
       <pubDate>Sat, 07 Jun 2025 00:00:00 GMT</pubDate>
       <description>Discover how Astro 5.9 introduces experimental Content Security Policy support, making it easier than ever to secure your websites against XSS attacks while maintaining framework flexibility.</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      
     </item>
         <item>
-      <title>The 30-Year-Old &apos;Impossible&apos; Algorithm That Makes Netflix Instant (And Why Your Computer Still Sucks)</title>
-      <link>https://piyushmehta.com/blog/bloom-filters/</link>
-      <pubDate>Wed, 02 Jul 2025 00:00:00 GMT</pubDate>
-      <description>How Bloom Filters power Google, Netflix, and Instagram with 99.9% accuracy while using almost zero memory - and the shocking reason they can lie to you</description>
+      <title>Migrating a 6-Year-Old Codebase to Astro: A Strategic Architecture Journey</title>
+      <link>https://piyushmehta.com/blog/migrating-legacy-codebase-to-astro/</link>
+      <pubDate>Tue, 03 Jun 2025 00:00:00 GMT</pubDate>
+      <description>A comprehensive deep-dive into migrating a legacy portfolio site to modern Astro 4.x, covering architectural decisions, performance optimizations, and lessons learned from a decade of web development.</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      
+    </item>
+        <item>
+      <title>Building a Hare-raisingly Good Queue-based Messaging System with NestJS, RabbitMQ, and Azure</title>
+      <link>https://piyushmehta.com/blog/rabbit-mq/</link>
+      <pubDate>Thu, 24 Aug 2023 00:00:00 GMT</pubDate>
+      <description>Embark on a tech adventure like no other with \&quot;Building a Hare-raisingly Good Queue-based Messaging System\&quot;! Join Piyush Mehta, Tech Consultant at BDO Canada LLP, as he crafts a messaging marvel using NestJS, TypeScript, Azure, and RabbitMQ</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>microservice</category>
+      <category>rabbit mq</category>
+      <category>messaging queue</category>
+      <category>microsoft azure sdk</category>
+      <category>Piyush97</category>
     </item>
         <item>
       <title>🔥 A Beginner’s Guide to ChatGPT and Ai based Chat bot solutions for individuals and enterprise</title>
@@ -95,15 +117,6 @@
       <category>Piyush97</category>
     </item>
         <item>
-      <title>🔥 A Beginner’s Guide to Hacktoberfest &amp; Winning the schwag 👕</title>
-      <link>https://piyushmehta.com/blog/hacktoberfest/</link>
-      <pubDate>Thu, 01 Oct 2020 00:00:00 GMT</pubDate>
-      <description>What exactly is hacktoberfest❓</description>
-      <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      <category>hacktoberfest</category>
-      <category>Piyush97</category>
-    </item>
-        <item>
       <title>How to make your own blog like this website!</title>
       <link>https://piyushmehta.com/blog/how-to-make-your-own-blog/</link>
       <pubDate>Fri, 15 Jan 2021 00:00:00 GMT</pubDate>
@@ -115,12 +128,24 @@
       <category>tutorial</category>
     </item>
         <item>
-      <title>How to Stay Ahead by Leveraging AI in Your Coding Workflow</title>
-      <link>https://piyushmehta.com/blog/leveraging-ai-in-coding-workflow/</link>
-      <pubDate>Thu, 12 Jun 2025 00:00:00 GMT</pubDate>
-      <description>Discover practical strategies for integrating AI coding assistants into your development process to boost productivity, improve code quality, and accelerate learning while avoiding common pitfalls.</description>
+      <title>🔥 A Beginner’s Guide to Hacktoberfest &amp; Winning the schwag 👕</title>
+      <link>https://piyushmehta.com/blog/hacktoberfest/</link>
+      <pubDate>Thu, 01 Oct 2020 00:00:00 GMT</pubDate>
+      <description>What exactly is hacktoberfest❓</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      
+      <category>hacktoberfest</category>
+      <category>Piyush97</category>
+    </item>
+        <item>
+      <title>What is Event Loop in JavaScript</title>
+      <link>https://piyushmehta.com/blog/What-is-Event-Loop-in-JavaScript/</link>
+      <pubDate>Fri, 25 Sep 2020 00:00:00 GMT</pubDate>
+      <description>JavaScript Event Loop is one of the most fundamental concepts that every developer must aspire to understand. It is also one of the most frequently asked interview questions.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>Javascript</category>
+      <category>Js</category>
+      <category>event loop</category>
+      <category>programming</category>
     </item>
         <item>
       <title>What the Hell is microfrontend?</title>
@@ -135,41 +160,15 @@
       <category>piyush mehta</category>
     </item>
         <item>
-      <title>Migrating a 6-Year-Old Codebase to Astro: A Strategic Architecture Journey</title>
-      <link>https://piyushmehta.com/blog/migrating-legacy-codebase-to-astro/</link>
-      <pubDate>Tue, 03 Jun 2025 00:00:00 GMT</pubDate>
-      <description>A comprehensive deep-dive into migrating a legacy portfolio site to modern Astro 4.x, covering architectural decisions, performance optimizations, and lessons learned from a decade of web development.</description>
+      <title>Monitor Website Uptime using GitHub Actions</title>
+      <link>https://piyushmehta.com/blog/uptime-monitor-ci/</link>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 GMT</pubDate>
+      <description>How to Monitor any website uptime using GitHub Actions for free</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      
-    </item>
-        <item>
-      <title>From Nginx Proxy Manager to SWAG: A Powerful Migration Journey</title>
-      <link>https://piyushmehta.com/blog/migrating-nginx-proxy-manager-to-swag/</link>
-      <pubDate>Sat, 21 Jun 2025 00:00:00 GMT</pubDate>
-      <description>Discover why I migrated from Nginx Proxy Manager to SWAG by LinuxServer.io, the challenges faced, and the transformative benefits that made this switch a game-changer for my self-hosted infrastructure.</description>
-      <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      <category>hosting</category>
-    </item>
-        <item>
-      <title>How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei</title>
-      <link>https://piyushmehta.com/blog/proto-buf/</link>
-      <pubDate>Mon, 02 Mar 2020 00:00:00 GMT</pubDate>
-      <description>How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei!</description>
-      <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      <category>grpc</category>
-      <category>protobuf</category>
-    </item>
-        <item>
-      <title>Building a Hare-raisingly Good Queue-based Messaging System with NestJS, RabbitMQ, and Azure</title>
-      <link>https://piyushmehta.com/blog/rabbit-mq/</link>
-      <pubDate>Thu, 24 Aug 2023 00:00:00 GMT</pubDate>
-      <description>Embark on a tech adventure like no other with \&quot;Building a Hare-raisingly Good Queue-based Messaging System\&quot;! Join Piyush Mehta, Tech Consultant at BDO Canada LLP, as he crafts a messaging marvel using NestJS, TypeScript, Azure, and RabbitMQ</description>
-      <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      <category>microservice</category>
-      <category>rabbit mq</category>
-      <category>messaging queue</category>
-      <category>microsoft azure sdk</category>
-      <category>Piyush97</category>
+      <category>How to</category>
+      <category>github</category>
+      <category>github actions</category>
+      <category>web dev</category>
     </item>
         <item>
       <title>How Do I Stop Feeling Inferior?</title>
@@ -183,31 +182,34 @@
       <category>motivation</category>
     </item>
         <item>
-      <title>Monitor Website Uptime using GitHub Actions</title>
-      <link>https://piyushmehta.com/blog/uptime-monitor-ci/</link>
-      <pubDate>Sun, 19 Jul 2020 00:00:00 GMT</pubDate>
-      <description>How to Monitor any website uptime using GitHub Actions for free</description>
+      <title>Will you be the Kubernetes to My Docker?</title>
+      <link>https://piyushmehta.com/blog/Kubenetes-Docker/</link>
+      <pubDate>Thu, 09 Apr 2020 00:00:00 GMT</pubDate>
+      <description>All about Kubernetes and Docker for a normal Man.</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      <category>How to</category>
-      <category>github</category>
-      <category>github actions</category>
-      <category>web dev</category>
+      <category>kubernetes</category>
+      <category>docker</category>
+      <category>Web</category>
+      <category>devops</category>
     </item>
         <item>
-      <title>Zero-Downtime Database Migration: Scaling from 10M to 100M Users</title>
-      <link>https://piyushmehta.com/blog/zero-downtime-database-migration-at-scale/</link>
-      <pubDate>Sun, 13 Jul 2025 00:00:00 GMT</pubDate>
-      <description>A comprehensive case study of migrating a 50TB PostgreSQL database to support 10x user growth with zero downtime, improved performance, and 40% cost reduction.</description>
+      <title>How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei</title>
+      <link>https://piyushmehta.com/blog/proto-buf/</link>
+      <pubDate>Mon, 02 Mar 2020 00:00:00 GMT</pubDate>
+      <description>How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei!</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
-      <category>database</category>
-      <category>postgresql</category>
-      <category>migration</category>
-      <category>scalability</category>
-      <category>architecture</category>
-      <category>devops</category>
-      <category>performance</category>
-      <category>case study</category>
-      <category>zero downtime</category>
+      <category>grpc</category>
+      <category>protobuf</category>
+    </item>
+        <item>
+      <title>The Silent S in HTTPS</title>
+      <link>https://piyushmehta.com/blog/The-Silent-S-in-HTTPS/</link>
+      <pubDate>Wed, 16 Oct 2019 00:00:00 GMT</pubDate>
+      <description>Why http(s) is not secure?</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>HTTPS</category>
+      <category>web</category>
+      <category>www</category>
     </item>
   </channel>
 </rss>

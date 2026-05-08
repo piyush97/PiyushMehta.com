@@ -5,35 +5,35 @@
  * Generates a comprehensive test report for the OG image generation system
  */
 
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
-const reportDir = path.join(process.cwd(), "test-reports");
-const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+const reportDir = path.join(process.cwd(), 'test-reports');
+const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 
 // Ensure report directory exists
 if (!fs.existsSync(reportDir)) {
   fs.mkdirSync(reportDir, { recursive: true });
 }
 
-console.log("🧪 Generating OG Image Test Report...");
+console.log('🧪 Generating OG Image Test Report...');
 
 // Test configuration
 const testConfig = {
-  baseUrl: "http://localhost:4321",
-  apiEndpoint: "/api/og-enhanced",
+  baseUrl: 'http://localhost:4321',
+  apiEndpoint: '/api/og-enhanced',
   templates: [
-    "modern",
-    "tech",
-    "cyber",
-    "minimal",
-    "terminal",
-    "gradient",
-    "professional",
-    "dark",
-    "blog",
+    'modern',
+    'tech',
+    'cyber',
+    'minimal',
+    'terminal',
+    'gradient',
+    'professional',
+    'dark',
+    'blog',
   ],
-  themes: ["dark", "light", "auto"],
+  themes: ['dark', 'light', 'auto'],
   timeout: 30000,
   maxRetries: 3,
 };
@@ -77,43 +77,43 @@ function formatDuration(ms) {
 }
 
 function formatBytes(bytes) {
-  const sizes = ["B", "KB", "MB", "GB"];
-  if (bytes === 0) return "0 B";
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  if (bytes === 0) return '0 B';
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
   return `${Math.round(bytes / Math.pow(1024, i), 2)} ${sizes[i]}`;
 }
 
 function getTestStatus(success, duration, expectedDuration) {
-  if (!success) return "FAILED";
-  if (duration > expectedDuration * 1.5) return "SLOW";
-  if (duration > expectedDuration) return "WARNING";
-  return "PASSED";
+  if (!success) return 'FAILED';
+  if (duration > expectedDuration * 1.5) return 'SLOW';
+  if (duration > expectedDuration) return 'WARNING';
+  return 'PASSED';
 }
 
 // Test execution functions
 async function runBasicTests() {
-  console.log("Running basic functionality tests...");
+  console.log('Running basic functionality tests...');
 
   const basicTests = [
     {
-      name: "Default Parameters",
+      name: 'Default Parameters',
       url: `${testConfig.baseUrl}${testConfig.apiEndpoint}?title=Test`,
-      expected: { status: 200, contentType: "image/png" },
+      expected: { status: 200, contentType: 'image/png' },
     },
     {
-      name: "Blog Post Content",
+      name: 'Blog Post Content',
       url: `${testConfig.baseUrl}${testConfig.apiEndpoint}?title=Blog%20Post&description=Test%20description&type=article&template=blog&theme=dark`,
-      expected: { status: 200, contentType: "image/png" },
+      expected: { status: 200, contentType: 'image/png' },
     },
     {
-      name: "Project Content",
+      name: 'Project Content',
       url: `${testConfig.baseUrl}${testConfig.apiEndpoint}?title=Project&description=Test%20project&type=project&template=modern&theme=dark`,
-      expected: { status: 200, contentType: "image/png" },
+      expected: { status: 200, contentType: 'image/png' },
     },
     {
-      name: "Empty Title",
+      name: 'Empty Title',
       url: `${testConfig.baseUrl}${testConfig.apiEndpoint}?description=Test%20description&template=modern&theme=dark`,
-      expected: { status: 200, contentType: "image/png" },
+      expected: { status: 200, contentType: 'image/png' },
     },
   ];
 
@@ -128,7 +128,7 @@ async function runBasicTests() {
         duration: Math.random() * 1000 + 500, // Simulate response time
         size: Math.random() * 100000 + 50000, // Simulate image size
         status: 200,
-        contentType: "image/png",
+        contentType: 'image/png',
       };
 
       testResults.functional.basic.push({
@@ -146,7 +146,7 @@ async function runBasicTests() {
     } catch (error) {
       testResults.functional.basic.push({
         name: test.name,
-        status: "FAILED",
+        status: 'FAILED',
         duration: Date.now() - startTime,
         error: error.message,
         url: test.url,
@@ -160,7 +160,7 @@ async function runBasicTests() {
 }
 
 async function runTemplateTests() {
-  console.log("Running template tests...");
+  console.log('Running template tests...');
 
   for (const template of testConfig.templates) {
     const startTime = Date.now();
@@ -171,7 +171,7 @@ async function runTemplateTests() {
         duration: Math.random() * 1500 + 300,
         size: Math.random() * 150000 + 40000,
         status: 200,
-        contentType: "image/png",
+        contentType: 'image/png',
       };
 
       testResults.functional.templates.push({
@@ -190,7 +190,7 @@ async function runTemplateTests() {
       testResults.functional.templates.push({
         name: `Template: ${template}`,
         template: template,
-        status: "FAILED",
+        status: 'FAILED',
         duration: Date.now() - startTime,
         error: error.message,
         passed: false,
@@ -203,7 +203,7 @@ async function runTemplateTests() {
 }
 
 async function runThemeTests() {
-  console.log("Running theme tests...");
+  console.log('Running theme tests...');
 
   for (const theme of testConfig.themes) {
     const startTime = Date.now();
@@ -214,7 +214,7 @@ async function runThemeTests() {
         duration: Math.random() * 1200 + 400,
         size: Math.random() * 120000 + 45000,
         status: 200,
-        contentType: "image/png",
+        contentType: 'image/png',
       };
 
       testResults.functional.themes.push({
@@ -233,7 +233,7 @@ async function runThemeTests() {
       testResults.functional.themes.push({
         name: `Theme: ${theme}`,
         theme: theme,
-        status: "FAILED",
+        status: 'FAILED',
         duration: Date.now() - startTime,
         error: error.message,
         passed: false,
@@ -246,14 +246,14 @@ async function runThemeTests() {
 }
 
 async function runPerformanceTests() {
-  console.log("Running performance tests...");
+  console.log('Running performance tests...');
 
   // Generation performance
   const generationTests = [
-    { name: "Simple Content", complexity: "low", expectedTime: 1000 },
-    { name: "Medium Content", complexity: "medium", expectedTime: 1500 },
-    { name: "Complex Content", complexity: "high", expectedTime: 2000 },
-    { name: "Long Title", complexity: "high", expectedTime: 2500 },
+    { name: 'Simple Content', complexity: 'low', expectedTime: 1000 },
+    { name: 'Medium Content', complexity: 'medium', expectedTime: 1500 },
+    { name: 'Complex Content', complexity: 'high', expectedTime: 2000 },
+    { name: 'Long Title', complexity: 'high', expectedTime: 2500 },
   ];
 
   for (const test of generationTests) {
@@ -276,16 +276,14 @@ async function runPerformanceTests() {
 
   // Caching performance
   const cacheTests = [
-    { name: "First Request", cached: false, expectedTime: 1500 },
-    { name: "Cached Request", cached: true, expectedTime: 100 },
-    { name: "Cache Miss", cached: false, expectedTime: 1500 },
-    { name: "Cache Hit", cached: true, expectedTime: 50 },
+    { name: 'First Request', cached: false, expectedTime: 1500 },
+    { name: 'Cached Request', cached: true, expectedTime: 100 },
+    { name: 'Cache Miss', cached: false, expectedTime: 1500 },
+    { name: 'Cache Hit', cached: true, expectedTime: 50 },
   ];
 
   for (const test of cacheTests) {
-    const duration = test.cached
-      ? Math.random() * 100 + 20
-      : Math.random() * 1500 + 300;
+    const duration = test.cached ? Math.random() * 100 + 20 : Math.random() * 1500 + 300;
 
     testResults.performance.caching.push({
       name: test.name,
@@ -302,14 +300,13 @@ async function runPerformanceTests() {
 
   // Concurrent requests
   const concurrentTest = {
-    name: "Concurrent Requests",
+    name: 'Concurrent Requests',
     requestCount: 10,
     totalTime: Math.random() * 3000 + 1000,
     avgTime: 0,
   };
 
-  concurrentTest.avgTime =
-    concurrentTest.totalTime / concurrentTest.requestCount;
+  concurrentTest.avgTime = concurrentTest.totalTime / concurrentTest.requestCount;
 
   testResults.performance.concurrent.push({
     name: concurrentTest.name,
@@ -326,14 +323,14 @@ async function runPerformanceTests() {
 }
 
 async function runVisualTests() {
-  console.log("Running visual regression tests...");
+  console.log('Running visual regression tests...');
 
   const visualTests = [
-    { name: "Template Consistency", type: "consistency" },
-    { name: "Theme Consistency", type: "consistency" },
-    { name: "Content Length Handling", type: "regression" },
-    { name: "Special Characters", type: "edgeCase" },
-    { name: "Unicode Support", type: "edgeCase" },
+    { name: 'Template Consistency', type: 'consistency' },
+    { name: 'Theme Consistency', type: 'consistency' },
+    { name: 'Content Length Handling', type: 'regression' },
+    { name: 'Special Characters', type: 'edgeCase' },
+    { name: 'Unicode Support', type: 'edgeCase' },
   ];
 
   for (const test of visualTests) {
@@ -343,14 +340,14 @@ async function runVisualTests() {
       name: test.name,
       type: test.type,
       passed: success,
-      status: success ? "PASSED" : "FAILED",
+      status: success ? 'PASSED' : 'FAILED',
       differences: success ? 0 : Math.random() * 5,
       threshold: 0.1,
     };
 
-    if (test.type === "consistency") {
+    if (test.type === 'consistency') {
       testResults.visual.consistency.push(result);
-    } else if (test.type === "regression") {
+    } else if (test.type === 'regression') {
       testResults.visual.regression.push(result);
     } else {
       testResults.visual.edgeCases.push(result);
@@ -363,7 +360,7 @@ async function runVisualTests() {
 }
 
 function generateRecommendations() {
-  console.log("Generating recommendations...");
+  console.log('Generating recommendations...');
 
   const recommendations = [];
 
@@ -372,17 +369,16 @@ function generateRecommendations() {
     ...testResults.performance.generation,
     ...testResults.performance.caching,
     ...testResults.performance.concurrent,
-  ].filter((test) => test.status === "SLOW" || test.status === "WARNING");
+  ].filter((test) => test.status === 'SLOW' || test.status === 'WARNING');
 
   if (slowTests.length > 0) {
     recommendations.push({
-      type: "performance",
-      priority: "high",
-      title: "Performance Optimization",
+      type: 'performance',
+      priority: 'high',
+      title: 'Performance Optimization',
       description: `${slowTests.length} tests showed slower than expected performance. Consider optimizing image generation pipeline.`,
-      impact: "User experience degradation",
-      solution:
-        "Implement caching improvements, optimize template rendering, consider CDN usage",
+      impact: 'User experience degradation',
+      solution: 'Implement caching improvements, optimize template rendering, consider CDN usage',
     });
   }
 
@@ -394,60 +390,56 @@ function generateRecommendations() {
 
   if (failedVisualTests.length > 0) {
     recommendations.push({
-      type: "visual",
-      priority: "medium",
-      title: "Visual Consistency",
+      type: 'visual',
+      priority: 'medium',
+      title: 'Visual Consistency',
       description: `${failedVisualTests.length} visual tests failed. Review template consistency and regression issues.`,
-      impact: "Brand consistency and user experience",
+      impact: 'Brand consistency and user experience',
       solution:
-        "Update visual regression baselines, standardize template designs, improve responsive handling",
+        'Update visual regression baselines, standardize template designs, improve responsive handling',
     });
   }
 
   // Template coverage recommendations
-  const failedTemplateTests = testResults.functional.templates.filter(
-    (test) => !test.passed
-  );
+  const failedTemplateTests = testResults.functional.templates.filter((test) => !test.passed);
 
   if (failedTemplateTests.length > 0) {
     recommendations.push({
-      type: "functionality",
-      priority: "high",
-      title: "Template Functionality",
+      type: 'functionality',
+      priority: 'high',
+      title: 'Template Functionality',
       description: `${failedTemplateTests.length} template tests failed. Critical functionality issues detected.`,
-      impact: "Core feature failure",
-      solution:
-        "Fix template rendering issues, improve error handling, add fallback mechanisms",
+      impact: 'Core feature failure',
+      solution: 'Fix template rendering issues, improve error handling, add fallback mechanisms',
     });
   }
 
   // General recommendations
   recommendations.push({
-    type: "monitoring",
-    priority: "medium",
-    title: "Monitoring & Alerting",
+    type: 'monitoring',
+    priority: 'medium',
+    title: 'Monitoring & Alerting',
     description:
-      "Implement continuous monitoring for OG image generation performance and availability.",
-    impact: "Proactive issue detection",
-    solution:
-      "Set up performance monitoring, error tracking, and automated alerts for failures",
+      'Implement continuous monitoring for OG image generation performance and availability.',
+    impact: 'Proactive issue detection',
+    solution: 'Set up performance monitoring, error tracking, and automated alerts for failures',
   });
 
   recommendations.push({
-    type: "testing",
-    priority: "low",
-    title: "Test Coverage Enhancement",
-    description: "Expand test coverage for edge cases and error conditions.",
-    impact: "Better reliability and robustness",
+    type: 'testing',
+    priority: 'low',
+    title: 'Test Coverage Enhancement',
+    description: 'Expand test coverage for edge cases and error conditions.',
+    impact: 'Better reliability and robustness',
     solution:
-      "Add more edge case tests, implement automated visual regression testing, increase error scenario coverage",
+      'Add more edge case tests, implement automated visual regression testing, increase error scenario coverage',
   });
 
   testResults.recommendations = recommendations;
 }
 
 function generateHTMLReport() {
-  console.log("Generating HTML report...");
+  console.log('Generating HTML report...');
 
   const reportHtml = `
 <!DOCTYPE html>
@@ -517,27 +509,19 @@ function generateHTMLReport() {
             </div>
             <div class="stat-card">
                 <h3>Passed</h3>
-                <div class="stat-value passed">${
-                  testResults.summary.passedTests
-                }</div>
+                <div class="stat-value passed">${testResults.summary.passedTests}</div>
                 <p>${(
-                  (testResults.summary.passedTests /
-                    testResults.summary.totalTests) *
-                  100
+                  (testResults.summary.passedTests / testResults.summary.totalTests) * 100
                 ).toFixed(1)}% success rate</p>
             </div>
             <div class="stat-card">
                 <h3>Failed</h3>
-                <div class="stat-value failed">${
-                  testResults.summary.failedTests
-                }</div>
+                <div class="stat-value failed">${testResults.summary.failedTests}</div>
                 <p>Needs attention</p>
             </div>
             <div class="stat-card">
                 <h3>Test Duration</h3>
-                <div class="stat-value">${formatDuration(
-                  testResults.summary.duration
-                )}</div>
+                <div class="stat-value">${formatDuration(testResults.summary.duration)}</div>
                 <p>Total execution time</p>
             </div>
         </div>
@@ -549,15 +533,11 @@ function generateHTMLReport() {
             <div class="section-content">
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${
-                      (testResults.summary.passedTests /
-                        testResults.summary.totalTests) *
-                      100
+                      (testResults.summary.passedTests / testResults.summary.totalTests) * 100
                     }%"></div>
                 </div>
                 <p>Overall success rate: ${(
-                  (testResults.summary.passedTests /
-                    testResults.summary.totalTests) *
-                  100
+                  (testResults.summary.passedTests / testResults.summary.totalTests) * 100
                 ).toFixed(1)}%</p>
             </div>
         </div>
@@ -572,29 +552,17 @@ function generateHTMLReport() {
                     ${testResults.functional.basic
                       .map(
                         (test) => `
-                        <div class="test-item ${
-                          test.passed ? "passed" : "failed"
-                        }">
+                        <div class="test-item ${test.passed ? 'passed' : 'failed'}">
                             <h4>${test.name}</h4>
-                            <span class="status ${test.status.toLowerCase()}">${
-                          test.status
-                        }</span>
+                            <span class="status ${test.status.toLowerCase()}">${test.status}</span>
                             <div class="test-meta">
-                                <span>Duration: ${formatDuration(
-                                  test.duration
-                                )}</span>
-                                ${
-                                  test.size
-                                    ? `<span>Size: ${formatBytes(
-                                        test.size
-                                      )}</span>`
-                                    : ""
-                                }
+                                <span>Duration: ${formatDuration(test.duration)}</span>
+                                ${test.size ? `<span>Size: ${formatBytes(test.size)}</span>` : ''}
                             </div>
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
 
                 <h3 style="margin-top: 30px;">Template Tests</h3>
@@ -602,23 +570,17 @@ function generateHTMLReport() {
                     ${testResults.functional.templates
                       .map(
                         (test) => `
-                        <div class="test-item ${
-                          test.passed ? "passed" : "failed"
-                        }">
+                        <div class="test-item ${test.passed ? 'passed' : 'failed'}">
                             <h4>${test.name}</h4>
-                            <span class="status ${test.status.toLowerCase()}">${
-                          test.status
-                        }</span>
+                            <span class="status ${test.status.toLowerCase()}">${test.status}</span>
                             <div class="test-meta">
-                                <span>Duration: ${formatDuration(
-                                  test.duration
-                                )}</span>
+                                <span>Duration: ${formatDuration(test.duration)}</span>
                                 <span>Size: ${formatBytes(test.size)}</span>
                             </div>
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
 
                 <h3 style="margin-top: 30px;">Theme Tests</h3>
@@ -626,23 +588,17 @@ function generateHTMLReport() {
                     ${testResults.functional.themes
                       .map(
                         (test) => `
-                        <div class="test-item ${
-                          test.passed ? "passed" : "failed"
-                        }">
+                        <div class="test-item ${test.passed ? 'passed' : 'failed'}">
                             <h4>${test.name}</h4>
-                            <span class="status ${test.status.toLowerCase()}">${
-                          test.status
-                        }</span>
+                            <span class="status ${test.status.toLowerCase()}">${test.status}</span>
                             <div class="test-meta">
-                                <span>Duration: ${formatDuration(
-                                  test.duration
-                                )}</span>
+                                <span>Duration: ${formatDuration(test.duration)}</span>
                                 <span>Size: ${formatBytes(test.size)}</span>
                             </div>
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
             </div>
         </div>
@@ -657,24 +613,18 @@ function generateHTMLReport() {
                     ${testResults.performance.generation
                       .map(
                         (test) => `
-                        <div class="test-item ${
-                          test.passed ? "passed" : "failed"
-                        }">
+                        <div class="test-item ${test.passed ? 'passed' : 'failed'}">
                             <h4>${test.name}</h4>
-                            <span class="status ${test.status.toLowerCase()}">${
-                          test.status
-                        }</span>
+                            <span class="status ${test.status.toLowerCase()}">${test.status}</span>
                             <div class="test-meta">
-                                <span>Duration: ${formatDuration(
-                                  test.duration
-                                )}</span>
+                                <span>Duration: ${formatDuration(test.duration)}</span>
                                 <span>Size: ${formatBytes(test.size)}</span>
                                 <span>Complexity: ${test.complexity}</span>
                             </div>
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
 
                 <h3 style="margin-top: 30px;">Caching Performance</h3>
@@ -682,25 +632,17 @@ function generateHTMLReport() {
                     ${testResults.performance.caching
                       .map(
                         (test) => `
-                        <div class="test-item ${
-                          test.passed ? "passed" : "failed"
-                        }">
+                        <div class="test-item ${test.passed ? 'passed' : 'failed'}">
                             <h4>${test.name}</h4>
-                            <span class="status ${test.status.toLowerCase()}">${
-                          test.status
-                        }</span>
+                            <span class="status ${test.status.toLowerCase()}">${test.status}</span>
                             <div class="test-meta">
-                                <span>Duration: ${formatDuration(
-                                  test.duration
-                                )}</span>
-                                <span>Cached: ${
-                                  test.cached ? "Yes" : "No"
-                                }</span>
+                                <span>Duration: ${formatDuration(test.duration)}</span>
+                                <span>Cached: ${test.cached ? 'Yes' : 'No'}</span>
                             </div>
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
 
                 <h3 style="margin-top: 30px;">Concurrent Performance</h3>
@@ -708,26 +650,18 @@ function generateHTMLReport() {
                     ${testResults.performance.concurrent
                       .map(
                         (test) => `
-                        <div class="test-item ${
-                          test.passed ? "passed" : "failed"
-                        }">
+                        <div class="test-item ${test.passed ? 'passed' : 'failed'}">
                             <h4>${test.name}</h4>
-                            <span class="status ${test.status.toLowerCase()}">${
-                          test.status
-                        }</span>
+                            <span class="status ${test.status.toLowerCase()}">${test.status}</span>
                             <div class="test-meta">
                                 <span>Requests: ${test.requestCount}</span>
-                                <span>Total: ${formatDuration(
-                                  test.totalTime
-                                )}</span>
-                                <span>Avg: ${formatDuration(
-                                  test.avgTime
-                                )}</span>
+                                <span>Total: ${formatDuration(test.totalTime)}</span>
+                                <span>Avg: ${formatDuration(test.avgTime)}</span>
                             </div>
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
             </div>
         </div>
@@ -742,23 +676,17 @@ function generateHTMLReport() {
                     ${testResults.visual.regression
                       .map(
                         (test) => `
-                        <div class="test-item ${
-                          test.passed ? "passed" : "failed"
-                        }">
+                        <div class="test-item ${test.passed ? 'passed' : 'failed'}">
                             <h4>${test.name}</h4>
-                            <span class="status ${test.status.toLowerCase()}">${
-                          test.status
-                        }</span>
+                            <span class="status ${test.status.toLowerCase()}">${test.status}</span>
                             <div class="test-meta">
-                                <span>Differences: ${test.differences.toFixed(
-                                  2
-                                )}%</span>
+                                <span>Differences: ${test.differences.toFixed(2)}%</span>
                                 <span>Threshold: ${test.threshold * 100}%</span>
                             </div>
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
 
                 <h3 style="margin-top: 30px;">Consistency Tests</h3>
@@ -766,23 +694,17 @@ function generateHTMLReport() {
                     ${testResults.visual.consistency
                       .map(
                         (test) => `
-                        <div class="test-item ${
-                          test.passed ? "passed" : "failed"
-                        }">
+                        <div class="test-item ${test.passed ? 'passed' : 'failed'}">
                             <h4>${test.name}</h4>
-                            <span class="status ${test.status.toLowerCase()}">${
-                          test.status
-                        }</span>
+                            <span class="status ${test.status.toLowerCase()}">${test.status}</span>
                             <div class="test-meta">
-                                <span>Differences: ${test.differences.toFixed(
-                                  2
-                                )}%</span>
+                                <span>Differences: ${test.differences.toFixed(2)}%</span>
                                 <span>Threshold: ${test.threshold * 100}%</span>
                             </div>
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
 
                 <h3 style="margin-top: 30px;">Edge Cases</h3>
@@ -790,23 +712,17 @@ function generateHTMLReport() {
                     ${testResults.visual.edgeCases
                       .map(
                         (test) => `
-                        <div class="test-item ${
-                          test.passed ? "passed" : "failed"
-                        }">
+                        <div class="test-item ${test.passed ? 'passed' : 'failed'}">
                             <h4>${test.name}</h4>
-                            <span class="status ${test.status.toLowerCase()}">${
-                          test.status
-                        }</span>
+                            <span class="status ${test.status.toLowerCase()}">${test.status}</span>
                             <div class="test-meta">
-                                <span>Differences: ${test.differences.toFixed(
-                                  2
-                                )}%</span>
+                                <span>Differences: ${test.differences.toFixed(2)}%</span>
                                 <span>Threshold: ${test.threshold * 100}%</span>
                             </div>
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
             </div>
         </div>
@@ -823,9 +739,7 @@ function generateHTMLReport() {
                         <div class="recommendation ${rec.priority}">
                             <h3>${rec.title}</h3>
                             <p><strong>Priority:</strong> ${rec.priority.toUpperCase()}</p>
-                            <p><strong>Description:</strong> ${
-                              rec.description
-                            }</p>
+                            <p><strong>Description:</strong> ${rec.description}</p>
                             <p><strong>Impact:</strong> ${rec.impact}</p>
                             <div class="solution">
                                 <strong>Solution:</strong> ${rec.solution}
@@ -833,7 +747,7 @@ function generateHTMLReport() {
                         </div>
                     `
                       )
-                      .join("")}
+                      .join('')}
                 </div>
             </div>
         </div>
@@ -846,20 +760,14 @@ function generateHTMLReport() {
 </html>
   `;
 
-  const reportPath = path.join(
-    reportDir,
-    `og-image-test-report-${timestamp}.html`
-  );
+  const reportPath = path.join(reportDir, `og-image-test-report-${timestamp}.html`);
   fs.writeFileSync(reportPath, reportHtml);
 
   return reportPath;
 }
 
 function generateJSONReport() {
-  const reportPath = path.join(
-    reportDir,
-    `og-image-test-report-${timestamp}.json`
-  );
+  const reportPath = path.join(reportDir, `og-image-test-report-${timestamp}.json`);
   fs.writeFileSync(reportPath, JSON.stringify(testResults, null, 2));
   return reportPath;
 }
@@ -882,36 +790,32 @@ async function main() {
     const htmlReport = generateHTMLReport();
     const jsonReport = generateJSONReport();
 
-    console.log("\n📊 Test Report Generated Successfully!");
-    console.log("═══════════════════════════════════════");
+    console.log('\n📊 Test Report Generated Successfully!');
+    console.log('═══════════════════════════════════════');
     console.log(`Total Tests: ${testResults.summary.totalTests}`);
     console.log(
       `Passed: ${testResults.summary.passedTests} (${(
-        (testResults.summary.passedTests / testResults.summary.totalTests) *
-        100
+        (testResults.summary.passedTests / testResults.summary.totalTests) * 100
       ).toFixed(1)}%)`
     );
     console.log(
       `Failed: ${testResults.summary.failedTests} (${(
-        (testResults.summary.failedTests / testResults.summary.totalTests) *
-        100
+        (testResults.summary.failedTests / testResults.summary.totalTests) * 100
       ).toFixed(1)}%)`
     );
     console.log(`Duration: ${formatDuration(testResults.summary.duration)}`);
-    console.log("\n📄 Report Files:");
+    console.log('\n📄 Report Files:');
     console.log(`HTML: ${htmlReport}`);
     console.log(`JSON: ${jsonReport}`);
 
     if (testResults.summary.failedTests > 0) {
-      console.log("\n⚠️  Some tests failed. Check the report for details.");
-      console.log(
-        "🔧 Review the recommendations section for improvement suggestions."
-      );
+      console.log('\n⚠️  Some tests failed. Check the report for details.');
+      console.log('🔧 Review the recommendations section for improvement suggestions.');
     } else {
-      console.log("\n✅ All tests passed! Great work on the OG image system.");
+      console.log('\n✅ All tests passed! Great work on the OG image system.');
     }
   } catch (error) {
-    console.error("❌ Error generating test report:", error);
+    console.error('❌ Error generating test report:', error);
     process.exit(1);
   }
 }

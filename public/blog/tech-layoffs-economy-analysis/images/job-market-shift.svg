@@ -1,0 +1,76 @@
+<svg width="860" height="360" viewBox="0 0 860 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117"/>
+      <stop offset="100%" style="stop-color:#161b22"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2ecc71"/>
+      <stop offset="100%" style="stop-color:#27ae60"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff4757"/>
+      <stop offset="100%" style="stop-color:#c0392b"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="860" height="360" rx="12" fill="url(#bg)"/>
+  <rect width="860" height="360" rx="12" fill="none" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Title -->
+  <text x="430" y="38" fill="#e6edf3" font-family="Arial, sans-serif" font-size="17" font-weight="bold" text-anchor="middle">Software Engineering Job Market: Then vs Now</text>
+  <line x1="80" y1="50" x2="780" y2="50" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Left panel: 2021 (boom) -->
+  <rect x="60" y="65" width="340" height="260" rx="10" fill="#0d1117" stroke="#2ecc71" stroke-width="1.5"/>
+  <text x="230" y="90" fill="#2ecc71" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle">2021 — Boom Era 🚀</text>
+
+  <!-- Job openings (3 per candidate) -->
+  <text x="100" y="118" fill="#6e7681" font-family="Arial" font-size="12">Job openings per candidate:</text>
+  <text x="100" y="148" fill="#2ecc71" font-family="Arial" font-size="36" font-weight="900">3:1</text>
+  <text x="200" y="148" fill="#8b949e" font-family="Arial" font-size="14">jobs per engineer</text>
+
+  <!-- Visual bars -->
+  <text x="100" y="180" fill="#6e7681" font-family="Arial" font-size="11">Openings</text>
+  <rect x="100" y="185" width="260" height="18" rx="4" fill="#2ecc71" opacity="0.8"/>
+  <text x="365" y="198" fill="#2ecc71" font-family="Arial" font-size="11" text-anchor="end">300 open roles</text>
+
+  <text x="100" y="220" fill="#6e7681" font-family="Arial" font-size="11">Candidates</text>
+  <rect x="100" y="225" width="87" height="18" rx="4" fill="#3b82f6" opacity="0.8"/>
+  <text x="365" y="238" fill="#3b82f6" font-family="Arial" font-size="11" text-anchor="end">100 applicants</text>
+
+  <!-- Conditions -->
+  <rect x="80" y="260" width="300" height="50" rx="6" fill="#0a1628" stroke="#2ecc71" stroke-width="0.5"/>
+  <text x="230" y="279" fill="#2ecc71" font-family="Arial" font-size="12" text-anchor="middle">✓ Multiple competing offers</text>
+  <text x="230" y="298" fill="#2ecc71" font-family="Arial" font-size="12" text-anchor="middle">✓ Remote work negotiable</text>
+
+  <!-- VS divider -->
+  <text x="430" y="200" fill="#484f58" font-family="Arial" font-size="28" font-weight="bold" text-anchor="middle">VS</text>
+  <line x1="430" y1="80" x2="430" y2="310" stroke="#30363d" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- Right panel: 2024 (bust) -->
+  <rect x="460" y="65" width="340" height="260" rx="10" fill="#0d1117" stroke="#ff4757" stroke-width="1.5"/>
+  <text x="630" y="90" fill="#ff4757" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle">2024 — Reset Era 📉</text>
+
+  <!-- Candidate to job ratio reversed -->
+  <text x="500" y="118" fill="#6e7681" font-family="Arial" font-size="12">Candidates per job opening:</text>
+  <text x="500" y="148" fill="#ff4757" font-family="Arial" font-size="36" font-weight="900">3:1</text>
+  <text x="600" y="148" fill="#8b949e" font-family="Arial" font-size="14">engineers per job</text>
+
+  <!-- Visual bars reversed -->
+  <text x="500" y="180" fill="#6e7681" font-family="Arial" font-size="11">Openings</text>
+  <rect x="500" y="185" width="87" height="18" rx="4" fill="#ff4757" opacity="0.7"/>
+  <text x="765" y="198" fill="#ff4757" font-family="Arial" font-size="11" text-anchor="end">100 open roles</text>
+
+  <text x="500" y="220" fill="#6e7681" font-family="Arial" font-size="11">Candidates</text>
+  <rect x="500" y="225" width="260" height="18" rx="4" fill="#f1c40f" opacity="0.7"/>
+  <text x="765" y="238" fill="#f1c40f" font-family="Arial" font-size="11" text-anchor="end">300 applicants</text>
+
+  <!-- Conditions -->
+  <rect x="480" y="260" width="300" height="50" rx="6" fill="#1a0a0a" stroke="#ff4757" stroke-width="0.5"/>
+  <text x="630" y="279" fill="#ff4757" font-family="Arial" font-size="12" text-anchor="middle">✗ Senior engineers in mid roles</text>
+  <text x="630" y="298" fill="#ff4757" font-family="Arial" font-size="12" text-anchor="middle">✗ Offer rescissions common</text>
+
+  <!-- Source -->
+  <text x="430" y="350" fill="#484f58" font-family="Arial" font-size="10" text-anchor="middle">Source: LinkedIn Workforce Report, Indeed Hiring Lab, Bureau of Labor Statistics</text>
+</svg>

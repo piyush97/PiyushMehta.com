@@ -9,7 +9,7 @@
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
@@ -30,12 +30,6 @@
       "@/scripts/*": ["scripts/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "**/*.astro"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*", "**/*.astro", "sentry.*.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }

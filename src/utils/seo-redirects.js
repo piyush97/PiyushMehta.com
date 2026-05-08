@@ -8,7 +8,7 @@
 export function handleSeoRedirects(request) {
   const url = new URL(request.url);
   const path = url.pathname;
-  
+
   // Remove trailing slashes (except for root)
   if (path.length > 1 && path.endsWith('/')) {
     return new Response(null, {
@@ -18,7 +18,7 @@ export function handleSeoRedirects(request) {
       },
     });
   }
-  
+
   // Enforce HTTPS and www subdomain removal
   if (url.hostname.startsWith('www.')) {
     const newUrl = new URL(request.url);
@@ -30,7 +30,7 @@ export function handleSeoRedirects(request) {
       },
     });
   }
-  
+
   // Add more redirect rules as needed
   const redirects = {
     '/cv': '/resume',
@@ -40,7 +40,7 @@ export function handleSeoRedirects(request) {
     '/piyush-mehta': '/about',
     '/piyush': '/about',
   };
-  
+
   if (redirects[path]) {
     return new Response(null, {
       status: 301,
@@ -49,7 +49,7 @@ export function handleSeoRedirects(request) {
       },
     });
   }
-  
+
   // Handle old blog post URLs (if they were previously different format)
   if (path.match(/^\/posts\/(.+)$/)) {
     const slug = path.replace('/posts/', '');
@@ -60,7 +60,7 @@ export function handleSeoRedirects(request) {
       },
     });
   }
-  
+
   // Continue with normal request processing
   return null;
 }
@@ -69,11 +69,12 @@ export function handleSeoRedirects(request) {
 export function getCanonicalUrl(path) {
   // Ensure path starts with a slash
   const formattedPath = path.startsWith('/') ? path : `/${path}`;
-  
+
   // Remove trailing slash except for homepage
-  const cleanPath = formattedPath.length > 1 && formattedPath.endsWith('/')
-    ? formattedPath.slice(0, -1)
-    : formattedPath;
-    
+  const cleanPath =
+    formattedPath.length > 1 && formattedPath.endsWith('/')
+      ? formattedPath.slice(0, -1)
+      : formattedPath;
+
   return `https://piyushmehta.com${cleanPath}`;
 }

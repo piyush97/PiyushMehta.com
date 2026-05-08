@@ -1,47 +1,340 @@
 ---
 import { getCollection } from 'astro:content';
-import BlogFilter from '../components/BlogFilter';
+import BlogFilter from '../components/BlogFilter.astro';
+import { writingHighlights } from '../data/portfolio';
+import socialCard from '../images/social.jpg';
 import Layout from '../layouts/Layout.astro';
 
 const allPosts = await getCollection('blog');
+const toPostSlug = (id: string) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
+
+const toPlainText = (value: string) =>
+  value
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`[^`]*`/g, ' ')
+    .replace(/!\[[^\]]*]\([^)]+\)/g, ' ')
+    .replace(/\[([^\]]+)]\([^)]+\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/[*_~>#-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const createExcerpt = (post: { data: { description?: string }; body?: string }) => {
+  if (post.data.description?.trim()) {
+    return post.data.description.trim();
+  }
+
+  const plain = toPlainText(post.body ?? '');
+  if (!plain) {
+    return 'Technical notes, implementation details, and lessons from production systems.';
+  }
+
+  return plain.slice(0, 180) + (plain.length > 180 ? '...' : '');
+};
+
+const calculateReadingTime = (post: { body?: string; data: { description?: string } }) => {
+  const plain = toPlainText(post.body ?? post.data.description ?? '');
+  const words = plain ? plain.split(' ').length : 0;
+  return Math.max(1, Math.ceil(words / 200));
+};
+
 const publishedPosts = allPosts
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 // Prepare posts data for the BlogFilter component
 const postsForFilter = publishedPosts.map((post) => ({
-  id: post.slug,
+  id: toPostSlug(post.id),
   title: post.data.title,
-  excerpt: post.data.description,
+  excerpt: createExcerpt(post),
   date: post.data.date.toISOString(),
-  slug: post.slug,
+  slug: toPostSlug(post.id),
   categories: post.data.tags || [],
-  readingTime: Math.ceil((post.data.description?.length || 0) / 200) || 5,
+  readingTime: calculateReadingTime(post),
 }));
+
+const avgReadingTime = postsForFilter.length
+  ? Math.round(
+      postsForFilter.reduce((total, post) => total + post.readingTime, 0) / postsForFilter.length
+    )
+  : 0;
+const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).size;
 ---
 
 <Layout
-   title="Blog - Piyush Mehta"
-   description="Articles about software engineering, web development, and technology"
-   type="website"
-   ogTemplate="blog"
-   ogTheme="dark"
- >
-  <div class="page-container">
-    <div class="container-base">
-      <!-- Header -->
-      <header class="text-center mb-12">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">
-          <span class="text-gradient">Blog</span>
-        </h1>
-        <p class="text-xl text-light-300 max-w-2xl mx-auto">
-          Thoughts on software development, technology, and the art of building
-          great products.
-        </p>
-      </header>
-
-      <!-- Interactive Blog Filter -->
-      <BlogFilter client:load posts={postsForFilter} />
+  title="Writing - Piyush Mehta"
+  description="Technical writing from Piyush Mehta on software architecture, web platforms, AI workflows, migration strategy, and developer tooling."
+  image={socialCard.src}
+  type="website"
+  ogTemplate="blog"
+  ogTheme="dark"
+>
+  <section class="writing-hero" data-reveal>
+    <span
+      class="writing-hero__accent writing-hero__accent--west"
+      aria-hidden="true"
+      data-parallax
+      data-parallax-speed="0.1"
+    ></span>
+    <span
+      class="writing-hero__accent writing-hero__accent--south"
+      aria-hidden="true"
+      data-parallax
+      data-parallax-speed="0.16"
+    ></span>
+    <div data-reveal data-reveal-delay="30">
+      <p class="eyebrow" data-hero-eyebrow>Technical Writing</p>
+      <h1 data-hero-title>How I think through systems in public.</h1>
+      <p>
+        Essays, implementation notes, and field reports about architecture, product engineering,
+        platform reliability, AI workflows, and the human work of making software hold together.
+      </p>
     </div>
-  </div>
+    <aside
+      aria-label="Writing themes"
+      data-reveal
+      data-reveal-delay="120"
+      data-parallax
+      data-parallax-speed="0.07"
+    >
+      <span>{publishedPosts.length} published pieces</span>
+      <span>{avgReadingTime} min avg read</span>
+      <span>{uniqueThemes} themes tracked</span>
+      <strong>Current focus</strong>
+      <ul>
+        <li>Architecture decisions under real constraints</li>
+        <li>Migration plans that reduce product risk</li>
+        <li>Frontend systems that stay fast and maintainable</li>
+        <li>AI workflows that respect trust boundaries</li>
+      </ul>
+    </aside>
+  </section>
+
+  <section class="writing-featured" aria-label="Featured writing">
+    <div class="section-heading" data-reveal data-reveal-delay="20">
+      <p class="eyebrow">Start Here</p>
+      <h2>Representative thinking.</h2>
+      <p>
+        These pieces are useful signals for how I explain tradeoffs, document decisions, and turn
+        ambiguous technical work into something teams can act on.
+      </p>
+    </div>
+    <div class="featured-grid">
+      {writingHighlights.map((post, index) => (
+        <article data-reveal data-reveal-stagger={String(index * 80)}>
+          <span>{post.theme}</span>
+          <h3><a href={post.href}>{post.title}</a></h3>
+          <p>{post.description}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="writing-index" aria-label="All writing">
+    <div class="section-heading" data-reveal data-reveal-delay="20">
+      <p class="eyebrow">Archive</p>
+      <h2>Browse the full library.</h2>
+    </div>
+    <div data-reveal data-reveal-delay="90">
+      <BlogFilter posts={postsForFilter} />
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .writing-hero,
+  .writing-featured,
+  .writing-index {
+    width: min(1120px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .writing-hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: end;
+    padding-block: clamp(4rem, 7vw, 5.5rem);
+  }
+
+  .writing-hero__accent {
+    position: absolute;
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.35;
+  }
+
+  .writing-hero__accent--west {
+    left: clamp(-2.2rem, -2vw, -0.8rem);
+    top: clamp(2rem, 7vw, 5rem);
+    width: clamp(5rem, 13vw, 9rem);
+    height: clamp(5rem, 13vw, 9rem);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.35);
+    background:
+      radial-gradient(circle at 30% 30%, rgba(var(--color-accent-rgb), 0.2), transparent 65%),
+      rgba(var(--color-accent-rgb), 0.05);
+  }
+
+  .writing-hero__accent--south {
+    right: clamp(0.4rem, 3vw, 2.2rem);
+    bottom: clamp(-1.4rem, 0vw, 0rem);
+    width: clamp(4.5rem, 10vw, 7rem);
+    height: clamp(4.5rem, 10vw, 7rem);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.24);
+    background: rgba(var(--color-accent-rgb), 0.1);
+  }
+
+  .writing-hero h1,
+  .section-heading h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 4.8rem;
+    line-height: 0.98;
+    letter-spacing: 0;
+  }
+
+  .writing-hero h1 {
+    max-width: 13ch;
+  }
+
+  .writing-hero p,
+  .section-heading p,
+  .featured-grid p {
+    color: var(--color-text-secondary);
+    line-height: 1.75;
+  }
+
+  .writing-hero p {
+    max-width: 48rem;
+    font-size: 1.15rem;
+  }
+
+  .eyebrow {
+    margin: 0 0 1rem;
+    color: var(--color-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .writing-hero aside {
+    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
+    padding: 1.25rem;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+  }
+
+  .writing-hero aside span {
+    display: block;
+    color: var(--color-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .writing-hero aside strong {
+    display: block;
+    margin-top: 0.8rem;
+    color: var(--color-text-primary);
+    font-size: 1.25rem;
+  }
+
+  .writing-hero aside ul {
+    display: grid;
+    gap: 0.7rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .writing-hero aside li {
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  .writing-featured,
+  .writing-index {
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+  }
+
+  .section-heading {
+    margin-bottom: 2rem;
+  }
+
+  .section-heading h2 {
+    max-width: 12ch;
+    font-size: clamp(2.6rem, 6vw, 4.2rem);
+  }
+
+  .section-heading p {
+    max-width: 44rem;
+    font-size: 1.05rem;
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--color-card-border);
+    background: var(--color-card-border);
+  }
+
+  .featured-grid article {
+    min-height: 100%;
+    background: var(--color-surface-raised);
+    padding: clamp(1.15rem, 2.4vw, 1.7rem);
+  }
+
+  .featured-grid span {
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .featured-grid h3 {
+    margin: 0.8rem 0;
+    color: var(--color-text-primary);
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .featured-grid a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .featured-grid a:hover {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 860px) {
+    .writing-hero {
+      grid-template-columns: 1fr;
+      padding-block: 3.5rem;
+    }
+
+    .featured-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .writing-hero,
+    .writing-featured,
+    .writing-index {
+      width: min(100% - 1rem, 1120px);
+    }
+
+    .writing-hero h1 {
+      font-size: 3rem;
+    }
+  }
+</style>

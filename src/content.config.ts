@@ -1,12 +1,14 @@
-import { defineCollection, z } from 'astro:content';
+import { z } from "astro/zod";
+import { defineCollection } from "astro:content";
+import { glob } from "astro/loaders";
 
 const blog = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/blog" }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
     date: z.date(),
-    author: z.string().default('Piyush Mehta'),
+    author: z.string().default("Piyush Mehta"),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
     image: z
@@ -19,8 +21,11 @@ const blog = defineCollection({
       })
       .optional(),
     banner: z.string().optional(),
-    ogTemplate: z.enum(['default', 'minimal', 'tech', 'blog', 'modern', 'professional']).default('default').optional(),
-    ogTheme: z.enum(['dark', 'light', 'retro']).default('dark').optional(),
+    ogTemplate: z
+      .enum(["default", "minimal", "tech", "blog", "modern", "professional"])
+      .default("default")
+      .optional(),
+    ogTheme: z.enum(["dark", "light", "retro"]).default("dark").optional(),
   }),
 });
 

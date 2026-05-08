@@ -1,0 +1,92 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="404 – Page Not Found · Piyush Mehta"
+  description="This page doesn't exist."
+  noindex={true}
+>
+  <section class="not-found">
+    <p class="eyebrow">404</p>
+    <h1>Page not found.</h1>
+    <p class="subtitle">
+      The URL you followed doesn't exist, was moved, or never existed.
+    </p>
+    <nav aria-label="Recovery links">
+      <a href="/">Home</a>
+      <a href="/blog">Writing</a>
+      <a href="/projects">Projects</a>
+    </nav>
+  </section>
+</Layout>
+
+<style>
+  .not-found {
+    width: min(640px, calc(100% - 2rem));
+    margin-inline: auto;
+    padding-block: clamp(6rem, 15vw, 10rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--color-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: clamp(2.8rem, 8vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    max-width: 36rem;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  nav a {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid var(--color-card-border);
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color 160ms, color 160ms;
+  }
+
+  nav a:first-child {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+  }
+
+  nav a:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  nav a:first-child:hover {
+    opacity: 0.88;
+    color: #fff;
+  }
+</style>

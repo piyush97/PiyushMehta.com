@@ -15,7 +15,7 @@ interface TimelineEvent {
 
 const MigrationTimeline: React.FC = () => {
   const [selectedHour, setSelectedHour] = useState<number>(0);
-  
+
   const timelineData: TimelineEvent[] = [
     {
       time: '2:00 AM',
@@ -27,13 +27,13 @@ const MigrationTimeline: React.FC = () => {
         'Ran comprehensive data validation script',
         'Enabled maintenance mode for write operations',
         'Notified stakeholders of cutover start',
-        'Verified all monitoring systems operational'
+        'Verified all monitoring systems operational',
       ],
       metrics: {
         replicationLag: '0.8s',
         connections: '45/200',
-        responseTime: '2.1s'
-      }
+        responseTime: '2.1s',
+      },
     },
     {
       time: '3:00 AM',
@@ -45,13 +45,13 @@ const MigrationTimeline: React.FC = () => {
         'Modified feature flags to route 100% traffic',
         'Performed rolling restart of application servers',
         'Validated new connection establishment',
-        'Confirmed zero connection errors'
+        'Confirmed zero connection errors',
       ],
       metrics: {
         replicationLag: 'N/A',
         connections: '52/200',
-        responseTime: '1.9s'
-      }
+        responseTime: '1.9s',
+      },
     },
     {
       time: '4:00 AM',
@@ -63,13 +63,13 @@ const MigrationTimeline: React.FC = () => {
         'Implemented emergency connection scaling',
         'Ran post-migration validation suite',
         'Identified and resolved cache inconsistencies',
-        'Confirmed all critical user flows working'
+        'Confirmed all critical user flows working',
       ],
       metrics: {
         replicationLag: 'N/A',
         connections: '89/200',
-        responseTime: '0.9s'
-      }
+        responseTime: '0.9s',
+      },
     },
     {
       time: '5:00 AM',
@@ -81,33 +81,43 @@ const MigrationTimeline: React.FC = () => {
         'Created missing performance indexes',
         'Configured enhanced monitoring alerts',
         'Warmed critical application caches',
-        'Validated business metrics alignment'
+        'Validated business metrics alignment',
       ],
       metrics: {
         replicationLag: 'N/A',
         connections: '61/200',
-        responseTime: '0.7s'
-      }
-    }
+        responseTime: '0.7s',
+      },
+    },
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-500';
-      case 'in-progress': return 'bg-blue-500';
-      case 'pending': return 'bg-gray-400';
-      case 'critical': return 'bg-orange-500';
-      default: return 'bg-gray-400';
+      case 'completed':
+        return 'bg-green-500';
+      case 'in-progress':
+        return 'bg-blue-500';
+      case 'pending':
+        return 'bg-gray-400';
+      case 'critical':
+        return 'bg-orange-500';
+      default:
+        return 'bg-gray-400';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return '✓';
-      case 'in-progress': return '⟳';
-      case 'pending': return '○';
-      case 'critical': return '⚠';
-      default: return '○';
+      case 'completed':
+        return '✓';
+      case 'in-progress':
+        return '⟳';
+      case 'pending':
+        return '○';
+      case 'critical':
+        return '⚠';
+      default:
+        return '○';
     }
   };
 
@@ -116,7 +126,7 @@ const MigrationTimeline: React.FC = () => {
       <h3 className="text-xl font-bold text-text-primary mb-6">
         Migration Cutover Timeline (4-Hour Window)
       </h3>
-      
+
       {/* Timeline Navigation */}
       <div className="flex space-x-2 mb-6 overflow-x-auto">
         {timelineData.map((event, index) => (
@@ -138,16 +148,16 @@ const MigrationTimeline: React.FC = () => {
       {/* Selected Hour Details */}
       <div className="bg-card-bg rounded-lg p-6 border border-card-border">
         <div className="flex items-center mb-4">
-          <div className={`w-8 h-8 rounded-full ${getStatusColor(timelineData[selectedHour].status)} flex items-center justify-center text-white font-bold mr-3`}>
+          <div
+            className={`w-8 h-8 rounded-full ${getStatusColor(timelineData[selectedHour].status)} flex items-center justify-center text-white font-bold mr-3`}
+          >
             {getStatusIcon(timelineData[selectedHour].status)}
           </div>
           <div>
             <h4 className="text-lg font-semibold text-text-primary">
               {timelineData[selectedHour].title}
             </h4>
-            <p className="text-text-secondary">
-              {timelineData[selectedHour].description}
-            </p>
+            <p className="text-text-secondary">{timelineData[selectedHour].description}</p>
           </div>
         </div>
 
@@ -180,7 +190,10 @@ const MigrationTimeline: React.FC = () => {
           <h5 className="font-semibold text-text-primary">Actions Performed:</h5>
           <ul className="space-y-2">
             {timelineData[selectedHour].details.map((detail, index) => (
-              <li key={`detail-${timelineData[selectedHour].time}-${index}`} className="flex items-start">
+              <li
+                key={`detail-${timelineData[selectedHour].time}-${index}`}
+                className="flex items-start"
+              >
                 <div className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0"></div>
                 <span className="text-text-secondary">{detail}</span>
               </li>
@@ -196,8 +209,9 @@ const MigrationTimeline: React.FC = () => {
               <span className="font-semibold text-orange-800">Critical Issue Resolved</span>
             </div>
             <p className="text-orange-700 text-sm">
-              Connection pool exhaustion detected and resolved within 15 minutes using emergency scaling procedures. 
-              This demonstrates the importance of having detailed rollback and scaling plans ready.
+              Connection pool exhaustion detected and resolved within 15 minutes using emergency
+              scaling procedures. This demonstrates the importance of having detailed rollback and
+              scaling plans ready.
             </p>
           </div>
         )}
@@ -212,7 +226,7 @@ const MigrationTimeline: React.FC = () => {
           </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
+          <div
             className="bg-accent h-2 rounded-full transition-all duration-300"
             style={{ width: `${((selectedHour + 1) / timelineData.length) * 100}%` }}
           ></div>
