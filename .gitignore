@@ -67,4 +67,5 @@ examples/**/env.d.ts
 tests/*.ts-snapshots
 .agents/*
 .omx/*
-.playwright-mcp/*
+.playwright-mcp/*env.d.ts
+src/varlock.env.d.ts

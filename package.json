@@ -47,6 +47,7 @@
     "@types/react-dom": "^19.2.3",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.37.0",
+    "@varlock/astro-integration": "^1.0.2",
     "@vercel/og": "^0.11.1",
     "@vercel/speed-insights": "^2.0.0",
     "astro": "^6.3.1",
@@ -57,7 +58,8 @@
     "react-dom": "^19.2.5",
     "resend": "^6.12.2",
     "satori": "^0.26.0",
-    "tailwindcss": "^4.2.4"
+    "tailwindcss": "^4.2.4",
+    "varlock": "^1.1.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",

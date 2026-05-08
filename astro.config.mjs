@@ -4,6 +4,7 @@ import sitemap from "@astrojs/sitemap";
 import vercel from "@astrojs/vercel";
 import sentry from "@sentry/astro";
 import tailwindcss from "@tailwindcss/vite";
+import varlock from "@varlock/astro-integration";
 import { defineConfig } from "astro/config";
 
 const isProductionBuild = process.env.NODE_ENV === "production";
@@ -20,6 +21,7 @@ export default defineConfig({
     defaultStrategy: "hover",
   },
   integrations: [
+    varlock(),
     sentry({
       enabled: {
         client: hasClientSentryDsn,
