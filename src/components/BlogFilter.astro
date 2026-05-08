@@ -38,9 +38,9 @@ const formatDate = (dateString: string) =>
       />
     </div>
 
-    <label>
+    <label for="blog-filter-category">
       Theme
-      <select data-filter-category>
+      <select id="blog-filter-category" data-filter-category>
         {categories.map((category) => (
           <option value={category}>
             {category === 'all' ? 'All themes' : category}
@@ -49,18 +49,18 @@ const formatDate = (dateString: string) =>
       </select>
     </label>
 
-    <label>
+    <label for="blog-filter-sort">
       Sort
-      <select data-filter-sort>
+      <select id="blog-filter-sort" data-filter-sort>
         <option value="date">Date</option>
         <option value="title">Title</option>
         <option value="readingTime">Read time</option>
       </select>
     </label>
 
-    <label>
+    <label for="blog-filter-order">
       Direction
-      <select data-filter-order>
+      <select id="blog-filter-order" data-filter-order>
         <option value="desc">Newest first</option>
         <option value="asc">Oldest first</option>
       </select>
