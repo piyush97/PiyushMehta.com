@@ -28,6 +28,8 @@ export default defineConfig({
       sourceMapsUploadOptions: {
         enabled: isProductionBuild && hasSentryAuth,
         telemetry: false,
+        assets: ["dist/**/*.js", "dist/**/*.mjs"],
+        filesToDeleteAfterUpload: ["dist/**/*.map"],
       },
     }),
     mdx(),
@@ -59,6 +61,9 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      sourcemap: isProductionBuild ? "hidden" : false,
+    },
     assetsInclude: [
       "**/*.png",
       "**/*.jpg",
