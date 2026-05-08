@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "concurrently --kill-others-on-fail \"node scripts/extract-critical-css.mjs\" \"node scripts/migrate-images-to-public.mjs\" && astro build && concurrently --kill-others-on-fail \"node scripts/run-pagefind.mjs\" \"node scripts/generate-enhanced-sitemap.mjs\" \"node scripts/generate-static-rss.mjs\"",
+    "build": "bunx varlock typegen && concurrently --kill-others-on-fail \"node scripts/extract-critical-css.mjs\" \"node scripts/migrate-images-to-public.mjs\" && astro build && concurrently --kill-others-on-fail \"node scripts/run-pagefind.mjs\" \"node scripts/generate-enhanced-sitemap.mjs\" \"node scripts/generate-static-rss.mjs\"",
     "preview": "astro preview",
     "astro": "astro",
     "migrate:images": "node scripts/migrate-images-to-public.mjs",
