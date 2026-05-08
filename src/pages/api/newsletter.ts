@@ -342,7 +342,7 @@ async function isRateLimited(ip: string): Promise<boolean> {
       } else {
         // Upstash Redis
         if (!redisClient.multi) {
-          return false;
+          throw new Error('Redis client missing multi() — falling back to in-memory rate limit');
         }
 
         const [count] = await redisClient
