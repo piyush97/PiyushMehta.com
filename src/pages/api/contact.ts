@@ -34,10 +34,23 @@ function escapeHtml(s: string) {
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   try {
-    // CSRF: only accept requests from our own origin
-    const origin = request.headers.get('origin') ?? request.headers.get('referer') ?? '';
-    const allowed = ['https://piyushmehta.com', 'http://localhost:4321', 'http://localhost:3000'];
-    if (!allowed.some((o) => origin.startsWith(o))) {
+    // CSRF: only accept requests from our own origin (exact match to prevent startsWith bypass)
+    const rawOrigin = request.headers.get('origin');
+    const rawReferer = request.headers.get('referer');
+    let requestOrigin = rawOrigin ?? '';
+    if (!requestOrigin && rawReferer) {
+      try {
+        requestOrigin = new URL(rawReferer).origin;
+      } catch {
+        requestOrigin = '';
+      }
+    }
+    const allowed = new Set([
+      'https://piyushmehta.com',
+      'http://localhost:4321',
+      'http://localhost:3000',
+    ]);
+    if (!allowed.has(requestOrigin)) {
       return json({ error: 'Forbidden.' }, 403);
     }
 
