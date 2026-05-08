@@ -10,6 +10,6 @@ if (dsn) {
     release: import.meta.env.PUBLIC_VERCEL_GIT_COMMIT_SHA,
     replaysOnErrorSampleRate: 1,
     replaysSessionSampleRate: 0.1,
-    tracesSampleRate: 1,
+    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1,
   });
 }

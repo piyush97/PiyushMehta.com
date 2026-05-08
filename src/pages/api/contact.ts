@@ -5,8 +5,16 @@ export const prerender = false;
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
+function pruneExpired(): void {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitMap) {
+    if (now > entry.resetAt) rateLimitMap.delete(key);
+  }
+}
+
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
+  if (rateLimitMap.size > 1000) pruneExpired();
   const entry = rateLimitMap.get(ip);
   if (!entry || now > entry.resetAt) {
     rateLimitMap.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
