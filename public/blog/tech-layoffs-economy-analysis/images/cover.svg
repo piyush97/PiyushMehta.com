@@ -1,0 +1,123 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117"/>
+      <stop offset="50%" style="stop-color:#161b22"/>
+      <stop offset="100%" style="stop-color:#1c1c2e"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff4757"/>
+      <stop offset="100%" style="stop-color:#c0392b"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff9f43"/>
+      <stop offset="100%" style="stop-color:#e67e22"/>
+    </linearGradient>
+    <linearGradient id="barFall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff4757;stop-opacity:0.9"/>
+      <stop offset="100%" style="stop-color:#c0392b;stop-opacity:0.4"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle grid -->
+  <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+    <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#ffffff" stroke-width="0.3" opacity="0.07"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Falling bar chart (right side decoration) -->
+  <g opacity="0.5">
+    <!-- Bar 2020 - growing -->
+    <rect x="740" y="340" width="55" height="120" fill="#2ecc71" opacity="0.6" rx="3"/>
+    <text x="767" y="335" fill="#2ecc71" font-family="Arial" font-size="11" text-anchor="middle" opacity="0.8">2020</text>
+    <!-- Bar 2021 - peak -->
+    <rect x="810" y="240" width="55" height="220" fill="#2ecc71" opacity="0.7" rx="3"/>
+    <text x="837" y="235" fill="#2ecc71" font-family="Arial" font-size="11" text-anchor="middle" opacity="0.8">2021</text>
+    <!-- Bar 2022 - crash -->
+    <rect x="880" y="310" width="55" height="150" fill="url(#redGrad)" opacity="0.8" rx="3"/>
+    <text x="907" y="305" fill="#ff4757" font-family="Arial" font-size="11" text-anchor="middle">2022</text>
+    <!-- Bar 2023 - deeper -->
+    <rect x="950" y="280" width="55" height="180" fill="url(#redGrad)" opacity="0.9" rx="3"/>
+    <text x="977" y="275" fill="#ff4757" font-family="Arial" font-size="11" text-anchor="middle">2023</text>
+    <!-- Bar 2024 -->
+    <rect x="1020" y="320" width="55" height="140" fill="url(#orangeGrad)" opacity="0.8" rx="3"/>
+    <text x="1047" y="315" fill="#ff9f43" font-family="Arial" font-size="11" text-anchor="middle">2024</text>
+    <!-- Baseline -->
+    <line x1="730" y1="460" x2="1090" y2="460" stroke="#ffffff" stroke-width="1" opacity="0.2"/>
+  </g>
+
+  <!-- Falling arrow / trend line -->
+  <path d="M 755 360 Q 850 350 920 380 Q 1000 420 1060 440"
+        stroke="#ff4757" stroke-width="2.5" fill="none" stroke-dasharray="8,4" opacity="0.6" filter="url(#softGlow)"/>
+
+  <!-- Down arrow -->
+  <g transform="translate(1070, 430)" filter="url(#glow)">
+    <path d="M 0 0 L 12 0 L 6 14 Z" fill="#ff4757"/>
+  </g>
+
+  <!-- Left side: ripple/network effect -->
+  <g transform="translate(130, 320)" opacity="0.35">
+    <circle cx="0" cy="0" r="6" fill="#ff4757"/>
+    <!-- Ripple rings -->
+    <circle cx="0" cy="0" r="30" stroke="#ff4757" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <circle cx="0" cy="0" r="60" stroke="#ff9f43" stroke-width="1" fill="none" opacity="0.4"/>
+    <circle cx="0" cy="0" r="90" stroke="#f39c12" stroke-width="0.8" fill="none" opacity="0.25"/>
+    <circle cx="0" cy="0" r="125" stroke="#e67e22" stroke-width="0.5" fill="none" opacity="0.15"/>
+    <!-- Spokes -->
+    <line x1="-125" y1="0" x2="125" y2="0" stroke="#ff6b6b" stroke-width="0.5" opacity="0.2"/>
+    <line x1="0" y1="-125" x2="0" y2="125" stroke="#ff6b6b" stroke-width="0.5" opacity="0.2"/>
+    <line x1="-88" y1="-88" x2="88" y2="88" stroke="#ff6b6b" stroke-width="0.5" opacity="0.2"/>
+    <line x1="88" y1="-88" x2="-88" y2="88" stroke="#ff6b6b" stroke-width="0.5" opacity="0.2"/>
+  </g>
+
+  <!-- Tag: ANALYSIS -->
+  <rect x="80" y="100" width="130" height="30" rx="15" fill="#ff4757" opacity="0.85"/>
+  <text x="145" y="120" fill="#ffffff" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" letter-spacing="2">ANALYSIS</text>
+
+  <!-- Main title -->
+  <text x="80" y="185" fill="#ffffff" font-family="Arial, sans-serif" font-size="46" font-weight="900" letter-spacing="-1">
+    What Happens to the
+  </text>
+  <text x="80" y="243" fill="#ffffff" font-family="Arial, sans-serif" font-size="46" font-weight="900" letter-spacing="-1">
+    Economy When Tech
+  </text>
+  <text x="80" y="300" fill="url(#redGrad)" font-family="Arial, sans-serif" font-size="46" font-weight="900" letter-spacing="-1" filter="url(#softGlow)">
+    Mass Lays Off Workers?
+  </text>
+
+  <!-- Subtitle -->
+  <text x="80" y="360" fill="#8b949e" font-family="Arial, sans-serif" font-size="20">
+    650,000+ jobs cut · Housing shocks · Startup cascades · AI displacement
+  </text>
+
+  <!-- Stats row -->
+  <g transform="translate(80, 420)">
+    <rect width="170" height="60" rx="8" fill="#21262d" stroke="#ff4757" stroke-width="1" opacity="0.9"/>
+    <text x="85" y="25" fill="#ff4757" font-family="Arial" font-size="22" font-weight="bold" text-anchor="middle">650K+</text>
+    <text x="85" y="45" fill="#8b949e" font-family="Arial" font-size="12" text-anchor="middle">Jobs Eliminated</text>
+
+    <rect x="190" width="170" height="60" rx="8" fill="#21262d" stroke="#ff9f43" stroke-width="1" opacity="0.9"/>
+    <text x="275" y="25" fill="#ff9f43" font-family="Arial" font-size="22" font-weight="bold" text-anchor="middle">36%</text>
+    <text x="275" y="45" fill="#8b949e" font-family="Arial" font-size="12" text-anchor="middle">SF Office Vacancy</text>
+
+    <rect x="380" width="170" height="60" rx="8" fill="#21262d" stroke="#f1c40f" stroke-width="1" opacity="0.9"/>
+    <text x="465" y="25" fill="#f1c40f" font-family="Arial" font-size="22" font-weight="bold" text-anchor="middle">4–5x</text>
+    <text x="465" y="45" fill="#8b949e" font-family="Arial" font-size="12" text-anchor="middle">Multiplier Effect</text>
+  </g>
+
+  <!-- Author tag -->
+  <text x="80" y="590" fill="#484f58" font-family="Arial, sans-serif" font-size="16">
+    piyushmehta.com · Piyush Mehta
+  </text>
+</svg>
