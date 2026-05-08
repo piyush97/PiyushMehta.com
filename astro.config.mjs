@@ -28,8 +28,10 @@ export default defineConfig({
       sourceMapsUploadOptions: {
         enabled: isProductionBuild && hasSentryAuth,
         telemetry: false,
-        assets: ["dist/**/*.js", "dist/**/*.mjs"],
-        filesToDeleteAfterUpload: ["dist/**/*.map"],
+        ...(isProductionBuild && {
+          assets: ["dist/_astro/**/*.js", "dist/_astro/**/*.mjs"],
+          filesToDeleteAfterUpload: ["dist/_astro/**/*.map"],
+        }),
       },
     }),
     mdx(),
