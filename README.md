@@ -7,7 +7,10 @@ A modern, fast, and SEO-optimized personal website built with Astro 6.x, showcas
 ## 🚀 Features
 
 - **Lightning Fast**: Built with Astro 6.x for optimal performance with server-side rendering
-- **Installable**: Web App Manifest for add-to-home-screen support
+- **Installable**: Web App Manifest for add-to-home-screen support (legacy service worker retired)
+- **Contact Form**: Secure contact API via Resend with CSRF protection and rate limiting
+- **Blog Filtering**: Client-side blog filter/search/sort with URL sync
+- **Custom 404**: Branded 404 page with recovery links
 - **Interactive Components**: Glass morphism UI with hover effects and smooth animations
 - **Command Palette**: Global search and navigation with ⌘+K keyboard shortcuts
 - **Full-Text Search**: Fast, client-side search powered by Pagefind
@@ -88,7 +91,19 @@ A modern, fast, and SEO-optimized personal website built with Astro 6.x, showcas
    ```env
    SITE_URL=https://piyushmehta.com
    DATABASE_URL=your_postgresql_connection_string
-   
+
+   # Contact Form (Resend - resend.com)
+   RESEND_API_KEY=re_your_api_key_here
+   CONTACT_FROM_EMAIL=contact@piyushmehta.com
+   CONTACT_TO_EMAIL=contact@piyushmehta.com
+
+   # Error Monitoring (optional)
+   SENTRY_DSN=your_sentry_dsn_here
+   PUBLIC_SENTRY_DSN=your_sentry_dsn_here
+   SENTRY_AUTH_TOKEN=your_sentry_auth_token_here
+   SENTRY_ORG=your_sentry_org_slug
+   SENTRY_PROJECT=your_sentry_project_slug
+
    # Newsletter Security (optional)
    UPSTASH_REDIS_REST_URL=your_upstash_redis_url
    UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
@@ -302,9 +317,14 @@ Create blog posts in the `src/content/` directory using MDX:
 ---
 title: 'Your Post Title'
 description: 'Post description for SEO'
-publishedTime: 2024-01-01
+date: 2024-01-01
+author: 'Piyush Mehta'
+ogTemplate: "blog"
+ogTheme: "dark"
 tags: ['react', 'javascript']
-image: '/path/to/image.jpg'
+image:
+  url: '/blog/your-post-slug/images/cover.svg'
+  alt: 'Cover image alt text'
 ---
 
 Your content here with MDX support for React components...
@@ -324,7 +344,7 @@ The site uses Astro's content collections for type-safe content management:
 Key configurations in `astro.config.mjs`:
 - **Server Output**: Configured for server-side rendering
 - **Site URL**: Set for canonical links and sitemap generation
-- **Integrations**: MDX, React, Sitemap, Tailwind CSS
+- **Integrations**: MDX, React, Sitemap; Tailwind CSS v4 via `@tailwindcss/vite` plugin
 - **Vercel Adapter**: With Web Analytics, Image Service, and ISR enabled
 - **Image Optimization**: Domains and formats configured for `astro:assets`.
 - **Prefetching**: Global prefetch configuration enabled.
@@ -371,8 +391,17 @@ The `build` script uses `concurrently` to run tasks in parallel:
 SITE_URL=https://your-domain.com
 DATABASE_URL=your_postgresql_connection_string
 
+# Contact Form
+RESEND_API_KEY=re_your_api_key_here
+CONTACT_FROM_EMAIL=contact@yourdomain.com
+CONTACT_TO_EMAIL=you@yourdomain.com
+
 # Error Monitoring (optional)
 SENTRY_DSN=your_sentry_dsn
+PUBLIC_SENTRY_DSN=your_sentry_dsn
+SENTRY_AUTH_TOKEN=your_sentry_auth_token
+SENTRY_ORG=your_org_slug
+SENTRY_PROJECT=your_project_slug
 
 # Newsletter Security (optional)
 UPSTASH_REDIS_REST_URL=your_upstash_redis_url
@@ -461,6 +490,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Built with ❤️ by Piyush Mehta in Toronto, CA 🇨🇦**
 
-This website showcases modern web development practices with Astro 5.x, server-side rendering, and optimal performance. Feel free to reach out for collaborations, feedback, or just to say hi!
+This website showcases modern web development practices with Astro 6.x, server-side rendering, and optimal performance. Feel free to reach out for collaborations, feedback, or just to say hi!
 
-*Last updated: April 2026*
+*Last updated: May 2026*
