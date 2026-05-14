@@ -18,10 +18,10 @@
       <link>https://piyushmehta.com</link>
     </image>
     <item>
-      <title>AI Agents Are Creating the Next Software Supply Chain Problem</title>
+      <title>What I Learned About AI Agents, MCP, and the Next Supply Chain Risk</title>
       <link>https://piyushmehta.com/blog/ai-agents-mcp-security-crisis/</link>
       <pubDate>Thu, 14 May 2026 00:00:00 GMT</pubDate>
-      <description>The viral 2026 developer trend is not just AI writing code. It is agents connecting to MCP tools, opening pull requests, and inheriting a new supply-chain attack surface. Here is the practical security playbook.</description>
+      <description>AI coding agents are moving from autocomplete into tool-calling workflows. Here is what I learned about MCP, prompt injection, credentials, and how to secure agentic development.</description>
       <author>hello@piyushmehta.com (Piyush Mehta)</author>
       <category>AI Agents</category>
       <category>MCP</category>

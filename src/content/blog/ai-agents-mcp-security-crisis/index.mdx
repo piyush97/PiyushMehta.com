@@ -1,6 +1,6 @@
 ---
-title: 'AI Agents Are Creating the Next Software Supply Chain Problem'
-description: 'The viral 2026 developer trend is not just AI writing code. It is agents connecting to MCP tools, opening pull requests, and inheriting a new supply-chain attack surface. Here is the practical security playbook.'
+title: 'What I Learned About AI Agents, MCP, and the Next Supply Chain Risk'
+description: 'AI coding agents are moving from autocomplete into tool-calling workflows. Here is what I learned about MCP, prompt injection, credentials, and how to secure agentic development.'
 date: 2026-05-14T12:00:00-04:00
 author: 'Piyush Mehta'
 ogTemplate: "tech"
@@ -21,347 +21,431 @@ image:
 draft: false
 ---
 
-The viral developer topic right now is not "AI will replace programmers." That argument is noisy, emotional, and already tired.
+The thing I underestimated about AI coding tools is not how fast they can write code.
 
-The better topic is sharper:
+It is how quickly they are becoming part of the execution path.
 
-> AI agents are no longer just suggesting code. They are connecting to tools, reading repositories, calling APIs, opening pull requests, and sometimes touching production-shaped systems. That turns the AI tool layer into a new software supply chain.
+For the last few years, most developers treated AI assistants like smarter autocomplete. The assistant suggested a function, explained an error, generated a test, or helped refactor a component. That workflow had risk, but the boundary was still clear: the AI produced text, and the developer decided what to run.
 
-That is the piece worth writing about in 2026 because it has the ingredients that make technical writing travel: a big adoption curve, a fresh security scare, real developer pain, and an actionable gap between what teams are doing and what they understand.
+That boundary is changing.
 
-As of May 14, 2026, the trend signal is unusually strong.
+AI agents can now read repositories, inspect issues, call tools, run tests, modify files, open pull requests, and connect to external systems through protocols like MCP. Once an AI system can use tools, the security question changes completely.
 
-Stack Overflow's 2025 Developer Survey reported that AI tool adoption reached 80% of developers, while trust in AI accuracy fell to 29%. The same survey found that 66% of developers spend more time fixing "almost-right" AI-generated code, and 52% say AI agents have already affected how they complete work. In other words: the tools are everywhere, but confidence is dropping.
+The risk is no longer only:
 
-At the same time, agent infrastructure is becoming standardized. Anthropic donated the Model Context Protocol, or MCP, to the Linux Foundation's Agentic AI Foundation in December 2025. Anthropic said MCP had crossed 10,000 active public servers and had been adopted by ChatGPT, Cursor, Gemini, Microsoft Copilot, Visual Studio Code, and other AI products.
+"Did the model generate incorrect code?"
 
-Then the security story arrived. OX Security published MCP research in April 2026 claiming a broad supply-chain flaw affecting 150M+ downloads and up to 200,000 vulnerable instances. On May 12, 2026, OX followed with additional MCP-related flaws in popular tools such as kubectl-mcp-server, Archon OS, and MarkItDown. Treat vendor research with the normal skepticism you would apply to any security marketing, but do not ignore the direction of travel: the integration layer has become an attack surface.
+The risk becomes:
 
-That makes the current trend less "AI is magic" and more "we just gave magic a socket, a token, and file access."
+"What is this agent allowed to do, what can influence it, and where can data flow after it acts?"
 
-## Why This Topic Beats the Other Trend Candidates
+That is the lesson I took away from looking at the current AI agent ecosystem: AI coding is becoming a software supply chain problem.
 
-If I were choosing a post designed to travel on Hacker News, LinkedIn, X, Reddit, and search, I would score the current developer topics like this:
+## Why This Changed My Mental Model
 
-| Topic | Viral pull | Evergreen value | Saturation risk | Why it matters |
-| --- | --- | --- | --- | --- |
-| Vibe coding backlash | Very high | Medium | Very high | Everyone has an opinion, but most posts repeat the same argument. |
-| AI replacing junior developers | Very high | Medium | Very high | Emotional, career-relevant, but often speculative. |
-| Cloud coding agents | High | High | Medium | GitHub, OpenAI, Anthropic, and Google are turning agents into normal workflow tools. |
-| MCP security and agent supply chain | High | Very high | Low-medium | Fresh security news, practical risk, and fewer high-quality explainers. |
-| React/server framework churn | Medium | Medium | High | Useful, but narrower and less urgent. |
+Stack Overflow's 2025 Developer Survey shows the contradiction developers are living with. AI tool adoption reached 80%, but trust in AI accuracy dropped to 29%. The survey also found that 66% of developers spend more time fixing "almost-right" AI-generated code, and 52% say AI agents have already changed how they complete work.
 
-The winner is MCP security and agentic software supply chain risk.
+That combination matters.
 
-It is specific enough to teach, urgent enough to share, and broad enough to matter to backend engineers, frontend engineers, DevOps teams, security teams, CTOs, and indie builders.
+Developers are using AI more, trusting it less, and still moving toward workflows where AI has more agency. That is a strange place to be. It means the tools are useful enough to become normal, but unreliable enough that we need stronger engineering discipline around them.
 
-## The Shift: From Assistant to Actor
+The mistake is thinking the main issue is hallucination.
 
-The old AI coding workflow looked like this:
+Hallucination is annoying. A tool-connected agent with excessive permissions is dangerous.
 
-1. You ask a model a question.
-2. It suggests code.
-3. You paste or accept the code.
-4. You remain the execution boundary.
+Bad code can fail tests. A badly constrained agent can read secrets, call APIs, mutate infrastructure, publish data, or create a pull request that changes how CI behaves.
 
-That was risky, but the blast radius was mostly human-mediated. The model could be wrong, but it usually could not independently mutate your repository, query your database, or call your cloud account.
+That is a different class of problem.
 
-The new workflow is different:
+## What MCP Actually Is
 
-1. You assign an issue or prompt to an agent.
-2. The agent reads the repository and surrounding context.
-3. It calls tools: shell, package manager, test runner, browser, database, GitHub, Slack, Jira, cloud APIs.
-4. It edits files, creates branches, opens pull requests, or takes actions through connected services.
-5. You review the result after the agent has already performed many intermediate steps.
+MCP, the Model Context Protocol, is a standard way for AI applications to connect to tools and data sources.
 
-GitHub's Copilot cloud agent documentation describes this direction clearly: Copilot can work independently in the background, make changes in an ephemeral development environment, run tests and linters, and request a review when finished.
+The simple explanation is:
 
-That is powerful. It also means an agent is no longer just an autocomplete. It is closer to a junior automation operator with credentials.
-
-## What MCP Actually Changes
-
-MCP is often described as a standard way for AI applications to connect with tools and data sources. That is true, but too abstract. A more practical description is:
-
-MCP is a plugin system for agents.
+MCP lets AI agents use external capabilities without every AI app needing a custom integration for every tool.
 
 An MCP server can expose:
 
-- tools the model can call, such as "query database," "create GitHub issue," "read file," or "run kubectl";
-- resources the model can inspect, such as docs, tickets, code, metrics, or logs;
-- prompts and templates that shape how the AI behaves.
+- tools, such as reading files, querying a database, creating GitHub issues, running `kubectl`, or searching internal docs;
+- resources, such as tickets, logs, source files, metrics, design docs, or API references;
+- prompts and templates that guide how the model should use those capabilities.
 
-Before MCP, every AI product needed custom integrations. After MCP, a tool can theoretically be exposed once and used across many clients. That is why adoption moved so quickly.
+Anthropic donated MCP to the Linux Foundation's Agentic AI Foundation in December 2025. At that point, Anthropic said MCP had crossed 10,000 active public servers and had been adopted across products including ChatGPT, Cursor, Gemini, Microsoft Copilot, Visual Studio Code, and other AI tools.
 
-But standardizing integration also standardizes risk.
+That adoption tells us something important: MCP is not a niche plugin format anymore. It is becoming a common integration layer for agentic software.
 
-The old software supply chain was about packages: npm modules, Docker images, GitHub Actions, base images, transitive dependencies.
+And every integration layer eventually becomes a security boundary.
 
-The new agent supply chain adds another layer:
+## The Old Supply Chain vs. The Agent Supply Chain
 
-- tool descriptions that influence model behavior;
-- local MCP servers with filesystem or shell access;
-- OAuth tokens scoped too broadly;
-- API connectors that can move data between systems;
-- agent memory and context windows that blend trusted and untrusted text;
-- marketplace-discovered servers that may not receive the scrutiny of normal production dependencies.
+Developers already understand traditional software supply chain risk.
 
-This is the part many teams have not internalized yet: if your agent can call a tool, that tool is now part of your execution path.
+We worry about:
 
-## The Main Attack Patterns
+- npm packages;
+- Docker images;
+- GitHub Actions;
+- CI runners;
+- package lockfiles;
+- base images;
+- transitive dependencies;
+- build scripts;
+- deployment credentials.
 
-OWASP's MCP Security Cheat Sheet is the best practical starting point because it names the risks in a way engineers can threat-model. The core problems are familiar, but the shape is new.
+AI agents add a new layer on top of that.
 
-### 1. Tool Poisoning
+Now we also need to worry about:
 
-Tool poisoning is a prompt injection attack against the tool layer.
+- tool descriptions that the model treats as instructions;
+- MCP servers installed from public repositories;
+- OAuth grants attached to AI clients;
+- local tools with access to the developer machine;
+- agent memory that mixes trusted and untrusted text;
+- prompts embedded inside tickets, docs, comments, or files;
+- tool responses that can influence later tool calls;
+- automated pull requests that modify executable project configuration.
 
-A malicious or compromised MCP server can present normal-looking tools while embedding instructions in descriptions, schemas, or responses. The agent may treat that tool output as trusted context and then misuse other tools.
+This is the key shift:
 
-The scary part is composability. One tool does not need full access to hurt you. It can influence the agent to call another tool that has stronger permissions.
+> If an agent can call a tool, that tool is part of your software supply chain.
 
-Example:
+It does not matter if the UI looks like chat. Underneath the UI, you may be giving a probabilistic planner access to files, credentials, network calls, source control, and production-shaped systems.
 
-1. A low-privilege documentation tool returns hidden instructions.
-2. The agent reads them as context.
-3. The agent calls a GitHub, shell, email, or database tool.
-4. Sensitive data leaves through a legitimate-looking call.
+That is powerful. It is also exactly the kind of thing engineers should threat-model.
 
-That is not science fiction. It is the same old injection problem, but the interpreter is now a model plus tools.
+## What Made Me Take MCP Security Seriously
 
-### 2. The Confused Deputy Problem
+The security research around MCP is still young, but the pattern is already clear.
 
-An MCP server may act with its own broad privileges rather than the permissions of the user who made the request.
+OWASP now has an MCP Security Cheat Sheet. OWASP also documents MCP tool poisoning as a specific attack pattern. OX Security published MCP research in April 2026 claiming a broad supply-chain issue affecting 150M+ downloads and up to 200,000 vulnerable instances. On May 12, 2026, OX followed with additional MCP-related findings in tools such as kubectl-mcp-server, Archon OS, and MarkItDown.
 
-That creates a classic confused deputy risk. The user asks for something harmless. The agent routes through a tool that has more authority than the user should have had. The tool obeys because it sees its own token, not the user's intent.
+Security vendor research should always be read with healthy skepticism. Headlines can overstate. Numbers can depend on assumptions. But the underlying concern is real:
 
-This is especially dangerous when teams use one long-lived token for many actions. A general-purpose agent with full repo access, full Slack access, full ticket access, and cloud credentials is not convenient. It is a blast radius waiting for a trigger.
+AI agents are connecting to tools faster than teams are defining permissions, audit trails, sandboxing, and review practices.
 
-### 3. Local MCP Servers With Host Access
+That is how normal developer convenience turns into infrastructure risk.
 
-Local MCP servers are attractive because they can read files, run commands, and connect to developer tools. That also means they may inherit the developer machine's trust boundary.
+## Attack Pattern 1: Tool Poisoning
 
-If a local server can access your home directory, SSH keys, cloud config, editor state, browser cookies, `.env` files, or package manager credentials, then an agent interaction can become much more sensitive than it appears in the chat UI.
+Tool poisoning is what changed my view of agent security the most.
 
-This is why OX's 2026 research attracted attention. Their claim is not merely "a bug exists." The larger claim is that parts of the MCP ecosystem can create command execution paths when downstream frameworks pass configuration or user input into server startup parameters.
+A normal application calls an API and receives data. An AI agent calls a tool and receives data that may become part of its reasoning context.
 
-Whether every detail of that claim applies to your stack is less important than the lesson: local agent tooling should be treated like development infrastructure, not like a harmless extension.
+That difference matters.
 
-### 4. Data Exfiltration Through Legitimate Channels
+If a malicious or compromised MCP server can influence the model through tool descriptions, schemas, or responses, the server may not need direct access to the most sensitive system. It can try to persuade the agent to use another tool that has stronger permissions.
 
-The most interesting agent attacks may not look like attacks.
+For example:
 
-An agent could leak data through:
+1. A documentation tool returns a normal-looking answer with hidden or indirect instructions.
+2. The agent treats the tool response as useful context.
+3. The agent then calls a GitHub, filesystem, shell, Slack, or database tool.
+4. Sensitive data leaves through a tool call that looks legitimate in isolation.
 
-- a search query;
-- an issue title;
-- a pull request body;
-- a log line;
-- an analytics event;
-- a pasted error report;
-- a support ticket;
-- a generated documentation page.
+This is why prompt injection becomes more serious in agentic systems. The injected text is not just trying to change an answer. It may be trying to change a sequence of actions.
 
-If the agent has access to both secrets and outbound communication tools, "do not print secrets" is not enough. You need controls over where data can flow.
+That is the part developers need to internalize.
 
-### 5. Pull Request and CI Abuse
+Prompt injection against a chatbot is a content integrity issue. Prompt injection against a tool-using agent can become an authorization issue.
 
-Coding agents naturally produce pull requests. That is good because it creates reviewable artifacts.
+## Attack Pattern 2: The Confused Deputy
 
-But pull requests are also executable documents in many modern repos. They can change workflows, test commands, package scripts, generated files, lockfiles, Dockerfiles, or dependency versions.
+The confused deputy problem is old, but agents make it easy to recreate.
 
-GitHub has built mitigations into Copilot cloud agent, including constrained branches and workflow approval controls, but the general pattern still matters: agent-authored diffs deserve the same suspicion as code from a new contributor whose incentives you do not know.
+Imagine a user asks an agent to summarize an internal document. The agent uses an MCP server that has broad access to many systems. The user may not have permission to read everything the MCP server can read, but the tool acts with its own credentials.
 
-## The Security Mistake Developers Are Most Likely to Make
+Now the agent is not acting with the user's authority. It is acting with the tool's authority.
 
-The most common mistake will be judging an agent by its UI.
+That is dangerous because the user interface hides the privilege boundary.
 
-The UI looks like chat, so people treat it like chat.
+The developer sees:
 
-But the system behavior is closer to:
+"Summarize this."
 
-- CI runner;
-- browser automation;
-- API gateway;
-- package installer;
-- repo write bot;
-- shell script with natural language input.
+The system may actually perform:
 
-That mismatch is where risk sneaks in. A chat box feels low stakes. A tool-connected agent is not low stakes.
+"Use a broadly scoped service token to search internal docs, tickets, repositories, and messages, then decide what context is relevant."
 
-Here is the mental model I would use:
+If the server does not enforce user-scoped authorization, the agent can become a path around the permission model.
 
-> An AI agent is a process with a probabilistic planner and a tool belt. Secure the process and the tool belt, not just the prompt.
+The fix is not glamorous: least privilege, user-scoped auth where possible, short-lived tokens, and separate credentials per tool. Boring security controls become very interesting when the thing using the credential is non-deterministic.
 
-## The Practical Playbook
+## Attack Pattern 3: Local Tool Access
 
-You do not need to ban agents. That would be like banning CI because CI can leak secrets. The right move is to make the trust boundaries explicit.
+Local MCP servers are useful because they can connect an agent to the developer's real environment.
 
-### 1. Inventory Every Agent and Tool
+They can read files. They can run commands. They can inspect logs. They can talk to local services. They can sometimes see configuration that was never meant to leave the machine.
 
-Create a list of:
+That is also why they need more caution.
 
-- every AI client used by the team;
-- every MCP server connected to those clients;
-- every token, secret, OAuth grant, filesystem path, and network destination available to each server;
-- whether the tool runs locally, in CI, in a cloud sandbox, or inside a vendor environment;
-- who can approve or install new tools.
+A developer laptop often contains:
 
-If you cannot inventory it, you cannot secure it.
+- SSH keys;
+- cloud credentials;
+- `.env` files;
+- package registry tokens;
+- local databases;
+- browser session state;
+- private notes;
+- customer or production debugging data;
+- cloned repositories from multiple projects.
 
-### 2. Use One Token Per Tool, Not One Token Per Developer
+If an MCP server can access the whole machine, the agent's effective context is much larger than the current repository. One bad tool, one bad prompt injection, or one over-broad file read can cross boundaries the developer did not intend to connect.
 
-Shared broad tokens are convenient until they are impossible to audit.
+The practical lesson is simple:
 
-Prefer scoped credentials:
+Run agent tools inside the smallest environment that can do the job.
 
-- repo-specific GitHub tokens;
-- read-only scopes where possible;
-- separate credentials per MCP server;
-- short-lived tokens;
-- no production credentials in local agent contexts;
-- no shared "automation super token."
+For coding work, that usually means the repository and its test environment. It should not mean the entire home directory, personal documents, browser profile, SSH folder, and every cloned project.
 
-OWASP's guidance starts with least privilege for a reason. It is boring because it works.
+## Attack Pattern 4: Pull Requests as Execution Vehicles
 
-### 3. Sandbox Local MCP Servers
+At first, agent-created pull requests feel safer than direct commits. And they are safer, because they create a review point.
 
-Run local MCP servers like untrusted dev services:
+But a pull request is not just text.
 
-- restrict filesystem access to the project directory;
-- deny network access unless the tool needs it;
-- run risky tools in containers or dedicated sandboxes;
-- avoid mounting the entire home directory;
-- avoid giving tools access to SSH keys, browser profiles, cloud config, and password-manager exports;
-- keep research tools separate from write-capable tools.
+A pull request can change:
 
-The goal is not perfect isolation. The goal is to make "one weird tool response" unable to become "read every secret on the laptop."
+- package scripts;
+- CI workflows;
+- Dockerfiles;
+- dependency versions;
+- lockfiles;
+- code generation steps;
+- test commands;
+- build configuration;
+- deployment scripts;
+- GitHub Actions permissions.
 
-### 4. Make Tool Calls Reviewable
+That means agent-created diffs need a different review habit.
 
-Human-in-the-loop approval only helps if the human sees the real operation.
+It is not enough to skim the application code and see whether the feature works. You also have to inspect the executable parts of the change. A one-line modification in `.github/workflows/deploy.yml` may matter more than 300 lines of harmless UI code.
 
-Bad confirmation:
+GitHub's Copilot cloud agent documentation describes guardrails such as isolated branches and workflow approval controls. Those guardrails are useful, but they do not remove the need for human review. They just give the review a better shape.
+
+The safest default is:
+
+- agents can propose;
+- humans review;
+- protected branches enforce policy;
+- workflow changes require extra attention;
+- deployment remains explicitly approved.
+
+## The Mistake I See Coming
+
+The mistake I expect many teams to make is treating agents like productivity tools while configuring them like infrastructure.
+
+The interface says chat.
+
+The permissions say automation worker.
+
+The actual system may behave like:
+
+- a CI runner;
+- a shell script;
+- a browser automation tool;
+- a GitHub bot;
+- an API gateway;
+- a package installer;
+- a junior developer with credentials.
+
+That mismatch is where incidents happen.
+
+If an AI agent can call tools, read files, and write code, it should be managed like a privileged development process. Not like a browser tab you happen to type into.
+
+## The Security Model I Would Use
+
+The most useful mental model I found is this:
+
+> An AI agent is a process with a probabilistic planner and a tool belt. Secure the process, the tool belt, and the data paths between them.
+
+That gives us three questions.
+
+First: what can the agent observe?
+
+Can it read the whole repository? Can it read `.env` files? Can it inspect private docs? Can it see customer data? Can it read tickets that contain credentials or internal URLs?
+
+Second: what can the agent do?
+
+Can it write files? Run shell commands? Install packages? Open pull requests? Send Slack messages? Query production? Deploy? Delete resources?
+
+Third: what can influence the agent?
+
+Can issue comments, docs, README files, logs, web pages, dependency output, or tool responses change what it does next?
+
+That third question is easy to forget. In normal software, untrusted input might break a parser or alter a query. In agentic software, untrusted input can alter the plan.
+
+## My Practical Checklist
+
+If I were adding AI agents and MCP tools to a development workflow, I would start with this checklist.
+
+### 1. Inventory Every Tool
+
+List every AI client, every MCP server, every connector, and every credential.
+
+For each one, write down:
+
+- what it can read;
+- what it can write;
+- whether it can execute commands;
+- whether it can access the network;
+- which credentials it receives;
+- who approved it;
+- how it is updated;
+- how it is removed.
+
+If the team cannot answer these questions, the team does not understand its agent surface area yet.
+
+### 2. Use Narrow Credentials
+
+Do not give a general agent a general token.
+
+Prefer:
+
+- repo-scoped GitHub credentials;
+- read-only tokens by default;
+- separate tokens per MCP server;
+- short-lived credentials;
+- user-scoped authorization where possible;
+- no production secrets in local agent contexts;
+- no shared automation super-token.
+
+This is the same least-privilege idea we already know. Agents just make the cost of ignoring it higher.
+
+### 3. Sandbox Local Servers
+
+Local MCP servers should not automatically inherit the whole laptop.
+
+Use containers, project-specific working directories, read-only mounts, and explicit network rules where possible.
+
+At minimum, avoid giving local agent tools access to:
+
+- `~/.ssh`;
+- cloud credential folders;
+- password manager exports;
+- browser profiles;
+- unrelated repositories;
+- real production `.env` files.
+
+The goal is not perfect isolation. The goal is to make the common failure modes boring.
+
+### 4. Separate Read, Write, and Release
+
+Do not put every capability into one agent context.
+
+Use separate modes:
+
+- research mode can read but not write;
+- implementation mode can edit files in a branch;
+- review mode can inspect diffs and logs;
+- release mode requires explicit approval.
+
+This adds friction, but it also makes behavior understandable. A single all-powerful agent is convenient until you need to explain an incident.
+
+### 5. Make Tool Calls Visible
+
+Approvals should show the real operation.
+
+Weak approval:
 
 "Allow agent to update project?"
 
-Better confirmation:
+Useful approval:
 
-"Allow `github.createPullRequest` on `piyushmehta/piyushmehta.com` from branch `agent/mcp-article` with these changed files?"
+"Allow `github.createPullRequest` in `piyush97/PiyushMehta.com` from branch `blog/ai-angents-mcp-post` with these changed files?"
 
-Best confirmation:
+For sensitive actions, show:
 
-Show the tool name, target system, exact parameters, diff, and data that will leave the machine.
+- tool name;
+- target system;
+- parameters;
+- data leaving the machine;
+- files being changed;
+- command being executed.
 
-This is especially important for destructive actions, data-sharing actions, payments, production deploys, email, Slack messages, database writes, and cloud operations.
+Humans cannot approve what they cannot see.
 
-### 5. Treat Tool Descriptions as Code
+### 6. Review Tool Definitions Like Code
 
-Tool descriptions and schemas are not documentation. They are instructions that the model reads.
+Tool names, descriptions, schemas, and prompts shape model behavior.
 
-Review them like code:
+That means they should be reviewed.
 
-- pin versions;
-- diff tool descriptions during updates;
-- reject vague tools with broad verbs like "execute," "manage," or "admin" unless they are heavily constrained;
-- prefer small tools with narrow parameters;
-- avoid tool schemas that accept raw shell commands;
-- alert when a tool's description changes unexpectedly.
+Pin versions. Diff updates. Avoid vague tools that accept arbitrary commands. Prefer small tools with clear parameters. Watch for tool description changes that alter how the agent is instructed to behave.
 
-If a package update changed a GitHub Action from "run tests" to "upload secrets," you would care. Agent tools deserve the same scrutiny.
+This feels strange only because the industry is still learning that prompts and tool schemas are executable influence.
 
-### 6. Separate Read, Plan, Write, and Deploy
+### 7. Log Enough To Debug Incidents
 
-One of the most useful patterns is capability separation.
+A final pull request is not a full audit trail.
 
-Use different agent contexts for different phases:
-
-- research agent: can read docs, issues, and code, but cannot write;
-- implementation agent: can edit files in a repo sandbox, but cannot deploy;
-- review agent: can inspect diffs and logs, but cannot merge;
-- release agent: can prepare a release only after explicit approval.
-
-This sounds slower, but in practice it is how teams keep parallel agent work from becoming unreviewable noise.
-
-### 7. Log Agent Decisions, Not Just Final Diffs
-
-A final pull request is useful. It is not enough.
-
-You also want:
+For important work, keep records of:
 
 - tool calls;
-- command history;
+- commands run;
 - files read;
 - URLs contacted;
-- secrets accessed or denied;
-- test results;
-- prompts or task inputs that drove major decisions;
-- approval events.
+- credentials requested;
+- credentials denied;
+- tests executed;
+- approval events;
+- final diffs.
 
-Audit trails are how you debug agent behavior when something strange happens. Without them, every incident turns into folklore.
+If something goes wrong, you need to know whether the problem came from the prompt, the model, the tool, the environment, or the permission model.
 
-## A Simple Threat Model for Any New MCP Server
-
-Before installing an MCP server, ask:
-
-1. What can this tool read?
-2. What can this tool write?
-3. Can it execute commands?
-4. Can it send data outside my machine or network?
-5. Which credentials does it receive?
-6. Are those credentials scoped and revocable?
-7. Can untrusted text influence this tool?
-8. Can this tool influence another, more privileged tool?
-9. How do I know when the tool changes?
-10. What is the worst thing it can do if the model calls it incorrectly?
-
-If the answer to number 10 is "delete production data," "exfiltrate customer information," or "push directly to main," the tool should not be in a casual agent setup.
+Without logs, every agent incident becomes a guessing game.
 
 ## The Individual Developer Version
 
-If you are one person using coding agents today, here is the short version:
+If you are using AI coding agents by yourself, the practical version is:
 
-- do not expose your whole filesystem;
-- do not run agents from a directory that contains unrelated secrets;
-- use repo-local `.env.example` files, not real production `.env` files;
-- review every shell command the agent wants to run;
-- read generated workflow, Docker, package, and lockfile changes carefully;
-- prefer read-only connectors until you know what you need;
-- revoke tokens when you stop using a tool;
-- never connect a random MCP server to your main cloud account just because the demo looks cool.
+- keep agents inside the project directory;
+- do not expose real production `.env` files;
+- review shell commands before running them;
+- inspect workflow, package, Docker, and lockfile changes carefully;
+- use read-only connectors until write access is clearly needed;
+- revoke tokens for tools you stop using;
+- avoid installing random MCP servers into your main development environment;
+- assume anything the agent can read may influence what it does next.
 
-The agent is allowed to be fast. You are allowed to be paranoid.
+The agent can move fast. Your job is to decide where it is allowed to move.
 
-## The Organization Version
+## The Team Version
 
-For teams, the playbook becomes policy:
+For teams, this becomes policy:
 
-- approved MCP registry or internal marketplace;
-- security review for new agent tools;
-- per-tool credentials managed centrally;
-- default-deny network egress for agent sandboxes;
-- branch protections for agent-authored code;
-- mandatory review for workflow changes;
-- secret scanning on every agent branch;
-- logging and retention for agent sessions;
-- clear ownership when an agent-created change breaks production.
+- maintain an approved MCP/tool registry;
+- require review for new agent tools;
+- manage per-tool credentials centrally;
+- restrict network egress from agent sandboxes;
+- protect branches from direct agent writes;
+- require extra review for CI and deployment changes;
+- scan agent branches for secrets;
+- log agent sessions;
+- define who owns agent-authored changes after merge.
 
-The ownership point matters. If nobody owns agent output, everyone owns the incident.
+The ownership part matters. If an agent opens a PR and a human merges it, the team owns the result. The model does not carry the pager.
 
-## Why This Will Stay Relevant After the News Cycle
+## What I Believe Now
 
-The current MCP vulnerability headlines will age. The underlying pattern will not.
+I do not think AI agents should be banned from development workflows.
 
-Every major developer platform is moving toward agents that can do more than chat. GitHub's cloud agent can work on branches and pull requests. MCP is becoming the shared connector layer. Stack Overflow's survey shows developers are using AI more while trusting it less.
+I think they should be treated honestly.
 
-That is exactly when engineering discipline matters.
+They are not just autocomplete. They are not just chat. They are becoming tool-using development processes that sit inside the same systems we use to build, test, review, and ship software.
 
-The next phase of AI coding is not about who writes the cleverest prompt. It is about who can delegate work to agents without losing control of identity, permissions, provenance, and review.
+That makes them useful.
 
-The teams that win will not be the teams that connect every tool to every model. They will be the teams that make agents useful inside small, observable, revocable boundaries.
+It also makes them part of the supply chain.
 
-That is the real trend:
+The teams that handle this well will not be the teams that connect every possible tool to every possible model. They will be the teams that make agent work observable, scoped, reversible, and reviewable.
 
-AI agents are becoming part of the software supply chain. The sooner we secure them like one, the less surprised we will be when they behave like one.
+That is the real lesson for me:
+
+AI agents are not dangerous because they are intelligent. They are dangerous when they are connected to powerful tools without clear boundaries.
+
+Boundaries are the product work now.
 
 ## Sources And Further Reading
 
