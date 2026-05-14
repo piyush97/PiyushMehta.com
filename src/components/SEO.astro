@@ -54,17 +54,22 @@ const {
   ],
 } = Astro.props;
 
-const requestBaseUrl = Astro.url.origin || Astro.site?.toString() || 'https://piyushmehta.com';
-const productionBaseUrl = Astro.site?.toString() || 'https://piyushmehta.com';
-const baseUrl = (import.meta.env.DEV ? requestBaseUrl : productionBaseUrl).replace(/\/$/, '');
+const requestBaseUrl = (
+  Astro.url.origin ||
+  Astro.site?.toString() ||
+  'https://piyushmehta.com'
+).replace(/\/$/, '');
+const productionBaseUrl = (Astro.site?.toString() || 'https://piyushmehta.com').replace(/\/$/, '');
+const canonicalBaseUrl = import.meta.env.DEV ? requestBaseUrl : productionBaseUrl;
+const imageBaseUrl = requestBaseUrl;
 
 // Optimize and sanitize content
 const optimizedDescription = sanitizeDescription(description);
-const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname, baseUrl);
+const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname, canonicalBaseUrl);
 
 const generatedImageMetadata = createSocialCardMetadata({
   pathname: new URL(canonicalUrl).pathname,
-  baseUrl,
+  baseUrl: imageBaseUrl,
   title,
   author,
 });
@@ -75,8 +80,8 @@ let providedImageMetadata: ImageMetadata | undefined;
 if (image && typeof image === 'string') {
   // Use the provided image URL directly
   providedImageMetadata = {
-    url: image.startsWith('http') ? image : `${baseUrl}${image}`,
-    secureUrl: image.startsWith('http') ? image : `${baseUrl}${image}`,
+    url: image.startsWith('http') ? image : `${imageBaseUrl}${image}`,
+    secureUrl: image.startsWith('http') ? image : `${imageBaseUrl}${image}`,
     type: 'image/jpeg',
     width: 1200,
     height: 630,
@@ -84,7 +89,7 @@ if (image && typeof image === 'string') {
   };
 } else if (image && typeof image === 'object' && image.url) {
   // Use the provided image object
-  const imageUrl = image.url.startsWith('http') ? image.url : `${baseUrl}${image.url}`;
+  const imageUrl = image.url.startsWith('http') ? image.url : `${imageBaseUrl}${image.url}`;
   providedImageMetadata = {
     url: imageUrl,
     secureUrl: imageUrl,
@@ -164,6 +169,14 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta name="twitter:image" content={imageMetadata.url} />
 <meta name="twitter:image:src" content={imageMetadata.url} />
 <meta name="twitter:image:alt" content={imageMetadata.alt || `${title} - ${author}`} />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:domain" content="piyushmehta.com" />
+<meta property="twitter:url" content={canonicalUrl} />
+<meta property="twitter:title" content={title.length > 70 ? title.substring(0, 67) + '...' : title} />
+<meta property="twitter:description" content={optimizedDescription.length > 200 ? optimizedDescription.substring(0, 197) + '...' : optimizedDescription} />
+<meta property="twitter:image" content={imageMetadata.url} />
+<meta property="twitter:image:src" content={imageMetadata.url} />
+<meta property="twitter:image:alt" content={imageMetadata.alt || `${title} - ${author}`} />
 <meta name="twitter:site" content="@piyushmehtas" />
 <meta name="twitter:creator" content="@piyushmehtas" />
 
