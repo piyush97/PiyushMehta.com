@@ -5,7 +5,7 @@
     <link>https://piyushmehta.com</link>
     <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 26 Aug 2025 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 14 May 2026 00:00:00 GMT</lastBuildDate>
     <generator>Static RSS Generator</generator>
     <copyright>Copyright 2026 Piyush Mehta. All rights reserved.</copyright>
     <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
@@ -18,6 +18,36 @@
       <link>https://piyushmehta.com</link>
     </image>
     <item>
+      <title>What I Learned About AI Agents, MCP, and the Next Supply Chain Risk</title>
+      <link>https://piyushmehta.com/blog/ai-agents-mcp-security-crisis/</link>
+      <pubDate>Thu, 14 May 2026 00:00:00 GMT</pubDate>
+      <description>AI coding agents are moving from autocomplete into tool-calling workflows. Here is what I learned about MCP, prompt injection, credentials, and how to secure agentic development.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>AI Agents</category>
+      <category>MCP</category>
+      <category>Security</category>
+      <category>Software Supply Chain</category>
+      <category>Developer Tools</category>
+      <category>GitHub Copilot</category>
+      <category>Prompt Injection</category>
+      <category>OWASP</category>
+      <category>AI Coding</category>
+    </item>
+        <item>
+      <title>What Happens to the Economy When Tech Companies Mass Lay Off Workers?</title>
+      <link>https://piyushmehta.com/blog/tech-layoffs-economy-analysis/</link>
+      <pubDate>Fri, 08 May 2026 00:00:00 GMT</pubDate>
+      <description>A detailed analysis of how mass tech layoffs ripple through housing markets, consumer spending, startup ecosystems, and the broader economy — and what it means for your career as a developer.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>Tech Layoffs</category>
+      <category>Economy</category>
+      <category>Career</category>
+      <category>Tech Industry</category>
+      <category>Developer Finance</category>
+      <category>Job Market</category>
+      <category>Software Engineering</category>
+    </item>
+        <item>
       <title>From macOS to Arch Linux with Omarchy: A Developer&apos;s Journey to True Productivity</title>
       <link>https://piyushmehta.com/blog/macos-to-arch-linux-omarchy-developer-productivity/</link>
       <pubDate>Tue, 26 Aug 2025 00:00:00 GMT</pubDate>

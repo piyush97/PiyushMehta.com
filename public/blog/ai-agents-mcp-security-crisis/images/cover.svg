@@ -1,0 +1,125 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">AI agents and MCP security supply chain</title>
+  <desc id="desc">A dark technical illustration showing AI agents connected to MCP tools, credentials, repositories, and security boundaries.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset="0.55" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#162019"/>
+    </linearGradient>
+    <linearGradient id="agent" x1="370" y1="135" x2="830" y2="500" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="risk" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f59e0b"/>
+      <stop offset="1" stop-color="#ef4444"/>
+    </linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M 42 0 L 0 0 0 42" fill="none" stroke="#334155" stroke-width="1" opacity="0.38"/>
+    </pattern>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.75"/>
+
+  <g opacity="0.36">
+    <path d="M160 104H1040" stroke="#64748b" stroke-width="1"/>
+    <path d="M160 526H1040" stroke="#64748b" stroke-width="1"/>
+    <path d="M156 104V526" stroke="#64748b" stroke-width="1"/>
+    <path d="M1044 104V526" stroke="#64748b" stroke-width="1"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect x="426" y="164" width="348" height="284" rx="28" fill="#0b1120" stroke="#38bdf8" stroke-width="2"/>
+    <rect x="458" y="198" width="284" height="64" rx="16" fill="url(#agent)" opacity="0.95"/>
+    <text x="600" y="239" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" text-anchor="middle" fill="#07111f">AI AGENT</text>
+
+    <g transform="translate(493 300)">
+      <circle cx="0" cy="0" r="34" fill="#111827" stroke="#22d3ee" stroke-width="3"/>
+      <path d="M-14 -2h28M-8 -12h16M-8 8h16" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"/>
+      <text x="0" y="62" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#e2e8f0">PLAN</text>
+    </g>
+
+    <g transform="translate(600 300)">
+      <circle cx="0" cy="0" r="34" fill="#111827" stroke="#10b981" stroke-width="3"/>
+      <path d="M-13 1l8 8 19 -21" fill="none" stroke="#10b981" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="0" y="62" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#e2e8f0">CALL</text>
+    </g>
+
+    <g transform="translate(707 300)">
+      <circle cx="0" cy="0" r="34" fill="#111827" stroke="#f59e0b" stroke-width="3"/>
+      <path d="M0 -17v24M0 18v2" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
+      <text x="0" y="62" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#e2e8f0">ACT</text>
+    </g>
+  </g>
+
+  <g stroke="#38bdf8" stroke-width="2.5" fill="none" opacity="0.9">
+    <path d="M426 247H300"/>
+    <path d="M426 316H260"/>
+    <path d="M426 385H314"/>
+    <path d="M774 247H900"/>
+    <path d="M774 316H940"/>
+    <path d="M774 385H886"/>
+  </g>
+
+  <g font-family="Inter, Arial, sans-serif" font-weight="700">
+    <g transform="translate(132 212)">
+      <rect width="168" height="70" rx="14" fill="#111827" stroke="#22d3ee" stroke-width="2"/>
+      <text x="84" y="31" font-size="18" text-anchor="middle" fill="#e0f2fe">MCP SERVER</text>
+      <text x="84" y="53" font-size="13" text-anchor="middle" fill="#94a3b8">tools + schemas</text>
+    </g>
+
+    <g transform="translate(92 281)">
+      <rect width="168" height="70" rx="14" fill="#111827" stroke="#10b981" stroke-width="2"/>
+      <text x="84" y="31" font-size="18" text-anchor="middle" fill="#dcfce7">REPOSITORY</text>
+      <text x="84" y="53" font-size="13" text-anchor="middle" fill="#94a3b8">branches + diffs</text>
+    </g>
+
+    <g transform="translate(146 350)">
+      <rect width="168" height="70" rx="14" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+      <text x="84" y="31" font-size="18" text-anchor="middle" fill="#fef3c7">SECRETS</text>
+      <text x="84" y="53" font-size="13" text-anchor="middle" fill="#94a3b8">tokens + env</text>
+    </g>
+
+    <g transform="translate(900 212)">
+      <rect width="168" height="70" rx="14" fill="#111827" stroke="#22d3ee" stroke-width="2"/>
+      <text x="84" y="31" font-size="18" text-anchor="middle" fill="#e0f2fe">DATABASE</text>
+      <text x="84" y="53" font-size="13" text-anchor="middle" fill="#94a3b8">queries + logs</text>
+    </g>
+
+    <g transform="translate(940 281)">
+      <rect width="168" height="70" rx="14" fill="#111827" stroke="#ef4444" stroke-width="2"/>
+      <text x="84" y="31" font-size="18" text-anchor="middle" fill="#fee2e2">CLOUD API</text>
+      <text x="84" y="53" font-size="13" text-anchor="middle" fill="#94a3b8">deploy + mutate</text>
+    </g>
+
+    <g transform="translate(886 350)">
+      <rect width="168" height="70" rx="14" fill="#111827" stroke="#10b981" stroke-width="2"/>
+      <text x="84" y="31" font-size="18" text-anchor="middle" fill="#dcfce7">PULL REQUEST</text>
+      <text x="84" y="53" font-size="13" text-anchor="middle" fill="#94a3b8">reviewable output</text>
+    </g>
+  </g>
+
+  <g transform="translate(503 468)">
+    <path d="M97 0l86 48v66c0 47 -35 89 -86 105C46 205 11 161 11 114V48L97 0z" fill="#111827" stroke="url(#risk)" stroke-width="4"/>
+    <path d="M97 51v66" stroke="#f59e0b" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="97" cy="145" r="7" fill="#f59e0b"/>
+  </g>
+
+  <text x="600" y="79" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="900" text-anchor="middle" fill="#f8fafc">AI Agents Are The New Supply Chain</text>
+  <text x="600" y="124" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="600" text-anchor="middle" fill="#67e8f9">MCP tools, tokens, pull requests, and the security boundary we forgot to draw</text>
+
+  <g transform="translate(70 548)">
+    <rect width="228" height="42" rx="21" fill="#0b1120" stroke="#22d3ee" stroke-width="2"/>
+    <text x="114" y="27" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800" text-anchor="middle" fill="#67e8f9">MCP SECURITY 2026</text>
+  </g>
+
+  <g transform="translate(902 548)">
+    <rect width="228" height="42" rx="21" fill="#0b1120" stroke="#10b981" stroke-width="2"/>
+    <text x="114" y="27" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800" text-anchor="middle" fill="#86efac">PRACTICAL PLAYBOOK</text>
+  </g>
+</svg>

@@ -119,7 +119,7 @@ async function getBlogPostItems() {
         const content = fs.readFileSync(entry.filePath, 'utf-8');
 
         // Extract frontmatter
-        const frontmatterMatch = content.match(/---\n([\s\S]*?)\n---/);
+        const frontmatterMatch = content.match(/---\r?\n([\s\S]*?)\r?\n---/);
 
         if (frontmatterMatch && frontmatterMatch[1]) {
           const frontmatter = frontmatterMatch[1];
@@ -137,7 +137,7 @@ async function getBlogPostItems() {
           const date = dateMatch && dateMatch[1] ? new Date(dateMatch[1]) : new Date();
 
           // Extract tags
-          const tagsSection = frontmatter.match(/tags:\s*\n([\s\S]*?)(\n\w|\n---)/);
+          const tagsSection = frontmatter.match(/tags:\s*\r?\n([\s\S]*?)(\r?\n\w|\r?\n---)/);
           const tags = [];
 
           if (tagsSection && tagsSection[1]) {
