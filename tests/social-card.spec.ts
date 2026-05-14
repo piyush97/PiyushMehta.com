@@ -43,6 +43,14 @@ test.describe('Social cards', () => {
       'content',
       /\/og\/home\.png$/
     );
+    await expect(page.locator('meta[property="twitter:card"]')).toHaveAttribute(
+      'content',
+      'summary_large_image'
+    );
+    await expect(page.locator('meta[property="twitter:image"]')).toHaveAttribute(
+      'content',
+      /\/og\/home\.png$/
+    );
     await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute(
       'content',
       '1200'
