@@ -471,14 +471,24 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
     }
   }
 
-  // Initialize reactions when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
+  const initializedReactionContainers = new WeakSet<HTMLElement>();
+
+  // Initialize reactions on full page loads and Astro client-side navigations.
+  const initPostReactions = () => {
     const reactionContainers = document.querySelectorAll('.post-reactions');
     
     reactionContainers.forEach(container => {
-      new PostReactionsManager(container as HTMLElement);
+      const reactionContainer = container as HTMLElement;
+      if (initializedReactionContainers.has(reactionContainer)) return;
+
+      initializedReactionContainers.add(reactionContainer);
+      new PostReactionsManager(reactionContainer);
     });
-  });
+  };
+
+  document.addEventListener('DOMContentLoaded', initPostReactions);
+  document.addEventListener('astro:page-load', initPostReactions);
+  initPostReactions();
 
   // Export for testing
   if (typeof window !== 'undefined') {

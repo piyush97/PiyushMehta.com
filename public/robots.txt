@@ -11,6 +11,8 @@ Allow: /projects/
 Allow: /contact-me/
 Allow: /resume/
 Allow: /uses/
+Allow: /og/
+Allow: /og/*.png$
 
 # Allow static assets for rich snippets and rendering
 Allow: /images/

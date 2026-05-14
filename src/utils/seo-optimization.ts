@@ -518,13 +518,13 @@ export function extractImageMetadata(
     };
   }
 
-  // Final fallback to a default static image
-  const fallbackImageUrl = new URL('/images/social.jpg', baseUrl).toString();
+  // Final fallback to the crawler-friendly home social card.
+  const fallbackImageUrl = new URL('/og/home.png', baseUrl).toString();
 
   return {
     url: fallbackImageUrl,
     secureUrl: fallbackImageUrl,
-    type: 'image/jpeg',
+    type: 'image/png',
     width: 1200,
     height: 630,
     alt: 'Piyush Mehta - Software Engineer & Tech Speaker',
