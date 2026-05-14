@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import BlogFilter from '../components/BlogFilter.astro';
 import { writingHighlights } from '../data/portfolio';
-import socialCard from '../images/social.jpg';
 import Layout from '../layouts/Layout.astro';
 
 const allPosts = await getCollection('blog');
@@ -65,7 +64,6 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
 <Layout
   title="Writing - Piyush Mehta"
   description="Technical writing from Piyush Mehta on software architecture, web platforms, AI workflows, migration strategy, and developer tooling."
-  image={socialCard.src}
   type="website"
   ogTemplate="blog"
   ogTheme="dark"

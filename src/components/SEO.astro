@@ -1,15 +1,14 @@
 ---
 import type { JsonLdData } from '../types/schema';
 import {
-  extractImageMetadata,
   generateCanonicalUrl,
   generateStructuredData,
-  generateTwitterImageUrl,
   type ImageMetadata,
   optimizeKeywords,
   sanitizeDescription,
   validateImageForSocialSharing,
 } from '../utils/og-generator';
+import { createSocialCardMetadata } from '../utils/social-card';
 
 export interface Props {
   title: string;
@@ -53,24 +52,29 @@ const {
     'AI Workflows',
     'Technical Writing',
   ],
-  ogTemplate = 'default',
-  ogTheme = 'dark',
 } = Astro.props;
 
-// Use the actual request origin for dynamic URLs, fallback to site config
-const baseUrl = Astro.url.origin || Astro.site?.toString() || 'https://piyushmehta.com';
+const requestBaseUrl = Astro.url.origin || Astro.site?.toString() || 'https://piyushmehta.com';
+const productionBaseUrl = Astro.site?.toString() || 'https://piyushmehta.com';
+const baseUrl = (import.meta.env.DEV ? requestBaseUrl : productionBaseUrl).replace(/\/$/, '');
 
 // Optimize and sanitize content
 const optimizedDescription = sanitizeDescription(description);
 const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname, baseUrl);
 
-// Handle image metadata with full OG Protocol compliance
-// Prioritize existing images over generated ones for better social media compatibility
-let imageMetadata: ImageMetadata;
+const generatedImageMetadata = createSocialCardMetadata({
+  pathname: new URL(canonicalUrl).pathname,
+  baseUrl,
+  title,
+  author,
+});
 
+// Handle image metadata with full OG Protocol compliance.
+// Prefer explicit raster overrides only when crawlers can reliably render them.
+let providedImageMetadata: ImageMetadata | undefined;
 if (image && typeof image === 'string') {
   // Use the provided image URL directly
-  imageMetadata = {
+  providedImageMetadata = {
     url: image.startsWith('http') ? image : `${baseUrl}${image}`,
     secureUrl: image.startsWith('http') ? image : `${baseUrl}${image}`,
     type: 'image/jpeg',
@@ -81,7 +85,7 @@ if (image && typeof image === 'string') {
 } else if (image && typeof image === 'object' && image.url) {
   // Use the provided image object
   const imageUrl = image.url.startsWith('http') ? image.url : `${baseUrl}${image.url}`;
-  imageMetadata = {
+  providedImageMetadata = {
     url: imageUrl,
     secureUrl: imageUrl,
     alt: image.alt || `${title} - ${author}`,
@@ -89,34 +93,17 @@ if (image && typeof image === 'string') {
     height: image.height || 630,
     type: image.type || 'image/jpeg',
   };
-} else {
-  // Fallback to generated OG image only when no image is provided
-  imageMetadata = extractImageMetadata(
-    null, // No image provided
-    baseUrl,
-    {
-      title,
-      description: optimizedDescription,
-      type,
-      publishedTime,
-      tags,
-      template: ogTemplate,
-      theme: ogTheme,
-    }
-  );
 }
 
-// Generate Twitter-optimized image URL
-const twitterImageUrl = generateTwitterImageUrl({
-  title,
-  description: optimizedDescription,
-  type,
-  publishedTime,
-  tags,
-  template: ogTemplate === 'tech' ? 'tech' : 'twitter', // Use tech template or default Twitter template
-  theme: ogTheme === 'retro' ? 'dark' : ogTheme, // Twitter only supports dark/light
-  baseUrl,
-});
+const isCrawlerSafeRasterImage = (metadata?: ImageMetadata) => {
+  if (!metadata?.url) return false;
+  if (metadata.type === 'image/svg+xml') return false;
+  return /\.(png|jpe?g|webp|gif)(?:[?#].*)?$/i.test(metadata.url);
+};
+
+const imageMetadata = isCrawlerSafeRasterImage(providedImageMetadata)
+  ? providedImageMetadata!
+  : generatedImageMetadata;
 
 // Validate image for optimal social sharing
 const imageValidation = validateImageForSocialSharing(imageMetadata);
@@ -154,14 +141,13 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 {!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
 
 <!-- Facebook Meta Tags -->
-<meta property="og:url" content={url} />
+<meta property="og:url" content={canonicalUrl} />
 <meta property="og:type" content={type} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={optimizedDescription} />
 <meta property="og:image" content={imageMetadata.url} />
-{imageMetadata.secureUrl && imageMetadata.secureUrl !== imageMetadata.url && (
-  <meta property="og:image:secure_url" content={imageMetadata.secureUrl} />
-)}
+<meta property="og:image:url" content={imageMetadata.url} />
+{imageMetadata.secureUrl && <meta property="og:image:secure_url" content={imageMetadata.secureUrl} />}
 {imageMetadata.type && <meta property="og:image:type" content={imageMetadata.type} />}
 {imageMetadata.width && <meta property="og:image:width" content={imageMetadata.width.toString()} />}
 {imageMetadata.height && <meta property="og:image:height" content={imageMetadata.height.toString()} />}
@@ -171,11 +157,12 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 
 <!-- Twitter Meta Tags -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta property="twitter:domain" content="piyushmehta.com" />
-<meta property="twitter:url" content={url} />
+<meta name="twitter:domain" content="piyushmehta.com" />
+<meta name="twitter:url" content={canonicalUrl} />
 <meta name="twitter:title" content={title.length > 70 ? title.substring(0, 67) + '...' : title} />
 <meta name="twitter:description" content={optimizedDescription.length > 200 ? optimizedDescription.substring(0, 197) + '...' : optimizedDescription} />
-<meta name="twitter:image" content={twitterImageUrl} />
+<meta name="twitter:image" content={imageMetadata.url} />
+<meta name="twitter:image:src" content={imageMetadata.url} />
 <meta name="twitter:image:alt" content={imageMetadata.alt || `${title} - ${author}`} />
 <meta name="twitter:site" content="@piyushmehtas" />
 <meta name="twitter:creator" content="@piyushmehtas" />

@@ -1,263 +1,147 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { OG_TEMPLATES } from '../utils/og-generator';
 
-const title = 'OG Image Showcase';
-const description = 'Explore the Open Graph image templates available on this site';
+const baseUrl = (
+  import.meta.env.DEV ? Astro.url.origin : Astro.site?.toString() || 'https://piyushmehta.com'
+).replace(/\/$/, '');
 
-// Sample data for demonstrations
-const samplePost = {
-  title: 'Building Modern Web Applications with React and TypeScript',
-  description:
-    'Learn how to create scalable, maintainable web applications using React, TypeScript, and modern development practices.',
-  tags: ['React', 'TypeScript', 'Web Development', 'Frontend'],
-  date: new Date('2024-01-15'),
-  readingTime: '8',
-};
-
-const sampleTalk = {
-  title: 'The Future of Web Development',
-  description:
-    'A deep dive into emerging technologies and trends shaping the future of web development.',
-  eventName: 'TechConf 2024',
-  tags: ['Web Dev', 'Technology', 'Future'],
-  date: new Date('2024-01-10'),
-};
-
-const sampleProject = {
-  title: 'Software Engineer Portfolio',
-  description:
-    'A focused portfolio website built with Astro, TypeScript, MDX, and selective React islands.',
-  tags: ['React', 'Portfolio', 'Design', 'Open Source'],
-};
-
-const baseUrl = Astro.site?.toString() || 'https://piyushmehta.com';
+const cards = [
+  {
+    label: 'Home',
+    url: `${baseUrl}/og/home.png`,
+    page: `${baseUrl}/`,
+  },
+  {
+    label: 'Writing',
+    url: `${baseUrl}/og/blog.png`,
+    page: `${baseUrl}/blog/`,
+  },
+  {
+    label: 'Article',
+    url: `${baseUrl}/og/blog/bloom-filters.png`,
+    page: `${baseUrl}/blog/bloom-filters`,
+  },
+  {
+    label: 'Work',
+    url: `${baseUrl}/og/projects.png`,
+    page: `${baseUrl}/projects/`,
+  },
+];
 ---
 
 <Layout
-   title={title}
-   description={description}
-   type="website"
-   ogTemplate="tech"
-   ogTheme="dark"
- >
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="text-center mb-12">
-      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-        OG Image Showcase
-      </h1>
-      <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-        Explore the Open Graph image templates available on this site. Each template is optimized for different content types and social media platforms.
+  title="OG Image Showcase"
+  description="Crawler-safe Open Graph image previews for PiyushMehta.com."
+  type="website"
+  ogTemplate="minimal"
+  ogTheme="dark"
+>
+  <section class="og-shell">
+    <header>
+      <p class="eyebrow">Open Graph</p>
+      <h1>Clean share cards.</h1>
+      <p>
+        These are the production social card URLs used by Open Graph and Twitter metadata. They are
+        PNG, 1200x630, cacheable, and crawler-friendly.
       </p>
-    </div>
+      <a href="/og/home.png">Open home card</a>
+    </header>
 
-    <!-- Template Gallery -->
-    <div class="space-y-16">
-      {Object.entries(OG_TEMPLATES).map(([templateKey, template]) => (
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-          <div class="p-8">
-            <div class="flex items-center justify-between mb-6">
-              <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                  {template.name}
-                </h2>
-                <p class="text-gray-600 dark:text-gray-300 mt-1">
-                  {template.description}
-                </p>
-              </div>
-              <div class="text-right">
-                <div class="text-sm text-gray-500 dark:text-gray-400">
-                  Best for: {template.bestFor.join(', ')}
-                </div>
-                <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                  Features: {template.features.join(', ')}
-                </div>
-              </div>
-            </div>
-
-            <!-- Sample Images Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              
-              <!-- Blog Post Example -->
-              <div class="space-y-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Blog Post
-                </h3>
-                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                  <img 
-                    src={`${baseUrl}/api/og-enhanced?title=${encodeURIComponent(samplePost.title)}&description=${encodeURIComponent(samplePost.description)}&type=article&template=${templateKey}&date=${samplePost.date.toISOString()}&tags=${samplePost.tags.join(',')}&readingTime=${samplePost.readingTime}`}
-                    alt={`${template.name} - Blog Post Example`}
-                    class="w-full h-auto"
-                    loading="lazy"
-                  />
-                </div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">
-                  Article with reading time and tags
-                </div>
-              </div>
-
-              <!-- Talk/Presentation Example -->
-              <div class="space-y-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Talk/Presentation
-                </h3>
-                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                  <img 
-                    src={`${baseUrl}/api/og-enhanced?title=${encodeURIComponent(sampleTalk.title)}&description=${encodeURIComponent(sampleTalk.description)}&type=website&template=${templateKey}&tags=${sampleTalk.tags.join(',')}&date=${sampleTalk.date.toISOString()}`}
-                    alt={`${template.name} - Talk Example`}
-                    class="w-full h-auto"
-                    loading="lazy"
-                  />
-                </div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">
-                  Tech talk or presentation with event info
-                </div>
-              </div>
-
-              <!-- Project Example -->
-              <div class="space-y-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Project
-                </h3>
-                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                  <img 
-                    src={`${baseUrl}/api/og-enhanced?title=${encodeURIComponent(sampleProject.title)}&description=${encodeURIComponent(sampleProject.description)}&type=project&template=${templateKey}&tags=${sampleProject.tags.join(',')}`}
-                    alt={`${template.name} - Project Example`}
-                    class="w-full h-auto"
-                    loading="lazy"
-                  />
-                </div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">
-                  Project showcase with tech stack
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Theme Variants -->
-            <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Theme Variations
-              </h3>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {['dark', 'light', 'auto'].map(theme => (
-                  <div class="space-y-2">
-                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
-                      {theme} Theme
-                    </h4>
-                    <div class="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                      <img 
-                        src={`${baseUrl}/api/og-enhanced?title=${encodeURIComponent('Theme Variation Example')}&description=${encodeURIComponent('This shows how the template looks in different themes')}&template=${templateKey}&theme=${theme}&showLogo=true&showBadge=true`}
-                        alt={`${template.name} - ${theme} theme`}
-                        class="w-full h-auto"
-                        loading="lazy"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <!-- API Usage -->
-            <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                API Usage
-              </h3>
-              <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                <pre class="text-sm text-gray-100">
-                  <code>{`// Generate OG image URL
-const ogImageUrl = \`${baseUrl}/api/og-enhanced?title=\${encodeURIComponent(title)}&template=${templateKey}&theme=dark\`;
-
-// With full parameters
-const fullOgImageUrl = \`${baseUrl}/api/og-enhanced?title=\${encodeURIComponent(title)}&description=\${encodeURIComponent(description)}&type=article&template=${templateKey}&theme=dark&tags=\${tags.join(',')}&showLogo=true&showBadge=true\`;`}</code>
-                </pre>
-              </div>
-            </div>
-
+    <div class="card-list">
+      {cards.map((card) => (
+        <article>
+          <div>
+            <p class="eyebrow">{card.label}</p>
+            <a href={card.page}>{card.page}</a>
           </div>
-        </div>
+          <img src={card.url} alt={`${card.label} social card`} width="1200" height="630" />
+          <code>{card.url}</code>
+        </article>
       ))}
     </div>
-
-    <!-- Integration Examples -->
-    <div class="mt-16 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-8">
-      <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-        Integration Examples
-      </h2>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Astro Integration
-          </h3>
-          <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
-            <code>{`---
-import { generateOGImageMetadata } from '../utils/og-generator';
-
-const ogImage = generateOGImageMetadata({
-  title: 'My Blog Post',
-  description: 'A concise blog post summary',
-  type: 'article',
-  template: 'blog',
-  tags: ['javascript', 'web-dev']
-});
----
-
-<meta property="og:image" content={ogImage.url} />
-<meta property="og:image:width" content={ogImage.width} />
-<meta property="og:image:height" content={ogImage.height} />`}</code>
-          </pre>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Dynamic Template Selection
-          </h3>
-          <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
-            <code>{`import { getRecommendedTemplate } from '../utils/og-generator';
-
-// AI-powered template selection
-const template = getRecommendedTemplate('article', ['programming', 'react']);
-
-// Generate optimized OG image
-const ogImage = generateOGImageMetadata({
-  title: post.title,
-  description: post.excerpt,
-  type: 'article',
-  template,
-  tags: post.tags
-});
-
-// For talks/presentations
-const talkImage = generateTalkOGImage({
-  title: 'My Conference Talk',
-  description: 'Building the future of web development',
-  eventName: 'TechConf 2024',
-  tags: ['React', 'Performance']
-});`}</code>
-          </pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- Performance Notes -->
-    <div class="mt-12 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-amber-800 dark:text-amber-200 mb-2">
-        Performance & Caching
-      </h3>
-      <ul class="text-amber-700 dark:text-amber-300 space-y-1">
-        <li>• Images are cached with a 1-year TTL for optimal performance</li>
-        <li>• Generated images are served from Vercel's edge network</li>
-        <li>• Template rendering is optimized with React.createElement for speed</li>
-        <li>• Multiple themes and templates can be generated without additional overhead</li>
-      </ul>
-    </div>
-
-  </div>
+  </section>
 </Layout>
 
 <style>
-  pre {
-    font-family: 'JetBrains Mono', 'Monaco', 'Consolas', monospace;
+  .og-shell {
+    width: min(1120px, calc(100% - 2rem));
+    margin-inline: auto;
+    padding-block: clamp(4rem, 8vw, 7rem);
+  }
+
+  header {
+    max-width: 48rem;
+    margin-bottom: 3rem;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--color-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 0.96;
+    letter-spacing: 0;
+  }
+
+  header p {
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  header a,
+  article a {
+    color: var(--color-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .card-list {
+    display: grid;
+    gap: 2rem;
+  }
+
+  article {
+    display: grid;
+    gap: 0.9rem;
+    border-top: 1px solid var(--color-card-border);
+    padding-top: 1.25rem;
+  }
+
+  article > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
+  }
+
+  code {
+    display: block;
+    overflow-wrap: anywhere;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 640px) {
+    .og-shell {
+      width: min(100% - 1rem, 1120px);
+    }
   }
 </style>

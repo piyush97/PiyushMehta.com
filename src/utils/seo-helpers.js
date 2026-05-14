@@ -36,8 +36,12 @@ export const generatePageMetadata = ({
   // Construct canonical URL
   const canonicalUrl = `${domain}${pagePath}`;
 
+  const normalizedPath =
+    pagePath && pagePath !== '/' ? pagePath.replace(/^\/?/, '/').replace(/\/$/, '') : '/';
+  const pageKey = normalizedPath === '/' ? 'home' : normalizedPath.replace(/^\/+/, '');
+
   // Default image if none provided
-  const ogImage = image || `${domain}/api/og-image?title=${encodeURIComponent(title)}`;
+  const ogImage = image || `${domain}/og/${pageKey}.png`;
 
   return {
     title,

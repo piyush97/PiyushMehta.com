@@ -7,6 +7,7 @@ import OptimizedImage from '../../components/OptimizedImage.astro';
 import PostReactions from '../../components/PostReactions.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
 import Layout from '../../layouts/Layout.astro';
+import { createSocialCardMetadata } from '../../utils/social-card';
 
 export const prerender = true;
 
@@ -24,25 +25,20 @@ const currentSlug = Astro.params.slug ?? post.id.replace(/\/index$/, '').replace
 const postBody = post.body ?? '';
 const { Content } = await render(post);
 
-const { title, description, date, author, tags, image, banner, ogTemplate, ogTheme } = post.data;
+const { title, description, date, author, tags, image, ogTemplate, ogTheme } = post.data;
 const typedTags: string[] = tags ?? [];
-
-// Import enhanced OG generator
-import { generateBlogOGImage, getRecommendedTemplate } from '../../utils/seo-optimization';
 
 // Calculate reading time (rough estimate)
 const readingTime = Math.ceil(postBody.split(' ').length / 200);
 
-// Generate enhanced OG image
-const recommendedTemplate = getRecommendedTemplate('article', typedTags);
-const enhancedOGImage = generateBlogOGImage({
+const baseUrl = (
+  import.meta.env.DEV ? Astro.url.origin : Astro.site?.toString() || 'https://piyushmehta.com'
+).replace(/\/$/, '');
+const socialImage = createSocialCardMetadata({
+  pathname: `/blog/${currentSlug}`,
+  baseUrl,
   title,
-  description,
-  publishedDate: date,
-  tags: typedTags,
-  readingTime: readingTime.toString(),
-  template: (ogTemplate as string) || recommendedTemplate,
-  baseUrl: Astro.site?.toString() || 'https://piyushmehta.com',
+  author: author || 'Piyush Mehta',
 });
 
 // Generate canonical URL
@@ -76,15 +72,13 @@ const articleSchema = {
     '@type': 'WebPage',
     '@id': canonicalUrl,
   },
-  ...(image && {
-    image: {
-      '@type': 'ImageObject',
-      url: new URL(image.url, Astro.site).toString(),
-      description: image.alt,
-      ...(image.width && { width: image.width }),
-      ...(image.height && { height: image.height }),
-    },
-  }),
+  image: {
+    '@type': 'ImageObject',
+    url: socialImage.url,
+    description: socialImage.alt,
+    width: socialImage.width,
+    height: socialImage.height,
+  },
 };
 ---
 
@@ -98,7 +92,7 @@ const articleSchema = {
   modifiedTime={date}
   tags={typedTags}
   canonical={canonicalUrl}
-  image={image || banner || enhancedOGImage}
+  image={socialImage}
   schema={articleSchema}
   ogTemplate={ogTemplate}
   ogTheme={ogTheme}
