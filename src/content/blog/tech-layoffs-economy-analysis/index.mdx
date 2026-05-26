@@ -18,11 +18,13 @@ image:
   alt: 'Tech layoffs economic impact analysis'
 ---
 
-Between 2022 and 2025, the tech industry eliminated over **650,000 jobs** across companies like Meta, Google, Amazon, Microsoft, and hundreds of startups. 2024 alone saw roughly 150,000 tech workers laid off globally. This wasn't routine restructuring — it was a sector-wide reset after a decade of overhiring fueled by near-zero interest rates.
+import LayoffEconomyExplainer from '../../../components/blog/LayoffEconomyExplainer.tsx'
+
+Between 2022 and May 2026, public layoff trackers count more than **820,000 tech jobs cut** across companies like Meta, Google, Amazon, Microsoft, and hundreds of startups. The peak was 2023, with roughly 264,000 tracked layoffs. 2024 cooled but still saw about 153,000 cuts, 2025 added roughly 125,000, and 2026 had already crossed six figures by late May. This wasn't routine restructuring -- it was a sector-wide reset after a decade of overhiring fueled by near-zero interest rates.
 
 If you're a developer, you felt it. Job postings dried up. Offer rescissions became normalized. Senior engineers competed for mid-level roles. But beyond the personal anxiety, what does this actually do to the broader economy?
 
-![Tech layoffs by year 2019–2024](/blog/tech-layoffs-economy-analysis/images/layoffs-timeline.svg)
+<LayoffEconomyExplainer client:load />
 
 ## Why Tech Layoffs Hit Differently
 
@@ -50,7 +52,7 @@ The mechanism: high-earning tech workers competed for premium housing and drove 
 
 Austin saw a softer version of this after the 2023 tech slowdown, with the condo market cooling sharply after years of price appreciation driven by the relocation of tech workers from California.
 
-For context: **tech workers account for roughly 12% of the US workforce but an outsized share of household spending in metro areas**. Their layoffs don't just reduce aggregate demand — they hollow out specific local economies.
+For context: the U.S. tech workforce is under 10 million people nationally, but the spending is highly concentrated in metro areas. Their layoffs don't just reduce aggregate demand -- they hollow out specific local economies.
 
 ## Consumer Spending and the Confidence Effect
 
@@ -62,10 +64,11 @@ Economists distinguish between two types of consumer behavior:
 
 Tech workers who remain employed after rounds of layoffs often significantly reduce discretionary spending — not because they can't afford it, but because they're uncertain whether their job is next. This behavioral shift is hard to measure but matters enormously.
 
-After Meta's 2022 layoffs, surveys showed that tech workers broadly reduced:
-- Restaurant and entertainment spending by ~20%
-- Large discretionary purchases (cars, furniture, travel) by ~25%
-- Home improvement spending by ~30%
+After large 2022-2024 layoff rounds, the pullback showed up in categories that depend on high-income confidence:
+- Restaurant and entertainment spending
+- Large discretionary purchases like cars, furniture, and travel
+- Home improvement and renovation work
+- Premium subscriptions and business software bought by small teams
 
 Multiply this across hundreds of thousands of workers who survived layoffs but changed their behavior, and you get a measurable drag on consumer-driven economic sectors.
 
@@ -73,7 +76,7 @@ Multiply this across hundreds of thousands of workers who survived layoffs but c
 
 The startup ecosystem is where the economy regenerates tech capacity. Layoffs affect it in complex, contradictory ways.
 
-**The talent availability paradox.** On one hand, layoffs flood the market with experienced engineers, making talent more accessible and affordable for startups. Y Combinator founders reported in 2023 that hiring quality senior engineers became dramatically easier and cheaper post-layoffs. This is genuinely good for startups trying to build.
+**The talent availability paradox.** On one hand, layoffs flood the market with experienced engineers, making talent more accessible and affordable for startups. Founders who had struggled to recruit senior engineers during the 2021 boom suddenly had more realistic hiring conversations. This is genuinely good for startups trying to build.
 
 On the other hand, **consumer-facing startups face destroyed demand**. B2C startups targeting tech workers — fintech apps, premium productivity tools, high-end consumer software — see their addressable market shrink directly when their core customer base loses jobs or cuts spending.
 
@@ -85,7 +88,7 @@ On the other hand, **consumer-facing startups face destroyed demand**. B2C start
 
 Here's what makes the current layoff cycle different from all previous ones: the stated reason for many cuts is **AI-driven productivity gains**, not just economic cycles.
 
-When Microsoft, Google, and Meta cite AI as a factor in headcount reductions, they're signaling something the 2008 or 2001 cycles didn't involve — that some of these jobs may not come back, even during the next economic expansion.
+When large tech companies cite AI investment, efficiency, and flatter organizations as reasons for headcount reductions, they're signaling something the 2008 or 2001 cycles didn't involve -- that some of these jobs may not come back, even during the next economic expansion.
 
 The economic implications of this are significant and contested:
 
@@ -99,7 +102,7 @@ The data from 2024–2026 suggests **something between the two**: AI tools have 
 
 This is underappreciated in most layoff analyses. Tech workers pay **significantly more in income tax** than the average worker — not just because of salaries, but because of capital gains from RSU and stock option vesting.
 
-During the 2020–2021 tech boom, California collected record income tax revenue, much of it from IPO-related capital gains among tech workers. When tech stocks crashed and layoffs began in 2022, California faced a **$22 billion budget deficit** in 2023, primarily driven by the collapse of capital gains tax receipts from tech workers.
+During the 2020-2021 tech boom, California collected record income tax revenue, much of it from IPO-related capital gains and stock compensation. When financial markets cooled and layoffs began in 2022, California's revenue base weakened sharply. The Legislative Analyst's Office later estimated a **$68 billion budget problem for 2024-25**, with 2022-23 revenue coming in **$26 billion below budget assumptions**. The state is unusually exposed to tech cycles because income-tax receipts depend heavily on high earners and capital gains.
 
 This creates a **pro-cyclical government funding problem**: when the economy is booming (and government spending is most needed for public goods), tech-driven tax revenue is high. When layoffs happen and unemployment services are most needed, that same tax base collapses. States with heavy tech sector dependency are essentially running a hidden leveraged bet on tech employment.
 
@@ -107,7 +110,7 @@ This creates a **pro-cyclical government funding problem**: when the economy is 
 
 If you're a software engineer reading this, here's the actionable picture:
 
-**The job market has structurally changed.** The 2010s model of "become a developer → get multiple competing offers → negotiate aggressively" no longer universally applies. The ratio of job seekers to open positions in software engineering shifted from roughly 1:3 in 2021 to roughly 3:1 in 2024 for mid-level roles.
+**The job market has structurally changed.** The 2010s model of "become a developer, get multiple competing offers, negotiate aggressively" no longer universally applies. The direction changed: fewer openings, longer interview loops, more applicants per role, and less leverage for mid-level generalist engineers.
 
 ![Software engineering job market: 2021 boom vs 2024 reset](/blog/tech-layoffs-economy-analysis/images/job-market-shift.svg)
 
@@ -117,7 +120,7 @@ If you're a software engineer reading this, here's the actionable picture:
 
 **Equity is not a salary substitute.** The 2022 crash reminded thousands of engineers that unvested RSUs are not money. If you took a below-market salary for equity that never vested, that was a real economic loss. Cash compensation is worth more during uncertainty.
 
-**Build financial buffer, not lifestyle inflation.** The median tech worker's savings rate during the 2019–2021 boom was low despite high incomes. Engineers who built 12-month emergency funds and avoided lifestyle inflation weathered layoffs dramatically better than those who expanded spending to match income.
+**Build financial buffer, not lifestyle inflation.** High income does not protect you if fixed costs expand to match it. Engineers who built 12-month emergency funds and avoided lifestyle inflation weathered layoffs dramatically better than those who expanded spending to match income.
 
 ## The Macro Outlook
 
@@ -134,6 +137,10 @@ The countervailing forces are real too: new industries emerge, costs decrease fo
 For developers, the message is uncomfortable but clear: **the era of unconditional demand for software engineers is over**. What replaced it is an era where the best engineers — those who combine deep technical skill with business judgment, who can work alongside AI tools rather than be replaced by them — are more valuable than ever. And the rest of the market has thinned.
 
 The economy will adapt. It always does. But this cycle is different enough in character — AI displacement, not just cyclical downturn — that treating it as a normal recession would be a mistake.
+
+## Data Notes and Sources
+
+The numbers here are directional because layoff trackers, official labor data, venture funding reports, and local real estate reports measure different things. The layoff totals use [Layoffs.fyi](https://layoffs.fyi/) as a public tracker through May 26, 2026. Software compensation context uses the [BLS software developer outlook](https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm). The local multiplier discussion follows Enrico Moretti's work and the [Bay Area Council Economic Institute summary](https://www.bayareaeconomy.org/report/local-multipliers-in-the-high-technology-sector/). San Francisco vacancy context comes from commercial real estate market reports such as [Cushman & Wakefield Q2 2024 MarketBeat](https://assets.cushmanwakefield.com/-/media/cw/marketbeat-pdfs/2024/q2/us-reports/office/san-francisco_americas_marketbeat_office_q2-2024.pdf). California budget context comes from the [Legislative Analyst's Office 2024-25 Fiscal Outlook](https://lao.ca.gov/Publications/Report/4819).
 
 ---
 

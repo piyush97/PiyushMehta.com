@@ -46,7 +46,7 @@ export const defaultCSPDirectives = {
     'giscus.app',
     'api.github.com',
   ],
-  'frame-src': ['giscus.app'],
+  'frame-src': ['giscus.app', 'https://www.youtube-nocookie.com'],
   'media-src': ["'self'"],
   'object-src': ["'none'"],
   'base-uri': ["'self'"],
