@@ -178,76 +178,102 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
     private userReactions: Set<string> = new Set();
     private reactionCounts: Map<string, number> = new Map();
     private feedbackElement: HTMLElement | null;
-    private analyticsElement: HTMLElement | null;
+    // Reactions the user has clicked but whose server response hasn't landed yet.
+    private pendingReactions: Set<string> = new Set();
+    // One AbortController per reaction so a second click cancels the first in-flight POST.
+    private syncControllers: Map<string, AbortController> = new Map();
 
     constructor(container: HTMLElement) {
       this.container = container;
       this.postId = container.dataset.postId || '';
       this.componentId = container.dataset.componentId || '';
       this.feedbackElement = document.getElementById(`${this.componentId}-feedback`);
-      this.analyticsElement = document.getElementById(`${this.componentId}-analytics`);
-      
+
       this.init();
     }
 
     private init() {
-      this.loadStoredData();
+      this.loadUserReactions();
+      this.initCounts();
       this.updateUI();
       this.setupEventListeners();
       this.setupKeyboardNavigation();
-      
-      // Show analytics in development
-      if (window.location.hostname === 'localhost') {
-        this.showAnalytics();
+      this.fetchGlobalCounts();
+    }
+
+    private loadUserReactions() {
+      try {
+        const userKey = `reactions_user_${this.postId}`;
+        const stored = localStorage.getItem(userKey);
+        if (stored) {
+          this.userReactions = new Set(JSON.parse(stored));
+        }
+      } catch {
+        // ignore
       }
     }
 
-    private loadStoredData() {
+    private initCounts() {
+      ['like', 'helpful', 'insightful', 'bookmark'].forEach(reaction => {
+        this.reactionCounts.set(reaction, 0);
+      });
+    }
+
+    private saveUserReactions() {
       try {
-        // Load user reactions
-        const userKey = `reactions_user_${this.postId}`;
-        const userReactions = localStorage.getItem(userKey);
-        if (userReactions) {
-          this.userReactions = new Set(JSON.parse(userReactions));
-        }
+        localStorage.setItem(
+          `reactions_user_${this.postId}`,
+          JSON.stringify([...this.userReactions])
+        );
+      } catch {
+        // ignore
+      }
+    }
 
-        // Load reaction counts
-        const countsKey = `reactions_counts_${this.postId}`;
-        const counts = localStorage.getItem(countsKey);
-        if (counts) {
-          const parsedCounts = JSON.parse(counts);
-          this.reactionCounts = new Map(Object.entries(parsedCounts));
-        }
-
-        // Initialize counts for reactions that don't exist
-        ['like', 'helpful', 'insightful', 'bookmark'].forEach(reaction => {
-          if (!this.reactionCounts.has(reaction)) {
-            this.reactionCounts.set(reaction, 0);
+    private async fetchGlobalCounts() {
+      try {
+        const res = await fetch(`/api/reactions?postId=${encodeURIComponent(this.postId)}`);
+        if (!res.ok) return;
+        const data: Record<string, number> = await res.json();
+        for (const [reaction, count] of Object.entries(data)) {
+          // Don't overwrite reactions the user has already clicked — their
+          // optimistic update is more recent than this initial server snapshot.
+          if (!this.pendingReactions.has(reaction)) {
+            this.reactionCounts.set(reaction, count);
           }
-        });
-
-      } catch (error) {
-        console.error('Error loading reaction data:', error);
+        }
+        this.updateUI();
+      } catch {
+        // silently fall back to zeros
       }
     }
 
-    private saveData() {
+    private async syncReactionToServer(reaction: string, action: 'add' | 'remove') {
+      // Abort any in-flight request for this reaction so a quick second click
+      // doesn't race against the first response and overwrite the newer state.
+      this.syncControllers.get(reaction)?.abort();
+      const controller = new AbortController();
+      this.syncControllers.set(reaction, controller);
+      this.pendingReactions.add(reaction);
+
       try {
-        // Save user reactions
-        const userKey = `reactions_user_${this.postId}`;
-        localStorage.setItem(userKey, JSON.stringify([...this.userReactions]));
-
-        // Save reaction counts
-        const countsKey = `reactions_counts_${this.postId}`;
-        const countsObj = Object.fromEntries(this.reactionCounts);
-        localStorage.setItem(countsKey, JSON.stringify(countsObj));
-
-        // Save last interaction timestamp
-        const timestampKey = `reactions_timestamp_${this.postId}`;
-        localStorage.setItem(timestampKey, Date.now().toString());
-
-      } catch (error) {
-        console.error('Error saving reaction data:', error);
+        const res = await fetch('/api/reactions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ postId: this.postId, reaction, action }),
+          signal: controller.signal,
+        });
+        if (!res.ok) return;
+        const { count }: { count: number } = await res.json();
+        this.reactionCounts.set(reaction, count);
+        this.updateUI();
+      } catch (e) {
+        if ((e as Error)?.name !== 'AbortError') {
+          // optimistic update already applied, ignore other network errors
+        }
+      } finally {
+        this.pendingReactions.delete(reaction);
+        this.syncControllers.delete(reaction);
       }
     }
 
@@ -300,37 +326,27 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
       }
 
       const wasActive = this.userReactions.has(reaction);
-      
-      if (wasActive) {
-        // Remove reaction
-        this.userReactions.delete(reaction);
-        const currentCount = this.reactionCounts.get(reaction) || 0;
-        this.reactionCounts.set(reaction, Math.max(0, currentCount - 1));
-        
-        this.trackEvent('reaction_removed', { 
-          reaction, 
-          postId: this.postId,
-          newCount: this.reactionCounts.get(reaction)
-        });
-      } else {
-        // Add reaction
-        this.userReactions.add(reaction);
-        const currentCount = this.reactionCounts.get(reaction) || 0;
-        this.reactionCounts.set(reaction, currentCount + 1);
-        
-        this.trackEvent('reaction_added', { 
-          reaction, 
-          postId: this.postId,
-          newCount: this.reactionCounts.get(reaction)
-        });
+      const action = wasActive ? 'remove' : 'add';
 
-        // Show feedback
+      // Optimistic update
+      if (wasActive) {
+        this.userReactions.delete(reaction);
+        this.reactionCounts.set(reaction, Math.max(0, (this.reactionCounts.get(reaction) || 0) - 1));
+      } else {
+        this.userReactions.add(reaction);
+        this.reactionCounts.set(reaction, (this.reactionCounts.get(reaction) || 0) + 1);
         this.showFeedback();
       }
 
-      this.saveData();
+      this.saveUserReactions();
       this.updateUI();
-      this.showAnalytics();
+      this.syncReactionToServer(reaction, action);
+
+      this.trackEvent(wasActive ? 'reaction_removed' : 'reaction_added', {
+        reaction,
+        postId: this.postId,
+        newCount: this.reactionCounts.get(reaction),
+      });
     }
 
     private handleShare() {
@@ -431,27 +447,6 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
           this.feedbackElement.classList.add('hidden');
         }
       }, 3000);
-    }
-
-    private showAnalytics() {
-      if (!this.analyticsElement || window.location.hostname !== 'localhost') return;
-
-      const analyticsData = this.analyticsElement.querySelector('.analytics-data');
-      if (!analyticsData) return;
-
-      const totalReactions = Array.from(this.reactionCounts.values()).reduce((sum, count) => sum + count, 0);
-      const userReactionCount = this.userReactions.size;
-      
-      analyticsData.innerHTML = `
-        <div>Total reactions: ${totalReactions}</div>
-        <div>User reactions: ${userReactionCount}</div>
-        <div>Like: ${this.reactionCounts.get('like') || 0}</div>
-        <div>Helpful: ${this.reactionCounts.get('helpful') || 0}</div>
-        <div>Insightful: ${this.reactionCounts.get('insightful') || 0}</div>
-        <div>Bookmarked: ${this.reactionCounts.get('bookmark') || 0}</div>
-      `;
-
-      this.analyticsElement.classList.remove('hidden');
     }
 
     private trackEvent(eventName: string, properties: any = {}) {
