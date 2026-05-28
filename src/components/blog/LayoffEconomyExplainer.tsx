@@ -140,7 +140,7 @@ const LayoffEconomyExplainer: React.FC = () => {
         </div>
       </div>
 
-      <div className="layoff-economy__flow" role="group" aria-label="Economic impact sequence">
+      <div className="layoff-economy__flow" aria-label="Economic impact sequence">
         {impactSteps.map((step, index) => (
           <button
             type="button"
@@ -226,7 +226,7 @@ const LayoffEconomyExplainer: React.FC = () => {
           <h3>Tracked layoffs by year</h3>
           <p>2026 is year-to-date, so compare directionally.</p>
         </div>
-        <div className="layoff-economy__bars" role="img" aria-label="2023 is the largest bar">
+        <figure className="layoff-economy__bars" aria-label="2023 is the largest bar">
           {layoffYears.map((year) => (
             <div className="layoff-economy__bar-wrap" key={year.year}>
               <div
@@ -238,7 +238,7 @@ const LayoffEconomyExplainer: React.FC = () => {
               <strong>{year.year}</strong>
             </div>
           ))}
-        </div>
+        </figure>
       </div>
 
       <div className="layoff-economy__videos" aria-label="Related explainer videos">
@@ -257,6 +257,7 @@ const LayoffEconomyExplainer: React.FC = () => {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   referrerPolicy="strict-origin-when-cross-origin"
+                  sandbox="allow-scripts allow-same-origin allow-presentation"
                 />
               ) : (
                 <a

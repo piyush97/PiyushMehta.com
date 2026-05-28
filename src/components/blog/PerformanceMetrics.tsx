@@ -175,22 +175,15 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
           );
 
           return (
-            <div
+            <button
               key={metric.key}
-              className={`bg-surface-1 border rounded-lg p-4 cursor-pointer transition-colors ${
+              type="button"
+              className={`w-full text-left bg-surface-1 border rounded-lg p-4 cursor-pointer transition-colors ${
                 selectedMetric === metric.key
                   ? 'border-primary bg-primary/5'
                   : 'border-border hover:border-primary/50'
               }`}
               onClick={() => setSelectedMetric(metric.key)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setSelectedMetric(metric.key);
-                }
-              }}
-              tabIndex={0}
-              role="button"
               aria-label={`Select ${metric.label} metric`}
             >
               <div className="text-center">
@@ -207,7 +200,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
                   {data[metric.key].arch} {metric.unit}
                 </div>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>

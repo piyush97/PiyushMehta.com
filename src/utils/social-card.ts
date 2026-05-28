@@ -290,8 +290,10 @@ export function parseTags(value?: string | null): string[] {
 
   return value
     .split(',')
-    .map((tag) => cleanText(tag))
-    .filter(Boolean)
+    .flatMap((tag) => {
+      const cleaned = cleanText(tag);
+      return cleaned ? [cleaned] : [];
+    })
     .slice(0, 4);
 }
 

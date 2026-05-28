@@ -25,9 +25,9 @@ self.addEventListener('activate', (event) => {
     (async () => {
       const cacheNames = await caches.keys();
       await Promise.all(
-        cacheNames
-          .filter((cacheName) => shouldRemoveCache(cacheName))
-          .map((cacheName) => caches.delete(cacheName))
+        cacheNames.flatMap((cacheName) =>
+          shouldRemoveCache(cacheName) ? [caches.delete(cacheName)] : []
+        )
       );
 
       await self.clients.claim();
