@@ -83,9 +83,8 @@ export async function fetchGitHubRepos(username: string, token?: string): Promis
 
     // Filter out forks and empty repos, and format them for our component
     return repos
-      .filter((repo) => !repo.fork && repo.description) // Filter out forks and repos without descriptions
-      .map((repo) => formatRepo(repo))
-      .sort((a, b) => b.year - a.year); // Sort by year (newest first)
+      .flatMap((repo) => (!repo.fork && repo.description ? [formatRepo(repo)] : []))
+      .sort((a, b) => b.year - a.year);
   } catch (error) {
     console.error('Error fetching GitHub repos:', error);
     return [];
@@ -100,10 +99,9 @@ function formatRepo(repo: GitHubRepo): FormattedRepo {
   const isFeatured = repo.stargazers_count >= 5;
 
   // Determine the technologies based on repo language and topics
-  const technologies = [repo.language]
-    .concat(repo.topics || [])
-    .filter(Boolean) // Remove null/undefined values
-    .map((tech) => (typeof tech === 'string' ? tech : ''));
+  const technologies = [repo.language, ...(repo.topics || [])].flatMap((tech) =>
+    tech ? [String(tech)] : []
+  );
 
   // Create a year from the created_at date
   const year = new Date(repo.created_at).getFullYear();

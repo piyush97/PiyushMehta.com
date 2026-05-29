@@ -59,7 +59,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
     }
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function updateField(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
     setFields((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof Field]) {
@@ -74,7 +74,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           ✓
         </div>
         <h3>Message sent.</h3>
-        <p>Got it — I'll get back to you shortly.</p>
+        <p>Got it, I'll get back to you shortly.</p>
         <button type="button" className="contact-success__reset" onClick={() => setStatus('idle')}>
           Send another
         </button>
@@ -94,7 +94,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
             autoComplete="name"
             placeholder="Your name"
             value={fields.name}
-            onChange={handleChange}
+            onChange={updateField}
             aria-invalid={!!errors.name}
             aria-describedby={errors.name ? 'cf-name-err' : undefined}
           />
@@ -114,7 +114,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
             autoComplete="email"
             placeholder="you@example.com"
             value={fields.email}
-            onChange={handleChange}
+            onChange={updateField}
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? 'cf-email-err' : undefined}
           />
@@ -134,7 +134,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           type="text"
           placeholder="What's this about?"
           value={fields.subject}
-          onChange={handleChange}
+          onChange={updateField}
           aria-invalid={!!errors.subject}
           aria-describedby={errors.subject ? 'cf-subject-err' : undefined}
         />
@@ -153,7 +153,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           rows={6}
           placeholder="Tell me about the project, constraints, and what good looks like."
           value={fields.message}
-          onChange={handleChange}
+          onChange={updateField}
           aria-invalid={!!errors.message}
           aria-describedby={errors.message ? 'cf-message-err' : undefined}
         />

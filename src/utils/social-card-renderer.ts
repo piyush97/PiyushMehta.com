@@ -310,7 +310,11 @@ export function createSocialCardElement(input: SocialCardData) {
     ...input,
     title: cleanText(input.title) || 'Piyush Mehta',
     description: cleanText(input.description),
-    tags: input.tags?.map((tag) => cleanText(tag)).filter(Boolean) || [],
+    tags:
+      input.tags?.flatMap((tag) => {
+        const c = cleanText(tag);
+        return c ? [c] : [];
+      }) || [],
   };
   const theme = getTheme(data.theme);
   const title = truncateText(data.title, data.type === 'article' ? 92 : 82);

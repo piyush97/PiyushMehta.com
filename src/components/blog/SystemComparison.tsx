@@ -52,7 +52,7 @@ const SystemComparison: React.FC<SystemComparisonProps> = ({ macosData, archData
         {/* macOS Column */}
         <div className="bg-surface-1 border border-border rounded-lg p-4">
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+            <div className="size-3 bg-blue-500 rounded-full"></div>
             <h4 className="font-semibold text-text-primary">macOS Setup</h4>
           </div>
 
@@ -94,7 +94,7 @@ const SystemComparison: React.FC<SystemComparisonProps> = ({ macosData, archData
         {/* Arch Linux Column */}
         <div className="bg-surface-1 border border-border rounded-lg p-4">
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <div className="size-3 bg-green-500 rounded-full"></div>
             <h4 className="font-semibold text-text-primary">Arch Linux Setup</h4>
           </div>
 

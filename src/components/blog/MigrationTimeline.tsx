@@ -128,7 +128,7 @@ const MigrationTimeline: React.FC = () => {
       </h3>
 
       {/* Timeline Navigation */}
-      <div className="flex space-x-2 mb-6 overflow-x-auto">
+      <div className="flex gap-x-2 mb-6 overflow-x-auto">
         {timelineData.map((event, index) => (
           <button
             type="button"
@@ -191,10 +191,10 @@ const MigrationTimeline: React.FC = () => {
           <ul className="space-y-2">
             {timelineData[selectedHour].details.map((detail, index) => (
               <li
-                key={`detail-${timelineData[selectedHour].time}-${index}`}
+                key={`detail-${timelineData[selectedHour].time}-${detail}`}
                 className="flex items-start"
               >
-                <div className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <div className="size-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0"></div>
                 <span className="text-text-secondary">{detail}</span>
               </li>
             ))}

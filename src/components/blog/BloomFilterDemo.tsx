@@ -95,9 +95,9 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
       <div className="mb-6">
         <h4 className="font-semibold mb-2 text-text-primary">Bit Array (8 bits):</h4>
         <div className="flex gap-2 mb-2">
-          {filter.bits.map((bit, index) => (
+          {[...filter.bits.entries()].map(([pos, bit]) => (
             <div
-              key={`bit-${index}-${bit}`}
+              key={`bit-${pos}`}
               className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${
                 bit ? 'bg-green-500' : 'bg-gray-400'
               }`}
@@ -125,6 +125,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addItem(inputValue)}
             placeholder="Enter a word (e.g., 'username123')"
+            aria-label="Add item to filter"
             className="flex-1 p-2 border border-card-border rounded bg-light-800 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
           />
           <button type="button" onClick={() => addItem(inputValue)} className="btn-primary">
@@ -155,6 +156,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
             onChange={(e) => setCheckValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && checkItem(checkValue)}
             placeholder="Check if item exists"
+            aria-label="Check if item exists in filter"
             className="flex-1 p-2 border border-card-border rounded bg-light-800 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
           />
           <button type="button" onClick={() => checkItem(checkValue)} className="btn-primary">
@@ -174,11 +176,8 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
           Items in Filter ({filter.items.length}):
         </h4>
         <div className="flex flex-wrap gap-2">
-          {filter.items.map((item, index) => (
-            <span
-              key={`item-${index}-${item}`}
-              className="bg-accent/20 text-accent px-2 py-1 rounded text-sm"
-            >
+          {filter.items.map((item) => (
+            <span key={item} className="bg-accent/20 text-accent px-2 py-1 rounded text-sm">
               {item}
             </span>
           ))}

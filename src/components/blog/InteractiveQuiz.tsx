@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 
 interface Question {
   id: number;
@@ -77,40 +77,70 @@ const questions: Question[] = [
   },
 ];
 
+type QuizState = {
+  currentQuestion: number;
+  selectedAnswer: number | null;
+  showExplanation: boolean;
+  score: number;
+  quizCompleted: boolean;
+};
+
+type QuizAction =
+  | { type: 'SELECT_ANSWER'; index: number; isCorrect: boolean }
+  | { type: 'NEXT_QUESTION'; isLast: boolean }
+  | { type: 'RESET' };
+
+const initialState: QuizState = {
+  currentQuestion: 0,
+  selectedAnswer: null,
+  showExplanation: false,
+  score: 0,
+  quizCompleted: false,
+};
+
+function quizReducer(state: QuizState, action: QuizAction): QuizState {
+  switch (action.type) {
+    case 'SELECT_ANSWER':
+      return {
+        ...state,
+        selectedAnswer: action.index,
+        showExplanation: true,
+        score: action.isCorrect ? state.score + 1 : state.score,
+      };
+    case 'NEXT_QUESTION':
+      if (action.isLast) return { ...state, quizCompleted: true };
+      return {
+        ...state,
+        currentQuestion: state.currentQuestion + 1,
+        selectedAnswer: null,
+        showExplanation: false,
+      };
+    case 'RESET':
+      return initialState;
+    default:
+      return state;
+  }
+}
+
 export const InteractiveQuiz: React.FC = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [score, setScore] = useState(0);
-  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [state, dispatch] = useReducer(quizReducer, initialState);
+  const { currentQuestion, selectedAnswer, showExplanation, score, quizCompleted } = state;
 
   const handleAnswerSelect = (answerIndex: number) => {
     if (showExplanation) return;
-
-    setSelectedAnswer(answerIndex);
-    setShowExplanation(true);
-
-    if (answerIndex === questions[currentQuestion].correct) {
-      setScore(score + 1);
-    }
+    dispatch({
+      type: 'SELECT_ANSWER',
+      index: answerIndex,
+      isCorrect: answerIndex === questions[currentQuestion].correct,
+    });
   };
 
   const nextQuestion = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-      setSelectedAnswer(null);
-      setShowExplanation(false);
-    } else {
-      setQuizCompleted(true);
-    }
+    dispatch({ type: 'NEXT_QUESTION', isLast: currentQuestion >= questions.length - 1 });
   };
 
   const resetQuiz = () => {
-    setCurrentQuestion(0);
-    setSelectedAnswer(null);
-    setShowExplanation(false);
-    setScore(0);
-    setQuizCompleted(false);
+    dispatch({ type: 'RESET' });
   };
 
   const getScoreMessage = () => {
@@ -159,7 +189,6 @@ export const InteractiveQuiz: React.FC = () => {
         </div>
       </div>
 
-      {/* Progress Bar */}
       <div className="w-full bg-light-700 rounded-full h-2 mb-6">
         <div
           className="bg-accent h-2 rounded-full transition-all duration-300"
@@ -167,7 +196,6 @@ export const InteractiveQuiz: React.FC = () => {
         ></div>
       </div>
 
-      {/* Question */}
       <div className="mb-6">
         <h4 className="text-lg font-semibold text-text-primary mb-4">{question.question}</h4>
 
@@ -193,7 +221,7 @@ export const InteractiveQuiz: React.FC = () => {
 
             return (
               <button
-                key={`option-${currentQuestion}-${option.slice(0, 20)}-${index}`}
+                key={`option-${currentQuestion}-${option}`}
                 type="button"
                 onClick={() => handleAnswerSelect(index)}
                 disabled={showExplanation}
@@ -215,7 +243,6 @@ export const InteractiveQuiz: React.FC = () => {
         </div>
       </div>
 
-      {/* Explanation */}
       {showExplanation && (
         <div className="mb-6 p-4 bg-light-700 border border-card-border rounded-lg">
           <h5 className="font-semibold text-accent mb-2">💡 Explanation:</h5>
@@ -223,7 +250,6 @@ export const InteractiveQuiz: React.FC = () => {
         </div>
       )}
 
-      {/* Next Button */}
       {showExplanation && (
         <div className="flex justify-between items-center">
           <div className="text-sm text-text-secondary">
