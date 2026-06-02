@@ -64,7 +64,7 @@ describe('addToResendAudience', () => {
   it('sends User-Agent header (required by Resend, error 1010 without it)', async () => {
     const { fetch: mock, getHeaders } = captureFetch();
     await addToResendAudience('a@b.com', API_KEY, SEGMENT_ID, mock);
-    assert.equal(getHeaders()['User-Agent'], 'piyushmehta.com');
+    assert.equal(getHeaders()['User-Agent'], 'piyushmehta.com/1.0');
   });
 
   it('throws on non-ok response (401 restricted key)', async () => {
@@ -136,7 +136,7 @@ describe('sendConfirmationEmail', () => {
   it('sends User-Agent header', async () => {
     const { fetch: mock, getHeaders } = captureFetch();
     await sendConfirmationEmail('a@b.com', API_KEY, FROM_ADDR, mock);
-    assert.ok(getHeaders()['User-Agent']?.includes('piyushmehta.com'));
+    assert.equal(getHeaders()['User-Agent'], 'piyushmehta.com/1.0');
   });
 
   it('throws on 401 restricted key', async () => {
