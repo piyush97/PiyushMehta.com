@@ -802,7 +802,29 @@ export const POST: APIRoute = async ({ request }) => {
         { status: 200, headers: securityHeaders }
       );
     } catch (resendError) {
-      console.error('Resend subscribe failed:', getErrorMessage(resendError));
+      // Common cause: API key scoped to "send emails only" (no Audience/Contact
+      // permission). Surface a clear, actionable error to the client so the
+      // operator can diagnose, instead of swallowing it and showing a fake
+      // success.
+      const errorMessage = getErrorMessage(resendError);
+      console.error('Resend subscribe failed:', errorMessage, 'for', sanitizedEmail);
+
+      Sentry.captureException(resendError, {
+        tags: { endpoint: 'newsletter_subscribe', ip: clientIP },
+        extra: { email: sanitizedEmail, errorMessage },
+      });
+
+      // For restricted API keys, the only fix is on the Resend side — tell
+      // the operator what to do.
+      if (errorMessage.includes('restricted_api_key') || errorMessage.includes('401')) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: 'Subscription is temporarily unavailable. The site admin has been notified.',
+          }),
+          { status: 503, headers: securityHeaders }
+        );
+      }
 
       // Fallback to Postgres if configured
       if (process.env.POSTGRES_URL) {
@@ -821,14 +843,15 @@ export const POST: APIRoute = async ({ request }) => {
         }
       }
 
-      // Final fallback: log for manual processing
+      // Last-resort: log for manual processing but tell user it failed
       await logEmailForManualProcessing(sanitizedEmail);
       return new Response(
         JSON.stringify({
-          success: true,
-          message: "You're on the list. We'll follow up shortly.",
+          success: false,
+          message:
+            "Couldn't complete your subscription right now. Please try again in a few minutes.",
         }),
-        { status: 200, headers: securityHeaders }
+        { status: 500, headers: securityHeaders }
       );
     }
   } catch (error) {
