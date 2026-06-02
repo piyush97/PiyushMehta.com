@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="MCP client-server architecture: a host process connects to a TypeScript MCP server that exposes tools, resources, and prompts over JSON-RPC.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#1a1140"/>
+    </linearGradient>
+    <linearGradient id="client" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="server" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- grid -->
+  <g stroke="#1e2a4a" stroke-width="1" opacity="0.4">
+    <path d="M0 100 H1200 M0 200 H1200 M0 300 H1200 M0 400 H1200 M0 500 H1200"/>
+    <path d="M100 0 V630 M250 0 V630 M400 0 V630 M550 0 V630 M700 0 V630 M850 0 V630 M1000 0 V630 M1150 0 V630"/>
+  </g>
+
+  <!-- title -->
+  <text x="60" y="70" font-family="ui-sans-serif, system-ui, -apple-system" font-size="42" font-weight="800" fill="#f8fafc">Building an MCP Server in TypeScript</text>
+  <text x="60" y="105" font-family="ui-sans-serif, system-ui" font-size="20" fill="#94a3b8">From zero to a working tool-calling agent in 90 minutes</text>
+
+  <!-- HOST (Claude / Cursor / OpenCode) -->
+  <g filter="url(#glow)">
+    <rect x="60" y="180" width="280" height="270" rx="20" fill="url(#client)"/>
+    <text x="200" y="225" text-anchor="middle" font-family="ui-sans-serif" font-size="22" font-weight="700" fill="#fff">MCP HOST</text>
+    <text x="200" y="252" text-anchor="middle" font-family="ui-monospace" font-size="14" fill="#c7d2fe">Claude · Cursor · OpenCode</text>
+  </g>
+  <g font-family="ui-sans-serif" font-size="16" fill="#e0e7ff">
+    <text x="200" y="300" text-anchor="middle">🧠 LLM decides to call a tool</text>
+    <text x="200" y="335" text-anchor="middle">📡 JSON-RPC 2.0 over stdio</text>
+    <text x="200" y="370" text-anchor="middle">🔁 Streaming responses</text>
+    <text x="200" y="405" text-anchor="middle">🛡 Permission &amp; trust boundaries</text>
+  </g>
+
+  <!-- arrow -->
+  <g stroke="#fbbf24" stroke-width="4" fill="none" marker-end="url(#arrow)">
+    <path d="M360 315 L560 315" stroke-dasharray="0"/>
+  </g>
+  <text x="460" y="300" text-anchor="middle" font-family="ui-monospace" font-size="14" fill="#fbbf24">tools/call</text>
+  <text x="460" y="340" text-anchor="middle" font-family="ui-monospace" font-size="14" fill="#fbbf24">stdio</text>
+
+  <!-- TYPESCRIPT MCP SERVER -->
+  <g filter="url(#glow)">
+    <rect x="580" y="180" width="560" height="270" rx="20" fill="url(#server)"/>
+    <text x="860" y="225" text-anchor="middle" font-family="ui-sans-serif" font-size="22" font-weight="700" fill="#fff">YOUR TYPESCRIPT MCP SERVER</text>
+    <text x="860" y="252" text-anchor="middle" font-family="ui-monospace" font-size="14" fill="#a7f3d0">@modelcontextprotocol/sdk · Node 22 · Zod</text>
+  </g>
+
+  <!-- three primitives -->
+  <g font-family="ui-sans-serif" font-size="16" fill="#022c22">
+    <rect x="610" y="285" width="160" height="140" rx="12" fill="#a7f3d0"/>
+    <text x="690" y="320" text-anchor="middle" font-weight="700">🛠 TOOLS</text>
+    <text x="690" y="350" text-anchor="middle" font-size="13">create_issue</text>
+    <text x="690" y="372" text-anchor="middle" font-size="13">search_docs</text>
+    <text x="690" y="394" text-anchor="middle" font-size="13">deploy_preview</text>
+
+    <rect x="790" y="285" width="160" height="140" rx="12" fill="#a7f3d0"/>
+    <text x="870" y="320" text-anchor="middle" font-weight="700">📦 RESOURCES</text>
+    <text x="870" y="350" text-anchor="middle" font-size="13">file://...</text>
+    <text x="870" y="372" text-anchor="middle" font-size="13">db://users</text>
+    <text x="870" y="394" text-anchor="middle" font-size="13">git://diff</text>
+
+    <rect x="970" y="285" width="150" height="140" rx="12" fill="#a7f3d0"/>
+    <text x="1045" y="320" text-anchor="middle" font-weight="700">📋 PROMPTS</text>
+    <text x="1045" y="350" text-anchor="middle" font-size="13">/review-pr</text>
+    <text x="1045" y="372" text-anchor="middle" font-size="13">/triage</text>
+    <text x="1045" y="394" text-anchor="middle" font-size="13">/release-notes</text>
+  </g>
+
+  <!-- footer stats -->
+  <g font-family="ui-monospace" font-size="14" fill="#cbd5e1">
+    <text x="60" y="520">$ npx create-mcp-server my-server</text>
+    <text x="60" y="548">$ cd my-server &amp;&amp; bun run dev</text>
+    <text x="60" y="576">→ tools exposed in &lt;5 min  ·  ~200 LoC to ship</text>
+  </g>
+
+  <g font-family="ui-sans-serif" font-size="13" fill="#64748b">
+    <text x="1140" y="610" text-anchor="end">piyushmehta.com · 2026</text>
+  </g>
+</svg>

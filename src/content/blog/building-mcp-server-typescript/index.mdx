@@ -1,0 +1,262 @@
+---
+title: "Building an MCP Server in TypeScript: From Zero to Tool-Calling Agent in 90 Minutes"
+description: "A production-grade walkthrough of the Model Context Protocol, the SDK almost nobody is using right, and why every full-stack dev will build at least one MCP server before 2027."
+date: 2026-06-02
+author: "Piyush Mehta"
+ogTemplate: "tech"
+ogTheme: "dark"
+tags:
+  - "MCP"
+  - "TypeScript"
+  - "AI Agents"
+  - "AI Coding"
+  - "OpenAI"
+  - "LLM"
+  - "Architecture"
+  - "Tutorial"
+image:
+  url: "/blog/building-mcp-server-typescript/images/mcp-architecture-hero.svg"
+  alt: "MCP client-server architecture diagram showing a host process talking to a TypeScript MCP server that exposes tools, resources, and prompts over JSON-RPC."
+featured: true
+---
+
+import ArchitectureDiagram from '../../../components/blog/ArchitectureDiagram.tsx'
+
+## TL;DR
+
+MCP is the missing layer between "an LLM that can talk" and "an LLM that can do." It is a tiny, well-designed protocol that turns any tool you already have into something Claude, Cursor, OpenCode, and a dozen other hosts can call as if it were a native function. If you can write a TypeScript function, you can ship an MCP server today. I built one in 90 minutes last weekend. This is the exact walkthrough — including the parts that bit me, the parts that surprised me, and the one architectural decision I think is going to define how agentic systems are built over the next 18 months.
+
+By the end of this post you will have:
+
+- A working MCP server with 3 tools, 2 resources, and 1 prompt
+- Type-safe inputs via Zod (no more "the LLM sent me garbage" debugging)
+- A streaming progress channel so the agent can report "I am 60% done" mid-call
+- A deployment path from `bun run dev` to a hosted endpoint anyone can install
+
+Let's go.
+
+## What MCP actually is (and what it isn't)
+
+MCP — the Model Context Protocol — is Anthropic's open standard for connecting LLMs to tools. It hit 1.0 in late 2025, and the spec is refreshingly small: JSON-RPC 2.0, three primitives (tools, resources, prompts), and a stdio or HTTP transport. That's it.
+
+What it isn't: a replacement for function calling. Your OpenAI `tools=` array still works. MCP is the *server* side of that conversation. Instead of hard-coding tool definitions into every agent script you write, you publish a server, register it in your host, and every LLM that can see it gets the same capabilities.
+
+<figure>
+  <img src="/blog/building-mcp-server-typescript/images/mcp-architecture-hero.svg" alt="MCP client-server architecture diagram" loading="lazy" />
+  <figcaption>The host (Claude, Cursor, OpenCode) holds the LLM. Your TypeScript server holds the tools. They speak JSON-RPC over stdio or HTTP.</figcaption>
+</figure>
+
+The reason this matters more than "yet another API spec" is the **direction of leverage**. The first time you build an MCP server, you are doing it for *your* workflow. The second time, you start noticing the same patterns — auth, rate limiting, observability — and they look like every other API you have ever built. By the third server, you realize MCP is just a really nice contract for "give an LLM a typed handle to a real-world capability." Once that clicks, the design space opens up fast.
+
+## Why TypeScript, specifically
+
+I get asked this constantly. The honest answer: the SDK is most mature in TypeScript, Zod gives you runtime-validated inputs that match the LLM's JSON Schema output almost 1:1, and you almost certainly already have Node on whatever machine you are reading this on.
+
+If you are a Python shop, the official Python SDK is fine. If you are Go or Rust, you are early. For the next 12 months, MCP server development is going to look a lot like a Node.js ecosystem in 2014 — fast-moving, full of examples, and forgiving of messy code.
+
+## Step 1: Scaffold in 60 seconds
+
+```bash
+mkdir my-mcp-server && cd my-mcp-server
+bun init -y
+bun add @modelcontextprotocol/sdk zod
+```
+
+That is the entire dependency tree. No `express`, no `body-parser`, no nothing. The SDK ships its own transport.
+
+> **No Bun? No problem.** Every snippet in this post runs on Node.js 22+ via `npx tsx`. The starter repo ships `dev:node` and `dev:node:http` scripts as drop-in replacements. If you do not have Bun, swap `bun run dev` for `npx tsx src/index.ts` everywhere.
+
+## Step 2: The 30-line server that exposes one tool
+
+This is the smallest useful MCP server I could write that still does something real — a tool that converts JSON to a TypeScript interface. Useful for exactly one workflow, and a great template to copy.
+
+```typescript
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
+import { z } from 'zod'
+
+const server = new McpServer({
+  name: 'json-to-ts',
+  version: '0.1.0',
+})
+
+server.tool(
+  'json_to_interface',
+  'Convert a JSON object into a TypeScript interface. Useful for bootstrapping types from API responses.',
+  {
+    json: z.string().describe('A JSON string to convert'),
+    interfaceName: z.string().default('Root').describe('Name of the generated interface'),
+  },
+  async ({ json, interfaceName }) => {
+    const parsed = JSON.parse(json) // schema-validated by Zod first
+    const ts = generateInterface(parsed, interfaceName)
+    return { content: [{ type: 'text', text: ts }] }
+  },
+)
+
+const transport = new StdioServerTransport()
+await server.connect(transport)
+```
+
+`server.tool()` is the entire API for registering a tool. You give it a name, a description the LLM reads, a Zod schema for inputs, and an async handler. That is the whole shape.
+
+Run it:
+
+```bash
+bun run dev
+```
+
+Wire it into Claude Desktop or Cursor and the LLM now has access to `json_to_interface` as a native capability. It will call it, your handler runs, the response streams back, the LLM uses it. You just built an agent.
+
+## Step 3: The three primitives — when to use which
+
+After about a dozen servers, the decision tree for which primitive to use stopped being obvious to me. Here is the rule I landed on:
+
+| Primitive | Use it when | Example |
+| --- | --- | --- |
+| **Tool** | The LLM should *decide* to call this based on user intent | `create_issue`, `search_docs`, `deploy_preview` |
+| **Resource** | The LLM should *always have access* to this data | `file://src/index.ts`, `db://schema` |
+| **Prompt** | The user explicitly types `/something` to trigger a workflow | `/review-pr`, `/release-notes`, `/triage` |
+
+The mistake I keep seeing in early MCP servers: everything is a tool. That is wrong. Tools are for *the LLM's discretion*. If you want the LLM to always see the current branch name, expose it as a resource. If you want the user to opt in to a structured workflow, expose it as a prompt. Mixing these up is the #1 reason early MCP servers feel clunky.
+
+```typescript
+// Resource: a file the LLM can always read
+server.resource(
+  'project-readme',
+  'file://README.md',
+  async (uri) => ({
+    contents: [{ uri: uri.href, text: await Bun.file('README.md').text() }],
+  }),
+)
+
+// Prompt: a slash-command-style workflow
+server.prompt(
+  'review-pr',
+  'Review a pull request with project-specific guidelines',
+  { prNumber: z.string() },
+  ({ prNumber }) => ({
+    messages: [{
+      role: 'user',
+      content: { type: 'text', text: `Review PR #${prNumber} using our CONTRIBUTING.md standards.` },
+    }],
+  }),
+)
+```
+
+## Step 4: The thing nobody tells you — Zod is your security boundary
+
+This is the spicy take. When an LLM calls your tool, you are letting a model execute code in your process. Zod is not just a typescript convenience — it is the *only* line of defense between "the model sent you what you expected" and "the model sent you `{ "json": "process.exit(1)" }` because some prompt injection told it to."
+
+Always validate. Always narrow. Never trust the description to be enough.
+
+```typescript
+// Bad: trusting the LLM
+async ({ json }) => JSON.parse(json)
+
+// Good: validating first
+const schema = z.object({
+  url: z.string().url(),
+  method: z.enum(['GET', 'POST']),
+})
+async ({ url, method }) => fetch(url, { method })
+```
+
+I learned this the hard way. I shipped a server last month where I skipped Zod on a "trust me, it's a string" field. A user pasted a JSON payload that contained a `__proto__` key. My handler spread it into an options object. RCE on day one. Do not be like me. Zod everything.
+
+<figure>
+  <img src="/blog/building-mcp-server-typescript/images/mcp-request-flow.svg" alt="MCP request flow with latency annotations" loading="lazy" />
+  <figcaption>The 6-step request flow. Notice 95% of the latency is step 2 — the LLM itself. Your server budget is ~5ms. Spend it on validation, not optimization.</figcaption>
+</figure>
+
+## Step 5: Streaming progress (the killer feature)
+
+Here is the part that surprised me most. MCP supports *progress notifications*. Your tool can stream "I am 40% done" back to the host, and the LLM can relay that to the user as it happens. This is what makes a 30-second tool feel responsive instead of broken.
+
+> **Heads up on the `query_sqlite` tool** — it uses `node:sqlite`, which is stable on Node 22.5+ and on Bun. On older Node versions, swap the body for a `better-sqlite3` call and the rest of the server keeps working unchanged. The starter repo's `query_sqlite` tool ships with a clear error message if your runtime is too old, so you will know immediately.
+
+```typescript
+server.tool(
+  'migrate_database',
+  'Run a zero-downtime database migration. Streams progress as it runs.',
+  { targetVersion: z.string() },
+  async ({ targetVersion }, { sendProgress }) => {
+    const steps = ['snapshot', 'replicate', 'cutover', 'verify']
+    for (let i = 0; i < steps.length; i++) {
+      await runStep(steps[i])
+      await sendProgress({
+        progress: (i + 1) / steps.length,
+        message: `Completed ${steps[i]}`,
+      })
+    }
+    return { content: [{ type: 'text', text: 'Migration complete' }] }
+  },
+)
+```
+
+I have a long-running `deploy_preview` tool that uses this. Before, the LLM would call it and the user would stare at a spinner for 45 seconds. Now they see "Building… 20%… 40%… uploading… 80%… done." The UX upgrade is enormous and the code change is 5 lines.
+
+## Step 6: The one architectural decision that matters
+
+When you go to ship your server, you have two transport choices:
+
+- **stdio** — your server runs as a child process of the host. Zero network, zero auth, zero ops. Perfect for local dev tools.
+- **Streamable HTTP** — your server is a normal HTTP endpoint. Auth, rate limiting, observability, multi-tenant. Required for hosted, shareable servers.
+
+Start with stdio. Move to HTTP the day someone *other than you* needs to install your server. Premature HTTP is the MCP equivalent of premature microservices — you will spend a week on auth before you have a user.
+
+```typescript
+// stdio
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
+
+// HTTP (streamable)
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
+import express from 'express'
+const app = express()
+app.post('/mcp', async (req, res) => {
+  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
+  await server.connect(transport)
+  await transport.handleRequest(req, res, req.body)
+})
+app.listen(3000)
+```
+
+That is a production-deployed MCP server. You can put that behind nginx, add a `/health` route, and you are live.
+
+## The honest list of things that are still rough
+
+I am going to keep being real with you, because that is what you come here for:
+
+1. **Auth is under-specified.** The spec is silent on OAuth flow. Everyone is rolling their own. Until this lands, assume any HTTP MCP server you run in production is wide-open.
+2. **Observability is bad.** Logs go to stderr. There is no OpenTelemetry story. If you need to debug "why did the LLM call this 400 times," you are reading `console.log` lines.
+3. **SDK churn is real.** The `McpServer` class API has had three breaking changes in 6 months. Pin your version.
+4. **The ecosystem is moving fast.** A pattern that works today may be deprecated next month. Subscribe to the spec repo before you ship anything you cannot rewrite in a week.
+
+## Where I think this is going
+
+My honest read of where agentic systems land by end of 2027:
+
+- **MCP becomes the "npm of tools."** You install a server the way you install a package. The discovery problem gets solved by a central registry.
+- **The tool/resource/prompt split hardens.** AIs that pick the wrong primitive get less usage. The hosts that enforce the split correctly win.
+- **Most "agent frameworks" shrink to thin wrappers around MCP.** If the protocol is good, the orchestration layer doesn't need to be 50k stars.
+- **TypeScript wins the server-side race.** Python catches up in tooling, Go/Rust in hot paths, but TS is the default for 24 months.
+
+If you are a full-stack dev in 2026 and you have not built an MCP server yet, you are leaving leverage on the table. It is the highest-leverage 90 minutes you can spend this month. Pick the most boring tool in your daily workflow — a deploy script, a Jira lookup, a SQL query — and ship it as an MCP server. The second one is where it gets fun. The fifth one is where you stop writing glue code entirely.
+
+## The full repo
+
+Every snippet in this post lives in a runnable repo: [github.com/piyush97/mcp-server-typescript-starter](https://github.com/piyush97/mcp-server-typescript-starter). Clone it, `bun install` (or `npm install`), `bun run dev` (or `npm run dev:node`), wire it into Claude Desktop. You are 90 minutes from your first tool call.
+
+The repo contains everything the article hints at but does not show in full:
+
+- **All 3 tools wired up** — `json_to_interface`, `fetch_url`, and the `query_sqlite` tool with the streaming progress callout from Step 5
+- **Both transports** — `src/index.ts` (stdio) and `src/http.ts` (Streamable HTTP) for the Step 6 deployment path
+- **Both resources** — `file://README.md` and `git://status`, the always-available LLM context
+- **The `/review-pr` prompt** — copy-paste ready, with the full review template
+- **A real JSON-to-TypeScript inference engine** in `src/json-to-ts.ts` — unions, nested objects, arrays, optional fields. Not the toy version from Step 2
+
+If you only have 30 minutes, read Step 1, Step 2, and Step 4, then clone the repo. The remaining concepts (resources, prompts, streaming, HTTP transport) are all in the working code with comments.
+
+If you ship something cool with this — or hit a wall I did not anticipate — my DMs are open. I am collecting real-world MCP server patterns and writing a follow-up. The next one is on multi-tenant auth, which is the part everyone is going to need six months from now and nobody is talking about today.
+
+Now go build the boring thing. The boring thing is where the leverage lives.

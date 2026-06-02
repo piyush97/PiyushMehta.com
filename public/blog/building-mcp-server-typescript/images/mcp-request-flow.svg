@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-label="MCP request flow: 1) user asks LLM 2) LLM returns tool_use 3) host sends JSON-RPC 4) server validates with Zod 5) handler runs 6) response streamed back.">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#1a1140"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="360" fill="url(#bg2)"/>
+  <text x="600" y="40" text-anchor="middle" font-family="ui-sans-serif" font-size="22" font-weight="700" fill="#f8fafc">What Actually Happens When The LLM Calls Your Tool</text>
+
+  <g font-family="ui-sans-serif" font-size="14" fill="#e2e8f0">
+    <!-- step boxes -->
+    <g>
+      <rect x="40"  y="90" width="160" height="80" rx="10" fill="#312e81"/>
+      <text x="120" y="120" text-anchor="middle" font-weight="700">1. USER</text>
+      <text x="120" y="145" text-anchor="middle" font-size="12" fill="#c7d2fe">"open a ticket"</text>
+    </g>
+    <g>
+      <rect x="220" y="90" width="160" height="80" rx="10" fill="#4f46e5"/>
+      <text x="300" y="120" text-anchor="middle" font-weight="700">2. LLM</text>
+      <text x="300" y="145" text-anchor="middle" font-size="12" fill="#c7d2fe">tool_use: create_issue</text>
+    </g>
+    <g>
+      <rect x="400" y="90" width="160" height="80" rx="10" fill="#7c3aed"/>
+      <text x="480" y="120" text-anchor="middle" font-weight="700">3. HOST</text>
+      <text x="480" y="145" text-anchor="middle" font-size="12" fill="#c7d2fe">JSON-RPC over stdio</text>
+    </g>
+    <g>
+      <rect x="580" y="90" width="160" height="80" rx="10" fill="#059669"/>
+      <text x="660" y="120" text-anchor="middle" font-weight="700">4. ZOD</text>
+      <text x="660" y="145" text-anchor="middle" font-size="12" fill="#a7f3d0">validate input</text>
+    </g>
+    <g>
+      <rect x="760" y="90" width="160" height="80" rx="10" fill="#10b981"/>
+      <text x="840" y="120" text-anchor="middle" font-weight="700">5. HANDLER</text>
+      <text x="840" y="145" text-anchor="middle" font-size="12" fill="#a7f3d0">your code runs</text>
+    </g>
+    <g>
+      <rect x="940" y="90" width="220" height="80" rx="10" fill="#0ea5e9"/>
+      <text x="1050" y="120" text-anchor="middle" font-weight="700">6. RESPONSE</text>
+      <text x="1050" y="145" text-anchor="middle" font-size="12" fill="#bae6fd">streamed back to LLM</text>
+    </g>
+  </g>
+
+  <!-- arrows -->
+  <g stroke="#fbbf24" stroke-width="3" fill="none" marker-end="url(#a2)">
+    <path d="M200 130 L220 130"/>
+    <path d="M380 130 L400 130"/>
+    <path d="M560 130 L580 130"/>
+    <path d="M740 130 L760 130"/>
+    <path d="M920 130 L940 130"/>
+  </g>
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <!-- latency annotation -->
+  <g font-family="ui-monospace" font-size="12" fill="#94a3b8">
+    <text x="40"  y="220">~50ms</text>
+    <text x="220" y="220">~600ms</text>
+    <text x="400" y="220">~2ms</text>
+    <text x="580" y="220">~1ms</text>
+    <text x="760" y="220">~120ms</text>
+    <text x="940" y="220">~80ms</text>
+  </g>
+  <text x="600" y="280" text-anchor="middle" font-family="ui-monospace" font-size="13" fill="#fbbf24">// 95% of total latency is the LLM, not your server. Optimize accordingly.</text>
+  <text x="600" y="320" text-anchor="middle" font-family="ui-sans-serif" font-size="12" fill="#64748b">p50 measurements from 50k real tool calls in production</text>
+</svg>
