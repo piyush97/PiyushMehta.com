@@ -9,7 +9,8 @@
  * Required env:
  *   RESEND_API_KEY       (re_xxx)
  *   RESEND_SEGMENT_ID    (UUID — create via POST /segments or in dashboard)
- *   RESEND_FROM          (e.g. "Piyush Mehta <news@piyushmehta.com>")
+ *   RESEND_FROM          (bare email, e.g. "news@piyushmehta.com";
+ *                         the script wraps it as "Piyush Mehta <news@piyushmehta.com>")
  *
  * Optional env:
  *   RESEND_REPLY_TO      (defaults to RESEND_FROM address)
@@ -47,7 +48,9 @@ function requireEnv(name, value) {
 
 const apiKey = requireEnv('RESEND_API_KEY', process.env.RESEND_API_KEY);
 const segmentId = requireEnv('RESEND_SEGMENT_ID', process.env.RESEND_SEGMENT_ID);
-const from = requireEnv('RESEND_FROM', process.env.RESEND_FROM);
+const fromAddress = requireEnv('RESEND_FROM', process.env.RESEND_FROM);
+// Wrap the bare address in a friendly "Name <email>" format for Resend.
+const from = `Piyush Mehta <${fromAddress}>`;
 const replyTo = values.reply ?? process.env.RESEND_REPLY_TO;
 
 if (!values.subject) {
