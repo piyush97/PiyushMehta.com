@@ -972,11 +972,11 @@ async function logEmailForManualProcessing(email: string) {
   // In production, consider adding Sentry or other monitoring
 }
 
-// Resend Segments integration
+// Resend Segments integration.
 // Resend deprecated Audiences in favor of Segments (Contacts are now global
-// per team; Segments are how you target them). We add a contact and put them
-// in a segment in one call. Idempotent on re-subscribe (Resend returns 422
-// for duplicates which we treat as success).
+// per team). We add a contact and put them in a segment in one call. The API
+// is idempotent — creating the same email returns the same contact ID with
+// 201 (not 422 as older docs suggested).
 async function addToResendAudience(email: string): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   const segmentId = process.env.RESEND_SEGMENT_ID;
@@ -1006,10 +1006,6 @@ async function addToResendAudience(email: string): Promise<void> {
 
   if (!response.ok) {
     const body = await response.text();
-    // Resend returns 422 if contact already exists; treat as success.
-    if (response.status === 422 && body.toLowerCase().includes('already exists')) {
-      return;
-    }
     throw new Error(`Resend API error ${response.status}: ${body.slice(0, 200)}`);
   }
 
