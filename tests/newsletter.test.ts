@@ -14,11 +14,11 @@ const FROM_ADDR = 'news@piyushmehta.com';
 // Reusable fetch capture helper
 function captureFetch(): {
   fetch: typeof fetch;
-  getBody: () => any;
+  getBody: () => Record<string, unknown>;
   getHeaders: () => Record<string, string>;
   getUrl: () => string;
 } {
-  let capturedBody: any = null;
+  let capturedBody: Record<string, unknown> | null = null;
   let capturedHeaders: Record<string, string> = {};
   let capturedUrl = '';
 

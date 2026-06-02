@@ -95,7 +95,7 @@ async function main() {
     text: values.text,
     reply_to: replyTo,
   });
-  console.log('Broadcast created:', broadcast.id, '(status:', broadcast.status + ')');
+  console.log('Broadcast created:', broadcast.id, '(status:', `${broadcast.status})`);
 
   if (!values.yes) {
     console.log('\nAbout to send. Press Ctrl+C to cancel, or wait 5s...');

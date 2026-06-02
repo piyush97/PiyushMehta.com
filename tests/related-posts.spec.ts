@@ -273,7 +273,7 @@ test.describe('Related Posts', () => {
 
       // Check if view event was tracked
       const events = await page.evaluate(() => window.analyticsEvents);
-      const hasViewEvent = events.some((event: any[]) => event.includes('related_posts_viewed'));
+      const hasViewEvent = events.some((event: string[]) => event.includes('related_posts_viewed'));
 
       if (events.length > 0) {
         expect(hasViewEvent).toBeTruthy();
