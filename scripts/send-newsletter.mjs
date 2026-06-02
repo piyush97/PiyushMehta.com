@@ -73,6 +73,7 @@ async function resend(path, method, body) {
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
+      'User-Agent': 'piyushmehta.com/1.0',
     },
     body: body ? JSON.stringify(body) : undefined,
   });
