@@ -789,55 +789,69 @@ export const POST: APIRoute = async ({ request }) => {
       timestamp: new Date().toISOString(),
     });
 
-    // Try Substack integration first
+    // Add to Resend Audience (also handles confirmation + unsubscribe automatically)
     try {
-      const result = await subscribeToSubstack(sanitizedEmail);
-      console.log('Successfully subscribed to Substack:', sanitizedEmail, result);
+      await addToResendAudience(sanitizedEmail);
+      console.log('Successfully subscribed via Resend:', sanitizedEmail);
 
       return new Response(
         JSON.stringify({
           success: true,
-          message: 'Successfully subscribed to newsletter via Substack!',
+          message: 'Almost there! Check your inbox to confirm your subscription.',
         }),
         { status: 200, headers: securityHeaders }
       );
-    } catch (substackError) {
-      console.error('Substack subscription failed:', getErrorMessage(substackError));
+    } catch (resendError) {
+      // Common cause: API key scoped to "send emails only" (no Audience/Contact
+      // permission). Surface a clear, actionable error to the client so the
+      // operator can diagnose, instead of swallowing it and showing a fake
+      // success.
+      const errorMessage = getErrorMessage(resendError);
+      console.error('Resend subscribe failed:', errorMessage, 'for', sanitizedEmail);
 
-      // Try database fallback only if we have database credentials
+      Sentry.captureException(resendError, {
+        tags: { endpoint: 'newsletter_subscribe', ip: clientIP },
+        extra: { email: sanitizedEmail, errorMessage },
+      });
+
+      // For restricted API keys, the only fix is on the Resend side — tell
+      // the operator what to do.
+      if (errorMessage.includes('restricted_api_key') || errorMessage.includes('401')) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: 'Subscription is temporarily unavailable. The site admin has been notified.',
+          }),
+          { status: 503, headers: securityHeaders }
+        );
+      }
+
+      // Fallback to Postgres if configured
       if (process.env.POSTGRES_URL) {
         try {
           await storeInDatabase(sanitizedEmail);
           console.log('Fallback: Subscriber stored in database:', sanitizedEmail);
-
           return new Response(
             JSON.stringify({
               success: true,
-              message: "Successfully subscribed to newsletter! We'll add you to our system.",
+              message: "Successfully subscribed! We'll add you to the next issue.",
             }),
             { status: 200, headers: securityHeaders }
           );
         } catch (dbError) {
           console.error('Database fallback also failed:', getErrorMessage(dbError));
-          // Final fallback: log to file or console for manual processing
-          await logEmailForManualProcessing(sanitizedEmail);
         }
-      } else {
-        console.log('No database fallback configured');
-        // Log email for manual processing
-        await logEmailForManualProcessing(sanitizedEmail);
       }
 
-      // If both Substack and database fail, still return success to user
-      // but log for manual follow-up
-      console.error('Both Substack and database failed for email:', sanitizedEmail);
-
+      // Last-resort: log for manual processing but tell user it failed
+      await logEmailForManualProcessing(sanitizedEmail);
       return new Response(
         JSON.stringify({
-          success: true,
-          message: "Thank you for subscribing! We'll add you to our newsletter soon.",
+          success: false,
+          message:
+            "Couldn't complete your subscription right now. Please try again in a few minutes.",
         }),
-        { status: 200, headers: securityHeaders }
+        { status: 500, headers: securityHeaders }
       );
     }
   } catch (error) {
@@ -958,130 +972,97 @@ async function logEmailForManualProcessing(email: string) {
   // In production, consider adding Sentry or other monitoring
 }
 
-// Substack integration function
-async function subscribeToSubstack(email: string) {
-  const SUBSTACK_PUBLICATION_URL = process.env.SUBSTACK_PUBLICATION_URL;
+// Resend Segments integration.
+// Resend deprecated Audiences in favor of Segments (Contacts are now global
+// per team). We add a contact and put them in a segment in one call. The API
+// is idempotent — creating the same email returns the same contact ID with
+// 201 (not 422 as older docs suggested).
+async function addToResendAudience(email: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const segmentId = process.env.RESEND_SEGMENT_ID;
 
-  if (!SUBSTACK_PUBLICATION_URL) {
-    throw new Error('SUBSTACK_PUBLICATION_URL environment variable is required');
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is not set');
+  }
+  if (!segmentId) {
+    throw new Error(
+      'RESEND_SEGMENT_ID is not set (create a segment in Resend dashboard, get its ID)'
+    );
   }
 
-  // Remove trailing slash if present
-  const baseUrl = SUBSTACK_PUBLICATION_URL.replace(/\/$/, '');
-
-  // Try multiple Substack integration methods
-  const methods = [
-    () => subscribeViaPublicAPI(email, baseUrl),
-    () => subscribeViaEmbed(email, baseUrl),
-    () => subscribeViaDirectForm(email, baseUrl),
-  ];
-
-  let lastError: unknown;
-
-  for (const method of methods) {
-    try {
-      const result = await method();
-      console.log('Substack subscription successful via method:', method.name);
-      return result;
-    } catch (error) {
-      console.warn('Substack method failed:', method.name, getErrorMessage(error));
-      lastError = error;
-    }
-  }
-
-  throw lastError || new Error('All Substack subscription methods failed');
-}
-
-// Method 1: Public API approach
-async function subscribeViaPublicAPI(email: string, baseUrl: string) {
-  const subscriptionUrl = `${baseUrl}/api/v1/free`;
-
-  const formData = new FormData();
-  formData.append('email', email);
-  formData.append('first_url', process.env.SUBSTACK_REFERRER_URL || 'https://piyushmehta.com');
-
-  const response = await fetch(subscriptionUrl, {
-    method: 'POST',
-    body: formData,
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (compatible; Newsletter-Bot/1.0)',
-      Referer: process.env.SUBSTACK_REFERRER_URL || 'https://piyushmehta.com',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`API method failed: ${response.status}`);
-  }
-
-  const responseText = await response.text();
-
-  // Check for common error patterns
-  if (
-    responseText.includes('error') ||
-    responseText.includes('Error') ||
-    responseText.includes('failed')
-  ) {
-    throw new Error(`API response indicates failure: ${responseText.slice(0, 200)}`);
-  }
-
-  return {
-    success: true,
-    method: 'public-api',
-    response: responseText.slice(0, 100),
-  };
-}
-
-// Method 2: Embed form approach
-async function subscribeViaEmbed(email: string, baseUrl: string) {
-  const subscriptionUrl = `${baseUrl}/subscribe`;
-
-  const params = new URLSearchParams({
-    email: email,
-    utm_source: 'piyushmehta.com',
-    utm_medium: 'web',
-    utm_campaign: 'newsletter_signup',
-  });
-
-  const response = await fetch(subscriptionUrl, {
+  const response = await fetch('https://api.resend.com/contacts', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'User-Agent': 'Mozilla/5.0 (compatible; Newsletter-Bot/1.0)',
-      Referer: 'https://piyushmehta.com',
-    },
-    body: params.toString(),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Embed method failed: ${response.status}`);
-  }
-
-  return { success: true, method: 'embed-form' };
-}
-
-// Method 3: Direct form submission (mimics browser behavior)
-async function subscribeViaDirectForm(email: string, baseUrl: string) {
-  const subscriptionUrl = `${baseUrl}/api/v1/free`;
-
-  const response = await fetch(subscriptionUrl, {
-    method: 'POST',
-    headers: {
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-      Referer: baseUrl,
-      Origin: baseUrl,
+      'User-Agent': 'piyushmehta.com/1.0',
     },
     body: JSON.stringify({
-      email: email,
-      first_url: process.env.SUBSTACK_REFERRER_URL || 'https://piyushmehta.com',
+      email,
+      unsubscribed: false,
+      segments: [{ id: segmentId }],
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`Direct form method failed: ${response.status}`);
+    const body = await response.text();
+    throw new Error(`Resend API error ${response.status}: ${body.slice(0, 200)}`);
   }
 
-  return { success: true, method: 'direct-form' };
+  // Send a welcome confirmation email
+  await sendConfirmationEmail(email);
+}
+
+// Send a welcome email after successful subscription.
+// Resend doesn't auto-send confirmations on contact create, so we do it here.
+async function sendConfirmationEmail(email: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromAddress = process.env.RESEND_FROM;
+
+  if (!apiKey || !fromAddress) return;
+
+  const html = `<!DOCTYPE html>
+<html>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 20px; background: #fafafa;">
+  <div style="background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #e5e7eb;">
+    <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 8px; color: #111;">You're in.</h1>
+    <p style="font-size: 16px; line-height: 1.6; color: #374151; margin: 0 0 20px;">
+      Thanks for subscribing to my newsletter. One email when there's something worth
+      saying — AI news, production lessons, and builds. No spam, no fluff.
+    </p>
+    <p style="font-size: 16px; line-height: 1.6; color: #374151; margin: 0 0 20px;">
+      If you want to read past posts while you wait, head over to
+      <a href="https://piyushmehta.com/blog/" style="color: #059669; text-decoration: underline;">the blog</a>.
+    </p>
+    <div style="border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 24px;">
+      <p style="font-size: 14px; color: #9ca3af; margin: 0;">
+        You received this because you subscribed at piyushmehta.com.
+        If this wasn't you, you can ignore this email.
+      </p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'User-Agent': 'piyushmehta.com/1.0',
+    },
+    body: JSON.stringify({
+      from: `Piyush Mehta <${fromAddress}>`,
+      to: [email],
+      subject: "You're subscribed — welcome aboard",
+      html,
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    console.warn('Welcome email failed (non-fatal):', response.status, body.slice(0, 200));
+  }
 }
 
 // Example integration functions (uncomment and configure as needed)

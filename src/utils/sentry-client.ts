@@ -46,7 +46,7 @@ export function initSentry() {
 }
 
 // Utility function to capture errors with context
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: generic key-value context, type is from Sentry's own extras bag
 export function captureError(error: Error, context?: Record<string, any>) {
   if (typeof window !== 'undefined') {
     Sentry.captureException(error, {
@@ -62,7 +62,7 @@ export function captureError(error: Error, context?: Record<string, any>) {
 export function captureMessage(
   message: string,
   level: 'info' | 'warning' | 'error' = 'info',
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: generic key-value context, type is from Sentry's own extras bag
   context?: Record<string, any>
 ) {
   if (typeof window !== 'undefined') {

@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import ArticleMeta from '../../components/ArticleMeta.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import GiscusComments from '../../components/GiscusComments.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.tsx';
 import OptimizedImage from '../../components/OptimizedImage.astro';
 import PostReactions from '../../components/PostReactions.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
@@ -307,6 +308,23 @@ const articleSchema = {
           size="md"
           orientation="horizontal"
         />
+
+        <!-- Newsletter Signup -->
+        <div class="newsletter-cta-card" data-reveal>
+          <div class="newsletter-cta-card__content">
+            <svg class="newsletter-cta-card__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
+            <div>
+              <p class="newsletter-cta-card__heading">Enjoying the read?</p>
+              <p class="newsletter-cta-card__text">
+                One email when there's something worth saying. AI news, production lessons, 
+                and builds — no spam, no fluff.
+              </p>
+            </div>
+          </div>
+          <NewsletterSignup client:load variant="inline" source="blog-post-cta" />
+        </div>
 
         <!-- Related Posts -->
         <RelatedPosts 
@@ -665,6 +683,49 @@ const articleSchema = {
   .blog-post-after {
     width: min(100%, 1120px);
     margin-top: clamp(3rem, 6vw, 5rem);
+  }
+
+  .newsletter-cta-card {
+    margin-block: 3rem;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid rgb(var(--border) / 0.5);
+    background: linear-gradient(135deg, rgb(var(--surface)) 0%, color-mix(in srgb, rgb(var(--accent)) 4%, rgb(var(--surface)) 100%) 100%);
+    transition: border-color 200ms ease;
+  }
+
+  .newsletter-cta-card:hover {
+    border-color: rgb(var(--accent) / 0.4);
+  }
+
+  .newsletter-cta-card__content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .newsletter-cta-card__icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: rgb(var(--accent));
+    opacity: 0.8;
+  }
+
+  .newsletter-cta-card__heading {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+    color: rgb(var(--text));
+  }
+
+  .newsletter-cta-card__text {
+    font-size: 0.925rem;
+    line-height: 1.55;
+    margin: 0;
+    color: rgb(var(--text) / 0.7);
   }
 
   @media (max-width: 720px) {

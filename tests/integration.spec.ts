@@ -230,7 +230,12 @@ test.describe('Integration Tests', () => {
 
   test('should load critical resources efficiently', async ({ page }) => {
     // Monitor network requests
-    const responses: any[] = [];
+    const responses: Array<{
+      url: string;
+      status: number;
+      contentType: string;
+      size: string | null;
+    }> = [];
     page.on('response', (response) => {
       responses.push({
         url: response.url(),

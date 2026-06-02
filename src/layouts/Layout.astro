@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import SpeedInsights from '@vercel/speed-insights/astro';
 import favicon from '../assets/favicon.svg';
 import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
@@ -137,6 +138,7 @@ const {
       <slot />
     </main>
     <Footer />
+    <SpeedInsights />
     <script is:inline>
       const getMotionState = () => {
         if (!window.__portfolioMotionState) {

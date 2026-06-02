@@ -1,0 +1,256 @@
+---
+import NewsletterSignup from '../components/NewsletterSignup.tsx';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Newsletter - Piyush Mehta"
+  description="A free, low-volume newsletter for software engineers. AI news, lessons from production systems, and the kind of stuff that actually helps you build better software."
+  type="website"
+  ogTemplate="blog"
+  ogTheme="dark"
+  keywords={['newsletter', 'AI', 'software engineering', 'developer', 'piyush mehta']}
+>
+  <section class="newsletter-hero" data-reveal>
+    <span class="newsletter-hero__accent newsletter-hero__accent--west" aria-hidden="true"></span>
+    <span class="newsletter-hero__accent newsletter-hero__accent--east" aria-hidden="true"></span>
+
+    <p class="newsletter-hero__eyebrow">The Newsletter</p>
+    <h1 class="newsletter-hero__title">
+      One email. Only when there's something worth saying.
+    </h1>
+    <p class="newsletter-hero__lede">
+      AI news without the doomerism. Lessons from production systems. The kind of stuff
+      that actually helps you ship better software on Monday.
+    </p>
+
+    <div class="newsletter-hero__form">
+      <NewsletterSignup client:load variant="card" source="newsletter-page" />
+    </div>
+
+    <p class="newsletter-hero__meta">
+      Free forever. Unsubscribe in one click. Delivered from news@piyushmehta.com.
+    </p>
+  </section>
+
+  <section class="newsletter-pillars" data-reveal>
+    <h2 class="newsletter-pillars__title">What you get</h2>
+    <div class="newsletter-pillars__grid">
+      <article class="newsletter-pillar">
+        <div class="newsletter-pillar__icon" aria-hidden="true">⚡</div>
+        <h3>AI without the hype</h3>
+        <p>
+          New models, real benchmarks, what actually works in production. Skip the
+          Twitter thread, get the distilled signal.
+        </p>
+      </article>
+      <article class="newsletter-pillar">
+        <div class="newsletter-pillar__icon" aria-hidden="true">🛠️</div>
+        <h3>Build notes</h3>
+        <p>
+          Patterns, anti-patterns, and gotchas from shipping real systems. Code I wish
+          someone had shown me three projects ago.
+        </p>
+      </article>
+      <article class="newsletter-pillar">
+        <div class="newsletter-pillar__icon" aria-hidden="true">📚</div>
+        <h3>Learnings in public</h3>
+        <p>
+          What I'm reading, building, and breaking. If you're an engineer who likes
+          learning on the side, this is for you.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="newsletter-faq" data-reveal>
+    <h2 class="newsletter-faq__title">FAQ</h2>
+    <details class="newsletter-faq__item">
+      <summary>How often does it ship?</summary>
+      <p>Whenever I have something worth saying. Usually 1-2x a month. Never daily spam.</p>
+    </details>
+    <details class="newsletter-faq__item">
+      <summary>Is it really free?</summary>
+      <p>Yes. No paywall, no upsell, no "premium tier." Hosted on Substack, delivered to your inbox.</p>
+    </details>
+    <details class="newsletter-faq__item">
+      <summary>Can I unsubscribe?</summary>
+      <p>One click. No guilt trip, no "are you sure?" page, no email sequence begging you to stay.</p>
+    </details>
+    <details class="newsletter-faq__item">
+      <summary>How is it delivered?</summary>
+      <p>
+        Sent via Resend from <code>news@piyushmehta.com</code>. Powered by the same
+        infrastructure as this site. No third-party middleman.
+      </p>
+    </details>
+    <details class="newsletter-faq__item">
+      <summary>Where do I read past issues?</summary>
+      <p>
+        Each issue lives as a post on the blog at <a href="/blog/">/blog/</a> and
+        gets archived in your inbox.
+      </p>
+    </details>
+  </section>
+
+  <section class="newsletter-cta" data-reveal>
+    <h2>Ready?</h2>
+    <NewsletterSignup client:load variant="card" source="newsletter-cta" />
+  </section>
+</Layout>
+
+<style>
+  .newsletter-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 6rem 1.5rem 4rem;
+    text-align: center;
+  }
+  .newsletter-hero__accent {
+    position: absolute;
+    width: 20rem;
+    height: 20rem;
+    border-radius: 9999px;
+    filter: blur(80px);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .newsletter-hero__accent--west {
+    top: -4rem;
+    left: -4rem;
+    background: radial-gradient(circle, #10b981 0%, transparent 70%);
+  }
+  .newsletter-hero__accent--east {
+    bottom: -4rem;
+    right: -4rem;
+    background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
+  }
+  .newsletter-hero__eyebrow {
+    color: rgb(var(--accent) / 0.9);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+  .newsletter-hero__title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 auto 1.5rem;
+    max-width: 48rem;
+    background: linear-gradient(135deg, rgb(var(--text)), rgb(var(--accent)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .newsletter-hero__lede {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: rgb(var(--text) / 0.8);
+    max-width: 38rem;
+    margin: 0 auto 2.5rem;
+  }
+  .newsletter-hero__form {
+    max-width: 32rem;
+    margin: 0 auto 1rem;
+  }
+  .newsletter-hero__meta {
+    font-size: 0.875rem;
+    color: rgb(var(--text) / 0.6);
+  }
+
+  .newsletter-pillars {
+    max-width: 72rem;
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+  }
+  .newsletter-pillars__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .newsletter-pillars__grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+  .newsletter-pillar {
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--border) / 0.5);
+    transition: transform 200ms ease, border-color 200ms ease;
+  }
+  .newsletter-pillar:hover {
+    transform: translateY(-2px);
+    border-color: rgb(var(--accent) / 0.5);
+  }
+  .newsletter-pillar__icon {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .newsletter-pillar h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  .newsletter-pillar p {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: rgb(var(--text) / 0.75);
+    margin: 0;
+  }
+
+  .newsletter-faq {
+    max-width: 48rem;
+    margin: 5rem auto;
+    padding: 0 1.5rem;
+  }
+  .newsletter-faq__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .newsletter-faq__item {
+    border-bottom: 1px solid rgb(var(--border) / 0.4);
+    padding: 1rem 0;
+  }
+  .newsletter-faq__item summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.05rem;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .newsletter-faq__item summary::after {
+    content: '+';
+    font-size: 1.5rem;
+    color: rgb(var(--accent));
+    transition: transform 200ms;
+  }
+  .newsletter-faq__item[open] summary::after {
+    transform: rotate(45deg);
+  }
+  .newsletter-faq__item p {
+    margin: 0.75rem 0 0;
+    color: rgb(var(--text) / 0.75);
+    line-height: 1.6;
+  }
+
+  .newsletter-cta {
+    max-width: 32rem;
+    margin: 5rem auto 7rem;
+    padding: 0 1.5rem;
+    text-align: center;
+  }
+  .newsletter-cta h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+</style>
