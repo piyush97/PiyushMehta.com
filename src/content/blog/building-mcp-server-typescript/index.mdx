@@ -64,6 +64,8 @@ bun add @modelcontextprotocol/sdk zod
 
 That is the entire dependency tree. No `express`, no `body-parser`, no nothing. The SDK ships its own transport.
 
+> **No Bun? No problem.** Every snippet in this post runs on Node.js 22+ via `npx tsx`. The starter repo ships `dev:node` and `dev:node:http` scripts as drop-in replacements. If you do not have Bun, swap `bun run dev` for `npx tsx src/index.ts` everywhere.
+
 ## Step 2: The 30-line server that exposes one tool
 
 This is the smallest useful MCP server I could write that still does something real — a tool that converts JSON to a TypeScript interface. Useful for exactly one workflow, and a great template to copy.
@@ -171,6 +173,8 @@ I learned this the hard way. I shipped a server last month where I skipped Zod o
 
 Here is the part that surprised me most. MCP supports *progress notifications*. Your tool can stream "I am 40% done" back to the host, and the LLM can relay that to the user as it happens. This is what makes a 30-second tool feel responsive instead of broken.
 
+> **Heads up on the `query_sqlite` tool** — it uses `node:sqlite`, which is stable on Node 22.5+ and on Bun. On older Node versions, swap the body for a `better-sqlite3` call and the rest of the server keeps working unchanged. The starter repo's `query_sqlite` tool ships with a clear error message if your runtime is too old, so you will know immediately.
+
 ```typescript
 server.tool(
   'migrate_database',
@@ -241,7 +245,17 @@ If you are a full-stack dev in 2026 and you have not built an MCP server yet, yo
 
 ## The full repo
 
-Every snippet in this post lives in a runnable repo: [github.com/piyush97/mcp-server-typescript-starter](https://github.com/piyush97/mcp-server-typescript-starter). Clone it, `bun install`, `bun run dev`, wire it into Claude Desktop. You are 90 minutes from your first tool call.
+Every snippet in this post lives in a runnable repo: [github.com/piyush97/mcp-server-typescript-starter](https://github.com/piyush97/mcp-server-typescript-starter). Clone it, `bun install` (or `npm install`), `bun run dev` (or `npm run dev:node`), wire it into Claude Desktop. You are 90 minutes from your first tool call.
+
+The repo contains everything the article hints at but does not show in full:
+
+- **All 3 tools wired up** — `json_to_interface`, `fetch_url`, and the `query_sqlite` tool with the streaming progress callout from Step 5
+- **Both transports** — `src/index.ts` (stdio) and `src/http.ts` (Streamable HTTP) for the Step 6 deployment path
+- **Both resources** — `file://README.md` and `git://status`, the always-available LLM context
+- **The `/review-pr` prompt** — copy-paste ready, with the full review template
+- **A real JSON-to-TypeScript inference engine** in `src/json-to-ts.ts` — unions, nested objects, arrays, optional fields. Not the toy version from Step 2
+
+If you only have 30 minutes, read Step 1, Step 2, and Step 4, then clone the repo. The remaining concepts (resources, prompts, streaming, HTTP transport) are all in the working code with comments.
 
 If you ship something cool with this — or hit a wall I did not anticipate — my DMs are open. I am collecting real-world MCP server patterns and writing a follow-up. The next one is on multi-tenant auth, which is the part everyone is going to need six months from now and nobody is talking about today.
 
