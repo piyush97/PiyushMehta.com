@@ -86,7 +86,7 @@ ORDER BY n_tup_upd + n_tup_del DESC;
 
 After extensive analysis, I proposed a multi-phase approach:
 
-<ArchitectureDiagram client:load />
+<ArchitectureDiagram client:visible />
 
 **Phase 1**: Infrastructure preparation and replication setup
 **Phase 2**: Data synchronization and testing
@@ -96,7 +96,7 @@ After extensive analysis, I proposed a multi-phase approach:
 
 ### Risk Assessment and Mitigation
 
-<RiskAssessmentMatrix client:load />
+<RiskAssessmentMatrix client:visible />
 
 The risk matrix above shows how we categorized and planned for potential issues. Each high-risk item had multiple mitigation strategies and rollback plans.
 
@@ -326,7 +326,7 @@ Three days before the cutover, I ran through our comprehensive checklist:
 
 ### The Critical 4-Hour Window
 
-<MigrationTimeline client:load />
+<MigrationTimeline client:visible />
 
 The actual cutover was meticulously planned for our lowest traffic period (2 AM - 6 AM PST):
 
@@ -428,7 +428,7 @@ export const migrationData = {
   fileSearch: { macos: 2.1, arch: 0.8 }
 };
 
-<PerformanceMetrics data={migrationData} client:load />
+<PerformanceMetrics data={migrationData} client:visible />
 
 **Database Performance:**
 - Query response time: 95th percentile improved from 2.3s to 0.7s

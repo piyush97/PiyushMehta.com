@@ -87,49 +87,6 @@ const {
         document.documentElement.classList.add('light');
       }
     </script>
-    <script is:inline>
-      const portfolioCacheNames = [
-        'workbox-',
-        'pages-cache',
-        'critical-css-cache',
-        'google-fonts-stylesheets',
-        'google-fonts-webfonts',
-        'images-cache',
-        'static-resources',
-        'astro-assets',
-        'api-cache',
-        'cdn-cache',
-      ];
-
-      const isPortfolioCache = (cacheName) =>
-        portfolioCacheNames.some((cachePrefix) => cacheName.startsWith(cachePrefix));
-
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker
-            .getRegistrations()
-            .then((registrations) =>
-              Promise.all(registrations.map((registration) => registration.unregister()))
-            )
-            .then(() => {
-              if (!('caches' in window)) {
-                return [];
-              }
-
-              return caches
-                .keys()
-                .then((cacheNames) =>
-                  Promise.all(
-                    cacheNames
-                      .filter((cacheName) => isPortfolioCache(cacheName))
-                      .map((cacheName) => caches.delete(cacheName))
-                  )
-                );
-            })
-            .catch(() => {});
-        });
-      }
-    </script>
   </head>
   <body>
     <a href="#main-content" class="skip-to-main">Skip to main content</a>

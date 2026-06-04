@@ -24,7 +24,7 @@ const { projects, className = '' } = Astro.props;
 ---
 
 <div class={className}>
-  <GitHubProjectIsland client:load projects={projects} />
+  <GitHubProjectIsland client:visible projects={projects} />
 </div>
 
 <style>
