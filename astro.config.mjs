@@ -104,7 +104,7 @@ export default defineConfig({
   },
 
   build: {
-    concurrency: 2,
+    concurrency: 4,
     assetsInlineLimit: 1024,
     rollupOptions: {
       output: {

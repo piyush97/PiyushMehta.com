@@ -1,6 +1,13 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/blog/kubenetes-docker",
+      "destination": "/blog/kubernetes-docker",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
