@@ -1,5 +1,88 @@
 @import "tailwindcss";
-@config "../../tailwind.config.mjs";
+@plugin "@tailwindcss/typography";
+
+/* ─── Design Tokens (migrated from tailwind.config.mjs) ─── */
+@theme {
+  --font-sans: Muli, "San Francisco", "SF Pro Text", -apple-system, system-ui, BlinkMacSystemFont,
+    Roboto, "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: "Source Code Pro", "Fira Code", "Fira Mono", "Roboto Mono", "Lucida Console",
+    Monaco, monospace;
+
+  --color-black: #000;
+  --color-white: #fff;
+  --color-gray-100: #f8f9fa;
+  --color-gray-200: #e9ecef;
+  --color-gray-300: #dee2e6;
+  --color-gray-400: #ced4da;
+  --color-gray-500: #adb5bd;
+  --color-gray-600: #6c757d;
+  --color-gray-700: #495057;
+  --color-gray-800: #343a40;
+  --color-gray-900: #212529;
+
+  --color-lighter: var(--color-lighter);
+  --color-light-100: var(--color-light-100);
+  --color-light-200: var(--color-light-200);
+  --color-light-300: var(--color-light-300);
+  --color-light-400: var(--color-light-400);
+  --color-light-500: var(--color-light-500);
+  --color-light-600: var(--color-light-600);
+  --color-light-700: var(--color-light-700);
+  --color-light-800: var(--color-light-800);
+  --color-light-900: var(--color-light-900);
+  --color-light-950: var(--color-light-950);
+  --color-darker: var(--color-darker);
+  --color-dark: var(--color-darker);
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-light-300);
+  --color-surface-primary: var(--color-bg);
+  --color-surface-secondary: var(--color-light-800);
+  --color-surface-tertiary: var(--color-light-700);
+  --color-text-primary: var(--color-light-100);
+  --color-text-secondary: var(--color-light-300);
+  --color-border: var(--color-card-border);
+  --color-bg: var(--color-bg);
+  --color-danger: #FF5252;
+  --color-card-border: var(--color-card-border);
+  --color-card-border-hover: var(--color-card-border-hover);
+  --color-card-gradient-light: var(--color-card-gradient-light);
+  --color-card-gradient-dark: var(--color-card-gradient-dark);
+  --color-navbar-bg: var(--color-navbar-bg);
+  --color-shadow: var(--color-shadow);
+  --color-shadow-dark: var(--color-shadow-dark);
+
+  --max-width-container-base: 784px;
+  --max-width-container-lg: 1200px;
+  --spacing-container-padding: 1rem;
+  --shadow-glow: var(--shadow-glow);
+  --shadow-soft: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card: 5px 5px 15px rgba(0, 0, 0, 0.12);
+  --animate-star-move: star-move 500ms infinite alternate-reverse;
+  --transition-duration-base: 200ms;
+  --transition-timing-function-base: ease-in-out;
+  --list-style-type-circle: circle;
+  --list-style-type-square: square;
+  --list-style-type-lower-alpha: lower-alpha;
+  --list-style-type-lower-roman: lower-roman;
+}
+
+@keyframes star-move {
+  to { transform: scale(1.2); }
+}
+
+/* Prose customization (was in tailwind.config.mjs typography plugin) */
+.prose {
+  --tw-prose-body: var(--color-text-primary);
+  --tw-prose-headings: var(--color-text-primary);
+  --tw-prose-links: var(--color-accent);
+  --tw-prose-bold: var(--color-text-primary);
+  --tw-prose-quotes: var(--color-text-primary);
+  --tw-prose-quote-borders: var(--color-accent);
+  --tw-prose-bullets: var(--color-accent);
+  --tw-prose-counters: var(--color-accent);
+}
+.prose a:hover { opacity: 0.8; }
 
 /* MDX Content Styling */
 @layer components {
