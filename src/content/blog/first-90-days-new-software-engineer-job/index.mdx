@@ -1,0 +1,148 @@
+---
+title: "The First 90 Days At A New Software Engineering Job: A Week-By-Week Playbook"
+description: "Why 30% of new hires fail in their first 90 days - and the week-by-week playbook that turned me from 'new joiner' to 'the person they can't live without' at three different companies"
+author: "Piyush Mehta"
+date: 2026-06-05
+tags: ["career", "onboarding", "new-job", "software-engineering", "productivity", "mentorship"]
+ogTemplate: "tech"
+ogTheme: "dark"
+image:
+  url: "/blog/first-90-days-new-software-engineer-job/hero.svg"
+  alt: "First 90 days at a new software engineering job week-by-week playbook"
+---
+
+# The First 90 Days At A New Software Engineering Job: A Week-By-Week Playbook
+
+**30% of new hires fail their first 90 days — and 70% of those failures are decided in week one. Here's the exact playbook that puts you on the right side of that stat.**
+
+I've started three new software engineering roles across a late-stage startup, Big Tech, and fintech. I bombed the first onboarding badly enough that my manager asked if I was "having second thoughts." I crushed the next two so thoroughly that by day 60 I was the person new joiners were told to go to for help.
+
+The difference wasn't coding ability. It was having a **repeatable 90-day system**.
+
+<div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
+  <h3 className="text-xl font-bold mb-2 text-text-primary">🤯 Mind-Blowing Fact</h3>
+  <p className="text-text-secondary">A BambooHR study of 10,000+ employees found <strong className="text-accent">30% of new hires leave within their first 90 days</strong>. For software engineers, it climbs to 35% when onboarding lacks structure. Your first week isn't a soft ramp — it's a flight that decides whether you crash or land.</p>
+</div>
+
+## Why Your First 90 Days Matter More Than Your Last 90
+
+Managers form a permanent impression in the first 1-2 weeks — the **primacy effect** in organizational psychology. Everything after that just confirms or revises that snapshot.
+
+Here's what makes the honeymoon period uniquely powerful:
+
+- **The team expects you to ask questions.** Week 1 is the only time you can say "where's the deploy button?" without raising eyebrows. By week 4, that grace period starts evaporating.
+- **Your manager has budgeted time for you.** They blocked their calendar for ramp-up 1:1s. If you don't use that time, it gets reallocated — permanently.
+- **You have low-ego permission to be wrong.** Early code review feedback stings less when everyone expects you to be figuring things out. Six months in, the same feedback feels like a performance review.
+
+The goal of the first 90 days isn't to prove you're a 10x engineer. It's to prove you're a **safe pair of hands** — someone who can be trusted with ownership, ambiguity, and production.
+
+## Week 1: The "Absorb and Ship" Sprint
+
+Your mission: become dangerous enough to contribute, and visible enough to matter.
+
+### Day 1-2: The Plumbing
+
+I've seen engineers waste an entire week because they couldn't build the monorepo. Don't be them.
+
+- Get on Slack, Linear/Jira, your calendar, the on-call rotation
+- Add your profile photo — it makes people 3x more likely to respond
+- Set up SSH keys, VPN, Docker, 1Password, dev certificates
+- Find the deploy pipeline and confirm you can ship a zero-risk change
+
+### Day 3: The Information Funnel
+
+Read every internal doc you can find — but **take notes**. If you don't write it down, you're signaling the knowledge isn't important.
+
+- Architecture docs and RFCs (especially rejected ones — they teach what *not* to do)
+- Postmortems from the last 6 months. Nothing teaches production reality faster than reading how someone ran `DROP DATABASE` without `WHERE` at 3 AM.
+- Runbooks, incident response guides, onboarding guides
+
+### Day 4: Map the Codebase
+
+Don't try to understand every file. Build a **mental index**: top-level folders, key entry points, the DB schema, and test patterns. Check the last 30 git commits to see what's active.
+
+```bash
+ls -la */             # top-level structure
+git log --oneline -30 # recent activity
+```
+
+### Day 5: Ship Something
+
+Your first PR should be **tiny, safe, and visible**. A typo fix. A logging improvement. Documentation that was wrong. A test that was flaky.
+
+This isn't about impact — it's about completing the cycle: **clone → edit → test → PR → merge → deploy**. Every day you don't ship, your manager wonders if you're stuck.
+
+**Also this week:** Schedule 15-min coffee chats with 5-8 teammates across functions — PM, design, infra, support. Ask: "What's the one thing you wish the new engineer knew on day one?"
+
+Book a 30-min 1:1 with your manager. Agenda: "I want to align on what *done* looks like at 30, 60, and 90 days."
+
+## Week 2-4: The First Owned Project
+
+You've survived week 1. Now it's time to **own something end-to-end**.
+
+Find a small visible task: a bug fix wrapped in a feature flag, a new API endpoint, a dashboard query. **Own it from requirements to production.**
+
+### What to Learn in This Period
+
+- **The deploy pipeline.** PR → staging → canary → production. Know how to roll back faster than you know how to roll forward.
+- **The on-call flow.** Shadow a teammate's shift. Read the last 5 alerts. What wakes someone at 3 AM vs. what waits until morning?
+- **Write a design doc.** Even if nobody asked. Writing forces clarity; sharing invites feedback that saves you from building the wrong thing.
+
+Pair with a senior engineer for an hour. Your goal isn't to contribute — it's to **watch how they think**. The senior who reads a ticket, opens three files, greps, and finds the root cause in 90 seconds has a mental model you can absorb by proximity.
+
+### The "Stupid Questions" Hack
+
+Ask in public channels, not DMs. It signals psychological safety, prevents five others from asking the same question privately, and builds your reputation as someone who prioritizes learning over ego.
+
+## Month 2: The "Propose and Mentor" Phase
+
+By day 31, you should know enough to spot problems — and to help others.
+
+### Find One Inefficiency
+
+Every codebase has a papercut: the CI build that takes 40 minutes, the manual step in the deploy process, the README that's wrong about the local setup. **Fix one of these.** It doesn't need to be heroic — just visible.
+
+When you propose a fix, frame it as a question: "I noticed our CI runs the full test suite even on doc-only changes. Would adding a path filter be valuable?" This shows you understand the system well enough to optimize it without overstepping.
+
+### Start Mentoring
+
+Volunteer to onboard the next hire, review a junior's PR, or improve the dev setup doc. Teaching forces deeper learning — if you can explain the service mesh to a new grad, you truly understand it.
+
+### Build Cross-Functional Relationships
+
+Grab coffee with a PM and ask about their roadmap pain points. Join the product team's sync — even if you just listen. The engineers who get promoted are the ones the PMs fight over.
+
+## Month 3: The "Deliver and Calibrate" Finish
+
+This is where the first 60 days pay off.
+
+### Ship Your First Major Project
+
+Deliver something end-to-end from ticket to production. It doesn't need to be complex — but it must be **yours**. Own the QA, rollout, and monitoring.
+
+### Get Calibrated
+
+Most companies run quarterly performance reviews. Make sure your manager can speak to your contributions — send them a **one-paragraph summary** of what you shipped, learned, and want to work on next. Your manager has 8-12 direct reports. If you don't advocate for yourself, nobody else will.
+
+### Be the Person New Joiners Go To
+
+By day 90, you should be the unofficial onboarding buddy for at least one thing. Write a **"State of the Codebase"** doc — a living document capturing what you wish someone had told you on day one. It signals ownership and deepens your system understanding.
+
+<div className="bg-light-700 border border-card-border p-4 rounded-lg my-6">
+  <h4 className="font-bold text-accent text-lg mb-2">⚠️ The 5 Anti-Patterns That Sink New Engineers</h4>
+  <ol className="space-y-3 text-text-secondary mt-3">
+    <li><strong className="text-text-primary">Going dark in week 1.</strong> No Slack messages, no questions, no coffee chats — you're building a reputation as the person who isolates themselves when confused.</li>
+    <li><strong className="text-text-primary">Refusing help.</strong> "I got this" when you clearly don't. Nobody expects you to know the codebase in week 2. They do expect you to know when you're stuck.</li>
+    <li><strong className="text-text-primary">Talking about your old company constantly.</strong> "At Google we did X" gets old fast. Every company has different constraints. Earn the right to compare by understanding *why* the current approach exists first.</li>
+    <li><strong className="text-text-primary">Coding in isolation.</strong> No pairing, no design review, no early feedback. The most dangerous PR is the one nobody reviewed because nobody knew about it.</li>
+    <li><strong className="text-text-primary">Skipping skip-level 1:1s.</strong> "Nothing to talk about" is the most expensive sentence in a new job. Your skip-level manager wants to know you exist and that you're thinking beyond your ticket list.</li>
+  </ol>
+</div>
+
+## The Path from "New Joiner" to "Safe Pair of Hands"
+
+The first 90 days aren't about writing the most code. They're about **building trust faster than features** — trust that you'll ask for help before breaking production, that you'll ship what you promised, that you're invested in the team's success. The engineers who thrive aren't the ones with the most lines shipped. They're the ones who made everyone around them more effective.
+
+---
+
+> **The Interview Prep Portal helps you land the offer — but it also has a Post-Offer checklist for the first 90 days, with week-by-week prompts to make sure you don't become a statistic. Free while in beta.**
