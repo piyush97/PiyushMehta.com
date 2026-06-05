@@ -30,7 +30,13 @@ const {
 
 const generateResponsiveImages = async (imageSrc: ImageMetadata | string) => {
   if (typeof imageSrc === 'string') {
-    return { src: imageSrc, srcset: '', sources: [], width: width || undefined, height: height || undefined };
+    return {
+      src: imageSrc,
+      srcset: '',
+      sources: [],
+      width: width || undefined,
+      height: height || undefined,
+    };
   }
 
   const baseWidth = width || imageSrc.width;
@@ -51,17 +57,39 @@ const generateResponsiveImages = async (imageSrc: ImageMetadata | string) => {
       const formatVariants = await Promise.all(
         widths.map(async (w) => {
           const h = Math.round(w / aspectRatio);
-          const image = await getImage({ src: imageSrc, width: w, height: h, quality, format: format as 'webp' | 'avif' | 'png' | 'jpg' });
+          const image = await getImage({
+            src: imageSrc,
+            width: w,
+            height: h,
+            quality,
+            format: format as 'webp' | 'avif' | 'png' | 'jpg',
+          });
           return `${image.src} ${w}w`;
         })
       );
-      return { format, srcset: formatVariants.join(', '), type: format === 'avif' ? 'image/avif' : 'image/webp' };
+      return {
+        format,
+        srcset: formatVariants.join(', '),
+        type: format === 'avif' ? 'image/avif' : 'image/webp',
+      };
     })
   );
 
-  const fallbackImage = await getImage({ src: imageSrc, width: baseWidth, height: baseHeight, quality, format: 'jpg' });
+  const fallbackImage = await getImage({
+    src: imageSrc,
+    width: baseWidth,
+    height: baseHeight,
+    quality,
+    format: 'jpg',
+  });
 
-  return { src: fallbackImage.src, srcset: variants.join(', '), sources, width: baseWidth, height: baseHeight };
+  return {
+    src: fallbackImage.src,
+    srcset: variants.join(', '),
+    sources,
+    width: baseWidth,
+    height: baseHeight,
+  };
 };
 
 const imageData = await generateResponsiveImages(src);
