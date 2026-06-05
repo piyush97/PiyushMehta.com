@@ -786,4 +786,14 @@
     background: rgba(var(--color-accent-rgb), 0.08);
     border-color: rgba(var(--color-accent-rgb), 0.15);
   }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-bg-pattern, .hero-bg-gradient, .floating-icon, .floating-pulse,
+    .hero-intro, .hero-teaser, .hero-cta, .hero-stats, .stat-number,
+    .scroll-indicator { animation: none; }
+    .hero-intro, .hero-title, .hero-teaser, .hero-cta, .hero-stats { opacity: 1; }
+    .hero-intro::before { animation: none; scale: 1 1; }
+    .particle, .floating-element { animation: none !important; }
+  }
 </style>
