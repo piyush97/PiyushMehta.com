@@ -73,5 +73,8 @@
     "pagefind": "^1.5.2",
     "react-doctor": "^0.2.10",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "estree-walker": "2.0.2"
   }
 }
