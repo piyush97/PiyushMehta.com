@@ -305,7 +305,9 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
   }
 
   @media (max-width: 767px) {
+    .site-nav { grid-template-columns: 1fr auto; }
     .site-nav__links { display: none; }
+    .site-nav__actions { justify-self: end; }
     .hamburger { display: flex; }
   }
 </style>
