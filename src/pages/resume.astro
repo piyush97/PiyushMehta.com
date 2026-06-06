@@ -28,6 +28,10 @@ import Layout from '../layouts/Layout.astro';
       <div class="resume-actions">
         <a class="btn-primary" href="/projects/">Review case studies</a>
         <a class="btn-secondary" href="/contact-me/">Start a conversation</a>
+        <button class="btn-ghost" id="resume-download-pdf" aria-label="Download resume as PDF">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </button>
       </div>
     </div>
 
@@ -134,9 +138,19 @@ import Layout from '../layouts/Layout.astro';
     <div class="resume-actions">
       <a class="btn-primary" href="/contact-me/">Contact Piyush</a>
       <a class="btn-secondary" href="/blog/">Read technical writing</a>
+      <button class="btn-ghost" onclick="window.print()" aria-label="Download resume as PDF">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PDF
+      </button>
     </div>
   </section>
 </Layout>
+
+<script is:inline>
+  document.getElementById('resume-download-pdf')?.addEventListener('click', () => {
+    window.print();
+  });
+</script>
 
 <style>
   .resume-hero,
@@ -414,6 +428,62 @@ import Layout from '../layouts/Layout.astro';
     .skills-grid,
     .achievement-grid {
       grid-template-columns: 1fr;
+    }
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.35rem;
+    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    border-radius: 0.35rem;
+    transition: color var(--motion-fast, 150ms) ease, border-color var(--motion-fast, 150ms) ease;
+  }
+
+  .btn-ghost:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  @media print {
+    nav,
+    footer,
+    .resume-cta,
+    #resume-download-pdf,
+    .metrics-band {
+      display: none !important;
+    }
+    .resume-hero h1 {
+      font-size: 24pt;
+    }
+    .resume-hero {
+      padding-block: 0.5in;
+    }
+    body {
+      color: #000;
+      background: #fff;
+    }
+    .resume-summary,
+    .timeline-card,
+    .info-card {
+      border: 1px solid #ccc;
+      break-inside: avoid;
+    }
+    .resume-section {
+      padding-block: 0.3in;
+    }
+    .timeline-card {
+      break-inside: avoid;
+    }
+    a {
+      color: #000;
+      text-decoration: underline;
     }
   }
 </style>

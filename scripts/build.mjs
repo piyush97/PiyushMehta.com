@@ -41,4 +41,7 @@ step('Pagefind search index', 'node scripts/run-pagefind.mjs', { optional: true 
 step('Sitemap generation', 'node scripts/generate-enhanced-sitemap.mjs', { optional: true });
 step('RSS generation', 'node scripts/generate-static-rss.mjs', { optional: true });
 
+// 5. Optional: generate resume PDF
+step('Resume PDF', 'node scripts/generate-resume-pdf.mjs', { optional: true });
+
 console.log(`\n🎉 Build complete`);

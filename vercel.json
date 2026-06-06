@@ -3,6 +3,21 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/writing/:path*",
+      "destination": "/blog/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact-me",
+      "permanent": true
+    },
+    {
+      "source": "/contact/",
+      "destination": "/contact-me/",
+      "permanent": true
+    },
+    {
       "source": "/blog/kubenetes-docker",
       "destination": "/blog/kubernetes-docker",
       "permanent": true
