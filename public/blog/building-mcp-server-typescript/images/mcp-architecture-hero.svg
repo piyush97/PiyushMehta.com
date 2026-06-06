@@ -16,6 +16,9 @@
       <feGaussianBlur stdDeviation="6" result="b"/>
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#fbbf24"/>
+    </marker>
   </defs>
 
   <rect width="1200" height="630" fill="url(#bg)"/>
@@ -49,11 +52,6 @@
   </g>
   <text x="460" y="300" text-anchor="middle" font-family="ui-monospace" font-size="14" fill="#fbbf24">tools/call</text>
   <text x="460" y="340" text-anchor="middle" font-family="ui-monospace" font-size="14" fill="#fbbf24">stdio</text>
-  <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-      <path d="M0 0 L10 5 L0 10 z" fill="#fbbf24"/>
-    </marker>
-  </defs>
 
   <!-- TYPESCRIPT MCP SERVER -->
   <g filter="url(#glow)">
@@ -86,7 +84,7 @@
   <!-- footer stats -->
   <g font-family="ui-monospace" font-size="14" fill="#cbd5e1">
     <text x="60" y="520">$ npx create-mcp-server my-server</text>
-    <text x="60" y="548">$ cd my-server && bun run dev</text>
+    <text x="60" y="548">$ cd my-server &amp;&amp; bun run dev</text>
     <text x="60" y="576">→ tools exposed in &lt;5 min  ·  ~200 LoC to ship</text>
   </g>
 
