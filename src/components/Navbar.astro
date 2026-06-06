@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from './ThemeToggle.astro';
+
 const pathname = Astro.url.pathname;
 
 const navItems = [
@@ -30,9 +32,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
   </div>
 
   <div class="site-nav__actions">
-    <button class="theme-button" type="button" aria-label="Toggle theme" data-theme-toggle>
-      <span aria-hidden="true">◐</span>
-    </button>
+    <ThemeToggle />
 
     <button class="hamburger" type="button" aria-label="Toggle menu" aria-expanded="false" data-mobile-toggle>
       <span class="hamburger__line"></span>
@@ -158,24 +158,6 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
   }
 
   .site-nav__actions { gap: 0.5rem; }
-
-  .theme-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 2.35rem;
-    height: 2.35rem;
-    border: 1px solid var(--color-card-border);
-    background: var(--color-surface-raised);
-    color: var(--color-text-primary);
-    cursor: pointer;
-  }
-
-  .theme-button:hover {
-    color: var(--color-accent);
-    transform: rotate(-10deg) scale(1.03);
-    transition: transform var(--motion-fast, 150ms) ease, color var(--motion-fast, 150ms) ease;
-  }
 
   .hamburger {
     display: none;
