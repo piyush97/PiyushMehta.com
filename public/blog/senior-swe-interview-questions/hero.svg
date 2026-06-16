@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Senior Software Engineering interview questions and system design guide">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="50%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="950" cy="180" r="260" fill="url(#glow)"/>
+  <circle cx="180" cy="520" r="200" fill="url(#glow)" opacity="0.5"/>
+
+  <!-- Grid background -->
+  <g stroke="#1f2937" stroke-width="1" opacity="0.45">
+    <path d="M0 100 H1200 M0 200 H1200 M0 300 H1200 M0 400 H1200 M0 500 H1200"/>
+    <path d="M150 0 V630 M300 0 V630 M450 0 V630 M600 0 V630 M750 0 V630 M900 0 V630 M1050 0 V630"/>
+  </g>
+
+  <!-- HyperLogLog register grid (representing the algorithm) -->
+  <g transform="translate(60, 60)">
+    <text x="0" y="0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#94a3b8" letter-spacing="2">HLL REGISTERS · 2^14</text>
+    <g transform="translate(0, 14)">
+      <g id="row1">
+        <rect x="0"   y="0" width="22" height="22" fill="#22d3ee"/>
+        <rect x="26"  y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+        <rect x="52"  y="0" width="22" height="22" fill="#a78bfa"/>
+        <rect x="78"  y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+        <rect x="104" y="0" width="22" height="22" fill="#22d3ee"/>
+        <rect x="130" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+        <rect x="156" y="0" width="22" height="22" fill="#a78bfa"/>
+        <rect x="182" y="0" width="22" height="22" fill="#22d3ee"/>
+        <rect x="208" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+        <rect x="234" y="0" width="22" height="22" fill="#22d3ee"/>
+        <rect x="260" y="0" width="22" height="22" fill="#a78bfa"/>
+        <rect x="286" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+      </g>
+      <g transform="translate(0, 26)">
+        <rect x="0"   y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+        <rect x="26"  y="0" width="22" height="22" fill="#22d3ee"/>
+        <rect x="52"  y="0" width="22" height="22" fill="#22d3ee"/>
+        <rect x="78"  y="0" width="22" height="22" fill="#a78bfa"/>
+        <rect x="104" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+        <rect x="130" y="0" width="22" height="22" fill="#22d3ee"/>
+        <rect x="156" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+        <rect x="182" y="0" width="22" height="22" fill="#a78bfa"/>
+        <rect x="208" y="0" width="22" height="22" fill="#22d3ee"/>
+        <rect x="234" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+        <rect x="260" y="0" width="22" height="22" fill="#22d3ee"/>
+        <rect x="286" y="0" width="22" height="22" fill="#a78bfa"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Right-side question stack -->
+  <g transform="translate(720, 100)" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+    <text x="0" y="0" font-size="14" fill="#94a3b8" letter-spacing="3">SENIOR SWE · 2026</text>
+
+    <text x="0" y="60" font-size="62" font-weight="800" fill="#f8fafc">Senior SWE</text>
+    <text x="0" y="130" font-size="62" font-weight="800" fill="url(#accent)">Interview Guide</text>
+
+    <text x="0" y="200" font-size="24" font-weight="600" fill="#cbd5e1">20 questions · System design · Tips</text>
+    <text x="0" y="232" font-size="24" font-weight="600" fill="#cbd5e1">HyperLogLog deep dive</text>
+
+    <g transform="translate(0, 290)">
+      <rect x="0" y="0" width="380" height="78" rx="10" fill="#0f172a" stroke="#334155"/>
+      <text x="20" y="30" font-size="14" fill="#94a3b8" letter-spacing="1">SYSTEM DESIGN</text>
+      <text x="20" y="58" font-size="18" font-weight="600" fill="#f8fafc">How would you count unique users at scale?</text>
+    </g>
+
+    <g transform="translate(0, 384)">
+      <rect x="0" y="0" width="380" height="78" rx="10" fill="#0f172a" stroke="#334155"/>
+      <text x="20" y="30" font-size="14" fill="#94a3b8" letter-spacing="1">CODING</text>
+      <text x="20" y="58" font-size="18" font-weight="600" fill="#f8fafc">Design an LRU cache · Rate limiter</text>
+    </g>
+  </g>
+
+  <!-- Bottom tag bar -->
+  <g transform="translate(60, 560)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#22d3ee">
+    <rect x="0" y="-18" width="84" height="26" rx="13" fill="none" stroke="#22d3ee"/>
+    <text x="14" y="0">#system</text>
+
+    <rect x="100" y="-18" width="100" height="26" rx="13" fill="none" stroke="#a78bfa"/>
+    <text x="114" y="0" fill="#a78bfa">#hyperloglog</text>
+
+    <rect x="216" y="-18" width="84" height="26" rx="13" fill="none" stroke="#22d3ee"/>
+    <text x="230" y="0">#interviews</text>
+
+    <rect x="316" y="-18" width="84" height="26" rx="13" fill="none" stroke="#a78bfa"/>
+    <text x="330" y="0" fill="#a78bfa">#senior</text>
+  </g>
+
+  <text x="1140" y="600" text-anchor="end" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="#64748b">piyushmehta.com</text>
+</svg>
