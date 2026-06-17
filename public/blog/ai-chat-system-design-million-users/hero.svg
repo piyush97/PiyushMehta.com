@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:0.4"/>
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22d3ee;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowStrong">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Grid pattern -->
+  <g opacity="0.03">
+    <line x1="0" y1="0" x2="1200" y2="0" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="40" x2="1200" y2="40" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="80" x2="1200" y2="80" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="120" x2="1200" y2="120" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="160" x2="1200" y2="160" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="200" x2="1200" y2="200" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="240" x2="1200" y2="240" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="280" x2="1200" y2="280" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="320" x2="1200" y2="320" stroke="#fff" stroke-width="0.5"/>
+    <line x1="0" y1="360" x2="1200" y2="360" stroke="#fff" stroke-width="0.5"/>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="55" text-anchor="middle" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="24" font-weight="700">
+    AI Chat System Design
+  </text>
+  <text x="600" y="80" text-anchor="middle" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="14" font-weight="400">
+    Million-User Architecture
+  </text>
+
+  <!-- ===== LAYER 1: Users + WebSocket Gateway ===== -->
+  <rect x="50" y="110" width="160" height="50" rx="25" fill="#312e81" stroke="#6366f1" stroke-width="1.5" filter="url(#glow)"/>
+  <text x="130" y="139" text-anchor="middle" fill="#a5b4fc" font-family="system-ui, sans-serif" font-size="11" font-weight="600">👤 Users (100K)</text>
+
+  <rect x="50" y="185" width="160" height="50" rx="8" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="130" y="214" text-anchor="middle" fill="#a5b4fc" font-family="system-ui, sans-serif" font-size="10" font-weight="500">Load Balancer (ALB)</text>
+
+  <rect x="50" y="260" width="160" height="50" rx="8" fill="#1e1b4b" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="130" y="282" text-anchor="middle" fill="#67e8f9" font-family="system-ui, sans-serif" font-size="10" font-weight="500">WS Gateway x10</text>
+  <text x="130" y="296" text-anchor="middle" fill="#22d3ee" font-family="system-ui, sans-serif" font-size="9" font-weight="400">10K conns/node</text>
+
+  <!-- Connection arrows: Users → LB → WS Gateway -->
+  <line x1="130" y1="160" x2="130" y2="185" stroke="#6366f1" stroke-width="1.5" opacity="0.6"/>
+  <polygon points="125,183 130,190 135,183" fill="#6366f1" opacity="0.8"/>
+  <line x1="130" y1="235" x2="130" y2="260" stroke="#6366f1" stroke-width="1.5" opacity="0.6"/>
+  <polygon points="125,258 130,265 135,258" fill="#6366f1" opacity="0.8"/>
+
+  <!-- ===== LAYER 2: Message Queue ===== -->
+  <rect x="280" y="185" width="180" height="50" rx="8" fill="#1e1b4b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="370" y="207" text-anchor="middle" fill="#fcd34d" font-family="system-ui, sans-serif" font-size="10" font-weight="500">Request Queue</text>
+  <text x="370" y="221" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="9" font-weight="400">Kafka / SQS</text>
+
+  <rect x="280" y="260" width="180" height="50" rx="8" fill="#1e1b4b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="370" y="282" text-anchor="middle" fill="#fcd34d" font-family="system-ui, sans-serif" font-size="10" font-weight="500">Priority Queue</text>
+  <text x="370" y="296" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="9" font-weight="400">Redis Sorted Sets</text>
+
+  <rect x="280" y="335" width="180" height="50" rx="8" fill="#1e1b4b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="370" y="357" text-anchor="middle" fill="#fcd34d" font-family="system-ui, sans-serif" font-size="10" font-weight="500">Stream Buffer</text>
+  <text x="370" y="371" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="9" font-weight="400">Redis Streams</text>
+
+  <!-- WS Gateway → Queues -->
+  <path d="M210,285 C250,285 250,210 280,210" stroke="#f59e0b" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <polygon points="277,213 284,210 278,206" fill="#f59e0b" opacity="0.8"/>
+  <path d="M210,285 C250,285 250,285 280,285" stroke="#f59e0b" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <polygon points="277,282 284,285 277,288" fill="#f59e0b" opacity="0.8"/>
+  <path d="M210,285 C250,285 250,360 280,360" stroke="#f59e0b" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <polygon points="277,357 284,360 277,363" fill="#f59e0b" opacity="0.8"/>
+
+  <!-- Queue vertical connection -->
+  <line x1="370" y1="235" x2="370" y2="260" stroke="#f59e0b" stroke-width="1" opacity="0.4"/>
+  <line x1="370" y1="310" x2="370" y2="335" stroke="#f59e0b" stroke-width="1" opacity="0.4"/>
+
+  <!-- ===== LAYER 3: LLM Router ===== -->
+  <rect x="530" y="260" width="180" height="60" rx="10" fill="#312e81" stroke="#8b5cf6" stroke-width="2" filter="url(#glow)"/>
+  <text x="620" y="286" text-anchor="middle" fill="#c4b5fd" font-family="system-ui, sans-serif" font-size="11" font-weight="600">🤖 LLM Router</text>
+  <text x="620" y="302" text-anchor="middle" fill="#8b5cf6" font-family="system-ui, sans-serif" font-size="9" font-weight="400">Capability-Aware Dispatch</text>
+
+  <!-- Queues → Router -->
+  <path d="M460,210 C500,210 500,290 530,290" stroke="#8b5cf6" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <polygon points="527,287 534,290 527,293" fill="#8b5cf6" opacity="0.8"/>
+  <path d="M460,290 C490,290 530,290 530,290" stroke="#8b5cf6" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <polygon points="527,287 534,290 527,293" fill="#8b5cf6" opacity="0.8"/>
+  <path d="M460,360 C500,360 500,290 530,290" stroke="#8b5cf6" stroke-width="1.5" fill="none" opacity="0.6"/>
+
+  <!-- ===== LAYER 4: LLM Models ===== -->
+  <rect x="780" y="110" width="150" height="45" rx="8" fill="#0f172a" stroke="#dc2626" stroke-width="1" opacity="0.8"/>
+  <text x="855" y="137" text-anchor="middle" fill="#fca5a5" font-family="system-ui, sans-serif" font-size="10" font-weight="500">GPT-4 (Premium)</text>
+
+  <rect x="780" y="175" width="150" height="45" rx="8" fill="#0f172a" stroke="#f97316" stroke-width="1" opacity="0.8"/>
+  <text x="855" y="202" text-anchor="middle" fill="#fdba74" font-family="system-ui, sans-serif" font-size="10" font-weight="500">Claude (Standard)</text>
+
+  <rect x="780" y="240" width="150" height="45" rx="8" fill="#0f172a" stroke="#22c55e" stroke-width="1" opacity="0.8"/>
+  <text x="855" y="267" text-anchor="middle" fill="#86efac" font-family="system-ui, sans-serif" font-size="10" font-weight="500">DeepSeek Flash (Free)</text>
+
+  <rect x="780" y="305" width="150" height="45" rx="8" fill="#0f172a" stroke="#6366f1" stroke-width="1" opacity="0.8"/>
+  <text x="855" y="332" text-anchor="middle" fill="#a5b4fc" font-family="system-ui, sans-serif" font-size="10" font-weight="500">Local 8B (Fallback)</text>
+
+  <!-- Router → Models -->
+  <line x1="710" y1="270" x2="780" y2="132" stroke="#dc2626" stroke-width="1.5" opacity="0.4"/>
+  <line x1="710" y1="280" x2="780" y2="197" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+  <line x1="710" y1="290" x2="780" y2="262" stroke="#22c55e" stroke-width="2" opacity="0.7" filter="url(#glow)"/>
+  <line x1="710" y1="300" x2="780" y2="327" stroke="#6366f1" stroke-width="1" opacity="0.3"/>
+
+  <!-- ===== LAYER 5: Caching ===== -->
+  <rect x="530" y="400" width="180" height="50" rx="8" fill="#1e1b4b" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="620" y="422" text-anchor="middle" fill="#67e8f9" font-family="system-ui, sans-serif" font-size="10" font-weight="500">⚡ Cache Layer</text>
+  <text x="620" y="438" text-anchor="middle" fill="#22d3ee" font-family="system-ui, sans-serif" font-size="9" font-weight="400">Redis + Vector DB</text>
+
+  <!-- Router → Cache connection down -->
+  <line x1="620" y1="320" x2="620" y2="400" stroke="#22d3ee" stroke-width="1.5" opacity="0.5" stroke-dasharray="4,3"/>
+  <polygon points="615,398 620,405 625,398" fill="#22d3ee" opacity="0.8"/>
+
+  <!-- ===== Tags / Stats ===== -->
+  <g transform="translate(790, 400)">
+    <rect x="0" y="0" width="170" height="28" rx="6" fill="#1e1b4b" stroke="#a78bfa" stroke-width="0.5" opacity="0.6"/>
+    <text x="12" y="18" fill="#a78bfa" font-family="system-ui, sans-serif" font-size="9" font-weight="500">99% prefix-cache hit rate</text>
+  </g>
+  <g transform="translate(790, 435)">
+    <rect x="0" y="0" width="170" height="28" rx="6" fill="#1e1b4b" stroke="#34d399" stroke-width="0.5" opacity="0.6"/>
+    <text x="12" y="18" fill="#34d399" font-family="system-ui, sans-serif" font-size="9" font-weight="500">73% cost reduction via routing</text>
+  </g>
+
+  <!-- Flow arrows layer labels -->
+  <text x="240" y="160" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="9" font-weight="400" transform="rotate(-90,240,160)">WebSocket</text>
+  <text x="475" y="220" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="9" font-weight="400" transform="rotate(90,475,220)">Pub/Sub</text>
+  <text x="740" y="180" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="9" font-weight="400" transform="rotate(90,740,180)">API</text>
+
+  <!-- Box around the layers -->
+  <rect x="40" y="100" width="900" height="375" rx="12" fill="none" stroke="#334155" stroke-width="1" opacity="0.3"/>
+
+  <!-- Cost / Performance badges -->
+  <g transform="translate(980, 130)">
+    <rect x="0" y="0" width="180" height="70" rx="8" fill="#1e1b4b" stroke="#22c55e" stroke-width="1"/>
+    <text x="90" y="25" text-anchor="middle" fill="#86efac" font-family="system-ui, sans-serif" font-size="20" font-weight="700">$0.012</text>
+    <text x="90" y="42" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="9" font-weight="400">Cost per request</text>
+    <text x="90" y="58" text-anchor="middle" fill="#4ade80" font-family="system-ui, sans-serif" font-size="9" font-weight="500">↓ 85% from baseline</text>
+  </g>
+
+  <g transform="translate(980, 220)">
+    <rect x="0" y="0" width="180" height="70" rx="8" fill="#1e1b4b" stroke="#f59e0b" stroke-width="1"/>
+    <text x="90" y="25" text-anchor="middle" fill="#fcd34d" font-family="system-ui, sans-serif" font-size="20" font-weight="700">120K</text>
+    <text x="90" y="42" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="9" font-weight="400">Concurrent users</text>
+    <text x="90" y="58" text-anchor="middle" fill="#fbbf24" font-family="system-ui, sans-serif" font-size="9" font-weight="500">Scale tested in prod</text>
+  </g>
+
+  <g transform="translate(980, 310)">
+    <rect x="0" y="0" width="180" height="70" rx="8" fill="#1e1b4b" stroke="#a78bfa" stroke-width="1"/>
+    <text x="90" y="25" text-anchor="middle" fill="#c4b5fd" font-family="system-ui, sans-serif" font-size="20" font-weight="700">1.8s</text>
+    <text x="90" y="42" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="9" font-weight="400">P50 latency</text>
+    <text x="90" y="58" text-anchor="middle" fill="#a78bfa" font-family="system-ui, sans-serif" font-size="9" font-weight="500">↓ 57% from naive design</text>
+  </g>
+
+  <!-- Decorative dots / particles -->
+  <circle cx="960" cy="410" r="3" fill="#818cf8" opacity="0.5"/>
+  <circle cx="1020" cy="440" r="2" fill="#22d3ee" opacity="0.4"/>
+  <circle cx="940" cy="460" r="4" fill="#34d399" opacity="0.3"/>
+  <circle cx="1100" cy="380" r="2" fill="#f59e0b" opacity="0.5"/>
+  <circle cx="1080" cy="470" r="3" fill="#a78bfa" opacity="0.4"/>
+</svg>

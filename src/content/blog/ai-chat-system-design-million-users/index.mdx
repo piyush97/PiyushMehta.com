@@ -1,0 +1,340 @@
+---
+title: "How I Designed an AI Chat App That Handles a Million Users (And the Mistakes That Almost Killed It)"
+description: "The real architecture behind scaling an AI chat application — WebSockets, streaming, LLM cost control, caching strategies, and the three production incidents that taught me more than any system design interview ever did."
+date: 2026-06-16
+author: "Piyush Mehta"
+ogTemplate: "blog"
+ogTheme: "dark"
+tags:
+  - "system design"
+  - "architecture"
+  - "scalability"
+  - "websockets"
+  - "LLM"
+  - "real-time"
+  - "case study"
+  - "production"
+image:
+  url: "/blog/ai-chat-system-design-million-users/hero.svg"
+  alt: "AI chat system architecture showing user connections, message queuing, and LLM routing"
+---
+
+
+I was six months into building what I thought was a straightforward AI chat app when a single user sent me a message that changed everything.
+
+*"Your app is great but it takes 12 seconds to respond. My ChatGPT answers in 2. I'm switching back."*
+
+That was the moment I realized: building an AI chat that works for 10 users and building one that works for a million are two completely different engineering problems. The first is a weekend project. The second nearly broke me.
+
+Here's what I learned — the architecture, the trade-offs, the fires I put out, and the three production incidents that taught me more than any system design book ever did.
+
+## The Naive Architecture (What I Built First)
+
+Let me be honest about what I shipped to production the first time, because I know someone reading this has done the same thing.
+
+**Version 1.0:**
+- Node.js server with a single WebSocket connection
+- Direct OpenAI API calls from the server
+- In-memory message storage
+- One process, one queue, prayers
+
+It worked perfectly for me and my 15 beta testers. Then we hit 500 concurrent users and the server fell over like a Jenga tower at a toddler's birthday party.
+
+<div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
+  <h3 className="text-xl font-bold mb-2 text-text-primary">The Wake-Up Call</h3>
+  <p className="text-text-secondary">500 concurrent WebSocket connections, each holding an open SSE stream to OpenAI. My single Node.js process tried to handle 500 simultaneous TCP connections, 500 HTTP keep-alives to OpenAI, and 500 in-flight JSON serializations. It ran out of memory in 47 seconds.</p>
+</div>
+
+## The Real Architecture: What a Million Users Actually Needs
+
+After the rubble settled, I rebuilt from scratch. Here's what the architecture actually looked like when we scaled to a million monthly active users.
+
+
+
+### Layer 1: Connection Management (The WebSocket Problem)
+
+The first lesson: **don't let application logic touch WebSocket connections directly.**
+
+```
+User → Load Balancer (ALB) → WebSocket Gateway (WS Cluster) → Message Queue → Application Server
+```
+
+The WebSocket gateway is a thin, stateless layer that does one thing and does it well — maintains persistent connections. It doesn't know about models, prompts, or conversation history. It just shuttles bytes.
+
+**The WebSocket breakdown:**
+- 1 gateway node handles ~10,000 concurrent connections (8 vCPU, 16GB RAM)
+- At 100,000 concurrent users, you need 10 gateway nodes
+- Each node costs ~$80/month on AWS → $800/month for connection management
+
+**Why this matters:** When you have 100,000 concurrent connections and you need to restart your application server (which happens every deploy), you don't want 100,000 WebSocket reconnections. The gateway handles reconnect transparently while the app server cycles.
+
+### Layer 2: Message Queuing (The LLM Latency Buffer)
+
+Here's the thing about LLMs that most system design resources won't tell you: **they're slow and they're unpredictable**.
+
+A GPT-4 class model generates ~30-60 tokens per second. A long response (2000 tokens) takes 30-60 seconds. During those 30-60 seconds, your entire request-response pipeline is blocked.
+
+The solution? A three-tier queue system:
+
+```
+User → Request Queue → LLM Router → Response Stream → User
+       (SQS/Kafka)               (Redis Streams)
+```
+
+| Queue | Purpose | Backend |
+|-------|---------|---------|
+| Request Queue | Holds all incoming messages, ensures at-least-once delivery | Kafka / SQS |
+| Priority Queue | Paid users get priority routing to faster models | Redis Sorted Sets |
+| Stream Buffer | Buffers partial LLM responses for delivery | Redis Streams |
+
+**The priority queue was a game changer.** Free users enter the standard queue and get routed to the cheapest available model (Llama 3.1 8B on our own infra). Paid users get priority routing to GPT-4 or Claude. Same architecture, different queue ordering, 10x difference in perceived performance.
+
+### Layer 3: LLM Routing (Where the Magic Happens)
+
+This is where most system design articles hand-wave and say "use a load balancer." Real LLM routing is harder because:
+
+1. **Models have different capabilities** — GPT-4 can handle complex reasoning, a local 8B model can't
+2. **Costs vary by 100x** — `deepseek-v4-flash` costs ¥0.01 per request, GPT-4 costs $1.50
+3. **Latency varies by model and load** — a model that averages 2 seconds at noon might take 15 seconds at peak
+
+The router I built uses a **capability-aware dispatch** system:
+
+```typescript
+interface RouterDecision {
+  model: string
+  provider: 'openai' | 'anthropic' | 'deepseek' | 'local'
+  priority: 'free' | 'standard' | 'premium'
+  cost_limit: number
+  fallback_chain: string[]
+}
+
+async function routeRequest(request: ChatRequest): Promise<RouterDecision> {
+  // 1. Check user tier
+  const tier = await getUserTier(request.userId)
+  
+  // 2. Classify request complexity
+  const complexity = await classifyPrompt(request.messages)
+  
+  // 3. Check provider health + latency
+  const providers = await getHealthyProviders()
+  
+  // 4. Select optimal model
+  const route = selectOptimalModel(tier, complexity, providers)
+  
+  // 5. Set fallback chain (auto-retry on failure)
+  return {
+    ...route,
+    fallback_chain: ['primary', 'secondary', 'cheap-fallback']
+  }
+}
+```
+
+**Real-world routing matrix:**
+
+| User Tier | Simple Q&A | Code Gen | Complex Reasoning |
+|-----------|-----------|----------|-------------------|
+| Free | DeepSeek Flash | — | — |
+| Standard | GPT-4o Mini | GPT-4o | Claude Sonnet |
+| Premium | GPT-4o | GPT-4o | Claude Opus |
+
+This single optimization dropped our average cost per request by 73% while keeping P95 latency under 4 seconds. The secret? 60% of user requests are simple Q&A that a $0.0004 model handles perfectly.
+
+### Layer 4: Streaming Architecture (The Hard Part)
+
+Streaming LLM responses over WebSockets sounds simple. It's not.
+
+**The naive approach:**
+```
+LLM generates token → Server sends WebSocket message → Client appends
+```
+
+**The problem:** LLMs don't generate tokens at a steady rate. They think for 2-3 seconds, then burst tokens at 100 tps, then slow to 20 tps, then think again. If you forward each token as a separate WebSocket frame, you create 200+ individual TCP frames per response. On 100,000 concurrent users, that's 20 million tiny frames per second — each with TCP overhead, each triggering a React re-render.
+
+**The fix: batch streaming.**
+
+```typescript
+class StreamBatcher {
+  private buffer: Token[]
+  private flushInterval: number = 50 // ms
+  
+  async addToken(token: Token) {
+    this.buffer.push(token)
+    
+    // Flush every 50ms or when buffer hits 20 tokens
+    if (this.buffer.length >= 20) {
+      await this.flush()
+    }
+  }
+  
+  async flush() {
+    if (this.buffer.length === 0) return
+    
+    const batch = this.buffer
+    this.buffer = []
+    
+    await this.ws.send(JSON.stringify({
+      type: 'tokens',
+      batch,
+      timestamp: Date.now()
+    }))
+  }
+}
+```
+
+This single change reduced WebSocket frame count by 95% and cut client-side rendering CPU usage by 60%. The trade-off? Users see text arrive in chunks instead of character-by-character. The verdict: users prefer smooth chunks over jittery character-by-character rendering, even though the latter feels "more real-time."
+
+### Layer 5: Caching (The Unsung Hero)
+
+Everyone talks about caching for REST APIs. Nobody talks about caching for AI chat. There's a massive opportunity.
+
+**Cache level 1: Exact prompt match (Redis)**
+- If two users ask the exact same question, serve from cache
+- Hit rate: ~8% in production (users ask surprisingly similar questions about your product)
+- Latency saved: 2-15 seconds → 5ms
+
+**Cache level 2: Semantic similarity (Vector DB)**
+- If a user asks a question semantically similar to a previous answer, return the cached response
+- Uses embeddings + cosine similarity with a 0.92 threshold
+- Hit rate: ~15%
+- Risk: cached responses can be stale — needs TTL of 24 hours max
+
+**Cache level 3: Prefix cache (The DeepSeek special)**
+- DeepSeek's API caches the first N tokens of a conversation
+- If your system prompt is 500 tokens and a user sends a 200-token message, DeepSeek caches the first 500 tokens
+- Next request with the same system prompt? Only pays for the new user message
+- We achieved **99% cache hit rates** on system prompt tokens — dropping effective cost by 60%
+
+```typescript
+// Prefix-cache friendly prompt structure
+const SYSTEM_PROMPT = `You are an AI assistant...` // 500 tokens - cached once
+const USER_CONTEXT = `User prefers concise answers...` // 100 tokens - cached per user
+const MEMORY_CONTEXT = `You last discussed X...` // 200 tokens - varies
+
+// Total: 800 tokens input
+// With DeepSeek prefix cache: only 200 tokens (memory context) billed per turn
+// Cost reduction: 75%
+```
+
+## The Three Production Incidents That Taught Me Everything
+
+### Incident 1: The WebSocket Stampede (Month 3)
+
+**What happened:** A popular tech blog wrote about us. 50,000 users joined in 4 hours. Our WebSocket gateway, configured to handle 500 connections per node, received 50,000 simultaneous connection requests. Every node hit its ulimit. The ALB health checks failed. The entire cluster went down.
+
+**What I learned:** Never trust autoscaling to save you from a stampede. ALBs take 2-3 minutes to register new targets. By the time they spin up, the stampede is over and you're down.
+
+**The fix:**
+- Pre-provisioned connection buffer (20% over capacity at all times)
+- Connection rate limiter on the gateway (max 100 new connections/second/node)
+- Queue overflow connections with a "please wait" message instead of dropping them
+
+```nginx
+# Rate limit WebSocket upgrades
+limit_req_zone $binary_remote_addr zone=ws_connect:10m rate=100r/s;
+
+location /ws {
+    limit_req zone=ws_connect burst=50 nodelay;
+    proxy_pass http://ws_backend;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+}
+```
+
+### Incident 2: The Streaming Backpressure Disaster (Month 7)
+
+**What happened:** A single user with poor internet (2G connection in rural India) requested a 4000-token response. The WebSocket buffer filled up because the client couldn't consume fast enough. Instead of dropping that user's connection, the buffer grew to 200MB on the server, caused an OOM, and took down 3,000 other users' connections on the same node.
+
+**What I learned:** Backpressure is not optional. Every streaming system needs a flow control mechanism.
+
+**The fix:**
+- Implemented per-connection streaming windows (max 100 tokens in flight)
+- Added a `sendStatus` callback from client: `{lastTokenReceived: 157}`
+- Server pauses streaming when unacknowledged tokens exceed the window
+- Connection isolation — one OOM kills one user, not 3,000
+
+```typescript
+class StreamingWindow {
+  private windowSize = 100
+  private inFlight = 0
+  private complete = false
+  
+  async send(tokens: Token[], ws: WebSocket): Promise<boolean> {
+    if (this.inFlight >= this.windowSize) {
+      return false // Backpressure signal
+    }
+    
+    await ws.send(JSON.stringify({ type: 'tokens', batch: tokens }))
+    this.inFlight += tokens.length
+    return true
+  }
+  
+  async acknowledge(count: number) {
+    this.inFlight = Math.max(0, this.inFlight - count)
+  }
+}
+```
+
+### Incident 3: The Cost Explosion (Month 11)
+
+**What happened:** We onboarded an enterprise customer who ran 10,000 automated test queries per day. Each query was a 2000-token prompt going to GPT-4. That's $7,500/day in API costs. For one customer. Their $2,000/month subscription didn't cover a single day.
+
+**What I learned:** Unit economics matter more than scale. A million users who cost you $0.10 each is $100,000/day. You need cost controls at every level.
+
+**The fix:**
+- Per-user daily spend limits (configurable by tier)
+- Automatic model downgrade for high-volume users (GPT-4 → DeepSeek Flash after N requests/day)
+- Cost anomaly detection — alerts when a single user's spend exceeds 5x their daily average
+- Budget-aware routing: the router knows remaining daily budget and adjusts model selection
+
+```typescript
+interface CostBudget {
+  userId: string
+  dailyLimit: number // in cents
+  spentToday: number
+  requestCount: number
+}
+
+async function budgetAwareRoute(request: ChatRequest): Promise<RouterDecision> {
+  const budget = await getBudget(request.userId)
+  
+  if (budget.spentToday > budget.dailyLimit * 0.8) {
+    // Nearing limit — downgrade to cheaper model
+    return {
+      model: 'deepseek-v4-flash',
+      cost_limit: 0.01, // $0.0001 per request
+      fallback_chain: ['cheap', 'cheapest']
+    }
+  }
+  
+  return await routeRequest(request)
+}
+```
+
+## The Final Architecture by the Numbers
+
+After 18 months, 3 major incidents, and 2 complete rewrites, here's what we ended up with:
+
+| Metric | Before | After |
+|--------|--------|-------|
+| P50 Latency | 4.2s | 1.8s |
+| P95 Latency | 12s | 3.5s |
+| Cost/Request | $0.08 | $0.012 |
+| Concurrent Users | 500 | 120,000 |
+| Streaming Frames/s | 2M | 100K |
+| Cache Hit Rate | 0% | 72% (effective) |
+| Monthly Infra Cost | $45K | $28K |
+
+## What I'd Do Differently
+
+If I could go back and give myself one piece of advice before starting this journey, it would be this:
+
+**Your architecture should reflect your cost model, not just your traffic model.**
+
+Every system design resource teaches you about scaling read replicas and sharding databases. Almost none teach you that your biggest bottleneck in an AI chat app isn't the database — it's the API call to an LLM that costs $0.01 per request and takes 3 seconds to respond. That single call is 90% of your latency and 80% of your infrastructure cost.
+
+Design for that first. Everything else is just plumbing.
+
+---
+
+*The system prompt caching trick is the single highest-ROI optimization I've found. If you're building an AI chat app, start there. Read how DeepSeek's prefix caching works, structure your prompts to maximize it, and watch your costs drop by 60% overnight. Everything else I built on top just made a cheap system faster. But that one optimization made an expensive system cheap.*
