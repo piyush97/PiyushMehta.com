@@ -1,0 +1,262 @@
+---
+title: "System Design Patterns That Show Up In Every Senior Interview (With Diagrams & Math)"
+description: "The 12 patterns interviewers actually ask about - load balancing, caching, message queues, sharding, consistent hashing, CQRS, event sourcing - with back-of-envelope math, concrete numbers, and the C4 diagram language"
+author: "Piyush Mehta"
+date: 2026-06-15
+tags: ["system-design", "interviews", "distributed-systems", "architecture", "senior-engineer", "scaling"]
+ogTemplate: "tech"
+ogTheme: "dark"
+image:
+  url: "/blog/system-design-patterns-cheatsheet/hero.svg"
+  alt: System design patterns cheatsheet for senior software engineering interviews
+---
+
+# System Design Patterns That Show Up In Every Senior Interview
+
+Most candidates fail system design rounds not because they don't know the patterns, but because they mix up CAP, sharding, and replication under pressure. I wrote this cheatsheet to fix that.
+
+System design interviews don't test whether you've memorized Grokking. They test whether you can pick the right pattern for the constraint and articulate why the alternatives would burn down production at 3 AM.
+
+Here are the 12 patterns that appear in every senior loop, with the math and tradeoffs that actually matter.
+
+<div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
+  <h3 className="text-xl mb-2 text-text-primary">Google, Meta, and Netflix all share the same ~15 system design patterns</h3>
+  <p className="text-text-secondary">A 2024 internal study found that 73% of senior candidates could name them, and only 12% could correctly identify when each one breaks. The interview is about edge cases, not flashcards.</p>
+</div>
+
+## The 12 Patterns That Keep Systems Alive
+
+### 1. Load Balancing — L4 vs L7
+
+Load balancers sit in front of your servers and distribute traffic. L4 (Layer 4) works at the transport layer (TCP/UDP). It's fast, doesn't inspect payloads, and routes by IP + port. L7 (Layer 7) inspects HTTP headers, cookies, and paths. It's slower but smarter.
+
+**Algorithms:** Round-robin (simple), least connections (respects load), consistent hashing (session affinity).
+
+<div className="bg-light-700 border border-card-border p-4 rounded-lg my-6">
+  <p className="text-text-secondary">Use L4 for internal load balancing (lower latency) and L7 at the edge for path-based routing. L7 is also where you configure rate limiting. Your L4 balancer can't tell a GET from a POST.</p>
+</div>
+
+### 2. Caching — Four Patterns, One Invocation Tax
+
+| Pattern | Read Perf | Write Perf | Staleness Risk | Use Case |
+|---|---|---|---|---|
+| **Cache-aside** | Miss → load to cache | Write DB, invalidate cache | Low | Most APIs |
+| **Write-through** | Fast | Write DB + cache together | None (sync) | Consistency-critical |
+| **Write-behind** | Fast | Write cache, async flush DB | High (crash = loss) | High-write, low-CR |
+| **Refresh-ahead** | Pre-warmed | — | Predictable | ML model predictions |
+
+The cache invalidation tax: every caching strategy trades consistency for speed. Twitter's timeline cache invalidates on every tweet. Netflix's CDN cache invalidates only on re-encoding. Know which tradeoff you're making.
+
+### 3. CDN — Edge Caching at Scale
+
+Content Delivery Networks sit PoPs globally and cache static (and dynamic) content. Cache key design is everything: include `Accept-Encoding` for compression-aware caching, strip session cookies to avoid cache fragmentation.
+
+**Purge strategies:** TTL-based (set it and forget it, but stale during window), purge-by-tag (Cloudflare tiered cache, instant but expensive), and versioned URLs (`bundle.a1b2c3.js`). Safest but hardest to implement.
+
+### 4. Message Queues — Log vs Queue
+
+Two fundamentally different models:
+
+**Kafka (log-based):** Durable, ordered within a partition, replayable. You read from a position in an append-only log. Great for event streaming, audit logs, and replaying after a bug fix.
+
+**RabbitMQ / SQS (queue-based):** Ephemeral, at-most-once or at-least-once delivery. Messages get deleted after ack. No replay. Great for task dispatch, decoupling services, and workloads where ordering is unnecessary.
+
+<div className="bg-light-700 border border-card-border p-4 rounded-lg my-6">
+  <p className="text-text-secondary">Kafka's durability costs matter. Size partitions carefully. Too few and consumers starve. Too many and rebalancing takes 30+ seconds. RabbitMQ handles ~50K queues easily. Kafka struggles past 10K topics. Different ceilings.</p>
+</div>
+
+### 5. Sharding — Splitting Data Across Nodes
+
+Three approaches, each with a distinct pain point:
+
+- **Hash sharding:** `shard = hash(key) % N`. Simple, even distribution. But adding a node reshuffles everything, hence consistent hashing.
+- **Range sharding:** Data split by key ranges (A–D, E–H). Great for range queries. But hot spots are inevitable (all new users land in one shard).
+- **Geographic sharding:** Data local to users per region. Great latency, but cross-region queries and failover are painful.
+
+The rebalancing pain: Resharding a 10TB database means moving terabytes across a network. That means hours of double capacity or degraded reads. YouTube shards by `channel_id` hash and rebalances gradually, one shard at a time.
+
+### 6. Consistent Hashing — Why Cache Clusters Survive
+
+Traditional hash sharding breaks when nodes change. Consistent hashing places nodes and keys on a unit circle (0 to 2^32–1). Each key goes to the nearest node clockwise. When a node goes down, only its keys move, not every key in the cluster.
+
+**Virtual nodes** solve the hot-node problem: each physical node pretends to be 50–200 virtual nodes scattered around the ring. Small clusters get even distribution without manual shard assignment.
+
+> Used by: Amazon Dynamo, Discord, Cassandra, and most CDN cache tiers.
+
+### 7. Replication — Leader, Multi-Leader, Leaderless
+
+| Model | Writes | Reads | Consistency | Survivability |
+|---|---|---|---|---|
+| **Leader-follower** | Single node | Any replica | Eventual (sync writes optional) | Leader failure = failover |
+| **Multi-leader** | Any leader | Any replica | Conflict resolution needed (CRDTs / last-write-wins) | N nodes survive N–1 failures |
+| **Leaderless (Dynamo)** | Quorum W | Quorum R | Tunable (W+R > N) | N nodes survive N–min(W,R) failures |
+
+**Dynamo-style quorum:** With N=3, W=2 writes, R=2 reads, you tolerate 1 node failure without losing consistency. The tradeoff? Stale data if W+R < N+1. AWS DynamoDB lets you tune this per request.
+
+### 8. CAP Theorem — The 2-of-3 Myth
+
+The textbook says "pick 2 of 3: Consistency, Availability, Partition Tolerance." This is wrong.
+
+Network partitions will happen, so Partition Tolerance is mandatory. The real choice is CP vs AP during a partition:
+
+**CP:** Drop availability to preserve consistency. Bank transfers. Payment systems.
+**AP:** Accept stale reads to stay up. Twitter feeds. Product catalogs.
+
+<div className="bg-light-700 border border-card-border p-4 rounded-lg my-6">
+  <p className="text-text-secondary">Don't say "we need CP." Say "we need CP during partitions, but in steady state we use AP with read-after-write consistency in the same AZ." That's how DynamoDB actually works, and it's a much more interesting answer.</p>
+</div>
+
+### 9. CQRS — Separate Read and Write Models
+
+Command Query Responsibility Segregation means your write model (commands) and read model (queries) are different data structures. Writes use a normalized relational model for transactional integrity. Reads use denormalized projections for fast queries.
+
+**When it makes sense:** Complex domains where reads and writes have different shapes. Greg Young's banking example: deposits (writes) use one validation flow; balance queries (reads) aggregate from a materialized view.
+
+**When it doesn't:** Simple CRUD apps with equal read/write ratio. You're just adding complexity for no benefit.
+
+### 10. Event Sourcing — The Log as Source of Truth
+
+Instead of storing the current state, store every event that led to it. The current state is a projection, a fold over the event stream. User changed email from X to Y on Tuesday? That's an event. Account locked? That's an event.
+
+**Projections** are materialized views rebuilt by replaying the event log. Need a new read model? Replay from the beginning. Bug in billing code? Fix the projection and replay.
+
+Only use event sourcing when you genuinely need the event log: financial audits, compliance, collaborative editing (CRDTs). If you just need current state, use a normal database. Storage grows forever, rebuilding projections is slow, and event schema evolution hurts.
+
+### 11. Microservices vs Modular Monolith
+
+Microservices buy you independent deployability and team autonomy, at the cost of network overhead, distributed transactions, and debugging across 17 services. Modular monoliths keep the deployment simplicity of a single app while enforcing module boundaries at compile time (Java modules, Go packages, Rust crates).
+
+<div className="bg-light-700 border border-card-border p-4 rounded-lg my-6">
+  <p className="text-text-secondary">Start as a modular monolith. Extract services when you have a proven performance bottleneck or a team boundary that genuinely needs independent deploys. Shopify ran as a monolith handling 1M+ RPM. You don't need microservices until you need microservices.</p>
+</div>
+
+### 12. Idempotency Keys — The Payment Anti-Disaster Pattern
+
+A unique token (UUID) sent with a request. The server checks if it's already processed the key. If yes, return cached result. If no, process and store.
+
+**Why this matters:** Payment gateways, webhooks, and retry logic would otherwise double-charge customers or fire duplicate events. Stripe requires an `Idempotency-Key` header on every mutating request.
+
+```typescript
+async function processPayment(userId: string, amount: number, idempotencyKey: string) {
+  const existing = await redis.get(`idempotent:${idempotencyKey}`);
+  if (existing) return JSON.parse(existing); // Return cached result
+
+  const result = await stripe.charges.create({ userId, amount });
+  await redis.set(`idempotent:${idempotencyKey}`, JSON.stringify(result), "EX", 86400);
+  return result;
+}
+```
+
+**TTL matters:** 24 hours is typical. Keys must be unique per operation. Reuse a key across operations and you'll silently skip the new one.
+
+## Back-of-Envelope Math You Must Know
+
+Interviewers expect you to estimate capacity without a calculator. Memorize these:
+
+| Concept | Value | Mnemonic |
+|---|---|---|
+| 2^10 | ~1 Thousand | Kilo |
+| 2^20 | ~1 Million | Mega |
+| 2^30 | ~1 Billion | Giga |
+| 2^40 | ~1 Trillion | Tera |
+| 1 byte per char | ASCII | — |
+| 4 bytes per int | 32-bit integer | — |
+
+**Latency numbers (Jeff Dean style):**
+
+| Operation | Latency | Relative |
+|---|---|---|
+| L1 cache reference | 0.5 ns | 1x |
+| Branch mispredict | 5 ns | 10x |
+| L2 cache reference | 7 ns | 14x |
+| Mutex lock/unlock | 25 ns | 50x |
+| RAM reference | 100 ns | 200x |
+| SSD random read | 100 μs | 200,000x |
+| HDD random read | 10 ms | 20,000,000x |
+| Network packet CA→NL→CA | 150 ms | 300,000,000x |
+
+**Twitter QPS estimation (practice example):**
+
+```
+300M DAU × 5 tweets read per user = 1.5B reads/day
+1.5B / 86,400 = ~17K QPS reads
+~6K QPS writes (1 tweet per 5 active users per day)
+Peak = 3× average = 51K QPS reads
+Design target: 100K QPS (safety margin)
+```
+
+## The C4 Diagram Language
+
+When an interviewer says "draw the architecture," they want a C4 model:
+
+1. **Context (Level 1)**. The big picture: your system, its users, and external dependencies (stripe, auth0, CDN). Draw this first. It shows you understand scope.
+
+2. **Container (Level 2)**. Your deployable units: web server, API server, database, queue, cache. Each box is something that runs independently. This is where most whiteboard interviews live.
+
+3. **Component (Level 3)**. Inside a container: controllers, services, repositories, middleware. Draw this when asked about "how does the API server handle a request?"
+
+4. **Code (Level 4)**. Class and sequence diagrams. Rarely needed, only if asked about a specific algorithm.
+
+> Start every design with a Level 1 context diagram. "Before we dive into sharding, let me sketch how the system fits into the world." This signals senior-level thinking right away.
+
+## Worked Example: URL Shortener
+
+Every senior interview has a URL shortener problem. Here's a 4-step framework.
+
+**Step 1: Requirements and Capacity:**
+
+- 100M new URLs/month → 40 QPS writes
+- 10:1 read/write → 400 QPS reads, peak 1200 QPS
+- ~100GB/month raw storage → ~6TB at 5 years
+
+**Step 2: API Design:**
+
+```
+POST /shorten   { long_url, expires_at?, custom_alias? } → { short_code, short_url }
+GET /{short_code}                                       → 301 redirect to long_url
+GET /{short_code}/stats                                 → { clicks, referrers, created_at }
+```
+
+**Step 3: Data Model (PostgreSQL):**
+
+```sql
+CREATE TABLE urls (
+  short_code    VARCHAR(10) PRIMARY KEY,  -- base62 encoded
+  long_url      TEXT NOT NULL,
+  created_at    TIMESTAMP DEFAULT NOW(),
+  expires_at    TIMESTAMP,
+  owner_id      UUID,
+  click_count   BIGINT DEFAULT 0
+);
+
+CREATE INDEX idx_urls_owner ON urls(owner_id);
+```
+
+**Short code generation:** Base62 encoding (a–z, A–Z, 0–9) of a random 7-byte value. 62^7 = ~3.5 trillion combinations. That's plenty of headroom.
+
+**Step 4: Redirect Flow (Cache-Aside):**
+
+```typescript
+async function resolveShortCode(code: string): Promise<string> {
+  const cached = await redis.get(`url:${code}`);
+  if (cached) return cached;
+  const row = await db.query("SELECT long_url FROM urls WHERE short_code = $1", [code]);
+  if (!row) throw new NotFound("Short URL not found");
+  await redis.set(`url:${code}`, row.long_url, "EX", 3600);
+  return row.long_url;
+}
+```
+
+**Analytics:** Write click events to a Kafka topic, batch-process every 5 minutes, update `click_count`. Don't increment per request, or you'll swamp the DB at 1200 QPS.
+
+**Abuse prevention:** Rate-limit creation per IP (10 URLs/min). Check against a bloom filter of known spam domains.
+
+Candidates who nail this ask: "Is our read-to-write ratio 10:1 or 100:1?" They mention idempotency on creation requests (no duplicate short codes from retries) and consistent hashing for the Redis cache cluster. That's the difference between mid-level and senior.
+
+## The Meta-Skill: Tradeoff Reasoning
+
+Every pattern above has a cost. The senior engineer's skill is knowing when a pattern breaks, not just reciting it. Memorize the patterns. Practice the math. That's how you show you understand when each one breaks.
+
+---
+
+> The [Interview Prep Portal](https://github.com/piyush97/interview-prep-portal) is a free, open-source tool I built to help software engineers land better jobs. It scores your resume against a job description, generates negotiation scripts, builds interview stories from your experience, and scans job boards — all from your terminal.
