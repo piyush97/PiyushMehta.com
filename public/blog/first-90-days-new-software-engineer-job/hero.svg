@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Week-by-week · 5 anti-patterns">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="50%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="950" cy="180" r="260" fill="url(#glow)"/>
+  <circle cx="180" cy="520" r="200" fill="url(#glow)" opacity="0.5"/>
+  <g stroke="#1f2937" stroke-width="1" opacity="0.45">
+    <path d="M0 100 H1200 M0 200 H1200 M0 300 H1200 M0 400 H1200 M0 500 H1200"/>
+    <path d="M150 0 V630 M300 0 V630 M450 0 V630 M600 0 V630 M750 0 V630 M900 0 V630 M1050 0 V630"/>
+  </g>
+  <g transform="translate(60, 80)">
+    <rect x="0" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="26" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="52" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="78" y="0" width="22" height="22" fill="#22d3ee"/>
+    <rect x="104" y="0" width="22" height="22" fill="#22d3ee"/>
+    <rect x="130" y="0" width="22" height="22" fill="#22d3ee"/>
+    <rect x="156" y="0" width="22" height="22" fill="#22d3ee"/>
+    <rect x="182" y="0" width="22" height="22" fill="#a78bfa"/>
+    <rect x="208" y="0" width="22" height="22" fill="#a78bfa"/>
+    <rect x="234" y="0" width="22" height="22" fill="#a78bfa"/>
+    <rect x="260" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="286" y="0" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="0" y="26" width="22" height="22" fill="#a78bfa"/>
+    <rect x="26" y="26" width="22" height="22" fill="#a78bfa"/>
+    <rect x="52" y="26" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="78" y="26" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="104" y="26" width="22" height="22" fill="#22d3ee"/>
+    <rect x="130" y="26" width="22" height="22" fill="#22d3ee"/>
+    <rect x="156" y="26" width="22" height="22" fill="#a78bfa"/>
+    <rect x="182" y="26" width="22" height="22" fill="#a78bfa"/>
+    <rect x="208" y="26" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="234" y="26" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="260" y="26" width="22" height="22" fill="#22d3ee"/>
+    <rect x="286" y="26" width="22" height="22" fill="#22d3ee"/>
+    <rect x="0" y="52" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="26" y="52" width="22" height="22" fill="#22d3ee"/>
+    <rect x="52" y="52" width="22" height="22" fill="#a78bfa"/>
+    <rect x="78" y="52" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="104" y="52" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="130" y="52" width="22" height="22" fill="#22d3ee"/>
+    <rect x="156" y="52" width="22" height="22" fill="#a78bfa"/>
+    <rect x="182" y="52" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="208" y="52" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="234" y="52" width="22" height="22" fill="#22d3ee"/>
+    <rect x="260" y="52" width="22" height="22" fill="#a78bfa"/>
+    <rect x="286" y="52" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="0" y="78" width="22" height="22" fill="#a78bfa"/>
+    <rect x="26" y="78" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="52" y="78" width="22" height="22" fill="#22d3ee"/>
+    <rect x="78" y="78" width="22" height="22" fill="#a78bfa"/>
+    <rect x="104" y="78" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="130" y="78" width="22" height="22" fill="#22d3ee"/>
+    <rect x="156" y="78" width="22" height="22" fill="#a78bfa"/>
+    <rect x="182" y="78" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="208" y="78" width="22" height="22" fill="#22d3ee"/>
+    <rect x="234" y="78" width="22" height="22" fill="#a78bfa"/>
+    <rect x="260" y="78" width="22" height="22" fill="#0f172a" stroke="#334155"/>
+    <rect x="286" y="78" width="22" height="22" fill="#22d3ee"/>
+  </g>
+  <g transform="translate(720, 100)" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+    <text x="0" y="0" font-size="14" fill="#94a3b8" letter-spacing="3">CAREER · 2026</text>
+    <text x="0" y="62" font-size="58" font-weight="800" fill="#f8fafc">First 90</text>
+    <text x="0" y="128" font-size="58" font-weight="800" fill="url(#accent)">Days</text>
+    <text x="0" y="190" font-size="22" font-weight="600" fill="#cbd5e1">Week-by-week · 5 anti-patterns</text>
+    <g transform="translate(0, 240)">
+      <rect x="0" y="0" width="380" height="74" rx="10" fill="#0f172a" stroke="#334155"/>
+      <text x="20" y="30" font-size="13" fill="#94a3b8" letter-spacing="1">WEEK 1</text>
+      <text x="20" y="58" font-size="18" font-weight="600" fill="#f8fafc">Absorb + ship a tiny PR</text>
+    </g>
+    <g transform="translate(0, 332)">
+      <rect x="0" y="0" width="380" height="74" rx="10" fill="#0f172a" stroke="#334155"/>
+      <text x="20" y="30" font-size="13" fill="#94a3b8" letter-spacing="1">WEEK 2-4</text>
+      <text x="20" y="58" font-size="18" font-weight="600" fill="#f8fafc">First owned end-to-end project</text>
+    </g>
+  </g>
+  <g transform="translate(60, 560)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14">
+    <rect x="0" y="-18" width="84" height="26" rx="13" fill="none" stroke="#22d3ee"/>
+    <text x="14" y="0" fill="#22d3ee">#onboard</text>
+    <rect x="100" y="-18" width="100" height="26" rx="13" fill="none" stroke="#a78bfa"/>
+    <text x="114" y="0" fill="#a78bfa">#first-90</text>
+    <rect x="216" y="-18" width="84" height="26" rx="13" fill="none" stroke="#22d3ee"/>
+    <text x="230" y="0" fill="#22d3ee">#trust</text>
+    <rect x="316" y="-18" width="84" height="26" rx="13" fill="none" stroke="#a78bfa"/>
+    <text x="330" y="0" fill="#a78bfa">#win</text>
+  </g>
+  <text x="1140" y="600" text-anchor="end" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="#64748b">piyushmehta.com</text>
+</svg>
