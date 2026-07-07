@@ -5,20 +5,38 @@ import vercel from "@astrojs/vercel";
 import sentry from "@sentry/astro";
 import tailwindcss from "@tailwindcss/vite";
 import varlock from "@varlock/astro-integration";
-import { defineConfig } from "astro/config";
+import { defineConfig, memoryCache } from "astro/config";
 
 const isProductionBuild = process.env.NODE_ENV === "production";
 const hasSentryAuth = Boolean(process.env.SENTRY_AUTH_TOKEN);
 const hasClientSentryDsn = Boolean(process.env.PUBLIC_SENTRY_DSN);
 const hasServerSentryDsn = Boolean(process.env.SENTRY_DSN || process.env.PUBLIC_SENTRY_DSN);
 
-// https://astro.build/config
 export default defineConfig({
   site: "https://piyushmehta.com",
   output: "server",
   prefetch: {
     prefetchAll: true,
     defaultStrategy: "hover",
+  },
+  // Astro v7 stable caching — enables Astro.cache.set() on server routes and APIs
+  cache: {
+    provider: memoryCache({ max: 500 }),
+  },
+  // Route-level cache rules for API and content routes
+  routeRules: {
+    "/api/og/[...path]": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
+    "/api/og-image": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
+    "/api/og-enhanced": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
+    "/api/og-simple": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
+    "/api/og-test": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
+    "/rss.xml": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
+    "/sitemap.xml": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
+    "/robots.txt": { headers: { "Cache-Control": "public, max-age=86400, s-maxage=86400" } },
+  },
+  experimental: {
+    // Speculative prerendering of prefetched pages — instant navigation
+    clientPrerender: true,
   },
   integrations: [
     varlock(),
