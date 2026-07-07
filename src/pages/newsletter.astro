@@ -92,10 +92,9 @@ import Layout from '../layouts/Layout.astro';
       </p>
     </details>
   </section>
-
   <section class="newsletter-cta" data-reveal>
     <h2>Ready?</h2>
-    <NewsletterSignup client:load variant="card" source="newsletter-cta" />
+    <NewsletterSignup client:idle variant="card" source="newsletter-cta" />
   </section>
 </Layout>
 
