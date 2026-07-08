@@ -1,6 +1,5 @@
 import fs from 'fs';
 // debug-rss-feed.mjs
-import fetch from 'node-fetch';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
