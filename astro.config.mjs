@@ -25,8 +25,6 @@ export default defineConfig({
   },
   // Route-level cache rules for API and content routes
   routeRules: {
-    "/api/og/[...path]": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
-    "/api/og-enhanced": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
     "/rss.xml": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
     "/sitemap.xml": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
     "/robots.txt": { headers: { "Cache-Control": "public, max-age=86400, s-maxage=86400" } },
