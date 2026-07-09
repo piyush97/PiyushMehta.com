@@ -72,7 +72,7 @@ See `.env.schema` for the full list.
 
 ```bash
 bun dev              # Dev server
-bun build            # Production build (typegen → CSS extraction → Astro build → Pagefind → sitemap → RSS)
+bun build            # Production build (typegen → image migration → Astro build → Pagefind → resume PDF)
 bun preview          # Preview production build locally
 
 bun run lint         # Biome lint
@@ -87,9 +87,6 @@ bun run test:headed  # Tests in headed mode
 bun run test:ui      # Playwright UI mode
 
 bun run migrate:images    # Migrate blog images to public/
-bun run enhance-sitemap   # Regenerate sitemap
-bun run generate-rss      # Regenerate RSS feed
-bun run verify-rss        # Verify RSS integrity
 bun run test-seo          # Validate SEO meta files
 ```
 
@@ -103,7 +100,7 @@ bun run test-seo          # Validate SEO meta files
 ├── public/                  # Static assets
 ├── scripts/                 # Build and maintenance scripts
 └── src/
-    ├── components/          # 31 UI components (Astro + React)
+    ├── components/          # 42 UI components (Astro + React)
     ├── content/
     │   └── blog/            # MDX blog posts
     ├── layouts/
@@ -146,12 +143,12 @@ image:
 
 - **⌘K Command palette** — global search and navigation
 - **Full-text search** — Pagefind, client-side, instant results
-- **Dynamic OG images** — per-post generated via `@vercel/og` + Satori
+- **Dynamic OG images** — per-post generated via Satori + `@resvg/resvg-js`
 - **Contact form** — Resend, CSRF protection, in-memory + Redis rate limiting
 - **Newsletter** — multi-provider (Resend, Mailchimp, ConvertKit, Substack) with bot protection
 - **Skip link** — keyboard accessibility, WCAG 2 AA
 - **Structured data** — JSON-LD Person, Article, WebSite, BreadcrumbList schemas
-- **Sitemap + RSS** — generated post-build, enhanced with custom pages
+- **Sitemap + RSS** — native `@astrojs/rss` and `@astrojs/sitemap` endpoints
 - **Secret scanning** — varlock pre-commit hook blocks sensitive values in staged files
 
 ## Deployment
