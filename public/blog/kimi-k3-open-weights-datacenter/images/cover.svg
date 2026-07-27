@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">Kimi K3 open weights require datacenter-scale infrastructure</title>
+  <desc id="description">A 1.56 terabyte model checkpoint travels from an open download port toward a dense accelerator cluster.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#10172b"/>
+    </linearGradient>
+    <linearGradient id="stream" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5eead4"/>
+      <stop offset="0.55" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-100%" width="160%" height="300%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <g opacity="0.18" stroke="#7dd3fc" stroke-width="1">
+    <path d="M0 90H1200M0 180H1200M0 270H1200M0 360H1200M0 450H1200M0 540H1200"/>
+    <path d="M90 0V630M180 0V630M270 0V630M360 0V630M450 0V630M540 0V630M630 0V630M720 0V630M810 0V630M900 0V630M990 0V630M1080 0V630"/>
+  </g>
+
+  <text x="72" y="86" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" letter-spacing="4" fill="#5eead4">OPEN WEIGHTS / DATACENTER SCALE</text>
+  <text x="72" y="164" font-family="ui-sans-serif, system-ui, sans-serif" font-size="58" font-weight="760" fill="#f8fafc">KIMI K3</text>
+  <text x="72" y="224" font-family="ui-sans-serif, system-ui, sans-serif" font-size="34" font-weight="650" fill="#bae6fd">Downloadable does not mean local.</text>
+
+  <g transform="translate(76 292)">
+    <rect width="278" height="164" rx="18" fill="#0b2032" stroke="#38bdf8" stroke-width="2"/>
+    <path d="M50 48h178v76H50z" fill="#08131f" stroke="#7dd3fc" stroke-width="2"/>
+    <path d="M30 137h218l-18 15H48z" fill="#164e63" stroke="#67e8f9" stroke-width="2"/>
+    <path d="M109 78h60M109 92h60" stroke="#5eead4" stroke-width="5" stroke-linecap="round"/>
+    <path d="M139 56v50m0 0-18-18m18 18 18-18" stroke="#f8fafc" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g filter="url(#glow)">
+    <path d="M376 374H686" stroke="url(#stream)" stroke-width="8" stroke-linecap="round"/>
+    <path d="m663 352 24 22-24 22" fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="442" y="345" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="28" font-weight="700" fill="#f8fafc">1.56 TB</text>
+  <text x="419" y="425" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#94a3b8">96 WEIGHT SHARDS</text>
+
+  <g transform="translate(716 264)">
+    <rect width="412" height="244" rx="20" fill="#11162b" stroke="#8b5cf6" stroke-width="2"/>
+    <g fill="#172554" stroke="#60a5fa" stroke-width="2">
+      <rect x="30" y="30" width="72" height="76" rx="7"/>
+      <rect x="119" y="30" width="72" height="76" rx="7"/>
+      <rect x="208" y="30" width="72" height="76" rx="7"/>
+      <rect x="297" y="30" width="72" height="76" rx="7"/>
+      <rect x="30" y="128" width="72" height="76" rx="7"/>
+      <rect x="119" y="128" width="72" height="76" rx="7"/>
+      <rect x="208" y="128" width="72" height="76" rx="7"/>
+      <rect x="297" y="128" width="72" height="76" rx="7"/>
+    </g>
+    <g fill="#5eead4">
+      <circle cx="48" cy="51" r="4"/><circle cx="137" cy="51" r="4"/><circle cx="226" cy="51" r="4"/><circle cx="315" cy="51" r="4"/>
+      <circle cx="48" cy="149" r="4"/><circle cx="137" cy="149" r="4"/><circle cx="226" cy="149" r="4"/><circle cx="315" cy="149" r="4"/>
+    </g>
+    <g stroke="#818cf8" stroke-width="3">
+      <path d="M47 73h38M136 73h38M225 73h38M314 73h38M47 171h38M136 171h38M225 171h38M314 171h38"/>
+      <path d="M47 87h26M136 87h26M225 87h26M314 87h26M47 185h26M136 185h26M225 185h26M314 185h26"/>
+    </g>
+  </g>
+
+  <text x="72" y="559" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#cbd5e1">2.8T TOTAL</text>
+  <text x="318" y="559" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#cbd5e1">104B ACTIVE</text>
+  <text x="574" y="559" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#cbd5e1">1M CONTEXT</text>
+  <text x="842" y="559" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#cbd5e1">64+ ACCELERATORS</text>
+  <text x="72" y="602" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#64748b">piyushmehta.com</text>
+</svg>
