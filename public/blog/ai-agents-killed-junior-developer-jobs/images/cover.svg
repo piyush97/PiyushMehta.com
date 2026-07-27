@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0d0d17"/>
+  <path d="M0 50h1200 M0 100h1200 M0 150h1200 M0 200h1200 M0 250h1200 M0 300h1200 M0 350h1200 M0 400h1200 M0 450h1200 M0 500h1200 M0 550h1200 M0 600h1200" stroke="#171728" stroke-width="1"/>
+  <path d="M50 0v630 M100 0v630 M150 0v630 M200 0v630 M250 0v630 M300 0v630 M350 0v630 M400 0v630 M450 0v630 M500 0v630 M550 0v630 M600 0v630 M650 0v630 M700 0v630 M750 0v630 M800 0v630 M850 0v630 M900 0v630 M950 0v630 M1000 0v630 M1050 0v630 M1100 0v630 M1150 0v630" stroke="#171728" stroke-width="1"/>
+
+  <rect x="120" y="120" width="960" height="390" rx="16" fill="#141425" opacity="0.9"/>
+
+  <text font-family="ui-sans-serif, system-ui, sans-serif" font-size="52" font-weight="700" fill="#f4f4f8">
+    <tspan x="160" y="220">AI Agents Didn't Kill</tspan>
+    <tspan x="160" y="285">Junior Dev Jobs.</tspan>
+  </text>
+  <text font-family="ui-sans-serif, system-ui, sans-serif" font-size="52" font-weight="700" fill="#7c5cff">
+    <tspan x="160" y="350">They Killed the Reason</tspan>
+    <tspan x="160" y="415">to Hire Them.</tspan>
+  </text>
+
+  <text font-family="monospace" font-size="22" fill="#8b8b9e">
+    <tspan x="160" y="470">piyushmehta.com</tspan>
+  </text>
+
+  <circle cx="1010" cy="180" r="6" fill="#7c5cff"/>
+  <circle cx="1040" cy="180" r="6" fill="#00d4aa"/>
+  <circle cx="1070" cy="180" r="6" fill="#ff6b6b"/>
+</svg>
