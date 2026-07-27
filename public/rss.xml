@@ -5,7 +5,7 @@
     <link>https://piyushmehta.com</link>
     <description>Articles and tutorials on React.js, web development, and software engineering by Piyush Mehta.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 02 Jun 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jun 2026 00:00:00 GMT</lastBuildDate>
     <generator>Static RSS Generator</generator>
     <copyright>Copyright 2026 Piyush Mehta. All rights reserved.</copyright>
     <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
@@ -18,6 +18,56 @@
       <link>https://piyushmehta.com</link>
     </image>
     <item>
+      <title>The ATS Resume That Actually Lands Interviews: A 2026 Software Engineer Guide</title>
+      <link>https://piyushmehta.com/blog/ats-resume-software-engineer/</link>
+      <pubDate>Wed, 17 Jun 2026 00:00:00 GMT</pubDate>
+      <description>Why 75% of resumes get auto-rejected by bots - and the format, keywords, and bullet rewrites that get yours to a human at Google, Stripe, or the companies you want to work for</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+    </item>
+        <item>
+      <title>How I Designed an AI Chat App That Handles a Million Users (And the Mistakes That Almost Killed It)</title>
+      <link>https://piyushmehta.com/blog/ai-chat-system-design-million-users/</link>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 GMT</pubDate>
+      <description>The real architecture behind scaling an AI chat application — WebSockets, streaming, LLM cost control, caching strategies, and the three production incidents that taught me more than any system design interview ever did.</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+      <category>system design</category>
+      <category>architecture</category>
+      <category>scalability</category>
+      <category>websockets</category>
+      <category>LLM</category>
+      <category>real-time</category>
+      <category>case study</category>
+      <category>production</category>
+    </item>
+        <item>
+      <title>Senior Software Engineering Interview Questions — What Actually Gets Asked</title>
+      <link>https://piyushmehta.com/blog/senior-swe-interview-questions/</link>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 GMT</pubDate>
+      <description>A guide to the questions that separate senior SWE candidates from mid-level, including a deep dive into HyperLogLog for counting unique users at scale, 15+ real interview questions, and the mistakes that silently disqualify you</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+    </item>
+        <item>
+      <title>System Design Patterns That Show Up In Every Senior Interview (With Diagrams &amp; Math)</title>
+      <link>https://piyushmehta.com/blog/system-design-patterns-cheatsheet/</link>
+      <pubDate>Mon, 15 Jun 2026 00:00:00 GMT</pubDate>
+      <description>The 12 patterns interviewers actually ask about - load balancing, caching, message queues, sharding, consistent hashing, CQRS, event sourcing - with back-of-envelope math, concrete numbers, and the C4 diagram language</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+    </item>
+        <item>
+      <title>STAR+R: The Behavioral Interview Framework That Lands Senior Offers (With 5 Real Stories)</title>
+      <link>https://piyushmehta.com/blog/star-r-behavioral-interviews/</link>
+      <pubDate>Fri, 12 Jun 2026 00:00:00 GMT</pubDate>
+      <description>Why STAR+R (Situation, Task, Action, Result, Reflection) beats STAR every time — and the 5 key stories every senior engineer needs ready before their first loop</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+    </item>
+        <item>
+      <title>The First 90 Days At A New Software Engineering Job: A Week-By-Week Playbook</title>
+      <link>https://piyushmehta.com/blog/first-90-days-new-software-engineer-job/</link>
+      <pubDate>Fri, 05 Jun 2026 00:00:00 GMT</pubDate>
+      <description>Why 30% of new hires fail in their first 90 days - and the week-by-week playbook that turned me from &apos;new joiner&apos; to &apos;the person they can&apos;t live without&apos; at three different companies</description>
+      <author>hello@piyushmehta.com (Piyush Mehta)</author>
+    </item>
+        <item>
       <title>Building an MCP Server in TypeScript: From Zero to Tool-Calling Agent in 90 Minutes</title>
       <link>https://piyushmehta.com/blog/building-mcp-server-typescript/</link>
       <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
