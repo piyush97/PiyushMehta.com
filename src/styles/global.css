@@ -155,6 +155,11 @@
   --color-darker: #0f1221;
   --color-darker-rgb: 15, 18, 33;
   --color-navbar-bg: rgba(23, 26, 47, 0.9);
+  /* RGB triples for old newsletter/CTA styles (rgb(var(--surface) / …)) */
+  --text: 246, 247, 255;    /* --color-text-primary */
+  --surface: 34, 38, 64;    /* --color-surface-raised */
+  --border: 52, 58, 95;     /* --color-card-border */
+  --accent: 255, 204, 104;  /* --color-accent */
 }
 
 :root.professional-light,
@@ -172,6 +177,11 @@
   --color-darker: #fffaf0;
   --color-darker-rgb: 255, 250, 240;
   --color-navbar-bg: rgba(246, 243, 234, 0.9);
+  /* RGB triples for old newsletter/CTA styles */
+  --text: 18, 24, 39;       /* --color-text-primary */
+  --surface: 255, 250, 240; /* --color-surface-raised */
+  --border: 221, 211, 194;  /* --color-card-border */
+  --accent: 141, 61, 31;    /* --color-accent */
 }
 
 body {
