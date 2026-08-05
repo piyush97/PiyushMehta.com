@@ -205,6 +205,27 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
   {
+    title: 'Interview Prep Portal',
+    eyebrow: 'AI product, open source',
+    role: 'Creator and engineer',
+    timeframe: '2025',
+    summary:
+      'An open-source, terminal-first AI tool that scores resumes against job descriptions, generates behavioral interview stories, writes negotiation scripts, and scans job boards.',
+    problem:
+      "Job hunting tools are fragmented, expensive, and rarely grounded in a candidate's actual experience — most give generic advice instead of personal output.",
+    approach: [
+      'Built a Python + FastAPI backend with typed tool endpoints driving an in-browser chat.',
+      'Scored resumes against live job descriptions and generated stories and scripts from real work history.',
+      'Kept it open source and terminal-first to stay fast and free for engineers.',
+    ],
+    outcomes: [
+      'A free, usable AI interview workflow from resume score to negotiation.',
+      'Public code that proves the full-stack engineer shipping AI positioning.',
+    ],
+    stack: ['Python', 'FastAPI', 'React', 'AI agents', 'Open source'],
+    links: [{ label: 'Repo', href: 'https://github.com/piyush97/interview-prep-portal' }],
+  },
+  {
     title: 'Developer Education and Talks',
     eyebrow: 'Community leadership',
     role: 'Speaker, mentor, workshop lead',
@@ -230,25 +251,27 @@ export const caseStudies: CaseStudy[] = [
 
 export const writingHighlights: WritingHighlight[] = [
   {
-    title: 'Zero-Downtime Database Migration: Scaling from 10M to 100M Users',
-    href: '/blog/zero-downtime-database-migration-at-scale',
-    theme: 'Architecture',
+    title: 'What I Learned About AI Agents, MCP, and the Next Supply Chain Risk',
+    href: '/blog/ai-agents-mcp-security-crisis',
+    theme: 'AI agents',
     description:
-      'A case-study style piece on migration planning, operational risk, performance, and cost tradeoffs.',
+      'A hands-on look at agentic systems, MCP, and where the next supply chain risk actually shows up.',
   },
   {
-    title: 'From macOS to Arch Linux with Omarchy',
-    href: '/blog/macos-to-arch-linux-omarchy-developer-productivity',
-    theme: 'Developer systems',
+    title:
+      'How I Designed an AI Chat App That Handles a Million Users (And the Mistakes That Almost Killed It)',
+    href: '/blog/ai-chat-system-design-million-users',
+    theme: 'System design',
     description:
-      'A practical operating-system migration story focused on tooling, ergonomics, and day-to-day engineering flow.',
+      'A real design walkthrough of AI chat architecture at scale, including the failure modes that almost broke it.',
   },
   {
-    title: 'Bloom Filters',
-    href: '/blog/bloom-filters',
-    theme: 'Computer science',
+    title:
+      'STAR+R: The Behavioral Interview Framework That Lands Senior Offers (With 5 Real Stories)',
+    href: '/blog/star-r-behavioral-interviews',
+    theme: 'Career',
     description:
-      'A hands-on explanation of probabilistic data structures and why small systems choices can change scale characteristics.',
+      'A practical framework for structuring senior behavioral answers, grounded in real interview stories.',
   },
 ];
 
@@ -275,8 +298,8 @@ export const resumeRoles: ResumeRole[] = [
     summary:
       'Driving enterprise software and AI delivery where teams need usable systems, not demo-only prototypes.',
     highlights: [
-      'Lead architecture and implementation for enterprise-grade software systems.',
-      'Build AI-assisted workflows with attention to maintainability and operational fit.',
+      'Lead architecture and delivery of enterprise software and AI agent workflows for a major Ontario energy client.',
+      'Build LLM-powered systems — RAG, MCP tools, agentic pipelines — focused on maintainability and operational fit.',
       'Coach teams on secure, durable engineering practices.',
     ],
   },
