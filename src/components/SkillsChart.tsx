@@ -29,7 +29,7 @@ const SkillRow: React.FC<{
 }> = ({ skill, delayMs, started }) => {
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
     if (!started) return;

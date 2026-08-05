@@ -28,7 +28,7 @@ const AnimatedNumber: React.FC<{
   started: boolean;
 }> = ({ target, suffix, label, delayMs, started }) => {
   const [current, setCurrent] = useState(0);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
     if (!started) return;
