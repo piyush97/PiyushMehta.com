@@ -1,0 +1,152 @@
+---
+title: "Running a Coding Agent on DeepSeek V4 Flash: The 1M-Context Cheap Workhorse"
+description: "What one million tokens of context, DeepSeek's prefix caching, and a sub-cent per run price actually mean when you build an AI coding agent. A practical field note, not a benchmark."
+date: 2026-08-05T12:00:00-04:00
+author: "Piyush Mehta"
+ogTemplate: "tech"
+ogTheme: "dark"
+tags:
+  - "DeepSeek"
+  - "AI Agents"
+  - "LLM"
+  - "Inference Costs"
+  - "Prefix Caching"
+  - "Coding Agents"
+  - "OpenRouter"
+image:
+  url: "/blog/deepseek-v4-flash-0731/images/cover.svg"
+  alt: "A low-cost DeepSeek V4 Flash token stream feeding an autonomous coding agent with a one-million-token context window"
+draft: false
+---
+
+My coding agent talks to `deepseek/deepseek-v4-flash-0731` through OpenRouter, and the single most unbelievable number about that setup is not the model's benchmark score. It is the price of the average turn.
+
+Most coding-agent turns cost me roughly **a fraction of a US cent**. Not a third of a cent of a bundled subscription, not a rounded-up estimate. A fraction of a cent, measured from the billed token counts. Several hours of continuous autonomous work can run lower than a single cup of coffee.
+
+That is only possible because of three unrelated facts stacking together: a **one-million-token context window**, DeepSeek's **prefix caching**, and per-token pricing of **$1 input / $2 output / $0.02 cache-hit** per million tokens. This post is a practical field note about what those numbers mean when you actually operate an agent, not a benchmark. If you want leaderboard scores, this is the wrong place—I am not going to invent any.
+
+## What the actual numbers look like
+
+Here is the real pricing sheet I work against, stated as a fixed unit of one million tokens:
+
+| Direction | Price per 1M tokens |
+| --- | ---: |
+| Input (cache miss / fresh prompt) | $1.00 |
+| Output (generation) | $2.00 |
+| Input (cache hit) | $0.02 |
+
+The model identifier is `deepseek/deepseek-v4-flash-0731`, served through OpenRouter. It exposes a **1,000,000-token context window**, and it is the cheap, fast tier in my setup—paired with a heavier `deepseek-pro` tier that I route hard tasks to.
+
+The gap that makes the whole thing work is the one at the bottom of the table. A cache hit costs **fifty times less** than a fresh input token. In a long agent session, almost every token you send is a cache hit, because the agent keeps resending the same large prefix over and over.
+
+Here is the same snippet as a cut-and-paste `curl`, if you want to poke at the fields yourself:
+
+```bash
+curl https://openrouter.ai/api/v1/chat/completions \
+  -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek/deepseek-v4-flash-0731",
+    "messages": [
+      { "role": "system", "content": "You operate a coding agent. Be concise." },
+      { "role": "user", "content": "Find the bug in src/utils/og-generator.ts" }
+    ],
+    "max_context_length": 1000000
+  }'
+```
+
+One million tokens is a lot. It is on the order of a small repository's entire source tree, or an entire afternoon of agent conversation, retained in one window.
+
+## What a one-million-token window actually buys you
+
+Most coding agents spend their lives fighting a small context. With a 128k or 200k window, you start every task by deciding what to discard: the repo map, the older conversation, the tool output you might still need. Getting this wrong produces the classic agent failure mode where the model forgets what it decided two turns ago and redoes the work.
+
+With a million tokens, that whole class of problem mostly disappears.
+
+- **Whole-repo context fits.** For a mid-sized project, I can keep the meaningful parts of the tree plus the agent's own reasoning history in one window.
+- **Whole-session context fits.** A long multi-step debugging run no longer needs to be compressed into an ever-shrinking summary that quietly drops the important constraints.
+- **Fewer compactions.** The agent jargon for this is "context compaction"—rewriting the conversation into a shorter summary to free space. Every compaction is a small information-loss at best and a self-inflicted bug at worst. A larger window means far fewer of them.
+
+The practical effect is that the agent stops spending effort on memory management and starts spending it on the actual task. That sounds vague until you watch a session run for hours without once asking "wait, why am I doing this again?" It just keeps its own thread of reasoning in front of it.
+
+There is a real cost to a huge window, and I will be honest about it. Context is not free to compute. Prefill—reading and processing all those cached tokens—takes time even when the tokens are cheap. For a long session you trade per-turn latency for the absence of compaction mistakes. On Flash, that trade lands in the right place; on the slower `pro` tier it is a reason to be more disciplined about trimming.
+
+## Why prefix caching changes the cost model
+
+This is the part most people misunderstand. They read "$1 input / $2 output" and conclude a long agent session is expensive, because they picture every turn paying full input price for the whole conversation.
+
+That picture is wrong, and it is wrong in the way that matters most.
+
+A coding agent does not send fresh tokens each turn. It sends the same long prefix—system prompt, repo context, conversation history—and appends only the newest piece. DeepSeek's **prefix caching** recognizes that the front of the prompt is unchanged and serves the cached portion at **$0.02 per million tokens** instead of $1.
+
+Here is the arithmetic for a typical turn with, say, 400k tokens of shared prefix and 2k tokens of new output:
+
+```js
+// per-1M prices in dollars
+const INPUT_COST  = 1.00
+const OUTPUT_COST = 2.00
+const CACHE_COST  = 0.02
+
+// 400k shared prefix almost always served from cache
+const prefix  = 400_000 / 1_000_000
+const newOut  = 2_000   / 1_000_000
+
+const turnCost =
+  prefix * CACHE_COST +          // ~$0.008
+  newOut * OUTPUT_COST           // ~$0.004
+
+console.log(`turn cost ≈ $${turnCost.toFixed(4)}`) // ~$0.012
+```
+
+Twelve thousandths of a cent. That is the "fraction of a cent per turn" I opened with.
+
+The critical variable is the **cache-hit rate**. In my long agent sessions, Piyush observes ~99% of input tokens come back as cache hits. At that rate the effective input price collapses toward a rounding error, and the dominant cost of a session becomes—surprisingly—the tiny output tokens it actually generates.
+
+That changes design decisions. When input tokens are nearly free, you stop being stingy with context. You happily re-send the whole repo map every turn, because resending is cheaper than the bug you introduce by leaving it out. The economics of the agent flip from "minimize tokens sent" to "send plenty, but keep the prefix stable so it stays cached."
+
+The one thing that breaks the math is changing the prefix. The moment an earlier part of the conversation changes—say, a tool result gets rewritten out of place—the cache invalidates from that point on, and you pay full input price again for everything after. A well-behaved agent keeps history immutable and only ever appends.
+
+## Flash versus pro: the routing tradeoff
+
+The 1M-context Flash model is not a replacement for harder models. It is the cheap, fast tier in a two-model setup, and the other half is `deepseek-pro`, which I use for the jobs Flash handles poorly.
+
+The practical rule I landed on is a routing split by task shape:
+
+| Task shape | Tier |
+| --- | --- |
+| Repetitive file edits, refactors, boilerplate | Flash |
+| Long multi-file searches across a big repo | Flash |
+| Reading and summarizing lots of cached context | Flash |
+| Hard algorithmic reasoning | Pro |
+| Debugging subtle concurrency or state bugs | Pro |
+| Ambiguous tool-use sequences that need care | Pro |
+
+Routing matters for two reasons. First, a cheap model doing easy work lets you run many more parallel lines of effort without watching the bill. That density of cheap iterations is where agent productivity compounds—you can afford to try a change, look at the diff, and try again.
+
+Second, it keeps the expensive model from being wasted. If `deepseek-pro` costs an order of magnitude more, you do not want it regenerating a boilerplate component when Flash can do that all day for pocket change. You want Pro for the one or two genuinely hard steps in a session, not the dozen easy ones around them.
+
+The honest caveat is that this split is not automatic. It requires a router that looks at the task and picks a tier, and routing mistakes are costly in both directions: sending hard work to Flash produces bad output, and sending easy work to Pro burns money and adds latency. Getting the routing heuristic right is the difference between a budget that feels free and one that quietly bleeds.
+
+## Where this setup still falls short
+
+I want to be clear that a few-hundredths-of-a-cent turn price is not the same thing as a frontier model. There are real gaps, and pretending otherwise would make this a worse field note.
+
+**Hard reasoning is the weak spot.** Give Flash a genuinely thorny algorithm, a subtle race condition, or a problem that needs many careful inferential steps, and it will sometimes march confidently down the wrong path. The output is cheap to produce and cheap to discard, but you still spend the time reading it, noticing it is wrong, and redoing it. For those tasks I stop routing to Flash and hand the whole problem to `deepseek-pro`.
+
+**Tool-use reliability is lower than on heavy models.** An agent is only as good as its ability to call tools correctly—running a command, reading a file, applying a patch—and keep going after a failure. The Flash tier occasionally formats a tool call awkwardly or missteps on a retry. It recovers, but it can stall a long autonomous run in a way a more careful model would not.
+
+**The latency catch.** Cheap input is not fast input. When a session's prefix is large, prefill still has to process all those cached tokens, and on a big window that adds a visible beat before the first output token. If you are asking a question that genuinely depends on the whole 1M-token window, you wait for the whole 1M-token window.
+
+None of these are fatal. They are the reason the setup is two tiers instead of one. Flash earns its place by volume and cost; Pro earns its place by the hard cases.
+
+## The bottom line: what 1M context plus cheap input actually unlocks
+
+Stepping back, the thing that surprised me most is not any single number. It is how the numbers combine into a different kind of agent.
+
+One million tokens of context means the agent can carry a whole repo and a whole session without constantly forgetting. Prefix caching at $0.02 input means carrying that context is nearly free. Together they make a coding agent that is not thrifty and nervous about tokens, but relaxed and persistent—the kind that will keep digging for an hour because another turn is basically free.
+
+The setup still punches above its weight class only when you respect its limits. Use it for the long, repetitive, search-heavy work where its cheap iterations and huge context shine. Route the genuinely hard reasoning elsewhere. Keep your session prefixes stable so the cache keeps hitting. Do those three things and the math stops being a novelty and starts being a working habit: a capable agent, running all day, at a fraction of a cent per meaningful step.
+
+That is the real takeaway. The interesting question about a cheap 1M-context model is not "is it as smart as the frontier?" It is "what can you afford to run continuously that you never could before?" For what a cheap workhorse buys you day after day, the answer has been worth far more than the bill.
+
+> The [Interview Prep Portal](https://github.com/piyush97/interview-prep-portal) is a free, open-source tool I built to help software engineers land better jobs. It scores your resume against a job description, generates negotiation scripts, builds interview stories from your experience, and scans job boards — all from your terminal.
