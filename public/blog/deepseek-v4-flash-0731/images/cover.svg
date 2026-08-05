@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">DeepSeek V4 Flash: a one-million-token, sub-cent-per-turn coding agent</title>
+  <desc id="description">A cheap token stream with a giant context window feeds an autonomous coding agent, showing the cost of cache hits versus fresh input.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#10172b"/>
+    </linearGradient>
+    <linearGradient id="stream" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5eead4"/>
+      <stop offset="0.55" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-100%" width="160%" height="300%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <g opacity="0.18" stroke="#7dd3fc" stroke-width="1">
+    <path d="M0 90H1200M0 180H1200M0 270H1200M0 360H1200M0 450H1200M0 540H1200"/>
+    <path d="M90 0V630M180 0V630M270 0V630M360 0V630M450 0V630M540 0V630M630 0V630M720 0V630M810 0V630M900 0V630M990 0V630M1080 0V630"/>
+  </g>
+
+  <text x="72" y="86" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" letter-spacing="4" fill="#5eead4">CODING AGENT / PREFIX CACHE ECONOMICS</text>
+  <text x="72" y="164" font-family="ui-sans-serif, system-ui, sans-serif" font-size="52" font-weight="760" fill="#f8fafc">DEEPSEEK V4 FLASH</text>
+  <text x="72" y="222" font-family="ui-sans-serif, system-ui, sans-serif" font-size="34" font-weight="650" fill="#bae6fd">1M context. Sub-cent iterations.</text>
+
+  <!-- gauge / speedometer motif -->
+  <g transform="translate(700 96)">
+    <circle cx="110" cy="130" r="96" fill="none" stroke="#0b2032" stroke-width="18"/>
+    <path d="M48 176 A96 96 0 0 1 172 176" fill="none" stroke="url(#stream)" stroke-width="18" stroke-linecap="round"/>
+    <path d="M96 138l26-52M88 138l58 14" stroke="#5eead4" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- cache-hit cost callout -->
+  <g transform="translate(76 292)">
+    <rect width="318" height="150" rx="18" fill="#0b2032" stroke="#38bdf8" stroke-width="2"/>
+    <text x="26" y="46" font-family="ui-monospace, monospace" font-size="20" fill="#5eead4">CACHE HIT</text>
+    <text x="26" y="92" font-family="ui-sans-serif, sans-serif" font-size="58" font-weight="760" fill="#f8fafc">$0.02</text>
+    <text x="26" y="124" font-family="ui-sans-serif, sans-serif" font-size="20" fill="#7dd3fc">per 1M input tokens</text>
+  </g>
+
+  <!-- fresh-input cost callout -->
+  <g transform="translate(430 292)">
+    <rect width="318" height="150" rx="18" fill="#0b2032" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="26" y="46" font-family="ui-monospace, monospace" font-size="20" fill="#c4b5fd">FRESH INPUT</text>
+    <text x="26" y="92" font-family="ui-sans-serif, sans-serif" font-size="58" font-weight="760" fill="#f8fafc">$1.00</text>
+    <text x="26" y="124" font-family="ui-sans-serif, sans-serif" font-size="20" fill="#ddd6fe">per 1M input tokens</text>
+  </g>
+
+  <g filter="url(#glow)">
+    <path d="M60 520 H1140" stroke="url(#stream)" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="60" y="560" font-family="ui-monospace, SFMono-Regular, monospace" font-size="20" fill="#67e8f9">deepseek/deepseek-v4-flash-0731</text>
+  <text x="60" y="592" font-family="ui-sans-serif, system-ui, sans-serif" font-size="22" fill="#94a3b8">A million-token window means whole repos fit in context -- and caching keeps every loop cheap.</text>
+</svg>
