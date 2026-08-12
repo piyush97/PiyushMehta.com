@@ -67,6 +67,12 @@ test.describe('astro v6 migration smoke', () => {
     }
   });
 
+  test('twitter image requests use the shared Open Graph handler', async ({ request }) => {
+    const response = await request.get('/twitter-image?title=Hello', { maxRedirects: 0 });
+    expect(response.status()).toBe(308);
+    expect(new URL(response.headers().location || '').pathname).toBe('/opengraph-image');
+  });
+
   test('service worker artifact available', async ({ request }) => {
     const sw = await request.get('/sw.js');
     expect(sw.ok()).toBeTruthy();
