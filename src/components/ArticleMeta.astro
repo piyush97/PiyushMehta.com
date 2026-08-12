@@ -120,7 +120,7 @@ const shareLinks = [
           <span class="text-sm text-text-secondary">Tags:</span>
           {tags.map((tag) => (
             <a
-              href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+              href={`/blog/?theme=${encodeURIComponent(tag)}`}
               class="px-3 py-1 text-sm transition-colors duration-200 rounded-full bg-accent/10 text-accent hover:bg-accent/20"
             >
               #{tag}

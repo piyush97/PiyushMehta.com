@@ -28,7 +28,6 @@ Allow: /*.js$
 
 # Allow sitemap and feeds (must come BEFORE file-type disallows)
 Allow: /sitemap.xml
-Allow: /sitemap_index.xml
 Allow: /rss.xml
 Allow: /feed.xml
 
@@ -79,7 +78,6 @@ Allow: /
 
 # Sitemaps
 Sitemap: https://piyushmehta.com/sitemap.xml
-Sitemap: https://piyushmehta.com/sitemap_index.xml
 Sitemap: https://piyushmehta.com/rss.xml
 
 # Canonical host

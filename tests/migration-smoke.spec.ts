@@ -50,6 +50,23 @@ test.describe('astro v6 migration smoke', () => {
     expect(await sitemap.text()).toContain('<urlset');
   });
 
+  test('PWA icons and legacy tag links resolve', async ({ request }) => {
+    for (const icon of ['/images/icon-192.png', '/images/icon-512.png']) {
+      expect((await request.get(icon)).ok(), `${icon} should return success`).toBeTruthy();
+    }
+
+    for (const [path, theme] of [
+      ['/blog/tag/openai', 'OpenAI'],
+      ['/blog/tag/architecture', 'architecture'],
+      ['/blog/tag/microfrontend', 'Microfrontend'],
+      ['/blog/tag/microservice', 'microservice'],
+    ]) {
+      const tag = await request.get(path, { maxRedirects: 0 });
+      expect(tag.status(), `${path} should redirect`).toBe(301);
+      expect(tag.headers().location).toBe(`/blog/?theme=${theme}`);
+    }
+  });
+
   test('service worker artifact available', async ({ request }) => {
     const sw = await request.get('/sw.js');
     expect(sw.ok()).toBeTruthy();
