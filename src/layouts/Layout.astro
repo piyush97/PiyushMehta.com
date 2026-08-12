@@ -79,16 +79,22 @@ const {
       ogTheme={ogTheme}
     />
     <script is:inline>
-      const savedTheme = localStorage.getItem('theme');
-      const preferredTheme =
-        savedTheme ||
-        (window.matchMedia('(prefers-color-scheme: light)').matches
-          ? 'professional-light'
-          : 'professional-dark');
-      document.documentElement.classList.add(preferredTheme);
-      if (preferredTheme === 'professional-light') {
-        document.documentElement.classList.add('light');
-      }
+      const applyTheme = () => {
+        const savedTheme = localStorage.getItem('theme');
+        const preferredTheme =
+          savedTheme ||
+          (window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'professional-light'
+            : 'professional-dark');
+        document.documentElement.classList.remove('professional-dark', 'professional-light', 'light', 'dark');
+        document.documentElement.classList.add(preferredTheme);
+        if (preferredTheme === 'professional-light') {
+          document.documentElement.classList.add('light');
+        }
+      };
+
+      applyTheme();
+      document.addEventListener('astro:after-swap', applyTheme);
     </script>
   </head>
   <body>
