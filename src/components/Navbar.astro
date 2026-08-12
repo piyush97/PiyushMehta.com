@@ -101,13 +101,12 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
 
 <script is:inline>
   (() => {
-    const btn = document.getElementById('theme-toggle-btn');
-    if (!btn) return;
     const root = document.documentElement;
-    const sun = btn.querySelector('.theme-icon-sun');
-    const moon = btn.querySelector('.theme-icon-moon');
 
     function syncIcons() {
+      const btn = document.getElementById('theme-toggle-btn');
+      const sun = btn?.querySelector('.theme-icon-sun');
+      const moon = btn?.querySelector('.theme-icon-moon');
       const isDark = root.classList.contains('professional-dark');
       if (sun && moon) {
         sun.classList.toggle('hidden', !isDark);
@@ -116,8 +115,13 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
     }
 
     syncIcons();
+    document.addEventListener('astro:page-load', syncIcons);
 
-    btn.addEventListener('click', () => {
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Element)) return;
+      const btn = event.target.closest('#theme-toggle-btn');
+      if (!btn) return;
+
       const currentlyDark = root.classList.contains('professional-dark');
       root.classList.remove('professional-dark', 'professional-light', 'light', 'dark');
       if (currentlyDark) {
