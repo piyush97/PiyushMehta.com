@@ -5,6 +5,8 @@ import NewsletterSignup from '../components/NewsletterSignup.tsx';
 import { writingHighlights } from '../data/portfolio';
 import Layout from '../layouts/Layout.astro';
 
+export const prerender = true;
+
 const allPosts = await getCollection('blog');
 const toPostSlug = (id: string) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
 
