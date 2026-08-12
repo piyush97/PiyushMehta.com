@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const tags = new Map<string, string>();
+  const toTagSlug = (tag: string) => tag.toLowerCase().replace(/\s+/g, '-');
+
+  for (const post of await getCollection('blog')) {
+    if (post.data.draft) continue;
+    for (const tag of post.data.tags) tags.set(toTagSlug(tag), tag);
+  }
+
+  return [...tags].map(([tag, theme]) => ({ params: { tag }, props: { theme } }));
+}
+
+const { theme } = Astro.props;
+
+return Astro.redirect(`/blog/?theme=${encodeURIComponent(theme)}`, 301);
+---

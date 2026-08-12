@@ -21,6 +21,11 @@
       "source": "/blog/kubenetes-docker",
       "destination": "/blog/kubernetes-docker",
       "permanent": true
+    },
+    {
+      "source": "/sitemap_index.xml",
+      "destination": "/sitemap.xml",
+      "permanent": true
     }
   ],
   "headers": [

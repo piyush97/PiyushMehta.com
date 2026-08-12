@@ -27,22 +27,6 @@
       "type": "image/png"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/images/screenshot-wide.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Piyush Mehta's Portfolio - Desktop View"
-    },
-    {
-      "src": "/images/screenshot-narrow.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Piyush Mehta's Portfolio - Mobile View"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Blog",
