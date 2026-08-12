@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#080D1B"/>
+      <stop offset="1" stop-color="#172554"/>
+    </linearGradient>
+    <linearGradient id="document" x1="248" y1="134" x2="686" y2="530" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#18233E"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <path d="M0 82H1200M0 164H1200M0 246H1200M0 328H1200M0 410H1200M0 492H1200M0 574H1200" stroke="#334155" stroke-opacity=".32"/>
+  <path d="M74 0V630M148 0V630M222 0V630M296 0V630M370 0V630M444 0V630M518 0V630M592 0V630M666 0V630M740 0V630M814 0V630M888 0V630M962 0V630M1036 0V630M1110 0V630" stroke="#334155" stroke-opacity=".24"/>
+  <circle cx="969" cy="158" r="132" fill="#2563EB" fill-opacity=".12"/>
+  <circle cx="969" cy="158" r="83" stroke="#38BDF8" stroke-opacity=".32" stroke-width="2"/>
+  <circle cx="969" cy="158" r="38" fill="#22D3EE" fill-opacity=".18" filter="url(#glow)"/>
+  <path d="M930 158H1008M969 119V197" stroke="#67E8F9" stroke-width="5" stroke-linecap="round"/>
+  <rect x="174" y="90" width="569" height="452" rx="24" fill="#020617" fill-opacity=".42" stroke="#475569" stroke-width="2"/>
+  <rect x="206" y="122" width="500" height="388" rx="14" fill="url(#document)" stroke="#64748B" stroke-opacity=".5"/>
+  <circle cx="238" cy="153" r="7" fill="#FB7185"/>
+  <circle cx="262" cy="153" r="7" fill="#FBBF24"/>
+  <circle cx="286" cy="153" r="7" fill="#34D399"/>
+  <text x="246" y="222" fill="#67E8F9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700"># AGENTS.md</text>
+  <text x="246" y="278" fill="#C4B5FD" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22">## Commands</text>
+  <text x="246" y="319" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="21">• bun run ci</text>
+  <text x="246" y="360" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="21">• bun run build</text>
+  <text x="246" y="413" fill="#C4B5FD" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22">## Guardrails</text>
+  <text x="246" y="453" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="21">• preserve public APIs</text>
+  <path d="M782 404C837 404 858 336 910 336H1081" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+  <path d="M782 404C837 404 858 466 910 466H1081" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
+  <rect x="916" y="286" width="193" height="100" rx="16" fill="#0F172A" stroke="#38BDF8" stroke-opacity=".7" stroke-width="2"/>
+  <text x="1012" y="329" text-anchor="middle" fill="#E0F2FE" font-family="Arial, sans-serif" font-size="20" font-weight="700">CODING</text>
+  <text x="1012" y="356" text-anchor="middle" fill="#E0F2FE" font-family="Arial, sans-serif" font-size="20" font-weight="700">AGENT</text>
+  <rect x="916" y="416" width="193" height="100" rx="16" fill="#0F172A" stroke="#A78BFA" stroke-opacity=".7" stroke-width="2"/>
+  <text x="1012" y="458" text-anchor="middle" fill="#EDE9FE" font-family="Arial, sans-serif" font-size="20" font-weight="700">REPOSITORY</text>
+  <text x="600" y="593" text-anchor="middle" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="35" font-weight="700">The operating manual for coding agents</text>
+</svg>

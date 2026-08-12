@@ -32,7 +32,11 @@ export default defineConfig({
   experimental: {
     // Speculative prerendering of prefetched pages — instant navigation
     clientPrerender: true,
+    // Reuse unchanged prerendered pages between builds when cacheKey + module graph are unchanged
+    incrementalBuild: true,
   },
+  // Sessions are not used in this project; skip session runtime wiring to reduce SSR bundle/runtime work
+  session: false,
   integrations: [
     varlock(),
     sentry({
@@ -117,7 +121,8 @@ export default defineConfig({
   },
 
   build: {
-    concurrency: 4,
+    // Incremental static builds currently require concurrency: 1 to use the cache.
+    concurrency: 1,
     assetsInlineLimit: 1024,
     rollupOptions: {
       output: {

@@ -1,0 +1,200 @@
+---
+title: "AGENTS.md Is Becoming the Most Important File in Your Repository"
+description: "Coding agents now read your repository's instructions before they touch your code. Here is how to turn AGENTS.md from prompt sludge into the operating manual that makes agents genuinely useful."
+date: 2026-08-11T12:00:00-04:00
+author: "Piyush Mehta"
+ogTemplate: "tech"
+ogTheme: "dark"
+tags:
+  - "AI Agents"
+  - "AGENTS.md"
+  - "Coding Agents"
+  - "Developer Productivity"
+  - "GitHub Copilot"
+  - "OpenAI Codex"
+  - "Claude Code"
+  - "Software Engineering"
+image:
+  url: "/blog/agents-md-repository-context/images/cover.svg"
+  alt: "AGENTS.md shown as the operating manual between a coding agent and a software repository"
+draft: false
+---
+
+The most consequential file in your repository may no longer be `package.json`, `Dockerfile`, or `README.md`.
+
+It is increasingly the small Markdown file that tells an AI agent what all of those files *mean*.
+
+Call it `AGENTS.md`, `CLAUDE.md`, or `.github/copilot-instructions.md`; the filename is less important than the shift behind it. Coding agents are moving from autocomplete into repositories, terminals, pull requests, and CI. In that world, the quality of the work is no longer determined only by the model you picked. It is determined by whether the repository can explain itself before the agent starts changing it.
+
+This is not a niche workflow for people who enjoy configuring tools. GitHub's current documentation says its cloud agent and CLI can load `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md`, alongside repository- and path-specific instructions. OpenAI's Codex agent loop also loads `AGENTS.md`; Anthropic's Claude Code has the equivalent `CLAUDE.md` project memory. The tools are competing. The pattern is converging.
+
+That is why a good instruction file is becoming engineering infrastructure—not a prompt.
+
+## The data says the work is already changing
+
+Anthropic's June 2026 study of roughly **400,000 Claude Code sessions** found that people still make most of the planning decisions—what to build—while the agent makes most execution decisions—how to build it. Over the study period, the share of sessions spent debugging fell by almost half, and the estimated value of the typical task rose about **25%**.
+
+The important finding is the one that gets lost in the "AI replaces developers" argument: people with more domain knowledge got more useful work out of the agent. The machine did not make context irrelevant. It made context more valuable.
+
+Your repository is where that context lives:
+
+- why the payment flow is deliberately awkward;
+- which API response is a public contract, not an implementation detail;
+- where auth, telemetry, and rate limiting are handled;
+- which command proves a change works; and
+- which "obvious cleanup" would quietly break production.
+
+An agent can infer some of this by reading files. It cannot reliably infer all of it, and making it rediscover the same rules on every task is a strange way to spend a context window.
+
+## Your repo is now part of the prompt
+
+For years, teams treated repository documentation as a thing written for the next human developer. Agent instructions change the audience, not the underlying job. You are still preserving decisions, naming the hazards, and making the safe path obvious. The difference is that the reader can now edit 40 files and run commands before you have made a coffee.
+
+That makes the document's job more precise.
+
+| A weak instruction file | A useful instruction file |
+| --- | --- |
+| "Write clean, maintainable code." | "Use Biome; run `bun run ci` after TypeScript changes; do not add ESLint or Prettier." |
+| "Follow existing patterns." | "API routes live in `src/pages/api/`, set `prerender = false`, and return JSON `Response` objects." |
+| "Test your work." | "For a blog route, run `bun run build`; for a UI interaction, add or update the matching Playwright spec under `tests/`." |
+| "Be careful with security." | "Never log tokens or cookies. Keep CSRF and rate-limit changes isolated to `src/middleware/` and API routes." |
+
+The left column sounds reasonable. It is also nearly useless under pressure. The right column gives an agent a decision it can actually execute and gives a reviewer something concrete to enforce.
+
+This is the same reason good runbooks beat company values at 2 a.m. Specificity is not bureaucracy. It is a shortcut to a correct decision.
+
+## The instruction file should be a map, not a constitution
+
+The common failure mode is taking every tribal rule in a company and pasting it into one enormous Markdown file. That creates a new problem: the agent pays attention to the generic rules and misses the one detail that matters for the task in front of it.
+
+GitHub makes the same distinction in its documentation. It recommends repository-wide instructions for durable conventions, but says that instructions which are too large or too specific can distract from the immediate task; use a skill or a custom agent for focused workflows instead.
+
+Think in three layers:
+
+```text
+Repository guide          Stable facts every task needs
+                           architecture, commands, guardrails
+
+Path-specific guidance    Rules that matter only in one area
+                           API auth, database migrations, frontend a11y
+
+Task playbooks            Repeatable, high-stakes workflows
+                           security review, release, incident response
+```
+
+Your root `AGENTS.md` should cover the first layer. Keep it short enough that a human can audit it in one sitting. Put database rules near database code. Put your release checklist in a release playbook. The exact support varies by tool, but the design principle does not: give the agent the smallest useful context at the point where it needs it.
+
+## What belongs in a good AGENTS.md
+
+Here is the skeleton I would start with for a web application:
+
+```md
+# Repository guide
+
+## What this service does
+One paragraph: users, core workflow, and production environment.
+
+## Map
+- `src/pages/`: routes and API endpoints
+- `src/components/`: UI components
+- `src/utils/`: pure shared logic
+- `tests/`: Playwright end-to-end coverage
+
+## Commands
+- Install: `bun install --frozen-lockfile`
+- Check: `bun run ci`
+- Build: `bun run build`
+- Test: `bun run test:smoke`
+
+## Guardrails
+- Do not add dependencies without a concrete need.
+- Preserve public API response shapes unless the task explicitly changes them.
+- Never expose secrets or log credentials.
+- Make the smallest viable change; do not refactor unrelated code.
+
+## Change recipe
+1. Read the closest existing implementation and relevant tests.
+2. State the intended behavior before editing when the requirement is ambiguous.
+3. Add or update the narrowest useful test.
+4. Run the relevant check, then report what passed and what remains unverified.
+```
+
+That is deliberately boring. It contains no model-specific magic words and no inspirational advice. It tells a capable agent where it is, how the codebase is shaped, how to prove a change, and what it must not casually damage.
+
+The exact details should come from the repository, not a template. If your app uses `pnpm`, do not copy the Bun command. If deployment has a migration gate, name it. If the fastest local test is a single Playwright project, make that the default. A lie in an agent instruction file is worse than no instruction file because it causes a confident wrong action.
+
+## Write rules that survive a model change
+
+The model race is moving too quickly to write your process around one vendor's quirks. A durable instruction describes the desired engineering outcome and the available evidence, not a chain of prompts optimized for this month's agent.
+
+Good:
+
+```md
+For authorization changes, add a regression test for the unauthorized path.
+Do not approve a change that widens access based only on a happy-path manual test.
+```
+
+Fragile:
+
+```md
+Ask the agent to think extremely carefully five times before modifying auth.
+```
+
+The first tells any agent—and any human reviewer—what success looks like. The second asks for an internal state you cannot inspect or verify.
+
+The same rule applies to tool permissions. Describe allowed operations and their boundaries. "Do not delete production data" is vague. "Production database commands are read-only unless a human has approved the exact migration" is an operational control. Agents are powerful precisely because they can use tools; instructions should reduce blast radius, not merely ask the model to be cautious.
+
+For a deeper look at those security boundaries, see my guide to [AI agents, MCP, and the next supply-chain risk](/blog/ai-agents-mcp-security-crisis/).
+
+## Instructions are not a substitute for tests
+
+This distinction matters more as the files get better. `AGENTS.md` is a steering layer. Tests, types, linters, CI checks, permissions, and code review are the enforcement layer.
+
+An instruction can tell an agent to preserve a response shape. A contract test is what catches the accidental change. An instruction can tell an agent not to weaken authorization. A permission boundary and a regression test are what make the rule credible.
+
+That is also why agents reward well-maintained projects unevenly. A repository with fast tests, crisp boundaries, and useful docs gives an agent short feedback loops. A repository with no checks gives it a large space in which to be confidently wrong.
+
+The practical loop is simple:
+
+```text
+Clear instruction → small change → automated check → reviewable diff
+        ↑                                            │
+        └──────── update the guide when it teaches you something new ─┘
+```
+
+If an agent repeatedly misses the same rule, do not immediately add another paragraph of admonitions. First ask which layer failed:
+
+- Was the rule absent or hard to find? Improve the relevant instruction.
+- Was the rule clear but not testable? Add a guardrail or regression test.
+- Was the task too broad? Break it into a smaller handoff.
+- Was the agent allowed to touch too much? Narrow permissions or isolate the environment.
+
+That diagnosis produces a system improvement. A larger prompt usually produces only a larger prompt.
+
+## Treat the file like production code
+
+The best way to maintain agent instructions is to edit them when reality changes, not during an annual documentation drive.
+
+Add a line when a production incident reveals a non-obvious invariant. Remove a line when the rule is duplicated elsewhere or no longer true. Review instruction changes in pull requests with the same skepticism you bring to CI changes, because they alter how future automated contributors will behave.
+
+Three useful questions for every addition:
+
+1. **Would a new human engineer make a worse decision without this?** If not, it probably does not belong in shared instructions.
+2. **Can I make this rule observable?** Prefer a command, path, test, or interface over an adjective.
+3. **Is this global, local, or task-specific?** Put it in the narrowest place that will still be discovered.
+
+The syntax is not the point. Whether your team standardizes on `AGENTS.md`, `CLAUDE.md`, or a vendor-specific instruction path, the useful content is remarkably portable. That portability is the opportunity: write down the engineering knowledge that should outlive a tool choice.
+
+## The real moat is legible engineering
+
+Coding agents will keep getting cheaper, faster, and more autonomous. GitHub has already added model selection, self-review, security scanning, custom agents, and CLI handoff to its coding agent. The agent itself is becoming a commodity feature.
+
+The durable advantage is a codebase that can be safely understood by a new contributor—human or artificial—without oral history, detective work, or a week of Slack archaeology.
+
+`AGENTS.md` will not make a bad architecture good. It will not replace a test suite. It will not turn a vague product request into a correct implementation. But it gives every future agent a running start, and it forces a healthy question onto the team: **could someone safely change this system if you were not online to explain it?**
+
+That is not an AI question. It is the oldest software-engineering question there is. The agents just made it impossible to ignore.
+
+---
+
+**Sources:** [Anthropic — *Agentic coding and persistent returns to expertise*](https://www.anthropic.com/research/claude-code-expertise), [OpenAI — *Unrolling the Codex agent loop*](https://openai.com/index/unrolling-the-codex-agent-loop/), [GitHub Docs — support for custom instructions](https://docs.github.com/en/copilot/reference/custom-instructions-support), [GitHub Docs — Copilot CLI customization guidance](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/comparing-cli-features), [Anthropic Docs — Claude Code memory](https://docs.anthropic.com/en/docs/claude-code/memory), and [GitHub Blog — updates to Copilot coding agent](https://github.blog/ai-and-ml/github-copilot/whats-new-with-github-copilot-coding-agent/).
