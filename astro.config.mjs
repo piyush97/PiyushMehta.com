@@ -1,6 +1,5 @@
 import mdx from "@astrojs/mdx";
 import react from "@astrojs/react";
-import sitemap from "@astrojs/sitemap";
 import vercel from "@astrojs/vercel";
 import sentry from "@sentry/astro";
 import tailwindcss from "@tailwindcss/vite";
@@ -54,24 +53,6 @@ export default defineConfig({
       },
     }),
     mdx(),
-    sitemap({
-      changefreq: "weekly",
-      priority: 0.7,
-      lastmod: new Date(),
-      entryLimit: 10000,
-      filter: (page) => !page.includes("?"),
-      customPages: [
-        "https://piyushmehta.com/",
-        "https://piyushmehta.com/blog/",
-        "https://piyushmehta.com/projects/",
-        "https://piyushmehta.com/about/",
-        "https://piyushmehta.com/contact-me/",
-        "https://piyushmehta.com/uses/",
-        "https://piyushmehta.com/videos/",
-        "https://piyushmehta.com/resume/",
-        "https://piyushmehta.com/services/",
-      ],
-    }),
     react(),
   ],
   markdown: {

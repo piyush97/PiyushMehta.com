@@ -6,7 +6,6 @@
  */
 
 import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
 
 const SEP = '─'.repeat(50);
 
@@ -37,7 +36,7 @@ step('Astro build', 'astro build', {
 });
 
 // 4. Post-build scripts (pagefind, resume PDF)
-step('Pagefind search index', 'node scripts/run-pagefind.mjs', { optional: true });
+step('Pagefind search index', 'pagefind --site dist/client', { optional: true });
 
 // 5. Optional: generate resume PDF
 step('Resume PDF', 'node scripts/generate-resume-pdf.mjs', { optional: true });
