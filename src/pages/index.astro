@@ -3,6 +3,8 @@ import { caseStudies, portfolioMetrics, socialLinks, writingHighlights } from '.
 import speakerPhoto from '../images/piyush-devfest.jpg';
 import Layout from '../layouts/Layout.astro';
 
+export const prerender = true;
+
 const featuredCaseStudies = caseStudies.slice(0, 3);
 ---
 
@@ -54,7 +56,15 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
     </div>
 
     <figure class="hero-portrait" data-reveal data-reveal-delay="120" data-parallax data-parallax-speed="0.08">
-      <img src={speakerPhoto.src} alt="Piyush Mehta speaking at a developer event" />
+      <img
+        src={speakerPhoto.src}
+        alt="Piyush Mehta speaking at a developer event"
+        width={speakerPhoto.width}
+        height={speakerPhoto.height}
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
       <figcaption>
         Developer education, production systems, and hands-on infrastructure practice.
       </figcaption>

@@ -23,6 +23,7 @@ export interface Props {
   keywords?: string[];
   ogTemplate?: 'default' | 'minimal' | 'tech' | 'blog' | 'modern' | 'professional';
   ogTheme?: 'dark' | 'light' | 'retro';
+  preloadImage?: string;
 }
 
 const {
@@ -40,6 +41,7 @@ const {
   keywords,
   ogTemplate = 'default',
   ogTheme = 'dark',
+  preloadImage,
 } = Astro.props;
 ---
 
@@ -59,6 +61,7 @@ const {
     <link rel="manifest" href="/manifest.json" />
     <meta name="generator" content={Astro.generator} />
     <ClientRouter />
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
     <SEO
       title={title}
       description={description}

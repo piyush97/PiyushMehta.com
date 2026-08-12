@@ -98,6 +98,7 @@ const articleSchema = {
   schema={articleSchema}
   ogTemplate={ogTemplate}
   ogTheme={ogTheme}
+  preloadImage={image?.url}
 >
   <div class="page-container blog-post-page">
     <div class="blog-post-shell">
@@ -236,7 +237,6 @@ const articleSchema = {
                 src={image.url}
                 alt={image.alt || title}
                 class="w-full h-auto"
-                loading="lazy"
                 priority={true}
                 quality={90}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
