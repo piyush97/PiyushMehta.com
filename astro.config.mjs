@@ -1,22 +1,22 @@
-import mdx from "@astrojs/mdx";
-import react from "@astrojs/react";
-import vercel from "@astrojs/vercel";
-import sentry from "@sentry/astro";
-import tailwindcss from "@tailwindcss/vite";
-import varlock from "@varlock/astro-integration";
-import { defineConfig, memoryCache } from "astro/config";
+import mdx from '@astrojs/mdx';
+import react from '@astrojs/react';
+import vercel from '@astrojs/vercel';
+import sentry from '@sentry/astro';
+import tailwindcss from '@tailwindcss/vite';
+import varlock from '@varlock/astro-integration';
+import { defineConfig, memoryCache } from 'astro/config';
 
-const isProductionBuild = process.env.NODE_ENV === "production";
+const isProductionBuild = process.env.NODE_ENV === 'production';
 const hasSentryAuth = Boolean(process.env.SENTRY_AUTH_TOKEN);
 const hasClientSentryDsn = Boolean(process.env.PUBLIC_SENTRY_DSN);
 const hasServerSentryDsn = Boolean(process.env.SENTRY_DSN || process.env.PUBLIC_SENTRY_DSN);
 
 export default defineConfig({
-  site: "https://piyushmehta.com",
-  output: "server",
+  site: 'https://piyushmehta.com',
+  output: 'server',
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: "hover",
+    defaultStrategy: 'hover',
   },
   // Astro v7 stable caching — enables Astro.cache.set() on server routes and APIs
   cache: {
@@ -24,9 +24,9 @@ export default defineConfig({
   },
   // Route-level cache rules for API and content routes
   routeRules: {
-    "/rss.xml": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
-    "/sitemap.xml": { headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" } },
-    "/robots.txt": { headers: { "Cache-Control": "public, max-age=86400, s-maxage=86400" } },
+    '/rss.xml': { headers: { 'Cache-Control': 'public, max-age=3600, s-maxage=3600' } },
+    '/sitemap.xml': { headers: { 'Cache-Control': 'public, max-age=3600, s-maxage=3600' } },
+    '/robots.txt': { headers: { 'Cache-Control': 'public, max-age=86400, s-maxage=86400' } },
   },
   experimental: {
     // Speculative prerendering of prefetched pages — instant navigation
@@ -47,8 +47,8 @@ export default defineConfig({
         enabled: isProductionBuild && hasSentryAuth,
         telemetry: false,
         ...(isProductionBuild && {
-          assets: ["dist/_astro/**/*.js", "dist/_astro/**/*.mjs"],
-          filesToDeleteAfterUpload: ["dist/_astro/**/*.map"],
+          assets: ['dist/_astro/**/*.js', 'dist/_astro/**/*.mjs'],
+          filesToDeleteAfterUpload: ['dist/_astro/**/*.map'],
         }),
       },
     }),
@@ -57,46 +57,39 @@ export default defineConfig({
   ],
   markdown: {
     shikiConfig: {
-      theme: "github-dark-dimmed",
+      theme: 'github-dark-dimmed',
       wrap: true,
     },
   },
   vite: {
     plugins: [tailwindcss()],
     build: {
-      sourcemap: isProductionBuild ? "hidden" : false,
+      sourcemap: isProductionBuild ? 'hidden' : false,
     },
-    assetsInclude: [
-      "**/*.png",
-      "**/*.jpg",
-      "**/*.jpeg",
-      "**/*.gif",
-      "**/*.svg",
-      "**/*.webp",
-    ],
+    assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp'],
     resolve: {
       alias: {
-        "@": new URL("./src", import.meta.url).pathname,
-        "@/components": new URL("./src/components", import.meta.url).pathname,
-        "@/layouts": new URL("./src/layouts", import.meta.url).pathname,
-        "@/pages": new URL("./src/pages", import.meta.url).pathname,
-        "@/utils": new URL("./src/utils", import.meta.url).pathname,
-        "@/types": new URL("./src/types", import.meta.url).pathname,
-        "@/content": new URL("./src/content", import.meta.url).pathname,
-        "@/assets": new URL("./src/assets", import.meta.url).pathname,
-        "@/styles": new URL("./src/styles", import.meta.url).pathname,
-        "@/middleware": new URL("./src/middleware", import.meta.url).pathname,
-        "@/app": new URL("./src/app", import.meta.url).pathname,
-        "@/scripts": new URL("./scripts", import.meta.url).pathname,
-      }
+        '@': new URL('./src', import.meta.url).pathname,
+        '@/components': new URL('./src/components', import.meta.url).pathname,
+        '@/layouts': new URL('./src/layouts', import.meta.url).pathname,
+        '@/pages': new URL('./src/pages', import.meta.url).pathname,
+        '@/utils': new URL('./src/utils', import.meta.url).pathname,
+        '@/types': new URL('./src/types', import.meta.url).pathname,
+        '@/content': new URL('./src/content', import.meta.url).pathname,
+        '@/assets': new URL('./src/assets', import.meta.url).pathname,
+        '@/styles': new URL('./src/styles', import.meta.url).pathname,
+        '@/middleware': new URL('./src/middleware', import.meta.url).pathname,
+        '@/app': new URL('./src/app', import.meta.url).pathname,
+        '@/scripts': new URL('./scripts', import.meta.url).pathname,
+      },
     },
   },
   image: {
-    domains: ["piyushmehta.com"],
+    domains: ['piyushmehta.com'],
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "**.githubusercontent.com",
+        protocol: 'https',
+        hostname: '**.githubusercontent.com',
       },
     ],
   },
@@ -125,12 +118,16 @@ export default defineConfig({
             // Other third-party packages
             return 'vendor-libs';
           }
-          
+
           // Application code chunking
           if (id.includes('/src/components/blog/')) {
             return 'components-blog';
           }
-          if (id.includes('CommentSystem') || id.includes('AuthModal') || id.includes('NewsletterForm')) {
+          if (
+            id.includes('CommentSystem') ||
+            id.includes('AuthModal') ||
+            id.includes('NewsletterForm')
+          ) {
             return 'components-interactive';
           }
           if (id.includes('/src/utils/')) {
@@ -146,18 +143,18 @@ export default defineConfig({
 
   adapter: vercel({
     webAnalytics: {
-      enabled: process.env.NODE_ENV === "production",
+      enabled: process.env.NODE_ENV === 'production',
     },
     imageService: true,
     imagesConfig: {
       sizes: [320, 640, 768, 1024, 1280, 1536],
-      formats: ["image/webp", "image/avif"],
+      formats: ['image/webp', 'image/avif'],
       minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-      domains: ["piyushmehta.com"],
+      domains: ['piyushmehta.com'],
       remotePatterns: [
         {
-          protocol: "https",
-          hostname: "**.githubusercontent.com",
+          protocol: 'https',
+          hostname: '**.githubusercontent.com',
         },
       ],
     },

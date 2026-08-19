@@ -75,7 +75,7 @@ async function resend(path, method, body) {
       'Content-Type': 'application/json',
       'User-Agent': 'piyushmehta.com/1.0',
     },
-    body: body ? JSON.stringify(body) : undefined,
+    ...(body ? { body: JSON.stringify(body) } : {}),
   });
   if (!res.ok) {
     const err = await res.text();
@@ -106,7 +106,7 @@ async function main() {
   const sent = await resend(`/broadcasts/${broadcast.id}/send`, 'POST');
   console.log('Broadcast sent:', sent);
   console.log(
-    `\nCheck Resend dashboard for delivery stats: https://resend.com/broadcasts/${broadcast.id}`
+    `\nCheck Resend dashboard for delivery stats: https://resend.com/broadcasts/${broadcast.id}`,
   );
 }
 

@@ -3,8 +3,8 @@ title: 'Migrating a 6-Year-Old Codebase to Astro: A Strategic Architecture Journ
 description: 'A comprehensive deep-dive into migrating a legacy portfolio site to modern Astro 4.x, covering architectural decisions, performance optimizations, and lessons learned from a decade of web development.'
 date: 2025-06-03
 author: 'Piyush Mehta'
-ogTemplate: "minimal"
-ogTheme: "light"
+ogTemplate: 'minimal'
+ogTheme: 'light'
 tags:
   [
     'Astro',
@@ -691,9 +691,9 @@ const MemoizedComponent = memo(
     useCallback(
       useMemo(() => {
         // Over-engineered component
-      })
-    )
-  )
+      }),
+    ),
+  ),
 );
 
 // ✅ Do: Measure first, optimize second
@@ -788,10 +788,7 @@ interface ComponentEnhancement {
   lazy: () => Promise<ComponentType>;
 }
 
-const enhanceComponent = (
-  element: HTMLElement,
-  enhancement: ComponentEnhancement
-) => {
+const enhanceComponent = (element: HTMLElement, enhancement: ComponentEnhancement) => {
   // Start with static HTML
   const staticElement = enhancement.static();
 
@@ -819,12 +816,9 @@ const evaluationCriteria = {
 };
 
 const scoreFramework = (framework: Framework) => {
-  return Object.entries(evaluationCriteria).reduce(
-    (score, [criterion, weight]) => {
-      return score + framework[criterion] * weight;
-    },
-    0
-  );
+  return Object.entries(evaluationCriteria).reduce((score, [criterion, weight]) => {
+    return score + framework[criterion] * weight;
+  }, 0);
 };
 ```
 

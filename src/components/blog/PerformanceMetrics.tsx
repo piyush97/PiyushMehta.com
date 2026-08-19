@@ -171,7 +171,7 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ data }) => {
           const metricImprovement = calculateImprovement(
             data[metric.key].macos,
             data[metric.key].arch,
-            metric.lowerIsBetter
+            metric.lowerIsBetter,
           );
 
           return (

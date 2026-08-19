@@ -63,7 +63,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
       setCheckResult(`✅ "${item}" MIGHT be in the filter (and it actually is!)`);
     } else {
       setCheckResult(
-        `⚠️ "${item}" MIGHT be in the filter (FALSE POSITIVE - it's not actually there!)`
+        `⚠️ "${item}" MIGHT be in the filter (FALSE POSITIVE - it's not actually there!)`,
       );
     }
   };
@@ -84,7 +84,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
   // Memoize position labels array to avoid recreation on every render
   const positionLabels = useMemo(
     () => Array.from({ length: filter.size }, (_, i) => i),
-    [filter.size]
+    [filter.size],
   );
 
   return (

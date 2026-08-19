@@ -7,7 +7,7 @@ export async function addToResendAudience(
   email: string,
   apiKey: string,
   segmentId: string,
-  _fetch: typeof fetch = fetch
+  _fetch: typeof fetch = fetch,
 ): Promise<void> {
   const response = await _fetch('https://api.resend.com/contacts', {
     method: 'POST',
@@ -33,7 +33,7 @@ export async function sendConfirmationEmail(
   email: string,
   apiKey: string,
   fromAddress: string,
-  _fetch: typeof fetch = fetch
+  _fetch: typeof fetch = fetch,
 ): Promise<void> {
   const html = `<!DOCTYPE html>
 <html>

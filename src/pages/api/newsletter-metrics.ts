@@ -6,12 +6,12 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async () => {
   return new Response(
     JSON.stringify({
       success: true,
       message: 'Metrics endpoint removed. Use @upstash/ratelimit analytics dashboard.',
     }),
-    { status: 200, headers: { 'Content-Type': 'application/json' } }
+    { status: 200, headers: { 'Content-Type': 'application/json' } },
   );
 };

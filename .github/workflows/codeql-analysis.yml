@@ -53,7 +53,7 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@ea751a9fae12fc5267ceb93f51622421afc5e87b # v3.29.11
         with:
-          category: "/language:javascript"
+          category: '/language:javascript'
 
   dependency-review:
     name: Dependency Review

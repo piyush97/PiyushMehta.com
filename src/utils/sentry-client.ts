@@ -28,7 +28,7 @@ export function initSentry() {
         // Filter out extension errors
         if (
           event.exception?.values?.[0]?.stacktrace?.frames?.some((frame) =>
-            frame.filename?.includes('extension://')
+            frame.filename?.includes('extension://'),
           )
         ) {
           return null;
@@ -46,7 +46,7 @@ export function initSentry() {
 }
 
 // Utility function to capture errors with context
-// biome-ignore lint/suspicious/noExplicitAny: generic key-value context, type is from Sentry's own extras bag
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any -- Sentry defines extras as a generic bag.
 export function captureError(error: Error, context?: Record<string, any>) {
   if (typeof window !== 'undefined') {
     Sentry.captureException(error, {
@@ -62,8 +62,8 @@ export function captureError(error: Error, context?: Record<string, any>) {
 export function captureMessage(
   message: string,
   level: 'info' | 'warning' | 'error' = 'info',
-  // biome-ignore lint/suspicious/noExplicitAny: generic key-value context, type is from Sentry's own extras bag
-  context?: Record<string, any>
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any -- Sentry defines extras as a generic bag.
+  context?: Record<string, any>,
 ) {
   if (typeof window !== 'undefined') {
     Sentry.captureMessage(message, {

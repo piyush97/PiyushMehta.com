@@ -101,7 +101,7 @@ function descriptionSize(description: string): number {
 
 function templateLabel(
   type?: SocialCardData['type'],
-  template?: SocialCardData['template']
+  template?: SocialCardData['template'],
 ): string {
   if (type === 'article') {
     return 'Article';
@@ -131,7 +131,7 @@ function createGridLines(theme: ThemeConfig) {
         background: theme.border,
         opacity: index % 2 === 0 ? 0.3 : 0.18,
       },
-    })
+    }),
   );
 
   const horizontal = Array.from({ length: 5 }, (_, index) =>
@@ -146,7 +146,7 @@ function createGridLines(theme: ThemeConfig) {
         background: theme.border,
         opacity: index % 2 === 0 ? 0.24 : 0.14,
       },
-    })
+    }),
   );
 
   return [...vertical, ...horizontal];
@@ -170,8 +170,8 @@ function createTags(tags: string[], theme: ThemeConfig) {
           padding: '11px 16px',
         },
       },
-      truncateText(tag, 22)
-    )
+      truncateText(tag, 22),
+    ),
   );
 }
 
@@ -205,9 +205,9 @@ function createMetaItems(data: SocialCardData, theme: ThemeConfig) {
             alignItems: 'center',
           },
         },
-        item
-      )
-    )
+        item,
+      ),
+    ),
   );
 }
 
@@ -254,7 +254,7 @@ function createRightPanel(data: SocialCardData, theme: ThemeConfig) {
             lineHeight: 1,
           },
         },
-        'PM'
+        'PM',
       ),
       React.createElement(
         'div',
@@ -280,9 +280,9 @@ function createRightPanel(data: SocialCardData, theme: ThemeConfig) {
                 fontWeight: 720,
               },
             },
-            skill
-          )
-        )
+            skill,
+          ),
+        ),
       ),
       React.createElement(
         'div',
@@ -295,9 +295,9 @@ function createRightPanel(data: SocialCardData, theme: ThemeConfig) {
             fontWeight: 700,
           },
         },
-        data.domain || 'piyushmehta.com'
+        data.domain || 'piyushmehta.com',
       ),
-    ]
+    ],
   );
 }
 
@@ -423,7 +423,7 @@ export function createSocialCardElement(input: SocialCardData) {
                         padding: '10px 15px',
                       },
                     },
-                    label
+                    label,
                   ),
                   React.createElement(
                     'div',
@@ -437,9 +437,9 @@ export function createSocialCardElement(input: SocialCardData) {
                         lineHeight: 1,
                       },
                     },
-                    data.author || 'Piyush Mehta'
+                    data.author || 'Piyush Mehta',
                   ),
-                ]
+                ],
               ),
               React.createElement(
                 'div',
@@ -455,7 +455,7 @@ export function createSocialCardElement(input: SocialCardData) {
                     maxWidth: '720px',
                   },
                 },
-                title
+                title,
               ),
               description
                 ? React.createElement(
@@ -472,10 +472,10 @@ export function createSocialCardElement(input: SocialCardData) {
                         maxWidth: '690px',
                       },
                     },
-                    description
+                    description,
                   )
                 : null,
-            ].filter(Boolean)
+            ].filter(Boolean),
           ),
           React.createElement(
             'div',
@@ -499,16 +499,16 @@ export function createSocialCardElement(input: SocialCardData) {
                         gap: '10px',
                       },
                     },
-                    createTags(data.tags, theme)
+                    createTags(data.tags, theme),
                   )
                 : null,
               createMetaItems(data, theme),
-            ].filter(Boolean)
+            ].filter(Boolean),
           ),
-        ]
+        ],
       ),
       createRightPanel(data, theme),
-    ]
+    ],
   );
 }
 

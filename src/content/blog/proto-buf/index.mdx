@@ -1,20 +1,20 @@
 ---
-title: "How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei"
-description: "How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei!"
+title: 'How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei'
+description: 'How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei!'
 date: 2020-03-02
-author: "Piyush Mehta"
+author: 'Piyush Mehta'
 tags:
-  - "grpc"
-  - "protobuf"
-ogTemplate: "tech"
-ogTheme: "dark"
+  - 'grpc'
+  - 'protobuf'
+ogTemplate: 'tech'
+ogTheme: 'dark'
 image:
-  url: "/blog/proto-buf/images/protobuf.png"
-  alt: "How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei"
+  url: '/blog/proto-buf/images/protobuf.png'
+  alt: 'How we are maintaining ProtoBuf (Protocol Buffers) at Nuclei'
 ---
 
-
 We at Nuclei, welcome the latest technologies in our stack. We have our Micro Services in Java and Go Lang. I as a Full Stack Developer got an opportunity to completely build this system for us.
+
 > # GitHub Actions + GitHub Package Registry + gRPC
 
 ## **Problems which our solution solved!**
@@ -46,6 +46,7 @@ When one creates a new release. Let’s say version V1.0.0. It triggers our GitH
 ## How do we pull dependencies?
 
 For java →
+
 ```json
     plugins {
         id("maven-publish")
@@ -69,7 +70,9 @@ For java →
         }
     }
 ```
+
 For Go →
+
 ```
     go get <URL of the release>
 ```

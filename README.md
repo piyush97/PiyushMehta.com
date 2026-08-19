@@ -20,7 +20,7 @@ Personal portfolio and blog. Built with Astro 6, React 19, Tailwind CSS v4, depl
 | Monitoring | [Sentry](https://sentry.io/) — errors + performance |
 | Analytics | Vercel Web Analytics + Speed Insights |
 | Env management | [varlock](https://varlock.dev/) — schema validation + secret scanning |
-| Linting | [Biome](https://biomejs.dev/) — lint + format |
+| Code quality | [Vite+](https://viteplus.dev/) — Oxfmt + Oxlint + type checks |
 | Testing | [Playwright](https://playwright.dev/) — E2E |
 | Deployment | [Vercel](https://vercel.com/) |
 | Package manager | [Bun](https://bun.sh/) |
@@ -75,11 +75,11 @@ bun dev              # Dev server
 bun build            # Production build (typegen → image migration → Astro build → Pagefind → resume PDF)
 bun preview          # Preview production build locally
 
-bun run lint         # Biome lint
-bun run lint:fix     # Biome lint + auto-fix
-bun run format       # Biome format
-bun run check        # Biome check (lint + format)
-bun run ci           # Biome CI (no auto-fix, for pipelines)
+bun run lint         # Oxlint via Vite+
+bun run lint:fix     # Oxlint auto-fix via Vite+
+bun run format       # Oxfmt via Vite+
+bun run check        # Vite+ format, lint, and type checks
+bun run ci           # Read-only Vite+ check for CI
 
 bun test             # Playwright E2E tests
 bun run test:smoke   # Smoke tests only
@@ -96,7 +96,7 @@ bun run test-seo          # Validate SEO meta files
 /
 ├── .env.schema              # Env var schema (varlock)
 ├── astro.config.mjs         # Astro config
-├── lefthook.yml             # Git hooks (Biome + varlock scan)
+├── lefthook.yml             # Git hooks (Vite+ check + varlock scan)
 ├── public/                  # Static assets
 ├── scripts/                 # Build and maintenance scripts
 └── src/
@@ -163,7 +163,7 @@ Output: `.vercel/output` (Vercel Build Output API)
 ```bash
 git checkout -b feature/your-feature
 # make changes
-git commit -m "feat: description"   # triggers Biome + varlock pre-commit hooks
+git commit -m "feat: description"   # triggers Vite+ + varlock pre-commit hooks
 git push origin feature/your-feature
 # open PR → preview deploy created automatically
 ```

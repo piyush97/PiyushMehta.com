@@ -1,13 +1,21 @@
 ---
-title: "System Design Patterns That Show Up In Every Senior Interview (With Diagrams & Math)"
-description: "The 12 patterns interviewers actually ask about - load balancing, caching, message queues, sharding, consistent hashing, CQRS, event sourcing - with back-of-envelope math, concrete numbers, and the C4 diagram language"
-author: "Piyush Mehta"
+title: 'System Design Patterns That Show Up In Every Senior Interview (With Diagrams & Math)'
+description: 'The 12 patterns interviewers actually ask about - load balancing, caching, message queues, sharding, consistent hashing, CQRS, event sourcing - with back-of-envelope math, concrete numbers, and the C4 diagram language'
+author: 'Piyush Mehta'
 date: 2026-06-15
-tags: ["system-design", "interviews", "distributed-systems", "architecture", "senior-engineer", "scaling"]
-ogTemplate: "tech"
-ogTheme: "dark"
+tags:
+  [
+    'system-design',
+    'interviews',
+    'distributed-systems',
+    'architecture',
+    'senior-engineer',
+    'scaling',
+  ]
+ogTemplate: 'tech'
+ogTheme: 'dark'
 image:
-  url: "/blog/system-design-patterns-cheatsheet/hero.svg"
+  url: '/blog/system-design-patterns-cheatsheet/hero.svg'
   alt: System design patterns cheatsheet for senior software engineering interviews
 ---
 
@@ -20,8 +28,13 @@ System design interviews don't test whether you've memorized Grokking. They test
 Here are the 12 patterns that appear in every senior loop, with the math and tradeoffs that actually matter.
 
 <div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
-  <h3 className="text-xl mb-2 text-text-primary">Google, Meta, and Netflix all share the same ~15 system design patterns</h3>
-  <p className="text-text-secondary">A 2024 internal study found that 73% of senior candidates could name them, and only 12% could correctly identify when each one breaks. The interview is about edge cases, not flashcards.</p>
+  <h3 className="text-xl mb-2 text-text-primary">
+    Google, Meta, and Netflix all share the same ~15 system design patterns
+  </h3>
+  <p className="text-text-secondary">
+    A 2024 internal study found that 73% of senior candidates could name them, and only 12% could
+    correctly identify when each one breaks. The interview is about edge cases, not flashcards.
+  </p>
 </div>
 
 ## The 12 Patterns That Keep Systems Alive
@@ -33,17 +46,20 @@ Load balancers sit in front of your servers and distribute traffic. L4 (Layer 4)
 **Algorithms:** Round-robin (simple), least connections (respects load), consistent hashing (session affinity).
 
 <div className="bg-light-700 border border-card-border p-4 rounded-lg my-6">
-  <p className="text-text-secondary">Use L4 for internal load balancing (lower latency) and L7 at the edge for path-based routing. L7 is also where you configure rate limiting. Your L4 balancer can't tell a GET from a POST.</p>
+  <p className="text-text-secondary">
+    Use L4 for internal load balancing (lower latency) and L7 at the edge for path-based routing. L7
+    is also where you configure rate limiting. Your L4 balancer can't tell a GET from a POST.
+  </p>
 </div>
 
 ### 2. Caching — Four Patterns, One Invocation Tax
 
-| Pattern | Read Perf | Write Perf | Staleness Risk | Use Case |
-|---|---|---|---|---|
-| **Cache-aside** | Miss → load to cache | Write DB, invalidate cache | Low | Most APIs |
-| **Write-through** | Fast | Write DB + cache together | None (sync) | Consistency-critical |
-| **Write-behind** | Fast | Write cache, async flush DB | High (crash = loss) | High-write, low-CR |
-| **Refresh-ahead** | Pre-warmed | — | Predictable | ML model predictions |
+| Pattern           | Read Perf            | Write Perf                  | Staleness Risk      | Use Case             |
+| ----------------- | -------------------- | --------------------------- | ------------------- | -------------------- |
+| **Cache-aside**   | Miss → load to cache | Write DB, invalidate cache  | Low                 | Most APIs            |
+| **Write-through** | Fast                 | Write DB + cache together   | None (sync)         | Consistency-critical |
+| **Write-behind**  | Fast                 | Write cache, async flush DB | High (crash = loss) | High-write, low-CR   |
+| **Refresh-ahead** | Pre-warmed           | —                           | Predictable         | ML model predictions |
 
 The cache invalidation tax: every caching strategy trades consistency for speed. Twitter's timeline cache invalidates on every tweet. Netflix's CDN cache invalidates only on re-encoding. Know which tradeoff you're making.
 
@@ -62,7 +78,11 @@ Two fundamentally different models:
 **RabbitMQ / SQS (queue-based):** Ephemeral, at-most-once or at-least-once delivery. Messages get deleted after ack. No replay. Great for task dispatch, decoupling services, and workloads where ordering is unnecessary.
 
 <div className="bg-light-700 border border-card-border p-4 rounded-lg my-6">
-  <p className="text-text-secondary">Kafka's durability costs matter. Size partitions carefully. Too few and consumers starve. Too many and rebalancing takes 30+ seconds. RabbitMQ handles ~50K queues easily. Kafka struggles past 10K topics. Different ceilings.</p>
+  <p className="text-text-secondary">
+    Kafka's durability costs matter. Size partitions carefully. Too few and consumers starve. Too
+    many and rebalancing takes 30+ seconds. RabbitMQ handles ~50K queues easily. Kafka struggles
+    past 10K topics. Different ceilings.
+  </p>
 </div>
 
 ### 5. Sharding — Splitting Data Across Nodes
@@ -85,11 +105,11 @@ Traditional hash sharding breaks when nodes change. Consistent hashing places no
 
 ### 7. Replication — Leader, Multi-Leader, Leaderless
 
-| Model | Writes | Reads | Consistency | Survivability |
-|---|---|---|---|---|
-| **Leader-follower** | Single node | Any replica | Eventual (sync writes optional) | Leader failure = failover |
-| **Multi-leader** | Any leader | Any replica | Conflict resolution needed (CRDTs / last-write-wins) | N nodes survive N–1 failures |
-| **Leaderless (Dynamo)** | Quorum W | Quorum R | Tunable (W+R > N) | N nodes survive N–min(W,R) failures |
+| Model                   | Writes      | Reads       | Consistency                                          | Survivability                       |
+| ----------------------- | ----------- | ----------- | ---------------------------------------------------- | ----------------------------------- |
+| **Leader-follower**     | Single node | Any replica | Eventual (sync writes optional)                      | Leader failure = failover           |
+| **Multi-leader**        | Any leader  | Any replica | Conflict resolution needed (CRDTs / last-write-wins) | N nodes survive N–1 failures        |
+| **Leaderless (Dynamo)** | Quorum W    | Quorum R    | Tunable (W+R > N)                                    | N nodes survive N–min(W,R) failures |
 
 **Dynamo-style quorum:** With N=3, W=2 writes, R=2 reads, you tolerate 1 node failure without losing consistency. The tradeoff? Stale data if W+R < N+1. AWS DynamoDB lets you tune this per request.
 
@@ -103,7 +123,11 @@ Network partitions will happen, so Partition Tolerance is mandatory. The real ch
 **AP:** Accept stale reads to stay up. Twitter feeds. Product catalogs.
 
 <div className="bg-light-700 border border-card-border p-4 rounded-lg my-6">
-  <p className="text-text-secondary">Don't say "we need CP." Say "we need CP during partitions, but in steady state we use AP with read-after-write consistency in the same AZ." That's how DynamoDB actually works, and it's a much more interesting answer.</p>
+  <p className="text-text-secondary">
+    Don't say "we need CP." Say "we need CP during partitions, but in steady state we use AP with
+    read-after-write consistency in the same AZ." That's how DynamoDB actually works, and it's a
+    much more interesting answer.
+  </p>
 </div>
 
 ### 9. CQRS — Separate Read and Write Models
@@ -127,7 +151,11 @@ Only use event sourcing when you genuinely need the event log: financial audits,
 Microservices buy you independent deployability and team autonomy, at the cost of network overhead, distributed transactions, and debugging across 17 services. Modular monoliths keep the deployment simplicity of a single app while enforcing module boundaries at compile time (Java modules, Go packages, Rust crates).
 
 <div className="bg-light-700 border border-card-border p-4 rounded-lg my-6">
-  <p className="text-text-secondary">Start as a modular monolith. Extract services when you have a proven performance bottleneck or a team boundary that genuinely needs independent deploys. Shopify ran as a monolith handling 1M+ RPM. You don't need microservices until you need microservices.</p>
+  <p className="text-text-secondary">
+    Start as a modular monolith. Extract services when you have a proven performance bottleneck or a
+    team boundary that genuinely needs independent deploys. Shopify ran as a monolith handling 1M+
+    RPM. You don't need microservices until you need microservices.
+  </p>
 </div>
 
 ### 12. Idempotency Keys — The Payment Anti-Disaster Pattern
@@ -142,7 +170,7 @@ async function processPayment(userId: string, amount: number, idempotencyKey: st
   if (existing) return JSON.parse(existing); // Return cached result
 
   const result = await stripe.charges.create({ userId, amount });
-  await redis.set(`idempotent:${idempotencyKey}`, JSON.stringify(result), "EX", 86400);
+  await redis.set(`idempotent:${idempotencyKey}`, JSON.stringify(result), 'EX', 86400);
   return result;
 }
 ```
@@ -153,27 +181,27 @@ async function processPayment(userId: string, amount: number, idempotencyKey: st
 
 Interviewers expect you to estimate capacity without a calculator. Memorize these:
 
-| Concept | Value | Mnemonic |
-|---|---|---|
-| 2^10 | ~1 Thousand | Kilo |
-| 2^20 | ~1 Million | Mega |
-| 2^30 | ~1 Billion | Giga |
-| 2^40 | ~1 Trillion | Tera |
-| 1 byte per char | ASCII | — |
-| 4 bytes per int | 32-bit integer | — |
+| Concept         | Value          | Mnemonic |
+| --------------- | -------------- | -------- |
+| 2^10            | ~1 Thousand    | Kilo     |
+| 2^20            | ~1 Million     | Mega     |
+| 2^30            | ~1 Billion     | Giga     |
+| 2^40            | ~1 Trillion    | Tera     |
+| 1 byte per char | ASCII          | —        |
+| 4 bytes per int | 32-bit integer | —        |
 
 **Latency numbers (Jeff Dean style):**
 
-| Operation | Latency | Relative |
-|---|---|---|
-| L1 cache reference | 0.5 ns | 1x |
-| Branch mispredict | 5 ns | 10x |
-| L2 cache reference | 7 ns | 14x |
-| Mutex lock/unlock | 25 ns | 50x |
-| RAM reference | 100 ns | 200x |
-| SSD random read | 100 μs | 200,000x |
-| HDD random read | 10 ms | 20,000,000x |
-| Network packet CA→NL→CA | 150 ms | 300,000,000x |
+| Operation               | Latency | Relative     |
+| ----------------------- | ------- | ------------ |
+| L1 cache reference      | 0.5 ns  | 1x           |
+| Branch mispredict       | 5 ns    | 10x          |
+| L2 cache reference      | 7 ns    | 14x          |
+| Mutex lock/unlock       | 25 ns   | 50x          |
+| RAM reference           | 100 ns  | 200x         |
+| SSD random read         | 100 μs  | 200,000x     |
+| HDD random read         | 10 ms   | 20,000,000x  |
+| Network packet CA→NL→CA | 150 ms  | 300,000,000x |
 
 **Twitter QPS estimation (practice example):**
 
@@ -240,9 +268,9 @@ CREATE INDEX idx_urls_owner ON urls(owner_id);
 async function resolveShortCode(code: string): Promise<string> {
   const cached = await redis.get(`url:${code}`);
   if (cached) return cached;
-  const row = await db.query("SELECT long_url FROM urls WHERE short_code = $1", [code]);
-  if (!row) throw new NotFound("Short URL not found");
-  await redis.set(`url:${code}`, row.long_url, "EX", 3600);
+  const row = await db.query('SELECT long_url FROM urls WHERE short_code = $1', [code]);
+  if (!row) throw new NotFound('Short URL not found');
+  await redis.set(`url:${code}`, row.long_url, 'EX', 3600);
   return row.long_url;
 }
 ```

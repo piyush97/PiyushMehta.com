@@ -3,10 +3,11 @@
  * Uses Playwright to render the resume page and save as PDF.
  * Run as part of the build pipeline: node scripts/generate-resume-pdf.mjs
  *
- * Requires the dev server to be running (handled by the build script).
+ * Starts a temporary dev server when one is not already available.
  */
 
-import { mkdirSync, writeFileSync } from 'fs';
+import { spawn } from 'node:child_process';
+import { mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { chromium } from 'playwright';
 
@@ -14,17 +15,55 @@ const PORT = process.env.PORT || '4321';
 const BASE = process.env.BASE_URL || `http://localhost:${PORT}`;
 const OUTPUT = resolve(import.meta.dirname, '..', 'public', 'resume.pdf');
 
+async function isServerAvailable() {
+  try {
+    const response = await fetch(BASE, { signal: AbortSignal.timeout(1_000) });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+async function startServerIfNeeded() {
+  if (await isServerAvailable()) {
+    return undefined;
+  }
+
+  console.log(`[generate-resume-pdf] Starting dev server at ${BASE} ...`);
+  const server = spawn('bun', ['run', 'dev'], {
+    env: { ...process.env, ASTRO_DEV_BACKGROUND: '1' },
+    stdio: 'inherit',
+  });
+
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline) {
+    if (await isServerAvailable()) {
+      return server;
+    }
+    if (server.exitCode !== null) {
+      throw new Error(`Dev server exited before becoming ready (exit ${server.exitCode}).`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+
+  server.kill('SIGTERM');
+  throw new Error(`Dev server did not become ready at ${BASE} within 30 seconds.`);
+}
+
 async function generate() {
   console.log(`[generate-resume-pdf] Navigating to ${BASE}/resume/ ...`);
 
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({
-    deviceScaleFactor: 2,
-    colorScheme: 'light',
-  });
-  const page = await context.newPage();
+  const server = await startServerIfNeeded();
+  let browser;
 
   try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({
+      deviceScaleFactor: 2,
+      colorScheme: 'light',
+    });
+    const page = await context.newPage();
+
     await page.goto(`${BASE}/resume/`, {
       waitUntil: 'networkidle',
       timeout: 30000,
@@ -59,10 +98,11 @@ async function generate() {
     console.log(`[generate-resume-pdf] ✓ Saved to ${OUTPUT}`);
   } catch (err) {
     console.error(`[generate-resume-pdf] ✗ Failed:`, err);
-    process.exit(1);
+    process.exitCode = 1;
   } finally {
-    await browser.close();
+    await browser?.close();
+    server?.kill('SIGTERM');
   }
 }
 
-generate();
+void generate();

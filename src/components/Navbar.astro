@@ -77,7 +77,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
       overlay.removeAttribute('hidden');
       toggle.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
-      panel.offsetHeight;
+      void panel.offsetHeight;
       panel.classList.add('visible');
       overlay.classList.add('visible');
     }

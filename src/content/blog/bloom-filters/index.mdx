@@ -1,19 +1,19 @@
 ---
 title: "The 30-Year-Old 'Impossible' Algorithm That Makes Netflix Instant (And Why Your Computer Still Sucks)"
-description: "How Bloom Filters power Google, Netflix, and Instagram with 99.9% accuracy while using almost zero memory - and the shocking reason they can lie to you"
-author: "Piyush Mehta"
+description: 'How Bloom Filters power Google, Netflix, and Instagram with 99.9% accuracy while using almost zero memory - and the shocking reason they can lie to you'
+author: 'Piyush Mehta'
 date: 2025-07-02
-tags: ["algorithms", "data-structures", "netflix", "google", "programming"]
-ogTemplate: "tech"
-ogTheme: "dark"
+tags: ['algorithms', 'data-structures', 'netflix', 'google', 'programming']
+ogTemplate: 'tech'
+ogTheme: 'dark'
 image:
-  url: "/blog/bloom-filters/bloom-filter-hero.svg"
-  alt: "Bloom Filter visualization showing probabilistic data structure concept"
+  url: '/blog/bloom-filters/bloom-filter-hero.svg'
+  alt: 'Bloom Filter visualization showing probabilistic data structure concept'
 ---
 
-import { BloomFilterDemo } from '../../../components/blog/BloomFilterDemo.tsx'
-import { TechComparison } from '../../../components/blog/TechComparison.tsx'
-import { InteractiveQuiz } from '../../../components/blog/InteractiveQuiz.tsx'
+import { BloomFilterDemo } from '../../../components/blog/BloomFilterDemo.tsx';
+import { TechComparison } from '../../../components/blog/TechComparison.tsx';
+import { InteractiveQuiz } from '../../../components/blog/InteractiveQuiz.tsx';
 
 # The 30-Year-Old "Impossible" Algorithm That Makes Netflix Instant
 
@@ -23,7 +23,13 @@ What's the difference? A probabilistic data structure called a **Bloom Filter** 
 
 <div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
   <h3 className="text-xl font-bold mb-2 text-text-primary">🤯 Mind-Blowing Fact</h3>
-  <p className="text-text-secondary">Bloom Filters can be 99.9% accurate while using 24x less memory than traditional databases. But here's the kicker: <strong className="text-accent">they can lie to you... and that's exactly why they work.</strong></p>
+  <p className="text-text-secondary">
+    Bloom Filters can be 99.9% accurate while using 24x less memory than traditional databases. But
+    here's the kicker:{' '}
+    <strong className="text-accent">
+      they can lie to you... and that's exactly why they work.
+    </strong>
+  </p>
 </div>
 
 ## The Problem That Broke the Internet (Almost)
@@ -53,15 +59,18 @@ Imagine you have a magic helper who watches your toy box. This helper has a spec
 ```
 
 **When you put toys in the box:**
+
 - Add teddy bear → Helper colors circles 1, 3, and 6: `● ○ ● ○ ○ ● ○ ○`
 - Add toy car → Helper colors circles 2, 4, and 7: `● ● ● ● ○ ● ○ ●`
 
 **When you ask "Is my ball in the box?"**
+
 - Helper checks if circles 2, 5, and 8 are colored
 - Circle 5 is empty → **"Definitely NOT in the box!"** ✅
 - Helper is **100% correct** when saying NO
 
 **When you ask "Is my teddy bear in the box?"**
+
 - Helper checks circles 1, 3, and 6
 - All are colored → **"Maybe in the box!"** ⚠️
 - Helper could be **wrong** when saying YES (false positive)
@@ -75,8 +84,13 @@ Here's where your brain breaks: **Bloom Filters can lie, but only in one directi
 <div className="border-l-4 border-accent pl-4 my-6 bg-light-700 p-4 rounded-r-lg">
   <h4 className="font-bold text-accent">The Bloom Filter Promise:</h4>
   <ul className="mt-2 space-y-1 text-text-secondary">
-    <li>✅ <strong className="text-text-primary">Never wrong</strong> when saying "definitely NOT there"</li>
-    <li>⚠️ <strong className="text-text-primary">Sometimes wrong</strong> when saying "might be there"</li>
+    <li>
+      ✅ <strong className="text-text-primary">Never wrong</strong> when saying "definitely NOT
+      there"
+    </li>
+    <li>
+      ⚠️ <strong className="text-text-primary">Sometimes wrong</strong> when saying "might be there"
+    </li>
   </ul>
 </div>
 
@@ -90,6 +104,7 @@ Why is this useful? Because **false negatives are catastrophic, but false positi
 <TechComparison client:visible />
 
 ### Netflix: Finding Your Next Binge
+
 Netflix doesn't actually search through every movie when you type "action movies." Instead:
 
 1. **Bloom Filter** instantly says "definitely no sci-fi movies with that title"
@@ -97,12 +112,14 @@ Netflix doesn't actually search through every movie when you type "action movies
 3. **Result**: Sub-second search across 15,000+ titles
 
 ### Google: Crawling the Internet
+
 When Google's bots crawl the web, they use Bloom Filters to avoid re-visiting the same pages:
 
 - **Without Bloom Filter**: Check 50 billion URLs against a database (impossible)
 - **With Bloom Filter**: Instant "definitely haven't seen this" or "maybe I have" (blazing fast)
 
 ### Instagram: Username Validation
+
 When you type @newusername:
 
 1. **Bloom Filter**: "Definitely available" or "might be taken"
@@ -110,6 +127,7 @@ When you type @newusername:
 3. **Result**: Most checks never hit the database
 
 ### Bitcoin: Transaction Validation
+
 Bitcoin nodes use Bloom Filters to quickly identify relevant transactions without downloading the entire blockchain.
 
 ## The Mathematics of "Impossible"
@@ -119,16 +137,28 @@ Let's get nerdy for a second. Here's why Bloom Filters seem to break physics:
 <div className="bg-light-700 border border-card-border p-4 rounded-lg my-6">
   <h4 className="font-bold mb-2 text-text-primary">Traditional Database:</h4>
   <ul className="space-y-1 text-text-secondary">
-    <li><strong className="text-text-primary">Space:</strong> O(n) - grows with data</li>
-    <li><strong className="text-text-primary">Time:</strong> O(log n) - gets slower as data grows</li>
-    <li><strong className="text-text-primary">Accuracy:</strong> 100%</li>
+    <li>
+      <strong className="text-text-primary">Space:</strong> O(n) - grows with data
+    </li>
+    <li>
+      <strong className="text-text-primary">Time:</strong> O(log n) - gets slower as data grows
+    </li>
+    <li>
+      <strong className="text-text-primary">Accuracy:</strong> 100%
+    </li>
   </ul>
-  
+
   <h4 className="font-bold mb-2 mt-4 text-accent">Bloom Filter:</h4>
   <ul className="space-y-1 text-text-secondary">
-    <li><strong className="text-accent">Space:</strong> O(1) - fixed size forever</li>
-    <li><strong className="text-accent">Time:</strong> O(k) - constant time always</li>
-    <li><strong className="text-accent">Accuracy:</strong> 99.9% (configurable)</li>
+    <li>
+      <strong className="text-accent">Space:</strong> O(1) - fixed size forever
+    </li>
+    <li>
+      <strong className="text-accent">Time:</strong> O(k) - constant time always
+    </li>
+    <li>
+      <strong className="text-accent">Accuracy:</strong> 99.9% (configurable)
+    </li>
   </ul>
 </div>
 
@@ -149,7 +179,11 @@ Here's what happens when you deploy Bloom Filters at scale:
 
 <div className="bg-accent/20 border border-accent/30 p-4 rounded-lg my-6">
   <h4 className="font-bold text-accent">💰 Business Impact</h4>
-  <p className="text-text-secondary mt-2">Companies report <strong className="text-text-primary">saving millions</strong> in server costs and <strong className="text-text-primary">improving user experience</strong> dramatically after implementing Bloom Filters.</p>
+  <p className="text-text-secondary mt-2">
+    Companies report <strong className="text-text-primary">saving millions</strong> in server costs
+    and <strong className="text-text-primary">improving user experience</strong> dramatically after
+    implementing Bloom Filters.
+  </p>
 </div>
 
 ## The Dark Side: When Bloom Filters Attack
@@ -157,12 +191,15 @@ Here's what happens when you deploy Bloom Filters at scale:
 Not everything is perfect in Bloom Filter land. Here are the gotchas:
 
 ### 1. The False Positive Problem
+
 As your Bloom Filter fills up, false positives increase exponentially. At some point, it starts saying "maybe" to everything.
 
 ### 2. No Deletions (Usually)
+
 Traditional Bloom Filters can't remove items. Once something is "in," it's in forever. (Though Counting Bloom Filters solve this.)
 
 ### 3. Size Matters
+
 Too small → High false positive rate
 Too large → Wastes memory
 Just right → Goldilocks zone of efficiency
@@ -177,7 +214,7 @@ class BloomFilter {
     this.size = size;
     this.bits = new Array(size).fill(false);
   }
-  
+
   hash(item, seed) {
     // Simple hash function (use better ones in production)
     let hash = seed;
@@ -186,31 +223,31 @@ class BloomFilter {
     }
     return Math.abs(hash);
   }
-  
+
   add(item) {
     const hash1 = this.hash(item, 1);
     const hash2 = this.hash(item, 2);
     const hash3 = this.hash(item, 3);
-    
+
     this.bits[hash1] = true;
     this.bits[hash2] = true;
     this.bits[hash3] = true;
   }
-  
+
   mightContain(item) {
     const hash1 = this.hash(item, 1);
     const hash2 = this.hash(item, 2);
     const hash3 = this.hash(item, 3);
-    
+
     return this.bits[hash1] && this.bits[hash2] && this.bits[hash3];
   }
 }
 
 // Usage
 const filter = new BloomFilter(100);
-filter.add("username123");
-console.log(filter.mightContain("username123")); // true (definitely maybe)
-console.log(filter.mightContain("newuser456"));   // false (definitely no)
+filter.add('username123');
+console.log(filter.mightContain('username123')); // true (definitely maybe)
+console.log(filter.mightContain('newuser456')); // false (definitely no)
 ```
 
 ## The Future: Bloom Filters Evolved
@@ -232,4 +269,4 @@ The next time Netflix loads your recommendations instantly, or Google blocks a m
 
 **Was your mind blown?** Share this article and tag three programmer friends who need to see this. Let's spread the Bloom Filter love! 🤯
 
-*Follow me for more deep dives into the algorithms that power your favorite apps.*
+_Follow me for more deep dives into the algorithms that power your favorite apps._

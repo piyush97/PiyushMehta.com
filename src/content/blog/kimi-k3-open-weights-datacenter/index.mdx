@@ -1,20 +1,20 @@
 ---
-title: "Kimi K3 Is Open Weight, but You Still Need a Datacenter to Run It"
-description: "Moonshot AI released a 2.8-trillion-parameter model with a 1.56 TB checkpoint. Here is what Kimi K3 changes—and what open weights still do not solve."
+title: 'Kimi K3 Is Open Weight, but You Still Need a Datacenter to Run It'
+description: 'Moonshot AI released a 2.8-trillion-parameter model with a 1.56 TB checkpoint. Here is what Kimi K3 changes—and what open weights still do not solve.'
 date: 2026-07-27T12:00:00-04:00
-author: "Piyush Mehta"
-ogTemplate: "tech"
-ogTheme: "dark"
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
 tags:
-  - "Kimi K3"
-  - "Open Weights"
-  - "Moonshot AI"
-  - "LLM"
-  - "Mixture of Experts"
-  - "AI Infrastructure"
-  - "Inference"
+  - 'Kimi K3'
+  - 'Open Weights'
+  - 'Moonshot AI'
+  - 'LLM'
+  - 'Mixture of Experts'
+  - 'AI Infrastructure'
+  - 'Inference'
 image:
-  url: "/blog/kimi-k3-open-weights-datacenter/images/cover.svg"
+  url: '/blog/kimi-k3-open-weights-datacenter/images/cover.svg'
   alt: "Kimi K3's 1.56 TB open-weight checkpoint crossing from a laptop to a datacenter"
 draft: false
 ---
@@ -33,29 +33,32 @@ That apparent contradiction is the most important part of this release. Kimi K3 
 
 <div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
   <p className="text-text-primary text-lg font-semibold mb-2">The Kimi K3 paradox</p>
-  <p className="text-text-secondary mb-0">The weights are open enough to download, restricted enough to have a revenue clause, and large enough that most developers will still rent access from somebody else.</p>
+  <p className="text-text-secondary mb-0">
+    The weights are open enough to download, restricted enough to have a revenue clause, and large
+    enough that most developers will still rent access from somebody else.
+  </p>
 </div>
 
 This is not a hands-on model review. Launch-day API comparisons would be misleading without the same harness, reasoning budget, tool environment, and repeated runs. This is an evidence audit of what Moonshot released on July 27, 2026, what the architecture means, what the license permits, what independent evaluation has established, and why weights that almost nobody can run locally still matter.
 
 ## Kimi K3 at a glance
 
-| Property | Kimi K3 |
-| --- | --- |
-| Architecture | Mixture of Experts (MoE) |
-| Total parameters | 2.8 trillion |
-| Activated parameters | 104 billion per token |
-| Layers | 93 |
-| Routed experts | 896 |
-| Experts selected per token | 16, plus 2 shared experts |
-| Attention layers | 69 Kimi Delta Attention + 24 Gated MLA |
-| Context window | 1,048,576 tokens |
-| Vision encoder | MoonViT-V2, 401 million parameters |
-| Weight format | MXFP4 weights, MXFP8 activations |
-| Published checkpoint | 96 shards, approximately 1.56 TB |
-| Recommended inference engines | vLLM, SGLang, TokenSpeed |
-| Official deployment guidance | Supernodes with 64 or more accelerators |
-| License | Custom Kimi K3 License |
+| Property                      | Kimi K3                                 |
+| ----------------------------- | --------------------------------------- |
+| Architecture                  | Mixture of Experts (MoE)                |
+| Total parameters              | 2.8 trillion                            |
+| Activated parameters          | 104 billion per token                   |
+| Layers                        | 93                                      |
+| Routed experts                | 896                                     |
+| Experts selected per token    | 16, plus 2 shared experts               |
+| Attention layers              | 69 Kimi Delta Attention + 24 Gated MLA  |
+| Context window                | 1,048,576 tokens                        |
+| Vision encoder                | MoonViT-V2, 401 million parameters      |
+| Weight format                 | MXFP4 weights, MXFP8 activations        |
+| Published checkpoint          | 96 shards, approximately 1.56 TB        |
+| Recommended inference engines | vLLM, SGLang, TokenSpeed                |
+| Official deployment guidance  | Supernodes with 64 or more accelerators |
+| License                       | Custom Kimi K3 License                  |
 
 Sources: the [Kimi K3 model card](https://huggingface.co/moonshotai/Kimi-K3), [technical report](https://github.com/MoonshotAI/Kimi-K3/blob/main/k3_tech_report.pdf), and [technical blog](https://www.kimi.com/blog/kimi-k3).
 
@@ -160,13 +163,13 @@ Those comments are useful signals, not benchmark data. Hardware prices and throu
 
 ## Downloadable, local, and open source are three different claims
 
-AI discussions often compress three separate ideas into one word: *open*.
+AI discussions often compress three separate ideas into one word: _open_.
 
-| Question | What it means | Kimi K3 |
-| --- | --- | --- |
-| Can I download the trained parameters? | Open weights | Yes |
-| Can a typical developer run it privately on local hardware? | Local accessibility | No, not realistically at full scale today |
-| Can I reproduce, modify, and redistribute the complete system under a standard open-source license? | Open-source reproducibility | Not fully |
+| Question                                                                                            | What it means               | Kimi K3                                   |
+| --------------------------------------------------------------------------------------------------- | --------------------------- | ----------------------------------------- |
+| Can I download the trained parameters?                                                              | Open weights                | Yes                                       |
+| Can a typical developer run it privately on local hardware?                                         | Local accessibility         | No, not realistically at full scale today |
+| Can I reproduce, modify, and redistribute the complete system under a standard open-source license? | Open-source reproducibility | Not fully                                 |
 
 Moonshot repeatedly calls K3 an open-source model in its product documentation. The more precise description is **open weight with a custom license**.
 
@@ -195,13 +198,13 @@ Moonshot's strongest claim is not model size. It is that an open-weight model no
 
 The company's own technical report is unusually direct about the limit: K3 **still trails Claude Fable 5 and GPT-5.6 Sol overall**. Its position changes by benchmark.
 
-| Benchmark | Kimi K3 | Claude Fable 5 | GPT-5.6 Sol | What the table suggests |
-| --- | ---: | ---: | ---: | --- |
-| DeepSWE | 67.5 | 70.0 | 73.0 | K3 trails both |
-| Terminal-Bench 2.1 | 88.3 | 88.0 | 88.8 | Near parity |
-| ProgramBench | 77.8 | 76.8 | 77.6 | K3 narrowly leads |
-| FrontierSWE | 81.2 | 86.6 | 71.3 | Between the two |
-| SWE-Marathon | 42.0 | 35.0 | 39.0 | K3 leads this evaluation |
+| Benchmark          | Kimi K3 | Claude Fable 5 | GPT-5.6 Sol | What the table suggests  |
+| ------------------ | ------: | -------------: | ----------: | ------------------------ |
+| DeepSWE            |    67.5 |           70.0 |        73.0 | K3 trails both           |
+| Terminal-Bench 2.1 |    88.3 |           88.0 |        88.8 | Near parity              |
+| ProgramBench       |    77.8 |           76.8 |        77.6 | K3 narrowly leads        |
+| FrontierSWE        |    81.2 |           86.6 |        71.3 | Between the two          |
+| SWE-Marathon       |    42.0 |           35.0 |        39.0 | K3 leads this evaluation |
 
 These are reported results, not a controlled experiment proving one model is universally better. The [benchmark footnotes](https://www.kimi.com/blog/kimi-k3) reveal why:
 
@@ -325,13 +328,13 @@ User → competing inference providers → same base weights, different services
 
 The bottleneck moves through the stack:
 
-| Closed-model bottleneck | Open-weight K3 bottleneck |
-| --- | --- |
-| Permission to access the model | Ability to obtain enough compute |
-| One provider's price | Provider competition and utilization |
-| One safety and policy layer | Operator-specific controls |
-| Vendor-controlled model lifecycle | Infrastructure and maintenance burden |
-| Limited inspection | Deep access, but incomplete training provenance |
+| Closed-model bottleneck           | Open-weight K3 bottleneck                       |
+| --------------------------------- | ----------------------------------------------- |
+| Permission to access the model    | Ability to obtain enough compute                |
+| One provider's price              | Provider competition and utilization            |
+| One safety and policy layer       | Operator-specific controls                      |
+| Vendor-controlled model lifecycle | Infrastructure and maintenance burden           |
+| Limited inspection                | Deep access, but incomplete training provenance |
 
 This is still a meaningful redistribution of power. A market with ten K3 providers is structurally different from a market with one K3 endpoint, even if an individual developer rents tokens in both cases.
 

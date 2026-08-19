@@ -52,8 +52,8 @@ jobs:
         uses: peter-evans/create-pull-request@271a8d0340265e3f60f2ea40e5a42ec7c2c0c987 # v7.0.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: update dependencies"
-          title: "chore: weekly dependency updates"
+          commit-message: 'chore: update dependencies'
+          title: 'chore: weekly dependency updates'
           body: |
             ## Automated Dependency Updates
 

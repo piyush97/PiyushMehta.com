@@ -33,7 +33,7 @@ ${staticPages
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>${page === '' || page === '/blog/' ? 'weekly' : 'monthly'}</changefreq>
     <priority>${page === '' ? '1.0' : page === '/blog/' ? '0.9' : '0.8'}</priority>
-  </url>`
+  </url>`,
   )
   .join('\n')}
 ${publishedPosts
@@ -43,7 +43,7 @@ ${publishedPosts
     <lastmod>${post.data.date.toISOString()}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>`
+  </url>`,
   )
   .join('\n')}
 </urlset>`;

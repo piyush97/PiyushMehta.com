@@ -1,26 +1,25 @@
 ---
-title: "Building an MCP Server in TypeScript: From Zero to Tool-Calling Agent in 90 Minutes"
-description: "A production-grade walkthrough of the Model Context Protocol, the SDK almost nobody is using right, and why every full-stack dev will build at least one MCP server before 2027."
+title: 'Building an MCP Server in TypeScript: From Zero to Tool-Calling Agent in 90 Minutes'
+description: 'A production-grade walkthrough of the Model Context Protocol, the SDK almost nobody is using right, and why every full-stack dev will build at least one MCP server before 2027.'
 date: 2026-06-02
-author: "Piyush Mehta"
-ogTemplate: "tech"
-ogTheme: "dark"
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
 tags:
-  - "MCP"
-  - "TypeScript"
-  - "AI Agents"
-  - "AI Coding"
-  - "OpenAI"
-  - "LLM"
-  - "Architecture"
-  - "Tutorial"
+  - 'MCP'
+  - 'TypeScript'
+  - 'AI Agents'
+  - 'AI Coding'
+  - 'OpenAI'
+  - 'LLM'
+  - 'Architecture'
+  - 'Tutorial'
 image:
-  url: "/blog/building-mcp-server-typescript/images/mcp-architecture-hero.svg"
-  alt: "MCP client-server architecture diagram showing a host process talking to a TypeScript MCP server that exposes tools, resources, and prompts over JSON-RPC."
+  url: '/blog/building-mcp-server-typescript/images/mcp-architecture-hero.svg'
+  alt: 'MCP client-server architecture diagram showing a host process talking to a TypeScript MCP server that exposes tools, resources, and prompts over JSON-RPC.'
 ---
 
-
-import ArchitectureDiagram from '../../../components/blog/ArchitectureDiagram.tsx'
+import ArchitectureDiagram from '../../../components/blog/ArchitectureDiagram.tsx';
 
 ## TL;DR
 
@@ -39,14 +38,21 @@ Let's go.
 
 MCP — the Model Context Protocol — is Anthropic's open standard for connecting LLMs to tools. It hit 1.0 in late 2025, and the spec is refreshingly small: JSON-RPC 2.0, three primitives (tools, resources, prompts), and a stdio or HTTP transport. That's it.
 
-What it isn't: a replacement for function calling. Your OpenAI `tools=` array still works. MCP is the *server* side of that conversation. Instead of hard-coding tool definitions into every agent script you write, you publish a server, register it in your host, and every LLM that can see it gets the same capabilities.
+What it isn't: a replacement for function calling. Your OpenAI `tools=` array still works. MCP is the _server_ side of that conversation. Instead of hard-coding tool definitions into every agent script you write, you publish a server, register it in your host, and every LLM that can see it gets the same capabilities.
 
 <figure>
-  <img src="/blog/building-mcp-server-typescript/images/mcp-architecture-hero.svg" alt="MCP client-server architecture diagram" loading="lazy" />
-  <figcaption>The host (Claude, Cursor, OpenCode) holds the LLM. Your TypeScript server holds the tools. They speak JSON-RPC over stdio or HTTP.</figcaption>
+  <img
+    src="/blog/building-mcp-server-typescript/images/mcp-architecture-hero.svg"
+    alt="MCP client-server architecture diagram"
+    loading="lazy"
+  />
+  <figcaption>
+    The host (Claude, Cursor, OpenCode) holds the LLM. Your TypeScript server holds the tools. They
+    speak JSON-RPC over stdio or HTTP.
+  </figcaption>
 </figure>
 
-The reason this matters more than "yet another API spec" is the **direction of leverage**. The first time you build an MCP server, you are doing it for *your* workflow. The second time, you start noticing the same patterns — auth, rate limiting, observability — and they look like every other API you have ever built. By the third server, you realize MCP is just a really nice contract for "give an LLM a typed handle to a real-world capability." Once that clicks, the design space opens up fast.
+The reason this matters more than "yet another API spec" is the **direction of leverage**. The first time you build an MCP server, you are doing it for _your_ workflow. The second time, you start noticing the same patterns — auth, rate limiting, observability — and they look like every other API you have ever built. By the third server, you realize MCP is just a really nice contract for "give an LLM a typed handle to a real-world capability." Once that clicks, the design space opens up fast.
 
 ## Why TypeScript, specifically
 
@@ -71,14 +77,14 @@ That is the entire dependency tree. No `express`, no `body-parser`, no nothing. 
 This is the smallest useful MCP server I could write that still does something real — a tool that converts JSON to a TypeScript interface. Useful for exactly one workflow, and a great template to copy.
 
 ```typescript
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
-import { z } from 'zod'
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
 
 const server = new McpServer({
   name: 'json-to-ts',
   version: '0.1.0',
-})
+});
 
 server.tool(
   'json_to_interface',
@@ -88,14 +94,14 @@ server.tool(
     interfaceName: z.string().default('Root').describe('Name of the generated interface'),
   },
   async ({ json, interfaceName }) => {
-    const parsed = JSON.parse(json) // schema-validated by Zod first
-    const ts = generateInterface(parsed, interfaceName)
-    return { content: [{ type: 'text', text: ts }] }
+    const parsed = JSON.parse(json); // schema-validated by Zod first
+    const ts = generateInterface(parsed, interfaceName);
+    return { content: [{ type: 'text', text: ts }] };
   },
-)
+);
 
-const transport = new StdioServerTransport()
-await server.connect(transport)
+const transport = new StdioServerTransport();
+await server.connect(transport);
 ```
 
 `server.tool()` is the entire API for registering a tool. You give it a name, a description the LLM reads, a Zod schema for inputs, and an async handler. That is the whole shape.
@@ -112,23 +118,19 @@ Wire it into Claude Desktop or Cursor and the LLM now has access to `json_to_int
 
 After about a dozen servers, the decision tree for which primitive to use stopped being obvious to me. Here is the rule I landed on:
 
-| Primitive | Use it when | Example |
-| --- | --- | --- |
-| **Tool** | The LLM should *decide* to call this based on user intent | `create_issue`, `search_docs`, `deploy_preview` |
-| **Resource** | The LLM should *always have access* to this data | `file://src/index.ts`, `db://schema` |
-| **Prompt** | The user explicitly types `/something` to trigger a workflow | `/review-pr`, `/release-notes`, `/triage` |
+| Primitive    | Use it when                                                  | Example                                         |
+| ------------ | ------------------------------------------------------------ | ----------------------------------------------- |
+| **Tool**     | The LLM should _decide_ to call this based on user intent    | `create_issue`, `search_docs`, `deploy_preview` |
+| **Resource** | The LLM should _always have access_ to this data             | `file://src/index.ts`, `db://schema`            |
+| **Prompt**   | The user explicitly types `/something` to trigger a workflow | `/review-pr`, `/release-notes`, `/triage`       |
 
-The mistake I keep seeing in early MCP servers: everything is a tool. That is wrong. Tools are for *the LLM's discretion*. If you want the LLM to always see the current branch name, expose it as a resource. If you want the user to opt in to a structured workflow, expose it as a prompt. Mixing these up is the #1 reason early MCP servers feel clunky.
+The mistake I keep seeing in early MCP servers: everything is a tool. That is wrong. Tools are for _the LLM's discretion_. If you want the LLM to always see the current branch name, expose it as a resource. If you want the user to opt in to a structured workflow, expose it as a prompt. Mixing these up is the #1 reason early MCP servers feel clunky.
 
 ```typescript
 // Resource: a file the LLM can always read
-server.resource(
-  'project-readme',
-  'file://README.md',
-  async (uri) => ({
-    contents: [{ uri: uri.href, text: await Bun.file('README.md').text() }],
-  }),
-)
+server.resource('project-readme', 'file://README.md', async (uri) => ({
+  contents: [{ uri: uri.href, text: await Bun.file('README.md').text() }],
+}));
 
 // Prompt: a slash-command-style workflow
 server.prompt(
@@ -136,42 +138,54 @@ server.prompt(
   'Review a pull request with project-specific guidelines',
   { prNumber: z.string() },
   ({ prNumber }) => ({
-    messages: [{
-      role: 'user',
-      content: { type: 'text', text: `Review PR #${prNumber} using our CONTRIBUTING.md standards.` },
-    }],
+    messages: [
+      {
+        role: 'user',
+        content: {
+          type: 'text',
+          text: `Review PR #${prNumber} using our CONTRIBUTING.md standards.`,
+        },
+      },
+    ],
   }),
-)
+);
 ```
 
 ## Step 4: The thing nobody tells you — Zod is your security boundary
 
-This is the spicy take. When an LLM calls your tool, you are letting a model execute code in your process. Zod is not just a typescript convenience — it is the *only* line of defense between "the model sent you what you expected" and "the model sent you `{ "json": "process.exit(1)" }` because some prompt injection told it to."
+This is the spicy take. When an LLM calls your tool, you are letting a model execute code in your process. Zod is not just a typescript convenience — it is the _only_ line of defense between "the model sent you what you expected" and "the model sent you `{ "json": "process.exit(1)" }` because some prompt injection told it to."
 
 Always validate. Always narrow. Never trust the description to be enough.
 
 ```typescript
 // Bad: trusting the LLM
-async ({ json }) => JSON.parse(json)
+async ({ json }) => JSON.parse(json);
 
 // Good: validating first
 const schema = z.object({
   url: z.string().url(),
   method: z.enum(['GET', 'POST']),
-})
-async ({ url, method }) => fetch(url, { method })
+});
+async ({ url, method }) => fetch(url, { method });
 ```
 
 I learned this the hard way. I shipped a server last month where I skipped Zod on a "trust me, it's a string" field. A user pasted a JSON payload that contained a `__proto__` key. My handler spread it into an options object. RCE on day one. Do not be like me. Zod everything.
 
 <figure>
-  <img src="/blog/building-mcp-server-typescript/images/mcp-request-flow.svg" alt="MCP request flow with latency annotations" loading="lazy" />
-  <figcaption>The 6-step request flow. Notice 95% of the latency is step 2 — the LLM itself. Your server budget is ~5ms. Spend it on validation, not optimization.</figcaption>
+  <img
+    src="/blog/building-mcp-server-typescript/images/mcp-request-flow.svg"
+    alt="MCP request flow with latency annotations"
+    loading="lazy"
+  />
+  <figcaption>
+    The 6-step request flow. Notice 95% of the latency is step 2 — the LLM itself. Your server
+    budget is ~5ms. Spend it on validation, not optimization.
+  </figcaption>
 </figure>
 
 ## Step 5: Streaming progress (the killer feature)
 
-Here is the part that surprised me most. MCP supports *progress notifications*. Your tool can stream "I am 40% done" back to the host, and the LLM can relay that to the user as it happens. This is what makes a 30-second tool feel responsive instead of broken.
+Here is the part that surprised me most. MCP supports _progress notifications_. Your tool can stream "I am 40% done" back to the host, and the LLM can relay that to the user as it happens. This is what makes a 30-second tool feel responsive instead of broken.
 
 > **Heads up on the `query_sqlite` tool** — it uses `node:sqlite`, which is stable on Node 22.5+ and on Bun. On older Node versions, swap the body for a `better-sqlite3` call and the rest of the server keeps working unchanged. The starter repo's `query_sqlite` tool ships with a clear error message if your runtime is too old, so you will know immediately.
 
@@ -181,17 +195,17 @@ server.tool(
   'Run a zero-downtime database migration. Streams progress as it runs.',
   { targetVersion: z.string() },
   async ({ targetVersion }, { sendProgress }) => {
-    const steps = ['snapshot', 'replicate', 'cutover', 'verify']
+    const steps = ['snapshot', 'replicate', 'cutover', 'verify'];
     for (let i = 0; i < steps.length; i++) {
-      await runStep(steps[i])
+      await runStep(steps[i]);
       await sendProgress({
         progress: (i + 1) / steps.length,
         message: `Completed ${steps[i]}`,
-      })
+      });
     }
-    return { content: [{ type: 'text', text: 'Migration complete' }] }
+    return { content: [{ type: 'text', text: 'Migration complete' }] };
   },
-)
+);
 ```
 
 I have a long-running `deploy_preview` tool that uses this. Before, the LLM would call it and the user would stare at a spinner for 45 seconds. Now they see "Building… 20%… 40%… uploading… 80%… done." The UX upgrade is enormous and the code change is 5 lines.
@@ -203,22 +217,24 @@ When you go to ship your server, you have two transport choices:
 - **stdio** — your server runs as a child process of the host. Zero network, zero auth, zero ops. Perfect for local dev tools.
 - **Streamable HTTP** — your server is a normal HTTP endpoint. Auth, rate limiting, observability, multi-tenant. Required for hosted, shareable servers.
 
-Start with stdio. Move to HTTP the day someone *other than you* needs to install your server. Premature HTTP is the MCP equivalent of premature microservices — you will spend a week on auth before you have a user.
+Start with stdio. Move to HTTP the day someone _other than you_ needs to install your server. Premature HTTP is the MCP equivalent of premature microservices — you will spend a week on auth before you have a user.
 
 ```typescript
 // stdio
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 
 // HTTP (streamable)
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
-import express from 'express'
-const app = express()
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import express from 'express';
+const app = express();
 app.post('/mcp', async (req, res) => {
-  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
-  await server.connect(transport)
-  await transport.handleRequest(req, res, req.body)
-})
-app.listen(3000)
+  const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: () => crypto.randomUUID(),
+  });
+  await server.connect(transport);
+  await transport.handleRequest(req, res, req.body);
+});
+app.listen(3000);
 ```
 
 That is a production-deployed MCP server. You can put that behind nginx, add a `/health` route, and you are live.
