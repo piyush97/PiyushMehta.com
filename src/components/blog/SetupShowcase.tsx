@@ -201,7 +201,7 @@ pacman -S bluez bluez-utils`,
   const selectedFile = configFiles.find((f) => f.id === selectedConfig)!;
 
   const copyToClipboard = (content: string) => {
-    navigator.clipboard.writeText(content);
+    void navigator.clipboard.writeText(content);
   };
 
   return (

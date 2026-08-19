@@ -32,7 +32,7 @@ export function generateCacheKey(params: Record<string, unknown>): string {
         acc[key] = params[key];
         return acc;
       },
-      {} as Record<string, unknown>
+      {} as Record<string, unknown>,
     );
 
   const paramString = JSON.stringify(sortedParams);
@@ -149,7 +149,7 @@ export class OGImageCache {
     const size = this.cache.size;
     const memoryUsage = Array.from(this.cache.values()).reduce(
       (acc, entry) => acc + entry.data.length,
-      0
+      0,
     );
 
     return {
@@ -171,7 +171,7 @@ export const ogImageCache = new OGImageCache();
 export async function withCache<T>(
   key: string,
   generator: () => Promise<T>,
-  options: CacheOptions = {}
+  options: CacheOptions = {},
 ): Promise<{
   data: T;
   cached: boolean;
@@ -226,7 +226,7 @@ export async function preloadCache(
     key: string;
     generator: () => Promise<Buffer>;
     options?: CacheOptions;
-  }>
+  }>,
 ) {
   const promises = preloadItems.map(async ({ key, generator, options }) => {
     const cacheKey = `og:${key}`;
@@ -262,7 +262,7 @@ export async function warmCache(commonTemplates: string[] = ['syntax', 'modern',
         return Buffer.from('');
       },
       options: { ttl: 86400 * 7 }, // 1 week for common items
-    }))
+    })),
   );
 
   await preloadCache(preloadItems);
@@ -307,7 +307,7 @@ export const prodCache = {
       await ogImageCache.set(testKey, Buffer.from('test'), { ttl: 1 });
       const result = await ogImageCache.get(testKey);
       return result.hit;
-    } catch (_error) {
+    } catch {
       return false;
     }
   },

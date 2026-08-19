@@ -42,7 +42,7 @@ export const GET: APIRoute = async ({ url }) => {
   try {
     const counts = await redis.hgetall(`reactions:${postId}`);
     const result = Object.fromEntries(
-      VALID_REACTIONS.map((r) => [r, counts ? Number(counts[r] ?? 0) : 0])
+      VALID_REACTIONS.map((r) => [r, counts ? Number(counts[r] ?? 0) : 0]),
     );
     return new Response(JSON.stringify(result), { headers: JSON_HEADERS });
   } catch {

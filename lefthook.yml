@@ -3,9 +3,9 @@ pre-commit:
     react-doctor:
       run: bunx react-doctor --staged --fail-on error
     check:
-      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
-      run: bunx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      glob: '*.{astro,css,js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,mdx}'
+      run: bunx vp check --fix --no-error-on-unmatched-pattern {staged_files}
       stage_fixed: true
     varlock-scan:
       run: bunx varlock scan --staged
-      fail_text: "Sensitive values detected in staged files. Remove secrets before committing."
+      fail_text: 'Sensitive values detected in staged files. Remove secrets before committing.'

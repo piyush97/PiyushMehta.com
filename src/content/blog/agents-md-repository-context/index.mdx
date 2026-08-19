@@ -1,28 +1,28 @@
 ---
-title: "AGENTS.md Is Becoming the Most Important File in Your Repository"
+title: 'AGENTS.md Is Becoming the Most Important File in Your Repository'
 description: "Coding agents now read your repository's instructions before they touch your code. Here is how to turn AGENTS.md from prompt sludge into the operating manual that makes agents genuinely useful."
 date: 2026-08-11T12:00:00-04:00
-author: "Piyush Mehta"
-ogTemplate: "tech"
-ogTheme: "dark"
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
 tags:
-  - "AI Agents"
-  - "AGENTS.md"
-  - "Coding Agents"
-  - "Developer Productivity"
-  - "GitHub Copilot"
-  - "OpenAI Codex"
-  - "Claude Code"
-  - "Software Engineering"
+  - 'AI Agents'
+  - 'AGENTS.md'
+  - 'Coding Agents'
+  - 'Developer Productivity'
+  - 'GitHub Copilot'
+  - 'OpenAI Codex'
+  - 'Claude Code'
+  - 'Software Engineering'
 image:
-  url: "/blog/agents-md-repository-context/images/cover.svg"
-  alt: "AGENTS.md shown as the operating manual between a coding agent and a software repository"
+  url: '/blog/agents-md-repository-context/images/cover.svg'
+  alt: 'AGENTS.md shown as the operating manual between a coding agent and a software repository'
 draft: false
 ---
 
 The most consequential file in your repository may no longer be `package.json`, `Dockerfile`, or `README.md`.
 
-It is increasingly the small Markdown file that tells an AI agent what all of those files *mean*.
+It is increasingly the small Markdown file that tells an AI agent what all of those files _mean_.
 
 Call it `AGENTS.md`, `CLAUDE.md`, or `.github/copilot-instructions.md`; the filename is less important than the shift behind it. Coding agents are moving from autocomplete into repositories, terminals, pull requests, and CI. In that world, the quality of the work is no longer determined only by the model you picked. It is determined by whether the repository can explain itself before the agent starts changing it.
 
@@ -52,12 +52,12 @@ For years, teams treated repository documentation as a thing written for the nex
 
 That makes the document's job more precise.
 
-| A weak instruction file | A useful instruction file |
-| --- | --- |
-| "Write clean, maintainable code." | "Use Biome; run `bun run ci` after TypeScript changes; do not add ESLint or Prettier." |
-| "Follow existing patterns." | "API routes live in `src/pages/api/`, set `prerender = false`, and return JSON `Response` objects." |
-| "Test your work." | "For a blog route, run `bun run build`; for a UI interaction, add or update the matching Playwright spec under `tests/`." |
-| "Be careful with security." | "Never log tokens or cookies. Keep CSRF and rate-limit changes isolated to `src/middleware/` and API routes." |
+| A weak instruction file           | A useful instruction file                                                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| "Write clean, maintainable code." | "Use Vite+; run `bun run ci` after TypeScript changes; do not add ESLint, Prettier, or Biome."                            |
+| "Follow existing patterns."       | "API routes live in `src/pages/api/`, set `prerender = false`, and return JSON `Response` objects."                       |
+| "Test your work."                 | "For a blog route, run `bun run build`; for a UI interaction, add or update the matching Playwright spec under `tests/`." |
+| "Be careful with security."       | "Never log tokens or cookies. Keep CSRF and rate-limit changes isolated to `src/middleware/` and API routes."             |
 
 The left column sounds reasonable. It is also nearly useless under pressure. The right column gives an agent a decision it can actually execute and gives a reviewer something concrete to enforce.
 
@@ -92,27 +92,32 @@ Here is the skeleton I would start with for a web application:
 # Repository guide
 
 ## What this service does
+
 One paragraph: users, core workflow, and production environment.
 
 ## Map
+
 - `src/pages/`: routes and API endpoints
 - `src/components/`: UI components
 - `src/utils/`: pure shared logic
 - `tests/`: Playwright end-to-end coverage
 
 ## Commands
+
 - Install: `bun install --frozen-lockfile`
 - Check: `bun run ci`
 - Build: `bun run build`
 - Test: `bun run test:smoke`
 
 ## Guardrails
+
 - Do not add dependencies without a concrete need.
 - Preserve public API response shapes unless the task explicitly changes them.
 - Never expose secrets or log credentials.
 - Make the smallest viable change; do not refactor unrelated code.
 
 ## Change recipe
+
 1. Read the closest existing implementation and relevant tests.
 2. State the intended behavior before editing when the requirement is ambiguous.
 3. Add or update the narrowest useful test.
@@ -197,4 +202,4 @@ That is not an AI question. It is the oldest software-engineering question there
 
 ---
 
-**Sources:** [Anthropic — *Agentic coding and persistent returns to expertise*](https://www.anthropic.com/research/claude-code-expertise), [OpenAI — *Unrolling the Codex agent loop*](https://openai.com/index/unrolling-the-codex-agent-loop/), [GitHub Docs — support for custom instructions](https://docs.github.com/en/copilot/reference/custom-instructions-support), [GitHub Docs — Copilot CLI customization guidance](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/comparing-cli-features), [Anthropic Docs — Claude Code memory](https://docs.anthropic.com/en/docs/claude-code/memory), and [GitHub Blog — updates to Copilot coding agent](https://github.blog/ai-and-ml/github-copilot/whats-new-with-github-copilot-coding-agent/).
+**Sources:** [Anthropic — _Agentic coding and persistent returns to expertise_](https://www.anthropic.com/research/claude-code-expertise), [OpenAI — _Unrolling the Codex agent loop_](https://openai.com/index/unrolling-the-codex-agent-loop/), [GitHub Docs — support for custom instructions](https://docs.github.com/en/copilot/reference/custom-instructions-support), [GitHub Docs — Copilot CLI customization guidance](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/comparing-cli-features), [Anthropic Docs — Claude Code memory](https://docs.anthropic.com/en/docs/claude-code/memory), and [GitHub Blog — updates to Copilot coding agent](https://github.blog/ai-and-ml/github-copilot/whats-new-with-github-copilot-coding-agent/).

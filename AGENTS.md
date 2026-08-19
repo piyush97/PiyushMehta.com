@@ -91,13 +91,13 @@ bun run start            # Alias for dev
 bun run build            # Full pipeline (typegen → images → astro → pagefind → sitemap → RSS)
 bun run preview          # Preview production build
 
-# Lint & Format (Biome)
-bun run lint             # Lint src/
+# Lint & Format (Vite+)
+bun run lint             # Lint with Oxlint
 bun run lint:fix         # Lint with auto-fix
-bun run format           # Format all files with Biome
-bun run check            # Full Biome check (lint + format + organize imports)
+bun run format           # Format with Oxfmt
+bun run check            # Full Vite+ check (format + lint + type checks)
 bun run check:write      # Check with auto-fix
-bun run ci               # CI check (read-only, no writes)
+bun run ci               # CI check (read-only)
 
 # Testing (Playwright)
 bun run test             # Run all Playwright tests
@@ -119,21 +119,16 @@ bun run doctor           # Run react-doctor analysis
 
 ## Code Conventions & Common Patterns
 
-### Formatting & Linting (Biome)
+### Formatting & Linting (Vite+)
 
-Configured in `biome.json`:
+Configured in `vite.config.ts`:
 - **Indent**: 2 spaces, `lf` line endings
-- **Line width**: 100
 - **Semicolons**: always
-- **Trailing commas**: es5
-- **Quotes**: single (JS), double (JSX)
-- **Organize Imports**: auto on save
+- **Quotes**: single
 
 Active lint rules:
-- `noUnusedVariables` (error), `useExhaustiveDependencies` (warn), `useHookAtTopLevel` (error)
-- `useAltText` (error), `useValidAnchor` (error)
-- `useConst` (error), `noDebugger` (error), `noDelete` (error), `noBlankTarget` (error)
-- `noArrayIndexKey` (warn), `noExplicitAny` (warn)
+- Oxlint's recommended correctness and TypeScript rules, with Vite+ import checks
+- Type-aware linting and TypeScript diagnostics through `tsgolint`
 
 ### Naming
 
@@ -261,10 +256,10 @@ export async function addToResendAudience(
 | `src/utils/github.ts` | GitHub repo fetch + formatting |
 | `src/utils/seo-redirects.js` | Trailing slash, www removal, path map redirects |
 | `vercel.json` | Clean URLs, redirects, security headers, CSP, cache policies |
-| `biome.json` | Linter + formatter configuration |
+| `vite.config.ts` | Vite+, Oxfmt, and Oxlint configuration |
 | `.env.schema` | All environment variables documented with types |
 | `scripts/build.mjs` | Build pipeline orchestrator |
-| `lefthook.yml` | Pre-commit hooks (Biome check, varlock scan, react-doctor) |
+| `lefthook.yml` | Pre-commit hooks (Vite+ check, varlock scan, react-doctor) |
 
 ---
 
@@ -275,11 +270,11 @@ export async function addToResendAudience(
 | **Runtime** | **Bun** (package manager + runtime). `packageManager: "bun@1.3.13"` in package.json |
 | **Node.js** | 22.x (engines field, CI pinning) |
 | **Package manager** | **Bun exclusively** — `bun install --frozen-lockfile` in CI. `bun.lock` is lockfile |
-| **Linter/Formatter** | **Biome** only — no ESLint, no Prettier |
+| **Linter/Formatter** | **Vite+** (Oxfmt + Oxlint) — no ESLint, Prettier, or Biome |
 | **TypeScript** | Strict mode via `astro/tsconfigs/strict`. TypeScript 6.x |
 | **Testing** | **Playwright** only — no Jest, no Vitest |
 | **CSS** | Tailwind CSS v4 + custom CSS variables |
-| **Pre-commit hooks** | Lefthook — runs Biome check + varlock scan + react-doctor on staged files |
+| **Pre-commit hooks** | Lefthook — runs Vite+ check + varlock scan + react-doctor on staged files |
 | **Env validation** | `@varlock/astro-integration` — type generation + schema validation |
 | **Package builds** | Controlled via `pnpm-workspace.yaml` — only specific packages allowed to build native deps |
 
@@ -315,14 +310,14 @@ node tests/newsletter.test.ts    # Newsletter unit tests (Node built-in test run
 ### CI Pipeline
 
 3 workflows in `.github/workflows/`:
-1. **ci-cd.yml** — Code Quality (Biome check) → Build Verification → Security Configuration Check (E2E tests commented out)
+1. **ci-cd.yml** — Code Quality (Vite+ check) → Build Verification → Security Configuration Check (E2E tests commented out)
 2. **codeql-analysis.yml** — CodeQL security scan + dependency review on push/PR and weekly
 3. **dependency-updates.yml** — Weekly `bun update` → verify → auto PR
 
 Key CI details:
 - step-security/harden-runner on all CI steps
 - Bun `--frozen-lockfile` for deterministic installs
-- Biome `ci` command (read-only, no writes)
+- Vite+ `check` command (read-only)
 - Build output verified via `dist/` directory existence
 
 ### Test Patterns
@@ -339,3 +334,31 @@ Key CI details:
 - All OG templates rendered + validated in multiple test suites
 - Accessibility checked on 5 core routes + 1 blog post
 - Cross-browser: Chromium, Firefox, WebKit, Pixel 5, iPhone 13
+
+<!--VITE PLUS START-->
+
+# Using Vite+, the Unified Toolchain for the Web
+
+This project is using Vite+, a unified toolchain built on top of Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. Vite+ wraps runtime management, package management, and frontend tooling in a single global CLI called `vp`. Vite+ is distinct from Vite, and it invokes Vite through `vp dev` and `vp build`. Run `vp help` to print a list of commands and `vp <command> --help` for information about a specific command.
+
+Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.dev/guide/.
+
+## Built-in Commands vs Scripts
+
+`vp <name>` runs a built-in command. `vp run <name>` runs a `package.json` script or a `vite.config.ts` task. Scripts cannot overwrite built-ins, so `vp dev` and `vp run dev` may do different things. Check `package.json` and `vite.config.ts` first, and run `vp run <name>` when the project defines a script or task with that name.
+
+## Tool Versions
+
+Run `vp toolchain` to show versions and relationships in the active Vite+
+release. Add a tool name to select part of the graph. For example, run
+`vp toolchain vite`. Use `--global` to ignore the local `vite-plus` package. Use
+`vp why <package>` to show the package-manager dependency graph.
+
+## Review Checklist
+
+- [ ] Run `vp install` after pulling remote changes and before getting started.
+- [ ] Run `vp check` and `vp run test` to validate static checks and Playwright tests.
+- [ ] Check if there are `vite.config.ts` tasks or `package.json` scripts necessary for validation, run via `vp run <script>`.
+- [ ] If setup, runtime, or package-manager behavior looks wrong, run `vp env doctor` and include its output when asking for help.
+
+<!--VITE PLUS END-->

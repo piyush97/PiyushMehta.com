@@ -3,8 +3,8 @@ title: 'From Nginx Proxy Manager to SWAG: A Powerful Migration Journey'
 description: 'Discover why I migrated from Nginx Proxy Manager to SWAG by LinuxServer.io, the challenges faced, and the transformative benefits that made this switch a game-changer for my self-hosted infrastructure.'
 date: 2025-06-21
 author: 'Piyush Mehta'
-ogTemplate: "tech"
-ogTheme: "dark"
+ogTemplate: 'tech'
+ogTheme: 'dark'
 tags:
   [
     'SWAG',
@@ -39,7 +39,7 @@ Before diving into the migration process, let's address the fundamental question
 Nginx Proxy Manager has been a beloved solution in the self-hosting community for good reasons:
 
 - 🖥️ **User-friendly web interface** that simplifies SSL certificate management
-- 🚀 **Easy setup** with Docker Compose 
+- 🚀 **Easy setup** with Docker Compose
 - 🔒 **Let's Encrypt integration** for automated certificate renewal
 - 🧩 **Proxy host management** through an intuitive dashboard
 
@@ -67,11 +67,13 @@ This all-in-one approach eliminates the need for multiple containers while provi
 The first challenge was mental: Nginx Proxy Manager abstracts much of the Nginx configuration through its UI, while SWAG embraces configuration files directly.
 
 **NPM Approach:**
+
 ```
 Configure everything through web UI → Black box magic → Working proxy
 ```
 
 **SWAG Approach:**
+
 ```
 Edit nginx config files → Restart container → Working proxy with complete control
 ```
@@ -142,11 +144,13 @@ The most labor-intensive part was converting each NPM proxy host to a SWAG confi
 For example, here's how I converted a Nextcloud instance:
 
 **In NPM (UI Configuration):**
+
 - Domain: `nextcloud.example.com`
 - Forward to: `http://nextcloud:80`
 - SSL: Enabled with Let's Encrypt
 
 **In SWAG (Configuration File):**
+
 ```nginx
 server {
     listen 443 ssl;
@@ -225,12 +229,12 @@ By consolidating multiple functions into a single container, SWAG simplifies my 
 
 After migrating to SWAG, I noticed measurable performance improvements:
 
-| Metric | Nginx Proxy Manager | SWAG |
-|--------|---------------------|------|
-| Response Time | 120ms | 85ms |
-| TLS Handshake | 85ms | 60ms |
-| Max Concurrent Connections | Good | Excellent |
-| Memory Usage | 250MB | 180MB |
+| Metric                     | Nginx Proxy Manager | SWAG      |
+| -------------------------- | ------------------- | --------- |
+| Response Time              | 120ms               | 85ms      |
+| TLS Handshake              | 85ms                | 60ms      |
+| Max Concurrent Connections | Good                | Excellent |
+| Memory Usage               | 250MB               | 180MB     |
 
 ## The Trade-offs: What You're Giving Up
 

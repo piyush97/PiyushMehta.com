@@ -45,19 +45,19 @@ function updateImagePaths(filePath, blogSlug) {
   // Update relative image paths in markdown syntax
   let updatedContent = content.replace(
     /!\[([^\]]*)\]\(\.\/images\/([^)]+)\)/g,
-    `![$1](/blog/${blogSlug}/images/$2)`
+    `![$1](/blog/${blogSlug}/images/$2)`,
   );
 
   // Update frontmatter image paths
   updatedContent = updatedContent.replace(
     /url:\s*["']\.\/images\/([^"']+)["']/g,
-    `url: "/blog/${blogSlug}/images/$1"`
+    `url: "/blog/${blogSlug}/images/$1"`,
   );
 
   // Handle the case where there's an extra "images" in the path (like in the HTTPS post)
   updatedContent = updatedContent.replace(
     /url:\s*["']\.\/images\/images\/([^"']+)["']/g,
-    `url: "/blog/${blogSlug}/images/$1"`
+    `url: "/blog/${blogSlug}/images/$1"`,
   );
 
   if (content !== updatedContent) {

@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (!allowed) {
       return new Response(
         JSON.stringify({ success: false, message: 'Too many requests. Please try again later.' }),
-        { status: 429, headers: { 'Content-Type': 'application/json' } }
+        { status: 429, headers: { 'Content-Type': 'application/json' } },
       );
     }
 
@@ -106,7 +106,7 @@ export const POST: APIRoute = async ({ request }) => {
         success: true,
         message: 'Almost there! Check your inbox to confirm your subscription.',
       }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error) {
     console.error('Newsletter subscription error:', error);
@@ -115,7 +115,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
     return new Response(
       JSON.stringify({ success: false, message: 'Failed to subscribe. Please try again later.' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: { 'Content-Type': 'application/json' } },
     );
   }
 };

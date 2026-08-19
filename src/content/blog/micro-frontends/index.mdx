@@ -1,32 +1,27 @@
 ---
-title: "What the Hell is microfrontend?"
-description: "\"Ever heard the word Micro-Frontend and wondered what the hell is that? Today youll know all about it!\""
+title: 'What the Hell is microfrontend?'
+description: '"Ever heard the word Micro-Frontend and wondered what the hell is that? Today youll know all about it!"'
 date: 2020-09-05
-author: "Piyush Mehta"
+author: 'Piyush Mehta'
 tags:
-  - "React"
-  - "Microfrontend"
-  - "frontend"
-  - "web development"
-  - "piyush mehta"
-ogTemplate: "tech"
-ogTheme: "dark"
+  - 'React'
+  - 'Microfrontend'
+  - 'frontend'
+  - 'web development'
+  - 'piyush mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
 image:
-  url: "/blog/micro-frontends/images/deployment.png"
-  alt: "What the Hell is microfrontend?"
+  url: '/blog/micro-frontends/images/deployment.png'
+  alt: 'What the Hell is microfrontend?'
 ---
-
-
-
 
 The term Micro Frontends first came up in <a target="__blank" href="https://www.thoughtworks.com/radar/techniques/micro-frontends">ThoughtWorks Technology Radar</a> at the end of 2016.
 
 Micro-frontend architecture is a design approach in which a front-end app is decomposed into individual, semi-independent “microapps” working loosely together.
 This concept is vaguely inspired by, and named after, microservices.
 
-
-
->The concept of Micro Frontend Architecture is to think about a web application as a composition of features owned by different independent teams. Each team having a distinct area of business that it specializes in.
+> The concept of Micro Frontend Architecture is to think about a web application as a composition of features owned by different independent teams. Each team having a distinct area of business that it specializes in.
 
 The current trend is to build a feature-rich and powerful browser application, aka single page app, which sits on top of a micro service architecture. Over time the frontend layer, often developed by a separate team, grows and gets more difficult to maintain. That’s what we call a Frontend Monolith.
 
@@ -46,7 +41,6 @@ The current trend is to build a feature-rich and powerful browser application, a
 1. Simple, decoupled codebases
 1. Independent deployment
 
-
 ## The easiest beginner friendly way to begin with (React) Micro frontend
 
 ```bash
@@ -56,51 +50,40 @@ npm i react-microfrontend
 ### Import
 
 ```javascript
- // index.js
+// index.js
 
- import { ImportMicrofrontend } from 'react-microfrontend';
+import { ImportMicrofrontend } from 'react-microfrontend';
 
- ReactDOM.render((
-   <ImportMicrofrontend>
-     <App />
-   </ImportMicrofrontend>
- ), document.getElementById('root'));
+ReactDOM.render(
+  <ImportMicrofrontend>
+    <App />
+  </ImportMicrofrontend>,
+  document.getElementById('root'),
+);
 
+// App.js
+import { withMicrofrontend } from 'react-microfrontend';
 
- // App.js
- import { withMicrofrontend } from 'react-microfrontend';
+const App = ({ microfrontends }) => (
+  <div>
+    {Object.keys(microfrontends).map((microfrontend) => (
+      <div>{microfrontend.content}</div>
+    ))}
+  </div>
+);
 
- const App = ({ microfrontends }) => (
-   <div>
-     {
-       Object.keys(microfrontends).map(microfrontend => (
-         <div>
-           {microfrontend.content}
-         </div>
-       ))
-     }
-   </div>
- );
-
- export default withMicrofrontend(App);
+export default withMicrofrontend(App);
 ```
 
 ### Export
 
 ```javascript
-
 import App from './App';
 import { ExportMicrofrontend } from 'react-microfrontend';
 
 ExportMicrofrontend(App);
-
 ```
 
->In short, micro frontends are all about slicing up big and scary things into smaller, more manageable pieces, and then being explicit about the dependencies between them. Our technology choices, our codebases, our teams, and our release processes should all be able to operate and evolve independently of each other, without excessive coordination.
-
-
-
-
-
+> In short, micro frontends are all about slicing up big and scary things into smaller, more manageable pieces, and then being explicit about the dependencies between them. Our technology choices, our codebases, our teams, and our release processes should all be able to operate and evolve independently of each other, without excessive coordination.
 
 Fin!

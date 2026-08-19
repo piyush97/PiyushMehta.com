@@ -1,29 +1,29 @@
 ---
-title: "Zero-Downtime Database Migration: Scaling from 10M to 100M Users"
-description: "A comprehensive case study of migrating a 50TB PostgreSQL database to support 10x user growth with zero downtime, improved performance, and 40% cost reduction."
+title: 'Zero-Downtime Database Migration: Scaling from 10M to 100M Users'
+description: 'A comprehensive case study of migrating a 50TB PostgreSQL database to support 10x user growth with zero downtime, improved performance, and 40% cost reduction.'
 date: 2025-07-13
-author: "Piyush Mehta"
-ogTemplate: "blog"
-ogTheme: "dark"
+author: 'Piyush Mehta'
+ogTemplate: 'blog'
+ogTheme: 'dark'
 tags:
-  - "database"
-  - "postgresql"
-  - "migration"
-  - "scalability"
-  - "architecture"
-  - "devops"
-  - "performance"
-  - "case study"
-  - "zero downtime"
+  - 'database'
+  - 'postgresql'
+  - 'migration'
+  - 'scalability'
+  - 'architecture'
+  - 'devops'
+  - 'performance'
+  - 'case study'
+  - 'zero downtime'
 image:
-  url: "/blog/zero-downtime-database-migration-at-scale/images/database-migration-hero.svg"
-  alt: "Zero-downtime database migration architecture diagram showing old and new database systems"
+  url: '/blog/zero-downtime-database-migration-at-scale/images/database-migration-hero.svg'
+  alt: 'Zero-downtime database migration architecture diagram showing old and new database systems'
 ---
 
-import MigrationTimeline from '../../../components/blog/MigrationTimeline.tsx'
-import PerformanceMetrics from '../../../components/blog/PerformanceMetrics.tsx'
-import RiskAssessmentMatrix from '../../../components/blog/RiskAssessmentMatrix.tsx'
-import ArchitectureDiagram from '../../../components/blog/ArchitectureDiagram.tsx'
+import MigrationTimeline from '../../../components/blog/MigrationTimeline.tsx';
+import PerformanceMetrics from '../../../components/blog/PerformanceMetrics.tsx';
+import RiskAssessmentMatrix from '../../../components/blog/RiskAssessmentMatrix.tsx';
+import ArchitectureDiagram from '../../../components/blog/ArchitectureDiagram.tsx';
 
 When your startup grows from 10 million to 100 million users in 18 months, your database becomes both your greatest asset and your biggest bottleneck. This is the story of how we successfully migrated a 50TB PostgreSQL database with **zero downtime**, improved performance by 300%, and reduced costs by 40% — all while maintaining business continuity during our most critical growth period.
 
@@ -43,12 +43,12 @@ The existing PostgreSQL 12 cluster was showing clear signs of strain:
 
 ```sql
 -- Query performance had degraded significantly
-SELECT 
+SELECT
   query,
   calls,
   mean_time,
   max_time
-FROM pg_stat_statements 
+FROM pg_stat_statements
 WHERE mean_time > 1000
 ORDER BY mean_time DESC;
 
@@ -62,20 +62,22 @@ ORDER BY mean_time DESC;
 My first step wasn't jumping into solutions — it was understanding the problem completely. I spent two weeks analyzing every aspect of our system:
 
 **Database Performance Audit:**
+
 ```sql
 -- Analyzed connection patterns
-SELECT datname, numbackends, xact_commit, xact_rollback 
+SELECT datname, numbackends, xact_commit, xact_rollback
 FROM pg_stat_database;
 
 -- Identified table bloat and index efficiency
-SELECT schemaname, tablename, 
+SELECT schemaname, tablename,
        n_tup_ins, n_tup_upd, n_tup_del,
        last_vacuum, last_autovacuum
-FROM pg_stat_user_tables 
+FROM pg_stat_user_tables
 ORDER BY n_tup_upd + n_tup_del DESC;
 ```
 
 **Key Findings:**
+
 - 60% of queries hitting unindexed columns
 - Table bloat reaching 40% on core user tables
 - Connection pool exhaustion during peak hours
@@ -111,26 +113,26 @@ resource "aws_rds_cluster" "primary" {
   cluster_identifier = "app-primary-v2"
   engine            = "aurora-postgresql"
   engine_version    = "14.6"
-  
+
   database_name = var.database_name
   master_username = var.master_username
   master_password = var.master_password
-  
+
   # Performance optimizations
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.optimized.name
-  
+
   # High availability
   backup_retention_period = 7
   preferred_backup_window = "03:00-04:00"
   preferred_maintenance_window = "sun:04:00-sun:05:00"
-  
+
   # Monitoring
   enabled_cloudwatch_logs_exports = ["postgresql"]
-  
+
   # Security
   storage_encrypted = true
   kms_key_id       = aws_kms_key.rds.arn
-  
+
   tags = {
     Environment = "production"
     Purpose     = "migration-target"
@@ -152,8 +154,8 @@ ALTER SYSTEM SET max_wal_senders = 10;
 CREATE PUBLICATION migration_pub FOR ALL TABLES;
 
 -- On target database: Create subscription
-CREATE SUBSCRIPTION migration_sub 
-CONNECTION 'host=source-db.example.com port=5432 user=repl_user dbname=production' 
+CREATE SUBSCRIPTION migration_sub
+CONNECTION 'host=source-db.example.com port=5432 user=repl_user dbname=production'
 PUBLICATION migration_pub;
 ```
 
@@ -174,7 +176,7 @@ class MigrationMonitor {
     const sourceResult = await this.sourceDb.query(`
       SELECT pg_current_wal_lsn() as current_lsn
     `);
-    
+
     const targetResult = await this.targetDb.query(`
       SELECT 
         latest_end_lsn,
@@ -183,10 +185,10 @@ class MigrationMonitor {
       FROM pg_stat_subscription 
       WHERE subname = 'migration_sub'
     `);
-    
+
     const lagSeconds = targetResult.rows[0].lag_seconds;
     this.metrics.setGauge('replication_lag_seconds', lagSeconds);
-    
+
     if (lagSeconds > 10) {
       await this.sendAlert('High replication lag detected', lagSeconds);
     }
@@ -194,19 +196,19 @@ class MigrationMonitor {
 
   async validateDataConsistency() {
     const tables = await this.getTablesForValidation();
-    
+
     for (const table of tables) {
       const sourceCount = await this.getTableCount(this.sourceDb, table);
       const targetCount = await this.getTableCount(this.targetDb, table);
-      
+
       const consistency = (targetCount / sourceCount) * 100;
       this.metrics.setGauge(`consistency_${table}`, consistency);
-      
+
       if (consistency < 99.9) {
         await this.sendAlert(`Data consistency issue in ${table}`, {
           sourceCount,
           targetCount,
-          consistency
+          consistency,
         });
       }
     }
@@ -223,20 +225,20 @@ To enable seamless switching between databases, I implemented a database abstrac
 ```javascript
 class DatabaseManager {
   constructor() {
-    this.primaryPool = new Pool({ 
+    this.primaryPool = new Pool({
       connectionString: process.env.PRIMARY_DB_URL,
       max: 20,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 2000,
     });
-    
-    this.secondaryPool = new Pool({ 
+
+    this.secondaryPool = new Pool({
       connectionString: process.env.SECONDARY_DB_URL,
       max: 20,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 2000,
     });
-    
+
     this.readStrategy = process.env.READ_STRATEGY || 'primary';
     this.writeStrategy = process.env.WRITE_STRATEGY || 'primary';
   }
@@ -249,20 +251,23 @@ class DatabaseManager {
   async executeWrite(query, params) {
     const pool = this.getWritePool();
     const result = await this.executeQuery(pool, query, params);
-    
+
     // Log all writes for audit during migration
     if (process.env.MIGRATION_MODE === 'active') {
       await this.logMigrationWrite(query, params, result);
     }
-    
+
     return result;
   }
 
   getReadPool() {
     switch (this.readStrategy) {
-      case 'secondary': return this.secondaryPool;
-      case 'split': return Math.random() > 0.5 ? this.primaryPool : this.secondaryPool;
-      default: return this.primaryPool;
+      case 'secondary':
+        return this.secondaryPool;
+      case 'split':
+        return Math.random() > 0.5 ? this.primaryPool : this.secondaryPool;
+      default:
+        return this.primaryPool;
     }
   }
 
@@ -296,15 +301,22 @@ class FeatureFlagManager {
 
     // Gradual rollout based on user ID
     const userHash = this.hashUserId(userId);
-    return userHash < (flag.percentage * 0.01);
+    return userHash < flag.percentage * 0.01;
   }
 
   hashUserId(userId) {
     // Consistent hash for user-based rollout
-    return (userId.toString().split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0) >>> 0) / 4294967295;
+    return (
+      (userId
+        .toString()
+        .split('')
+        .reduce((a, b) => {
+          a = (a << 5) - a + b.charCodeAt(0);
+          return a & a;
+        }, 0) >>>
+        0) /
+      4294967295
+    );
   }
 }
 ```
@@ -330,6 +342,7 @@ Three days before the cutover, I ran through our comprehensive checklist:
 The actual cutover was meticulously planned for our lowest traffic period (2 AM - 6 AM PST):
 
 **Hour 1 (2:00-3:00 AM): Preparation**
+
 ```bash
 # Stop logical replication to ensure data consistency
 psql -h target-db -c "ALTER SUBSCRIPTION migration_sub DISABLE;"
@@ -342,6 +355,7 @@ redis-cli set maintenance_mode "true"
 ```
 
 **Hour 2 (3:00-4:00 AM): Database Switch**
+
 ```bash
 # Update DNS to point to new database
 aws route53 change-resource-record-sets --hosted-zone-id Z123 \
@@ -356,6 +370,7 @@ kubectl rollout restart deployment/api-server
 ```
 
 **Hour 3 (4:00-5:00 AM): Validation**
+
 ```bash
 # Run comprehensive validation suite
 ./scripts/post-migration-validation.sh
@@ -365,12 +380,13 @@ watch -n 5 'curl -s http://localhost:3000/health/database'
 ```
 
 **Hour 4 (5:00-6:00 AM): Optimization**
+
 ```sql
 -- Update statistics on new database
 ANALYZE;
 
 -- Create missing indexes identified during testing
-CREATE INDEX CONCURRENTLY idx_users_activity_optimized 
+CREATE INDEX CONCURRENTLY idx_users_activity_optimized
 ON users(last_activity) WHERE status = 'active';
 ```
 
@@ -397,11 +413,11 @@ Some cached data was inconsistent with the new database. I implemented real-time
 ```javascript
 async function warmCriticalCaches() {
   const criticalQueries = [
-    'SELECT * FROM users WHERE status = \'active\' LIMIT 1000',
+    "SELECT * FROM users WHERE status = 'active' LIMIT 1000",
     'SELECT * FROM products WHERE featured = true',
-    'SELECT * FROM user_sessions WHERE expires_at > NOW()'
+    'SELECT * FROM user_sessions WHERE expires_at > NOW()',
   ];
-  
+
   for (const query of criticalQueries) {
     try {
       await db.query(query);
@@ -424,17 +440,19 @@ export const migrationData = {
   memoryUsage: { macos: 8.2, arch: 4.1 },
   dockerBuild: { macos: 45, arch: 18 },
   ideStartup: { macos: 3.2, arch: 1.9 },
-  fileSearch: { macos: 2.1, arch: 0.8 }
+  fileSearch: { macos: 2.1, arch: 0.8 },
 };
 
 <PerformanceMetrics data={migrationData} client:visible />
 
 **Database Performance:**
+
 - Query response time: 95th percentile improved from 2.3s to 0.7s
 - Throughput: Increased from 15K QPS to 45K QPS
 - Connection handling: Zero connection pool exhaustion events
 
 **Business Impact:**
+
 - Page load times: Average improved by 40%
 - User engagement: 25% increase in session duration
 - Revenue impact: Zero downtime = $0 lost revenue during migration
@@ -467,15 +485,16 @@ Savings: $9,950/month (35% reduction)
 After the successful cutover, I implemented several optimizations:
 
 **1. Query Optimization**
+
 ```sql
 -- Optimized frequently-used query that was causing issues
 CREATE MATERIALIZED VIEW user_activity_summary AS
-SELECT 
+SELECT
   user_id,
   COUNT(*) as total_actions,
   MAX(created_at) as last_activity,
   AVG(duration) as avg_duration
-FROM user_activities 
+FROM user_activities
 WHERE created_at > NOW() - INTERVAL '30 days'
 GROUP BY user_id;
 
@@ -488,11 +507,12 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Automated refresh every hour
-SELECT cron.schedule('refresh-activity-summary', '0 * * * *', 
+SELECT cron.schedule('refresh-activity-summary', '0 * * * *',
                      'SELECT refresh_user_activity_summary();');
 ```
 
 **2. Connection Pool Optimization**
+
 ```javascript
 // Implemented intelligent connection pooling
 class IntelligentPool {
@@ -507,7 +527,7 @@ class IntelligentPool {
       const config = {
         ...this.baseConfig,
         max: this.getMaxConnections(priority),
-        priority: priority
+        priority: priority,
       };
       this.pools.set(priority, new Pool(config));
     }
@@ -517,11 +537,16 @@ class IntelligentPool {
   getMaxConnections(priority) {
     const base = this.baseConfig.max || 20;
     switch (priority) {
-      case 'critical': return Math.floor(base * 0.5);
-      case 'high': return Math.floor(base * 0.3);
-      case 'normal': return Math.floor(base * 0.15);
-      case 'low': return Math.floor(base * 0.05);
-      default: return base;
+      case 'critical':
+        return Math.floor(base * 0.5);
+      case 'high':
+        return Math.floor(base * 0.3);
+      case 'normal':
+        return Math.floor(base * 0.15);
+      case 'low':
+        return Math.floor(base * 0.05);
+      default:
+        return base;
     }
   }
 }
@@ -539,25 +564,30 @@ One of the most important lessons was the importance of stakeholder communicatio
 - Success metrics and business impact projections
 
 **Template I used:**
+
 ```markdown
 ## Migration Status Update - Day X
 
 ### Current Status: GREEN 🟢
+
 - Replication lag: 0.8 seconds (target: <2 seconds)
 - Data consistency: 99.97% (target: >99.9%)
 - Application compatibility tests: 47/50 passed
 
 ### Today's Accomplishments:
+
 - Completed connection pool optimization
 - Resolved index creation performance issue
 - Validated rollback procedures
 
 ### Tomorrow's Focus:
+
 - Final load testing with 120% expected traffic
 - Pre-cutover checklist validation
 - Team coordination dry run
 
 ### Risks and Mitigations:
+
 - Medium Risk: Potential connection exhaustion
   - Mitigation: Emergency scaling procedures tested and ready
 ```
@@ -589,38 +619,38 @@ log() {
 
 validate_prerequisites() {
   log "Validating prerequisites..."
-  
+
   # Check replication lag
   LAG=$(psql -h target-db -t -c "SELECT EXTRACT(EPOCH FROM (now() - latest_end_time)) FROM pg_stat_subscription WHERE subname = 'migration_sub';")
   if (( $(echo "$LAG > 2" | bc -l) )); then
     log "ERROR: Replication lag too high: ${LAG}s"
     exit 1
   fi
-  
+
   # Validate application health
   if ! curl -f http://localhost:3000/health; then
     log "ERROR: Application not healthy"
     exit 1
   fi
-  
+
   log "Prerequisites validated successfully"
 }
 
 perform_cutover() {
   log "Starting cutover process..."
-  
+
   # Stop replication
   psql -h target-db -c "ALTER SUBSCRIPTION migration_sub DISABLE;"
-  
+
   # Update feature flags
   redis-cli hset migration:feature_flags new_db_writes '{"percentage": 100}'
-  
+
   # Wait for application restarts
   sleep 30
-  
+
   # Validate new connections
   validate_new_database_connections
-  
+
   log "Cutover completed successfully"
 }
 
@@ -645,27 +675,27 @@ I built comprehensive monitoring that tracked:
 const migrationMetrics = {
   replicationLag: new prometheus.Gauge({
     name: 'migration_replication_lag_seconds',
-    help: 'Replication lag in seconds'
+    help: 'Replication lag in seconds',
   }),
-  
+
   dataConsistency: new prometheus.Gauge({
     name: 'migration_data_consistency_percentage',
     help: 'Data consistency percentage',
-    labelNames: ['table_name']
+    labelNames: ['table_name'],
   }),
-  
+
   queryPerformance: new prometheus.Histogram({
     name: 'migration_query_duration_seconds',
     help: 'Query performance comparison',
     labelNames: ['database', 'query_type'],
-    buckets: [0.1, 0.5, 1, 2, 5, 10]
+    buckets: [0.1, 0.5, 1, 2, 5, 10],
   }),
-  
+
   businessMetrics: new prometheus.Counter({
     name: 'migration_business_impact_total',
     help: 'Business impact metrics',
-    labelNames: ['metric_type', 'impact_level']
-  })
+    labelNames: ['metric_type', 'impact_level'],
+  }),
 };
 ```
 
@@ -679,19 +709,23 @@ One of my proudest achievements was creating a comprehensive migration playbook 
 # Database Migration Playbook
 
 ## Phase 1: Assessment (Week 1-2)
+
 ### Technical Assessment
+
 - [ ] Database performance audit
 - [ ] Query analysis and optimization opportunities
 - [ ] Infrastructure capacity planning
 - [ ] Security and compliance review
 
 ### Business Impact Analysis
+
 - [ ] Downtime cost calculation
 - [ ] Performance improvement projections
 - [ ] Resource requirement estimation
 - [ ] Risk vs. benefit analysis
 
 ### Stakeholder Alignment
+
 - [ ] Technical team consensus on approach
 - [ ] Business team approval and timeline
 - [ ] Executive sponsorship confirmation
@@ -723,6 +757,7 @@ I used this project as an opportunity to develop other team members:
 The migration taught us valuable lessons about preparing for the next order of magnitude:
 
 **1. Horizontal Sharding Strategy**
+
 ```sql
 -- Prepared sharding-ready schema design
 CREATE TABLE users_shard_1 (
@@ -730,7 +765,7 @@ CREATE TABLE users_shard_1 (
 ) INHERITS (users);
 
 CREATE TABLE users_shard_2 (
-  LIKE users INCLUDING ALL  
+  LIKE users INCLUDING ALL
 ) INHERITS (users);
 
 -- Sharding function for future implementation
@@ -743,6 +778,7 @@ $$ LANGUAGE plpgsql;
 ```
 
 **2. Event-Driven Architecture**
+
 ```javascript
 // Prepared for eventual microservices migration
 class EventBus {
@@ -752,12 +788,10 @@ class EventBus {
 
   async publish(eventType, payload) {
     const handlers = this.handlers.get(eventType) || [];
-    const promises = handlers.map(handler => 
-      this.safeExecute(handler, payload)
-    );
-    
+    const promises = handlers.map((handler) => this.safeExecute(handler, payload));
+
     await Promise.allSettled(promises);
-    
+
     // Prepare for external message queue
     if (process.env.EVENT_BUS_EXTERNAL) {
       await this.publishExternal(eventType, payload);
@@ -767,6 +801,7 @@ class EventBus {
 ```
 
 **3. Multi-Region Strategy**
+
 ```yaml
 # Terraform for multi-region setup
 resource "aws_rds_global_cluster" "global" {
@@ -779,12 +814,12 @@ resource "aws_rds_global_cluster" "global" {
 
 resource "aws_rds_cluster" "primary" {
   count = length(var.regions)
-  
+
   cluster_identifier     = "app-${var.regions[count.index]}"
   engine                = aws_rds_global_cluster.global.engine
   engine_version        = aws_rds_global_cluster.global.engine_version
   global_cluster_identifier = aws_rds_global_cluster.global.id
-  
+
   # Primary region configuration
   depends_on = [aws_rds_global_cluster.global]
 }
@@ -821,20 +856,22 @@ This project fundamentally changed how I approach complex engineering challenges
 
 ---
 
-*The techniques and strategies outlined in this case study have been used successfully in multiple migration projects. If you're facing similar scaling challenges, I'd be happy to discuss how these approaches might apply to your specific situation.*
+_The techniques and strategies outlined in this case study have been used successfully in multiple migration projects. If you're facing similar scaling challenges, I'd be happy to discuss how these approaches might apply to your specific situation._
 
 ## Additional Resources
 
 ### Related Reading
+
 - [PostgreSQL Logical Replication Documentation](https://www.postgresql.org/docs/current/logical-replication.html) - Official PostgreSQL logical replication guide
 - [AWS Aurora Migration Best Practices](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Migrate.html) - AWS official migration documentation
 - [Zero Downtime Migrations at Scale](https://engineering.fb.com/2011/06/27/core-data/the-underlying-technology-of-messages/) - Facebook's approach to large-scale migrations
 
 ### Tools & Technologies Mentioned
+
 - **PostgreSQL Logical Replication** - For zero-downtime data synchronization
 - **AWS Aurora Serverless v2** - Auto-scaling database infrastructure
 - **Terraform** - Infrastructure as code for reproducible deployments
 - **Prometheus & Grafana** - Monitoring and observability stack
 - **Redis** - Feature flag management and caching
 
-*Want to discuss scaling challenges or database optimization strategies? Feel free to [reach out](/contact-me) — I love talking about complex engineering problems and solutions.*
+_Want to discuss scaling challenges or database optimization strategies? Feel free to [reach out](/contact-me) — I love talking about complex engineering problems and solutions._

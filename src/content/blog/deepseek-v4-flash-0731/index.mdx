@@ -1,21 +1,21 @@
 ---
-title: "Running a Coding Agent on DeepSeek V4 Flash: The 1M-Context Cheap Workhorse"
+title: 'Running a Coding Agent on DeepSeek V4 Flash: The 1M-Context Cheap Workhorse'
 description: "What one million tokens of context, DeepSeek's prefix caching, and a sub-cent per run price actually mean when you build an AI coding agent. A practical field note, not a benchmark."
 date: 2026-08-05T12:00:00-04:00
-author: "Piyush Mehta"
-ogTemplate: "tech"
-ogTheme: "dark"
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
 tags:
-  - "DeepSeek"
-  - "AI Agents"
-  - "LLM"
-  - "Inference Costs"
-  - "Prefix Caching"
-  - "Coding Agents"
-  - "OpenRouter"
+  - 'DeepSeek'
+  - 'AI Agents'
+  - 'LLM'
+  - 'Inference Costs'
+  - 'Prefix Caching'
+  - 'Coding Agents'
+  - 'OpenRouter'
 image:
-  url: "/blog/deepseek-v4-flash-0731/images/cover.svg"
-  alt: "A low-cost DeepSeek V4 Flash token stream feeding an autonomous coding agent with a one-million-token context window"
+  url: '/blog/deepseek-v4-flash-0731/images/cover.svg'
+  alt: 'A low-cost DeepSeek V4 Flash token stream feeding an autonomous coding agent with a one-million-token context window'
 draft: false
 ---
 
@@ -29,11 +29,11 @@ That is only possible because of three unrelated facts stacking together: a **on
 
 Here is the real pricing sheet I work against, stated as a fixed unit of one million tokens:
 
-| Direction | Price per 1M tokens |
-| --- | ---: |
-| Input (cache miss / fresh prompt) | $1.00 |
-| Output (generation) | $2.00 |
-| Input (cache hit) | $0.02 |
+| Direction                         | Price per 1M tokens |
+| --------------------------------- | ------------------: |
+| Input (cache miss / fresh prompt) |               $1.00 |
+| Output (generation)               |               $2.00 |
+| Input (cache hit)                 |               $0.02 |
 
 The model identifier is `deepseek/deepseek-v4-flash-0731`, served through OpenRouter. It exposes a **1,000,000-token context window**, and it is the cheap, fast tier in my setup—paired with a heavier `deepseek-pro` tier that I route hard tasks to.
 
@@ -83,19 +83,19 @@ Here is the arithmetic for a typical turn with, say, 400k tokens of shared prefi
 
 ```js
 // per-1M prices in dollars
-const INPUT_COST  = 1.00
-const OUTPUT_COST = 2.00
-const CACHE_COST  = 0.02
+const INPUT_COST = 1.0;
+const OUTPUT_COST = 2.0;
+const CACHE_COST = 0.02;
 
 // 400k shared prefix almost always served from cache
-const prefix  = 400_000 / 1_000_000
-const newOut  = 2_000   / 1_000_000
+const prefix = 400_000 / 1_000_000;
+const newOut = 2_000 / 1_000_000;
 
 const turnCost =
-  prefix * CACHE_COST +          // ~$0.008
-  newOut * OUTPUT_COST           // ~$0.004
+  prefix * CACHE_COST + // ~$0.008
+  newOut * OUTPUT_COST; // ~$0.004
 
-console.log(`turn cost ≈ $${turnCost.toFixed(4)}`) // ~$0.012
+console.log(`turn cost ≈ $${turnCost.toFixed(4)}`); // ~$0.012
 ```
 
 Twelve thousandths of a cent. That is the "fraction of a cent per turn" I opened with.
@@ -112,14 +112,14 @@ The 1M-context Flash model is not a replacement for harder models. It is the che
 
 The practical rule I landed on is a routing split by task shape:
 
-| Task shape | Tier |
-| --- | --- |
-| Repetitive file edits, refactors, boilerplate | Flash |
-| Long multi-file searches across a big repo | Flash |
+| Task shape                                     | Tier  |
+| ---------------------------------------------- | ----- |
+| Repetitive file edits, refactors, boilerplate  | Flash |
+| Long multi-file searches across a big repo     | Flash |
 | Reading and summarizing lots of cached context | Flash |
-| Hard algorithmic reasoning | Pro |
-| Debugging subtle concurrency or state bugs | Pro |
-| Ambiguous tool-use sequences that need care | Pro |
+| Hard algorithmic reasoning                     | Pro   |
+| Debugging subtle concurrency or state bugs     | Pro   |
+| Ambiguous tool-use sequences that need care    | Pro   |
 
 Routing matters for two reasons. First, a cheap model doing easy work lets you run many more parallel lines of effort without watching the bill. That density of cheap iterations is where agent productivity compounds—you can afford to try a change, look at the diff, and try again.
 

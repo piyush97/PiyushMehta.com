@@ -1,14 +1,23 @@
 ---
-title: "Senior Software Engineering Interview Questions — What Actually Gets Asked"
-description: "A guide to the questions that separate senior SWE candidates from mid-level, including a deep dive into HyperLogLog for counting unique users at scale, 15+ real interview questions, and the mistakes that silently disqualify you"
-author: "Piyush Mehta"
+title: 'Senior Software Engineering Interview Questions — What Actually Gets Asked'
+description: 'A guide to the questions that separate senior SWE candidates from mid-level, including a deep dive into HyperLogLog for counting unique users at scale, 15+ real interview questions, and the mistakes that silently disqualify you'
+author: 'Piyush Mehta'
 date: 2026-06-16
-tags: ["interviews", "system-design", "hyperloglog", "career", "software-engineering", "algorithms", "senior-engineer"]
-ogTemplate: "tech"
-ogTheme: "dark"
+tags:
+  [
+    'interviews',
+    'system-design',
+    'hyperloglog',
+    'career',
+    'software-engineering',
+    'algorithms',
+    'senior-engineer',
+  ]
+ogTemplate: 'tech'
+ogTheme: 'dark'
 image:
-  url: "/blog/senior-swe-interview-questions/hero.svg"
-  alt: "Senior Software Engineering interview questions and system design guide"
+  url: '/blog/senior-swe-interview-questions/hero.svg'
+  alt: 'Senior Software Engineering interview questions and system design guide'
 ---
 
 # Senior Software Engineering Interview Questions — What Actually Gets Asked
@@ -18,8 +27,13 @@ The difference between a $150K mid-level offer and a $350K+ senior offer isn't y
 Most candidates walk into senior loops thinking interviewers will ask them to invert binary trees. They won't. Senior interviews test something harder: how you handle ambiguity, make tradeoffs, and design systems that work in the real world.
 
 <div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
-  <h3 className="text-xl mb-2 text-text-primary">Google's senior SWE loop has a ~0.2% offer rate from initial application</h3>
-  <p className="text-text-secondary">But candidates who prepare system design in depth instead of just memorizing Grokking pass at nearly 5x the average rate. The gap is depth, not breadth.</p>
+  <h3 className="text-xl mb-2 text-text-primary">
+    Google's senior SWE loop has a ~0.2% offer rate from initial application
+  </h3>
+  <p className="text-text-secondary">
+    But candidates who prepare system design in depth instead of just memorizing Grokking pass at
+    nearly 5x the average rate. The gap is depth, not breadth.
+  </p>
 </div>
 
 ## What You'll Actually Get Asked
@@ -111,8 +125,13 @@ Let that sink in: 1.5 KB can count 1 billion unique items with about 2% error.
   <ul className="mt-2 space-y-1 text-text-secondary">
     <li>Fixed memory: 1.5 KB whether you're counting 1,000 or 1,000,000,000 unique items</li>
     <li>Constant time: O(1) per operation, always</li>
-    <li>Mergeable: Combine two HLL counters by taking the max of each register. Perfect for distributed systems</li>
-    <li>About 2% error: Not exact, but for "how many unique users visited today?" 2% is perfectly fine</li>
+    <li>
+      Mergeable: Combine two HLL counters by taking the max of each register. Perfect for
+      distributed systems
+    </li>
+    <li>
+      About 2% error: Not exact, but for "how many unique users visited today?" 2% is perfectly fine
+    </li>
   </ul>
 </div>
 
@@ -138,7 +157,10 @@ HyperLogLog replaces coin flips with hash functions:
     <li>HashSet (100M UUIDs): ~3.6 GB per instance, O(n) memory growth</li>
     <li>HyperLogLog (any cardinality): ~1.5 KB per instance, O(1) memory forever</li>
     <li>Accuracy trade-off: 100% exact → 98% accurate, 2,400,000x less memory</li>
-    <li>Merge cost: HashSets require full data transfer; HLL merges in microseconds by comparing registers</li>
+    <li>
+      Merge cost: HashSets require full data transfer; HLL merges in microseconds by comparing
+      registers
+    </li>
   </ul>
 </div>
 
@@ -218,7 +240,7 @@ class HyperLogLog {
   // Merge another HLL into this one (key property for distributed systems)
   merge(other: HyperLogLog): void {
     if (this.m !== other.m) {
-      throw new Error("Cannot merge HLLs with different register counts");
+      throw new Error('Cannot merge HLLs with different register counts');
     }
     for (let i = 0; i < this.m; i++) {
       if (other.registers[i] > this.registers[i]) {
@@ -230,23 +252,28 @@ class HyperLogLog {
 
 // Usage: count unique visitors across 1M+ daily users in 1.5 KB
 const dailyVisitors = new HyperLogLog(14);
-dailyVisitors.add("user-abc-123");
-dailyVisitors.add("user-def-456");
-dailyVisitors.add("user-abc-123"); // Duplicate — ignored by design
+dailyVisitors.add('user-abc-123');
+dailyVisitors.add('user-def-456');
+dailyVisitors.add('user-abc-123'); // Duplicate — ignored by design
 console.log(dailyVisitors.estimate()); // ~2 (with ~1.6% error margin)
 
 // Distributed use: each server maintains its own HLL, merge at query time
 const server1 = new HyperLogLog(14);
 const server2 = new HyperLogLog(14);
-server1.add("user-1");
-server2.add("user-2");
+server1.add('user-1');
+server2.add('user-2');
 server1.merge(server2);
 console.log(server1.estimate()); // ~2
 ```
 
 <div className="bg-accent/20 border border-accent/30 p-4 rounded-lg my-6">
   <h4 className="font-bold text-accent">Interview Tip</h4>
-  <p className="text-text-secondary mt-2">When the interviewer asks "How would you count unique users at scale?", lead with HyperLogLog. Mention the 1.5 KB memory footprint, the mergeability property for distributed systems, and the ~2% error trade-off. Then ask: "Would 2% error be acceptable for this use case, or do we need exact counts?" That follow-up question alone signals senior-level thinking.</p>
+  <p className="text-text-secondary mt-2">
+    When the interviewer asks "How would you count unique users at scale?", lead with HyperLogLog.
+    Mention the 1.5 KB memory footprint, the mergeability property for distributed systems, and the
+    ~2% error trade-off. Then ask: "Would 2% error be acceptable for this use case, or do we need
+    exact counts?" That follow-up question alone signals senior-level thinking.
+  </p>
 </div>
 
 > Reference: The canonical deep-dive on HyperLogLog is on GeeksforGeeks: [HyperLogLog Algorithm in System Design](https://www.geeksforgeeks.org/system-design/hyperloglog-algorithm-in-system-design/). It covers the algorithm, implementation steps in Python, and the bias correction math in detail.

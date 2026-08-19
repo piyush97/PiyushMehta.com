@@ -1,19 +1,33 @@
 ---
 title: "From macOS to Arch Linux with Omarchy: A Developer's Journey to True Productivity"
-description: "How I switched from macOS to Arch Linux using Omarchy and dramatically improved my development productivity. Real configs, benchmarks, and honest insights from 6 months of daily use."
+description: 'How I switched from macOS to Arch Linux using Omarchy and dramatically improved my development productivity. Real configs, benchmarks, and honest insights from 6 months of daily use.'
 date: 2025-08-26
-tags: ['linux', 'arch', 'omarchy', 'hyprland', 'productivity', 'macos', 'developer-tools', 'wayland', 'performance', 'cost-optimization', 'development-environment', 'migration']
+tags:
+  [
+    'linux',
+    'arch',
+    'omarchy',
+    'hyprland',
+    'productivity',
+    'macos',
+    'developer-tools',
+    'wayland',
+    'performance',
+    'cost-optimization',
+    'development-environment',
+    'migration',
+  ]
 image:
   url: '/blog/macos-to-arch-linux-omarchy-developer-productivity/images/omarchy-desktop-hero.webp'
   alt: 'Omarchy desktop environment showing Hyprland with dual monitors, terminal, and development tools'
 author: 'Piyush Mehta'
-ogTemplate: "tech"
-ogTheme: "dark"
+ogTemplate: 'tech'
+ogTheme: 'dark'
 draft: false
 ---
 
-import SystemComparison from '@/components/blog/SystemComparison.tsx'
-import SetupShowcase from '@/components/blog/SetupShowcase.tsx'
+import SystemComparison from '@/components/blog/SystemComparison.tsx';
+import SetupShowcase from '@/components/blog/SetupShowcase.tsx';
 
 ## From macOS to Arch Linux with Omarchy: A Developer's Journey to True Productivity
 
@@ -26,17 +40,20 @@ Let me be clear: macOS isn't bad. It's polished, stable, and has excellent hardw
 ### The Breaking Points
 
 **Hardware Costs Were Insane**
+
 - MacBook Pro 16" with decent specs: $3,500+
 - My Intel NUC13ANKi7 with similar performance: $800
 - Same development power, 4x less cost
 
 **Performance Bottlenecks**
+
 - Docker containers running through virtualization layer
 - Thermal throttling during intensive builds
 - Memory pressure with just a few development tools open
 - No true package management (Homebrew is good, but not great)
 
 **Ecosystem Lock-in**
+
 - Vendor-specific tools and workflows
 - Limited customization options
 - Forced upgrades breaking development environments
@@ -59,6 +76,7 @@ Omarchy isn't just another Linux distribution. It's a carefully curated Arch Lin
 - **Comprehensive documentation** for customization
 
 Version 2.0.0, which I'm running, introduced significant improvements:
+
 - Better multi-monitor support (crucial for my dual 4K setup)
 - Enhanced theming system with live switching
 - Improved application launcher (Bolt)
@@ -71,6 +89,7 @@ Let me walk you through my actual configuration—this is what I use daily for p
 <SetupShowcase client:visible />
 
 ### Hardware Foundation
+
 ```bash
 # System: Intel NUC13ANKi7
 # CPU: 13th Gen Intel(R) Core(TM) i7-1360P (8+8) @ 5.00 GHz
@@ -83,6 +102,7 @@ Let me walk you through my actual configuration—this is what I use daily for p
 ### Core System Stack
 
 **Operating System**
+
 - **OS**: Arch Linux (rolling release)
 - **Kernel**: Linux 6.16.3-zen1-1-zen (optimized for desktop performance)
 - **Display Server**: Wayland
@@ -90,6 +110,7 @@ Let me walk you through my actual configuration—this is what I use daily for p
 - **Desktop Environment**: Omarchy v2.0.0
 
 **Development Environment**
+
 - **Shell**: Zsh 5.9 with Oh My Zsh
 - **Terminal**: Alacritty with 98% opacity
 - **Font**: CaskaydiaMono Nerd Font (size 9)
@@ -98,6 +119,7 @@ Let me walk you through my actual configuration—this is what I use daily for p
 ### Application Ecosystem
 
 **Editors and IDEs**
+
 ```bash
 # Primary editors I use daily
 - Neovim (terminal-based, lightning fast)
@@ -107,6 +129,7 @@ Let me walk you through my actual configuration—this is what I use daily for p
 ```
 
 **Development Tools**
+
 ```bash
 # Core development stack
 - Docker & Docker Compose (native performance)
@@ -118,6 +141,7 @@ Let me walk you through my actual configuration—this is what I use daily for p
 ```
 
 **Productivity Suite**
+
 - **Browser**: Ungoogled Chromium (privacy-focused)
 - **File Manager**: Nautilus
 - **System Monitor**: btop (beautiful terminal system monitor)
@@ -129,6 +153,7 @@ Let me walk you through my actual configuration—this is what I use daily for p
 The heart of my productivity setup is Hyprland configuration. Here's how I've organized it:
 
 ### Configuration Structure
+
 ```bash
 # Omarchy's smart configuration system
 ~/.config/hypr/hyprland.conf         # Main config
@@ -188,7 +213,9 @@ With dual 32" 4K displays, my workspace organization is crucial:
 The productivity gains from switching to this setup have been substantial. Let me quantify them:
 
 ### Docker Performance
+
 **macOS (virtualized):**
+
 ```bash
 docker build time: ~45 seconds
 docker-compose up:  ~12 seconds
@@ -196,6 +223,7 @@ Memory overhead:    ~2GB for Docker Desktop
 ```
 
 **Arch Linux (native):**
+
 ```bash
 docker build time: ~18 seconds (60% faster)
 docker-compose up:  ~3 seconds (75% faster)
@@ -203,7 +231,9 @@ Memory overhead:    ~200MB for Docker daemon
 ```
 
 ### Terminal Workflow
+
 My terminal setup with Alacritty is incredibly fast:
+
 ```toml
 # ~/.config/alacritty/alacritty.toml
 [font]
@@ -221,7 +251,9 @@ TERM = "xterm-256color"
 ```
 
 ### IDE Performance
+
 All my editors benefit from native Linux performance:
+
 - **Neovim**: Instantaneous startup, native file watching
 - **VS Code Insiders**: 40% faster extension loading
 - **Claude Code**: Native Linux performance, better responsiveness
@@ -230,7 +262,9 @@ All my editors benefit from native Linux performance:
 ## Productivity Tools Integration
 
 ### System Monitoring with Waybar
+
 My Waybar configuration shows exactly what I need:
+
 ```json
 // Waybar modules I actually use
 {
@@ -241,14 +275,18 @@ My Waybar configuration shows exactly what I need:
 ```
 
 ### Application Launching with Bolt
+
 Bolt launcher (part of Omarchy) is incredibly fast:
+
 - Sub-100ms application launch times
 - Fuzzy search through all applications
 - Custom web app shortcuts
 - System command integration
 
 ### Screenshot Workflow
+
 My screenshot workflow is seamless:
+
 ```bash
 # Custom screenshot scripts
 copy-image --screenshot    # Full screen to clipboard
@@ -261,18 +299,21 @@ paste-image                # Save clipboard to file
 Let's be honest about the challenges. The transition wasn't completely smooth, but Omarchy made it much easier than vanilla Arch.
 
 ### Initial Challenges (First 2 weeks)
+
 - **Package management**: Learning pacman vs Homebrew
 - **Configuration files**: Everything is text-based (actually a benefit)
 - **Display scaling**: Getting 4K displays perfect on Wayland
 - **Application equivalents**: Finding Linux alternatives for macOS apps
 
 ### What Made It Easier
+
 - **Omarchy documentation**: Excellent getting started guides
 - **Pre-configured everything**: Sensible defaults that work
 - **Active community**: Discord support for questions
 - **Incremental learning**: Could customize gradually
 
 ### Time Investment vs ROI
+
 - **Week 1**: Basic setup and application installation
 - **Week 2-4**: Fine-tuning workflow and keybindings
 - **Month 2**: Advanced customization and optimization
@@ -283,6 +324,7 @@ Let's be honest about the challenges. The transition wasn't completely smooth, b
 Here are the concrete performance comparisons from my daily development work:
 
 ### Current System Utilization
+
 ```bash
 # Typical development workload
 Memory: 6.29 GiB / 15.17 GiB (41%)
@@ -292,6 +334,7 @@ Swap:   0 B / 4.00 GiB (0%) - rarely needed
 ```
 
 ### Application Launch Times
+
 ```bash
 Alacritty:      ~50ms
 Neovim:         ~100ms
@@ -307,26 +350,29 @@ export const costData = {
     hardware: 3500,
     software: 200,
     maintenance: 500,
-    yearly: 800
+    yearly: 800,
   },
   archData: {
     hardware: 800,
     software: 0,
     maintenance: 0,
-    yearly: 50
-  }
+    yearly: 50,
+  },
 };
 
 <SystemComparison macosData={costData.macosData} archData={costData.archData} client:visible />
 
 ### Total Cost of Ownership (3 years)
+
 **macOS Setup:**
+
 - MacBook Pro 16": $3,500
 - Software licenses: $200/year
 - AppleCare/maintenance: $500
 - **Total**: $4,800
 
 **Arch Linux Setup:**
+
 - Intel NUC13ANKi7: $800
 - External monitors: $600 (optional, reused from macOS)
 - Software: $0 (all open source)
@@ -340,12 +386,14 @@ export const costData = {
 If you're considering this transition, here's what I wish I'd known:
 
 ### Essential Preparation
+
 1. **Backup your dotfiles**: Export all your shell configurations
 2. **Document your workflow**: List all applications you use daily
 3. **Prepare alternatives**: Research Linux equivalents beforehand
 4. **Plan downtime**: Allocate a weekend for the transition
 
 ### Application Equivalents
+
 ```bash
 # macOS → Linux alternatives
 Finder → Nautilus
@@ -357,13 +405,16 @@ Rectangle → Hyprland (built-in tiling)
 ```
 
 ### Configuration Management
+
 Use dotfiles management from day one:
+
 ```bash
 # I recommend using chezmoi (which I have installed)
 chezmoi init --apply https://github.com/yourusername/dotfiles
 ```
 
 ### Learning Resources
+
 - **Arch Wiki**: The gold standard for Linux documentation
 - **Hyprland Wiki**: Comprehensive window manager documentation
 - **Omarchy Discord**: Active community support
@@ -374,6 +425,7 @@ chezmoi init --apply https://github.com/yourusername/dotfiles
 After six months of daily development work on Arch Linux with Omarchy, I can confidently say this was one of the best technical decisions I've made.
 
 ### What I Gained
+
 - **50-60% performance improvement** across all development tasks
 - **Complete control** over my development environment
 - **Significant cost savings** without sacrificing capability
@@ -381,18 +433,22 @@ After six months of daily development work on Arch Linux with Omarchy, I can con
 - **Zero vendor lock-in** - I own my entire stack
 
 ### What I Miss from macOS
+
 To be completely honest, there are a few things:
+
 - **AirDrop**: Convenient file sharing with mobile devices
 - **Native iOS development**: Still need macOS for iOS apps
 - **Some commercial software**: Adobe Creative Suite, Sketch
 - **Plug-and-play hardware**: Occasionally need to configure drivers
 
 ### Would I Go Back?
+
 **Absolutely not.** The productivity gains, cost savings, and freedom far outweigh any minor inconveniences. For web development, backend services, and most programming work, this setup is superior in every measurable way.
 
 ## Recommendations by Developer Profile
 
 ### Perfect For:
+
 - **Backend/Full-stack developers**: Native Docker, better performance
 - **DevOps engineers**: Native Kubernetes, cloud tools
 - **Open source contributors**: Familiar environment
@@ -400,6 +456,7 @@ To be completely honest, there are a few things:
 - **Budget-conscious developers**: Significant cost savings
 
 ### Consider Carefully If You:
+
 - **iOS developers**: Still need macOS for Xcode
 - **Adobe Creative Suite users**: Limited Linux alternatives
 - **Prefer plug-and-play**: Occasional configuration needed
@@ -410,18 +467,21 @@ To be completely honest, there are a few things:
 If this has convinced you to try Arch Linux with Omarchy, here's your getting started checklist:
 
 ### Week 1: Foundation
+
 1. **Download Omarchy**: Visit [omarchy.org](https://omarchy.org)
 2. **Backup everything**: Full Time Machine backup
 3. **Create installation media**: USB drive with Omarchy
 4. **Install on secondary machine**: Don't risk your main dev machine initially
 
 ### Week 2: Migration
+
 1. **Basic installation**: Follow Omarchy's excellent guides
 2. **Install core development tools**: Your essential applications
 3. **Configure displays**: Get your monitors working perfectly
 4. **Set up basic keybindings**: Start with defaults, customize gradually
 
 ### Month 1: Optimization
+
 1. **Fine-tune workflow**: Adjust keybindings and applications
 2. **Optimize performance**: Configure for your specific hardware
 3. **Backup configurations**: Start managing dotfiles properly
@@ -441,7 +501,7 @@ This journey has been transformative for my development workflow, similar to how
 
 ---
 
-*Have questions about making the switch? [Reach out to me](/contact-me) or find me in the Omarchy Discord community. I'm happy to help fellow developers make this transition successfully.*
+_Have questions about making the switch? [Reach out to me](/contact-me) or find me in the Omarchy Discord community. I'm happy to help fellow developers make this transition successfully._
 
 ## Related Articles
 

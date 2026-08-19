@@ -25,7 +25,7 @@ function step(name, cmd, opts = {}) {
 }
 
 // 1. Type generation
-step('Type generation', 'bunx varlock typegen');
+step('Type generation', 'bunx varlock codegen');
 
 // 2. Migrate blog images to public/
 step('Image migration', 'node scripts/migrate-images-to-public.mjs');

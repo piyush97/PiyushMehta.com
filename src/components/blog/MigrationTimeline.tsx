@@ -189,7 +189,7 @@ const MigrationTimeline: React.FC = () => {
         <div className="space-y-3">
           <h5 className="font-semibold text-text-primary">Actions Performed:</h5>
           <ul className="space-y-2">
-            {timelineData[selectedHour].details.map((detail, index) => (
+            {timelineData[selectedHour].details.map((detail) => (
               <li
                 key={`detail-${timelineData[selectedHour].time}-${detail}`}
                 className="flex items-start"

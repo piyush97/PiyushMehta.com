@@ -114,7 +114,7 @@ export async function GET(context) {
         headers: {
           'Content-Type': 'application/xml; charset=utf-8',
         },
-      }
+      },
     );
   }
 }

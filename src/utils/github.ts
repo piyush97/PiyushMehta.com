@@ -70,7 +70,7 @@ export async function fetchGitHubRepos(username: string, token?: string): Promis
       {
         headers,
         signal: controller.signal,
-      }
+      },
     );
 
     clearTimeout(timeoutId);
@@ -100,7 +100,7 @@ function formatRepo(repo: GitHubRepo): FormattedRepo {
 
   // Determine the technologies based on repo language and topics
   const technologies = [repo.language, ...(repo.topics || [])].flatMap((tech) =>
-    tech ? [String(tech)] : []
+    tech ? [String(tech)] : [],
   );
 
   // Create a year from the created_at date

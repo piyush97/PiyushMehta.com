@@ -1,14 +1,14 @@
 ---
-title: "The ATS Resume That Actually Lands Interviews: A 2026 Software Engineer Guide"
-description: "Why 75% of resumes get auto-rejected by bots - and the format, keywords, and bullet rewrites that get yours to a human at Google, Stripe, or the companies you want to work for"
-author: "Piyush Mehta"
+title: 'The ATS Resume That Actually Lands Interviews: A 2026 Software Engineer Guide'
+description: 'Why 75% of resumes get auto-rejected by bots - and the format, keywords, and bullet rewrites that get yours to a human at Google, Stripe, or the companies you want to work for'
+author: 'Piyush Mehta'
 date: 2026-06-17
-tags: ["resume", "interviews", "career", "ats", "job-search", "software-engineering"]
-ogTemplate: "tech"
-ogTheme: "dark"
+tags: ['resume', 'interviews', 'career', 'ats', 'job-search', 'software-engineering']
+ogTemplate: 'tech'
+ogTheme: 'dark'
 image:
-  url: "/blog/ats-resume-software-engineer/hero.svg"
-  alt: "ATS resume guide for software engineers with before-after bullet rewrites"
+  url: '/blog/ats-resume-software-engineer/hero.svg'
+  alt: 'ATS resume guide for software engineers with before-after bullet rewrites'
 ---
 
 Seventy-five percent of resumes never reach a human. Not because the candidate was unqualified, but because an algorithm said their PDF had "too many columns."
@@ -18,8 +18,14 @@ You spend 12 hours tailoring a resume. Workday's parser spends 0.3 seconds decid
 The good news? ATS systems are stupidly predictable. They follow rigid rules. Once you know them, you can write a resume that scores well before a person ever sees it.
 
 <div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
-  <h3 className="text-xl font-bold mb-2 text-text-primary">Greenhouse's ATS ranks candidates on a 0-100 match score</h3>
-  <p className="text-text-secondary">A resume with single-column layout, standard section headers, and high keyword overlap with the JD averages 60 points higher than one with graphics, charts, or two-column formats, even when the actual experience is identical.</p>
+  <h3 className="text-xl font-bold mb-2 text-text-primary">
+    Greenhouse's ATS ranks candidates on a 0-100 match score
+  </h3>
+  <p className="text-text-secondary">
+    A resume with single-column layout, standard section headers, and high keyword overlap with the
+    JD averages 60 points higher than one with graphics, charts, or two-column formats, even when
+    the actual experience is identical.
+  </p>
 </div>
 
 ## How ATS Actually Sees Your Resume in 2026
@@ -64,13 +70,13 @@ After testing 40+ resume formats across Workday, Greenhouse, and Lever with real
 ```typescript
 // The exact font & sizing that parsers love
 const atsSafeFormat = {
-  font: "Calibri, Arial, Helvetica, or Georgia",
-  fontSize: "10.5pt - 11.5pt body, 14pt - 16pt headings",
-  margins: "0.5in - 0.75in all sides",
-  fileType: "PDF saved from Word/Google Docs (not scanned)",
-  color: "Black text on white background",
-  columns: "Single column, always",
-}
+  font: 'Calibri, Arial, Helvetica, or Georgia',
+  fontSize: '10.5pt - 11.5pt body, 14pt - 16pt headings',
+  margins: '0.5in - 0.75in all sides',
+  fileType: 'PDF saved from Word/Google Docs (not scanned)',
+  color: 'Black text on white background',
+  columns: 'Single column, always',
+};
 ```
 
 No exceptions. A two-column resume might look better, but it scores 30-50 points lower on Workday. Every time.
@@ -81,34 +87,34 @@ This is the highest-leverage change you can make. The rewrite takes 5 minutes pe
 
 ### Junior Engineer
 
-| Before | After |
-|--------|-------|
-| "Helped with backend development" | "Built 3 internal API endpoints in Go serving 12 internal users, reducing manual reporting time by 8 hours/week" |
-| "Fixed bugs in the frontend" | "Resolved 47 frontend bugs across 6 React sprint cycles, reducing customer-reported issues by 34%" |
-| "Worked on a team project" | "Collaborated with 3 engineers to ship a payment UI in React + Stripe Elements, processing $200K+ in its first month" |
-| "Used Docker and Kubernetes" | "Containerized 4 microservices with Docker and deployed on a 3-node Kubernetes cluster in staging" |
+| Before                            | After                                                                                                                 |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| "Helped with backend development" | "Built 3 internal API endpoints in Go serving 12 internal users, reducing manual reporting time by 8 hours/week"      |
+| "Fixed bugs in the frontend"      | "Resolved 47 frontend bugs across 6 React sprint cycles, reducing customer-reported issues by 34%"                    |
+| "Worked on a team project"        | "Collaborated with 3 engineers to ship a payment UI in React + Stripe Elements, processing $200K+ in its first month" |
+| "Used Docker and Kubernetes"      | "Containerized 4 microservices with Docker and deployed on a 3-node Kubernetes cluster in staging"                    |
 
 The junior trap: "Helped with" and "worked on" are red flags to recruiters. Every bullet should prove you did something, not that you were present for something.
 
 ### Senior Engineer
 
-| Before | After |
-|--------|-------|
-| "Led a team" | "Led 4-engineer team migrating auth from session cookies to JWT with zero-downtime rollout across 14M users" |
-| "Improved performance" | "Optimized critical search query from 3.2s to 180ms (94% faster) by adding composite indexes and query caching" |
-| "Managed the deployment pipeline" | "Designed CI/CD pipeline in GitHub Actions running 200+ deployments/month with 99.97% success rate" |
-| "Worked with stakeholders" | "Partnered with 3 product teams to scope 12 engineering initiatives, delivering 8 ahead of quarterly roadmap" |
+| Before                            | After                                                                                                           |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| "Led a team"                      | "Led 4-engineer team migrating auth from session cookies to JWT with zero-downtime rollout across 14M users"    |
+| "Improved performance"            | "Optimized critical search query from 3.2s to 180ms (94% faster) by adding composite indexes and query caching" |
+| "Managed the deployment pipeline" | "Designed CI/CD pipeline in GitHub Actions running 200+ deployments/month with 99.97% success rate"             |
+| "Worked with stakeholders"        | "Partnered with 3 product teams to scope 12 engineering initiatives, delivering 8 ahead of quarterly roadmap"   |
 
 The senior trap: "Led a team" with no numbers. Size of team, scope of project, scale of impact. If a number would fit, it should be there.
 
 ### Staff Engineer
 
-| Before | After |
-|--------|-------|
-| "Improved performance" | "Identified and fixed N+1 query hot path in checkout, reducing p99 latency from 1.4s to 220ms (84% improvement) and saving roughly $40K/mo in compute" |
-| "Architected the system" | "Architected event-driven inventory system processing 500+ events/sec on Kafka, replacing legacy batch job and reducing stock discrepancies from 4.2% to 0.3%" |
-| "Mentored junior engineers" | "Mentored 6 junior engineers across 2 pods, with 4 promoted within 18 months and pod velocity increasing 2.3x year-over-year" |
-| "Drove technical decisions" | "Chose CockroachDB over Postgres for multi-region compliance, reducing cross-region read latency from 340ms to 48ms and passing SOC2 audit on first attempt" |
+| Before                      | After                                                                                                                                                          |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Improved performance"      | "Identified and fixed N+1 query hot path in checkout, reducing p99 latency from 1.4s to 220ms (84% improvement) and saving roughly $40K/mo in compute"         |
+| "Architected the system"    | "Architected event-driven inventory system processing 500+ events/sec on Kafka, replacing legacy batch job and reducing stock discrepancies from 4.2% to 0.3%" |
+| "Mentored junior engineers" | "Mentored 6 junior engineers across 2 pods, with 4 promoted within 18 months and pod velocity increasing 2.3x year-over-year"                                  |
+| "Drove technical decisions" | "Chose CockroachDB over Postgres for multi-region compliance, reducing cross-region read latency from 340ms to 48ms and passing SOC2 audit on first attempt"   |
 
 The staff trap: "Improved performance" at staff level needs dollar signs or organizational impact. If you can't name the metric and the business outcome, the bullet isn't staff-level yet.
 
@@ -127,14 +133,16 @@ ATS ranking is simple: more keyword matches = higher score. But keyword stuffing
 ```typescript
 // Example keyword pass for a Staff Backend role at Stripe
 const mustHaves = [
-  "Go", "PostgreSQL", "distributed systems",
-  "payment processing", "PCI compliance",
-  "gRPC", "Kubernetes", "event-driven",
-]
-const niceToHaves = [
-  "Java", "Cassandra", "Apache Flink",
-  "fraud detection", "machine learning",
-]
+  'Go',
+  'PostgreSQL',
+  'distributed systems',
+  'payment processing',
+  'PCI compliance',
+  'gRPC',
+  'Kubernetes',
+  'event-driven',
+];
+const niceToHaves = ['Java', 'Cassandra', 'Apache Flink', 'fraud detection', 'machine learning'];
 ```
 
 Your resume should include 80%+ of the must-haves in context-rich bullets. Don't just list "Skills: Go." Write "Built payment reconciliation pipeline in Go processing 10K transactions/minute."
@@ -165,7 +173,11 @@ For everyone reading this: your resume is too long. Under 10 years of experience
 
 <div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
   <h3 className="text-xl font-bold mb-2 text-text-primary">The Data</h3>
-  <p className="text-text-secondary">I tracked 122 resume submissions from 16 engineers over 9 months. The one-page, single-column, keyword-optimized resumes had a 3.7x higher callback rate than the multi-page, two-column, generic ones, controlling for experience level and target companies.</p>
+  <p className="text-text-secondary">
+    I tracked 122 resume submissions from 16 engineers over 9 months. The one-page, single-column,
+    keyword-optimized resumes had a 3.7x higher callback rate than the multi-page, two-column,
+    generic ones, controlling for experience level and target companies.
+  </p>
 </div>
 
 ## Do Cover Letters Still Matter in 2026?
