@@ -1,21 +1,31 @@
 # piyushmehta.com
 
-Personal portfolio and blog. Built with Astro 6, React 19, Tailwind CSS v4, deployed on Vercel.
+Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, deployed on Vercel.
 
 ![](.github/demo.gif)
+
+## Built with
+
+| Tech | Role |
+|---|---|
+| [Astro](https://astro.build/) | Framework — SSR via Vercel adapter |
+| [TypeScript](https://www.typescriptlang.org/) | Language |
+| [React](https://react.dev/) | Interactive islands |
+| [Tailwind CSS](https://tailwindcss.com/) | Styling |
+| [MDX](https://mdxjs.com/) | Blog content |
+| [Vercel](https://vercel.com/) | Deployment |
 
 ## Stack
 
 | Layer | Technology |
 |---|---|
-| Framework | [Astro 6](https://astro.build/) — SSR via Vercel adapter |
+| Framework | [Astro 7](https://astro.build/) — SSR via Vercel adapter |
 | UI | [React 19](https://react.dev/) — interactive islands |
 | Styling | [Tailwind CSS v4](https://tailwindcss.com/) — via `@tailwindcss/vite` |
-| Language | TypeScript 6 |
+| Language | TypeScript 7 |
 | Content | MDX — blog posts with component support |
 | Search | [Pagefind](https://pagefind.app/) — static full-text search |
-| Email | [Resend](https://resend.com/) — contact form + newsletter |
-| Database | PostgreSQL — newsletter subscriptions |
+| Email | [Resend](https://resend.com/) — contact form + newsletter (audience + confirmation) |
 | Rate limiting | [Upstash Redis](https://upstash.com/) — serverless Redis |
 | Monitoring | [Sentry](https://sentry.io/) — errors + performance |
 | Analytics | Vercel Web Analytics + Speed Insights |
@@ -160,6 +170,14 @@ Output: `.vercel/output` (Vercel Build Output API)
 
 ## Contributing
 
+Contributions are welcome! PRs are reviewed and preview deployments are created automatically for every pull request.
+
+- **Install with Bun** — this repo uses [Bun](https://bun.sh/) exclusively (`bun@1.3.13`): `bun install`
+- **Run the dev server** — `bun dev` → `http://localhost:4321`
+- **Build locally** — `bun build` runs the full pipeline (typegen → image migration → Astro build → Pagefind → resume PDF)
+- **Follow the existing style** — Vite+ (Oxfmt + Oxlint) format and lint are enforced via pre-commit hooks; run `bun run check` before pushing
+- **PRs welcome** — keep changes scoped, update the README if behavior changes, and make sure tests pass (`bun test`)
+
 ```bash
 git checkout -b feature/your-feature
 # make changes
@@ -167,6 +185,12 @@ git commit -m "feat: description"   # triggers Vite+ + varlock pre-commit hooks
 git push origin feature/your-feature
 # open PR → preview deploy created automatically
 ```
+
+## Support / Sponsor
+
+If you find this project useful, consider sponsoring:
+
+[💖 Sponsor Piyush on GitHub Sponsors](https://github.com/sponsors/piyush97)
 
 ## License
 
