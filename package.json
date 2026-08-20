@@ -53,6 +53,7 @@
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.62.1",
     "@tailwindcss/typography": "^0.5.20",
+    "@types/node": "^22",
     "lefthook": "^2.1.10",
     "pagefind": "^1.5.2",
     "react-doctor": "^0.9.12",
