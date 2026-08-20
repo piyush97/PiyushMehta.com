@@ -1,0 +1,44 @@
+# Stale-bot: comment + label only — never auto-closes issues or PRs.
+# Close counters are set to -1 (disabled); Dependabot PRs are exempt.
+# https://github.com/actions/stale
+name: Close stale issues and PRs
+
+on:
+  schedule:
+    # Weekly on Mondays at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    name: Stale issue and PR hygiene
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/stale@v11
+        with:
+          # Issues: stale after 60 days, never auto-closed
+          days-before-issue-stale: 60
+          days-before-issue-close: -1
+          stale-issue-label: stale
+          stale-issue-message: >
+            This issue has been automatically marked as stale because it has not
+            had recent activity. It will remain open — please add a comment if it
+            is still relevant.
+
+          # PRs: stale after 30 days, never auto-closed
+          days-before-pr-stale: 30
+          days-before-pr-close: -1
+          stale-pr-label: stale
+          stale-pr-message: >
+            This pull request has been automatically marked as stale because it
+            has not had recent activity. It will remain open — please add a
+            comment or push an update if it is still in progress.
+
+          # Never mark Dependabot (dependency) PRs as stale
+          exempt-pr-labels: dependencies
