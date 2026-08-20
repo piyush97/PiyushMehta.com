@@ -28,10 +28,10 @@
     "doctor": "react-doctor"
   },
   "dependencies": {
-    "@astrojs/mdx": "7.0.4",
-    "@astrojs/react": "6.0.1",
+    "@astrojs/mdx": "7.0.5",
+    "@astrojs/react": "6.0.2",
     "@astrojs/rss": "4.0.19",
-    "@astrojs/vercel": "11.0.3",
+    "@astrojs/vercel": "11.0.5",
     "@resvg/resvg-js": "^2.6.2",
     "@sentry/astro": "^10.70.0",
     "@tailwindcss/vite": "^4.3.3",
@@ -45,7 +45,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "resend": "^6.20.0",
-    "satori": "^0.26.0",
+    "satori": "^0.29.0",
     "tailwindcss": "^4.3.3",
     "varlock": "^1.17.0"
   },
@@ -53,9 +53,10 @@
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.62.1",
     "@tailwindcss/typography": "^0.5.20",
+    "@types/node": "^22",
     "lefthook": "^2.1.10",
     "pagefind": "^1.5.2",
-    "react-doctor": "^0.2.16",
+    "react-doctor": "^0.9.12",
     "typescript": "^7.0.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9",
     "vite-plus": "0.2.9"
