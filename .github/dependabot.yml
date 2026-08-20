@@ -1,0 +1,40 @@
+# Dependabot configuration — piyushmehta.com
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Relationship with the existing `.github/workflows/dependency-updates.yml`:
+#   - KEEP BOTH. Dependabot opens granular per-package upgrade PRs; the weekly
+#     `dependency-updates.yml` workflow does a bulk `bun update` as a fallback.
+#   - Dependabot's schedule (Monday 06:00) is intentionally distinct from the
+#     workflow's (Monday 09:00) to reduce overlap on the same day.
+version: 2
+
+updates:
+  # npm ecosystem handles bun.lock (bun >= 1.0 uses the npm-compatible lockfile format)
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: 'UTC'
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    groups:
+      bun-minor-patch:
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: 'UTC'
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
