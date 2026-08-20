@@ -178,6 +178,8 @@ Contributions are welcome! PRs are reviewed and preview deployments are created 
 - **Follow the existing style** — Vite+ (Oxfmt + Oxlint) format and lint are enforced via pre-commit hooks; run `bun run check` before pushing
 - **PRs welcome** — keep changes scoped, update the README if behavior changes, and make sure tests pass (`bun test`)
 
+**Maintenance:** see [MAINTENANCE.md](MAINTENANCE.md) — the consolidated handbook for all piyush97 profile repositories.
+
 ```bash
 git checkout -b feature/your-feature
 # make changes
