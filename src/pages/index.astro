@@ -1,6 +1,17 @@
 ---
 import { caseStudies, portfolioMetrics, socialLinks, writingHighlights } from '../data/portfolio';
 import speakerPhoto from '../images/piyush-devfest.jpg';
+import speakerPhotoAvif320 from '../images/responsive/piyush-devfest-320.avif';
+import speakerPhotoAvif640 from '../images/responsive/piyush-devfest-640.avif';
+import speakerPhotoAvif960 from '../images/responsive/piyush-devfest-960.avif';
+import speakerPhotoAvif1280 from '../images/responsive/piyush-devfest-1280.avif';
+import speakerPhotoWebp320 from '../images/responsive/piyush-devfest-320.webp';
+import speakerPhotoWebp640 from '../images/responsive/piyush-devfest-640.webp';
+import speakerPhotoWebp960 from '../images/responsive/piyush-devfest-960.webp';
+import speakerPhotoWebp1280 from '../images/responsive/piyush-devfest-1280.webp';
+import speakerPhotoJpg320 from '../images/responsive/piyush-devfest-320.jpg';
+import speakerPhotoJpg640 from '../images/responsive/piyush-devfest-640.jpg';
+import speakerPhotoJpg960 from '../images/responsive/piyush-devfest-960.jpg';
 import Layout from '../layouts/Layout.astro';
 
 export const prerender = true;
@@ -56,15 +67,47 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
     </div>
 
     <figure class="hero-portrait" data-reveal data-reveal-delay="120" data-parallax data-parallax-speed="0.08">
-      <img
-        src={speakerPhoto.src}
-        alt="Piyush Mehta speaking at a developer event"
-        width={speakerPhoto.width}
-        height={speakerPhoto.height}
-        loading="eager"
-        decoding="async"
-        fetchpriority="high"
-      />
+      <picture>
+        <source
+          type="image/avif"
+          srcset={`
+            ${speakerPhotoAvif320.src} 320w,
+            ${speakerPhotoAvif640.src} 640w,
+            ${speakerPhotoAvif960.src} 960w,
+            ${speakerPhotoAvif1280.src} 1280w
+          `}
+          sizes="(max-width: 920px) 100vw, (max-width: 1120px) 50vw, 540px"
+        />
+        <source
+          type="image/webp"
+          srcset={`
+            ${speakerPhotoWebp320.src} 320w,
+            ${speakerPhotoWebp640.src} 640w,
+            ${speakerPhotoWebp960.src} 960w,
+            ${speakerPhotoWebp1280.src} 1280w
+          `}
+          sizes="(max-width: 920px) 100vw, (max-width: 1120px) 50vw, 540px"
+        />
+        <source
+          type="image/jpeg"
+          srcset={`
+            ${speakerPhotoJpg320.src} 320w,
+            ${speakerPhotoJpg640.src} 640w,
+            ${speakerPhotoJpg960.src} 960w,
+            ${speakerPhoto.src} 1280w
+          `}
+          sizes="(max-width: 920px) 100vw, (max-width: 1120px) 50vw, 540px"
+        />
+        <img
+          src={speakerPhoto.src}
+          alt="Piyush Mehta speaking at a developer event"
+          width={speakerPhoto.width}
+          height={speakerPhoto.height}
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </picture>
       <figcaption>
         Developer education, production systems, and hands-on infrastructure practice.
       </figcaption>
