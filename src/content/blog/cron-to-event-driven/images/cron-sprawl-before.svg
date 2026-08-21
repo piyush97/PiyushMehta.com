@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif">
+  <defs>
+    <marker id="arrow-cron" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <style>
+      .cron-box { fill: #1f2937; stroke: #475569; stroke-width: 1.5; rx: 8; ry: 8; }
+      .cron-label { fill: #e2e8f0; font-size: 13px; font-weight: 600; text-anchor: middle; }
+      .cron-meta { fill: #94a3b8; font-size: 11px; text-anchor: middle; }
+      .cron-edge { stroke: #94a3b8; stroke-width: 1.5; fill: none; marker-end: url(#arrow-cron); }
+      .cron-title { fill: #f8fafc; font-size: 18px; font-weight: 700; }
+      .cron-subtitle { fill: #94a3b8; font-size: 12px; }
+      .warn { fill: #fbbf24; font-size: 11px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <text x="450" y="30" class="cron-title" text-anchor="middle">Before: cron sprawl across services</text>
+  <text x="450" y="50" class="cron-subtitle" text-anchor="middle">Each box is a scheduled task. Arrows show hidden dependencies nobody owns.</text>
+
+  <!-- Cron entries -->
+  <g>
+    <rect class="cron-box" x="40" y="100" width="140" height="56"/>
+    <text x="110" y="125" class="cron-label">nightly-billing</text>
+    <text x="110" y="145" class="cron-meta">0 3 * * *  (UTC)</text>
+  </g>
+  <g>
+    <rect class="cron-box" x="200" y="100" width="140" height="56"/>
+    <text x="270" y="125" class="cron-label">hourly-reports</text>
+    <text x="270" y="145" class="cron-meta">0 * * * *</text>
+  </g>
+  <g>
+    <rect class="cron-box" x="360" y="100" width="140" height="56"/>
+    <text x="430" y="125" class="cron-label">daily-cleanup</text>
+    <text x="430" y="145" class="cron-meta">30 2 * * *</text>
+  </g>
+  <g>
+    <rect class="cron-box" x="520" y="100" width="140" height="56"/>
+    <text x="590" y="125" class="cron-label">webhook-retry</text>
+    <text x="590" y="145" class="cron-meta">*/5 * * * *</text>
+  </g>
+  <g>
+    <rect class="cron-box" x="680" y="100" width="160" height="56"/>
+    <text x="760" y="125" class="cron-label">expire-trials</text>
+    <text x="760" y="145" class="cron-meta">0 1 * * *</text>
+  </g>
+
+  <!-- Services -->
+  <g>
+    <rect class="cron-box" x="40" y="280" width="160" height="60"/>
+    <text x="120" y="307" class="cron-label">billing-svc</text>
+    <text x="120" y="325" class="cron-meta">PostgreSQL + Redis</text>
+  </g>
+  <g>
+    <rect class="cron-box" x="220" y="280" width="160" height="60"/>
+    <text x="300" y="307" class="cron-label">reports-svc</text>
+    <text x="300" y="325" class="cron-meta">Snowflake read-only</text>
+  </g>
+  <g>
+    <rect class="cron-box" x="400" y="280" width="160" height="60"/>
+    <text x="480" y="307" class="cron-label">webhook-svc</text>
+    <text x="480" y="325" class="cron-meta">queue + retry log</text>
+  </g>
+  <g>
+    <rect class="cron-box" x="580" y="280" width="160" height="60"/>
+    <text x="660" y="307" class="cron-label">identity-svc</text>
+    <text x="660" y="325" class="cron-meta">MySQL primary</text>
+  </g>
+  <g>
+    <rect class="cron-box" x="760" y="280" width="100" height="60"/>
+    <text x="810" y="307" class="cron-label">stripe</text>
+    <text x="810" y="325" class="cron-meta">external</text>
+  </g>
+
+  <!-- Arrows: crons → services, with hidden deps -->
+  <path class="cron-edge" d="M 110 156 Q 110 220 120 280" marker-end="url(#arrow-cron)"/>
+  <path class="cron-edge" d="M 270 156 Q 270 220 300 280" marker-end="url(#arrow-cron)"/>
+  <path class="cron-edge" d="M 430 156 Q 430 220 480 280" marker-end="url(#arrow-cron)"/>
+  <path class="cron-edge" d="M 590 156 Q 590 220 660 280" marker-end="url(#arrow-cron)"/>
+  <path class="cron-edge" d="M 760 156 Q 760 220 810 280" marker-end="url(#arrow-cron)"/>
+
+  <!-- Hidden cross-service deps -->
+  <path class="cron-edge" stroke-dasharray="4 4" stroke="#fbbf24" d="M 120 340 Q 120 400 480 340" marker-end="url(#arrow-cron)"/>
+  <text x="280" y="395" class="warn">⚠ silent dep: billing-svc → webhook-svc (cron ordering assumption)</text>
+
+  <path class="cron-edge" stroke-dasharray="4 4" stroke="#fbbf24" d="M 480 340 Q 480 410 660 340" marker-end="url(#arrow-cron)"/>
+  <text x="280" y="450" class="warn">⚠ silent dep: webhook-svc → identity-svc (retry uses expired token state)</text>
+
+  <!-- Problem callouts -->
+  <text x="450" y="495" class="cron-subtitle" text-anchor="middle">Every new cron entry added another implicit dependency. The system wasn't designed — it accumulated.</text>
+</svg>

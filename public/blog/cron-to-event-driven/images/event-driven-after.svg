@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif">
+  <defs>
+    <marker id="arrow-ev" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22d3ee"/>
+    </marker>
+    <style>
+      .producer { fill: #0e7490; stroke: #22d3ee; stroke-width: 1.5; }
+      .bus { fill: #1e1b4b; stroke: #818cf8; stroke-width: 2; stroke-dasharray: 6 3; }
+      .consumer { fill: #1f2937; stroke: #475569; stroke-width: 1.5; }
+      .label { fill: #e2e8f0; font-size: 13px; font-weight: 600; text-anchor: middle; }
+      .meta { fill: #94a3b8; font-size: 11px; text-anchor: middle; }
+      .edge { stroke: #22d3ee; stroke-width: 1.5; fill: none; marker-end: url(#arrow-ev); }
+      .title { fill: #f8fafc; font-size: 18px; font-weight: 700; }
+      .subtitle { fill: #94a3b8; font-size: 12px; }
+      .bus-label { fill: #c7d2fe; font-size: 13px; font-weight: 700; text-anchor: middle; }
+      .good { fill: #34d399; font-size: 11px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <text x="450" y="30" class="title" text-anchor="middle">After: one event bus, explicit subscriptions</text>
+  <text x="450" y="50" class="subtitle" text-anchor="middle">Producers emit intent. Consumers subscribe to what they need. The bus owns the contract.</text>
+
+  <!-- Producers -->
+  <g>
+    <rect class="producer" x="40" y="120" width="150" height="60" rx="8" ry="8"/>
+    <text x="115" y="148" class="label">billing-svc</text>
+    <text x="115" y="166" class="meta">emits invoice.paid</text>
+  </g>
+  <g>
+    <rect class="producer" x="40" y="200" width="150" height="60" rx="8" ry="8"/>
+    <text x="115" y="228" class="label">identity-svc</text>
+    <text x="115" y="246" class="meta">emits trial.expired</text>
+  </g>
+  <g>
+    <rect class="producer" x="40" y="280" width="150" height="60" rx="8" ry="8"/>
+    <text x="115" y="308" class="label">webhook-svc</text>
+    <text x="115" y="326" class="meta">emits delivery.failed</text>
+  </g>
+
+  <!-- Bus -->
+  <rect class="bus" x="240" y="120" width="200" height="220" rx="14" ry="14"/>
+  <text x="340" y="150" class="bus-label">event bus</text>
+  <text x="340" y="170" class="meta">persistent + replayable</text>
+  <text x="340" y="190" class="meta">schema-versioned topics</text>
+  <text x="340" y="210" class="meta">per-event idempotency key</text>
+  <text x="340" y="240" class="meta">consumer offsets tracked</text>
+  <text x="340" y="260" class="meta">contract tests on every PR</text>
+
+  <!-- Consumers -->
+  <g>
+    <rect class="consumer" x="490" y="100" width="160" height="60" rx="8" ry="8"/>
+    <text x="570" y="128" class="label">reports-svc</text>
+    <text x="570" y="146" class="meta">subscribes invoice.paid</text>
+  </g>
+  <g>
+    <rect class="consumer" x="490" y="180" width="160" height="60" rx="8" ry="8"/>
+    <text x="570" y="208" class="label">notifications-svc</text>
+    <text x="570" y="226" class="meta">subscribes trial.expired</text>
+  </g>
+  <g>
+    <rect class="consumer" x="490" y="260" width="160" height="60" rx="8" ry="8"/>
+    <text x="570" y="288" class="label">dunning-svc</text>
+    <text x="570" y="306" class="meta">subscribes delivery.failed</text>
+  </g>
+  <g>
+    <rect class="consumer" x="490" y="340" width="160" height="60" rx="8" ry="8"/>
+    <text x="570" y="368" class="label">analytics-svc</text>
+    <text x="570" y="386" class="meta">subscribes everything</text>
+  </g>
+
+  <!-- Edges -->
+  <path class="edge" d="M 190 150 L 240 180"/>
+  <path class="edge" d="M 190 230 L 240 220"/>
+  <path class="edge" d="M 190 310 L 240 260"/>
+
+  <path class="edge" d="M 440 180 L 490 130"/>
+  <path class="edge" d="M 440 220 L 490 210"/>
+  <path class="edge" d="M 440 260 L 490 290"/>
+  <path class="edge" d="M 440 240 L 490 370"/>
+
+  <!-- Win callout -->
+  <text x="450" y="450" class="good" text-anchor="middle">No hidden dependencies. Every subscription is explicit. Every event is replayable.</text>
+</svg>

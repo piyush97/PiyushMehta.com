@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="bus-glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.0"/>
+      <stop offset="0.5" stop-color="#22d3ee" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0.0"/>
+    </linearGradient>
+    <style>
+      .title { fill: #f8fafc; font-size: 56px; font-weight: 800; }
+      .subtitle { fill: #cbd5e1; font-size: 24px; font-weight: 500; }
+      .node { fill: #0e7490; stroke: #22d3ee; stroke-width: 2; rx: 12; ry: 12; }
+      .bus { fill: #1e1b4b; stroke: #818cf8; stroke-width: 2; stroke-dasharray: 8 4; }
+      .consumer { fill: #1f2937; stroke: #475569; stroke-width: 2; rx: 12; ry: 12; }
+      .nlabel { fill: #e2e8f0; font-size: 22px; font-weight: 600; text-anchor: middle; }
+      .nmeta { fill: #94a3b8; font-size: 16px; text-anchor: middle; }
+      .buslabel { fill: #c7d2fe; font-size: 24px; font-weight: 700; text-anchor: middle; }
+      .edge { stroke: #22d3ee; stroke-width: 2.5; fill: none; }
+      .accent { fill: #22d3ee; font-size: 18px; font-weight: 700; letter-spacing: 4px; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="60" y="80" class="accent">FROM CRON TO EVENT-DRIVEN</text>
+  <text x="60" y="140" class="title">The quiet migration that</text>
+  <text x="60" y="200" class="title">removed a whole class of bugs.</text>
+  <text x="60" y="240" class="subtitle">A six-month case study.</text>
+
+  <!-- Producers (left) -->
+  <g>
+    <rect class="node" x="60" y="350" width="170" height="80"/>
+    <text x="145" y="385" class="nlabel">billing-svc</text>
+    <text x="145" y="410" class="nmeta">emits invoice.paid</text>
+  </g>
+  <g>
+    <rect class="node" x="60" y="450" width="170" height="80"/>
+    <text x="145" y="485" class="nlabel">identity-svc</text>
+    <text x="145" y="510" class="nmeta">emits trial.expired</text>
+  </g>
+
+  <!-- Bus (center) -->
+  <rect class="bus" x="320" y="340" width="280" height="200" rx="20" ry="20"/>
+  <rect x="320" y="380" width="280" height="40" fill="url(#bus-glow)"/>
+  <text x="460" y="430" class="buslabel">event bus</text>
+  <text x="460" y="460" class="nmeta">persistent · replayable</text>
+  <text x="460" y="485" class="nmeta">schema-versioned topics</text>
+  <text x="460" y="510" class="nmeta">per-event idempotency</text>
+
+  <!-- Consumers (right) -->
+  <g>
+    <rect class="consumer" x="700" y="320" width="200" height="70"/>
+    <text x="800" y="352" class="nlabel">reports-svc</text>
+    <text x="800" y="375" class="nmeta">subscribes invoice.paid</text>
+  </g>
+  <g>
+    <rect class="consumer" x="940" y="320" width="200" height="70"/>
+    <text x="1040" y="352" class="nlabel">notifications</text>
+    <text x="1040" y="375" class="nmeta">subscribes trial.expired</text>
+  </g>
+  <g>
+    <rect class="consumer" x="700" y="420" width="200" height="70"/>
+    <text x="800" y="452" class="nlabel">dunning-svc</text>
+    <text x="800" y="475" class="nmeta">subscribes delivery.failed</text>
+  </g>
+  <g>
+    <rect class="consumer" x="940" y="420" width="200" height="70"/>
+    <text x="1040" y="452" class="nlabel">analytics-svc</text>
+    <text x="1040" y="475" class="nmeta">subscribes everything</text>
+  </g>
+
+  <!-- Edges -->
+  <line class="edge" x1="230" y1="390" x2="320" y2="430"/>
+  <line class="edge" x1="230" y1="490" x2="320" y2="460"/>
+  <line class="edge" x1="600" y1="430" x2="700" y2="355"/>
+  <line class="edge" x1="600" y1="450" x2="940" y2="355"/>
+  <line class="edge" x1="600" y1="470" x2="700" y2="455"/>
+  <line class="edge" x1="600" y1="490" x2="940" y2="455"/>
+
+  <!-- Footer -->
+  <text x="60" y="595" class="nmeta" text-anchor="start">Piyush Mehta · Senior Software Engineer · 2026</text>
+</svg>

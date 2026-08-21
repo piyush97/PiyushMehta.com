@@ -1,0 +1,329 @@
+---
+title: 'From Cron to Event-Driven: A Migration Playbook'
+description: 'Why time-based scheduling quietly produces a class of bugs that intent-based scheduling eliminates, and a 6-month migration playbook for moving from cron to an event bus without breaking production.'
+date: 2026-08-21
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'architecture'
+  - 'migration'
+  - 'event-driven'
+  - 'system design'
+  - 'cron'
+  - 'case study'
+  - 'reliability'
+  - 'idempotency'
+  - 'transactional outbox'
+image:
+  url: '/blog/cron-to-event-driven/images/event-driven-hero.svg'
+  alt: 'Event-driven architecture diagram showing producers emitting events to a bus and consumers processing them asynchronously'
+---
+
+**Event-driven architecture replaces time-based scheduling with intent-based scheduling.** When work is scheduled by the clock, the system develops a hidden class of bugs — missed windows, cascading retries, daylight-saving surprises, and silent partial state — that don't exist when work is scheduled by the fact that caused it. This post is the playbook for moving a real production system from cron to an event bus without breaking it.
+
+---
+
+## The incident that proved it
+
+It was a Tuesday at 11:47 PM UTC. A reconciliation cron — the kind that's been quietly doing its job for three years — failed on a network timeout. The retry kicked in. It hit the same timeout. The retry kicked in again. By the time anyone noticed, the cron had retried 47 times in a 90-minute window, hammering the downstream database with the same query.
+
+The interesting part isn't that the cron failed. Cron fails all the time. The interesting part is the _shape_ of the failure: it wasn't a one-off bug, it was a **class of bug** that the architecture itself made easy to produce. The clock kept ticking; the retries had no notion of _intent_; the downstream system had no way to deduplicate what it was receiving.
+
+Three weeks later, after a finance reconciliation caught a different silent failure — a state change that hadn't propagated to a downstream consumer because the cron had been running on stale assumptions — the team made the call. We're not fixing this cron. We're replacing the model.
+
+This is the playbook for what came next.
+
+## The starting state: cron sprawl
+
+Here's what the system looked like before. If you've ever inherited a few years of "just one more cron," it will look familiar.
+
+<p>
+  <img
+    src="/blog/cron-to-event-driven/images/cron-sprawl-before.svg"
+    alt="Cron sprawl before migration: each box is a scheduled task, with arrows showing hidden cross-service dependencies nobody owns"
+    width="900"
+    height="520"
+    loading="lazy"
+  />
+</p>
+
+The numbers from this system:
+
+- **47 cron entries** spread across 6 services
+- **5 cron entries** with implicit ordering dependencies (a billing-svc cron assumed a webhook-svc cron had already run)
+- **3 distinct time zones** in the cron expressions (UTC, America/Toronto, Europe/Berlin) — at least one was wrong
+- **~6 hours per month** spent babysitting: investigating missed runs, replaying logs, manually triggering retries
+- **3 incidents in the past quarter** traceable to missed windows or retry storms
+
+Cron wasn't a bad decision when it was made. It was the simplest thing that could work, and it worked for a long time. That's not a sin — that's how software grows. The problem is that **cron accumulates**. Each new entry added another implicit dependency, and the system wasn't designed — it accumulated.
+
+## Why event-driven, and why now
+
+Three things changed:
+
+1. **Scale**: crons that took 5 minutes started taking 45 minutes. The reconciliation cron, when it finally worked, blocked four downstream consumers from processing fresh data for almost an hour.
+2. **Observability ceiling**: there was no way to answer "what ran, in what order, with what result?" by grepping cron logs. The information existed in 47 different files, written by 6 different services, in 3 different log formats.
+3. **Incident count**: missed windows + cascading retries + a daylight-saving bug that fired a job twice in one hour pushed the team past a threshold.
+
+The decision wasn't "cron is bad." The decision was "**for jobs where the real trigger was never the clock, we were polling on a timer because that was the only tool we had**."
+
+### The decision matrix
+
+A quick one — not exhaustive, but enough to think with:
+
+| Trigger type         | Use when                                                             | Watch out for                                                |
+| -------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **Cron / scheduled** | Reports, reconciliation, digests, anything genuinely calendar-driven | DST, missed windows, retry storms, ordering assumptions      |
+| **Queue**            | Tasks that should run once, with retries                             | Poison messages, ordering, backpressure                      |
+| **Event bus**        | Things that should happen _because_ something else happened          | Idempotency, schema evolution, observability across services |
+
+The honest version of the playbook: **migrate the host for every job, migrate the trigger model only for jobs where time was a proxy for an event.** Time is sometimes the right trigger — a monthly billing reconciliation is a time-based fact, and forcing it into events buys you nothing.
+
+## The migration design
+
+Four contracts make this safe. Get any one wrong and the migration will silently corrupt state.
+
+```typescript
+// 1. IDEMPOTENCY — every event carries a key derived from *intent*,
+// not from when the event was emitted. The same intent, retried
+// forever, produces the same key.
+
+interface BillingEvent {
+  idempotencyKey: string;
+  schemaVersion: 1;
+  type: 'invoice.paid';
+  customerId: string;
+  invoiceId: string;
+  amountCents: number;
+  paidAt: string;
+}
+
+function buildInvoicePaidKey(customerId: string, periodMonth: string): string {
+  return `invoice.paid:${customerId}:${periodMonth}`;
+}
+
+async function publishInvoicePaid(event: BillingEvent) {
+  await eventBus.publish('billing.invoice.paid', event, {
+    messageDeduplicationId: event.idempotencyKey,
+    headers: { 'x-schema-version': String(event.schemaVersion) },
+  });
+}
+
+// Consumer-side dedup catches the slow-retry case outside the bus's
+// 5-minute dedup window. 24h TTL matches the industry standard.
+const seen = new Map<string, { result: unknown; expiresAt: number }>();
+
+async function handleInvoicePaid(event: BillingEvent) {
+  const cached = seen.get(event.idempotencyKey);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.result;
+  }
+
+  const result = await applyInvoicePaidToLedger(event);
+  seen.set(event.idempotencyKey, {
+    result,
+    expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+  });
+  return result;
+}
+```
+
+```typescript
+// 2. CONTRACT TEST — the single test that, when it passed, told us
+// the dual-write phase was safe to start. We used Pact Message variant
+// to pin producer expectations against consumer requirements at the
+// event-bus boundary — a brand-new interface surface with no prior
+// contract artifacts.
+
+import { pactWith } from 'pact';
+
+pactWith({ consumer: 'reports-svc', provider: 'billing-svc' }, (pact) => {
+  pact.addMessage({
+    description: 'invoice.paid event for reports-svc ledger',
+    content: {
+      idempotencyKey: 'invoice.paid:cus_abc:2026-08',
+      schemaVersion: 1,
+      type: 'invoice.paid',
+      customerId: 'cus_abc',
+      invoiceId: 'in_001',
+      amountCents: 12500,
+      paidAt: '2026-08-15T14:23:11Z',
+    },
+    metaData: {
+      contentType: 'application/json',
+      kafkaTopic: 'billing.invoice.paid',
+    },
+  });
+});
+
+pactWith({ consumer: 'reports-svc', provider: 'billing-svc' }, (pact) => {
+  pact.addMessage({
+    description: 'reports-svc requires idempotencyKey on every paid event',
+    metaData: { kafkaTopic: 'billing.invoice.paid' },
+    content: (message: { contents: any }) => {
+      expect(message.contents).toHaveProperty('idempotencyKey');
+      expect(message.contents).toHaveProperty('schemaVersion');
+      expect(message.contents.schemaVersion).toBe(1);
+    },
+  });
+});
+```
+
+The point of this section isn't "use Pact." The point is: **when you cut over a producer and a consumer to a new boundary, you need a way to prove the boundary is what both sides think it is.** Without it, every cutover is a leap of faith.
+
+The other two contracts — **schema versioning** (so producers can't break consumers silently) and **observability** (every event carries a trace ID, so you can correlate across services) — are covered well elsewhere. The pattern matters more than the tool: don't ship the migration without these four contracts in place.
+
+## The cutover plan
+
+Four phases. The most common mistake is collapsing phases 1 and 2; don't.
+
+| Phase                | What happens                                                                                 | What proves it's safe to move on                                                        |
+| -------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **1. Shadow**        | New consumer reads events from the bus, logs what it _would_ do, takes no action             | Shadow consumer's output matches cron output for 7 days straight, in production traffic |
+| **2. Dual-write**    | Producer emits both to the old cron path AND the new bus; both run, neither is authoritative | The diff between cron results and bus results is empty across 14 days                   |
+| **3. Dark launch**   | Event bus is authoritative; cron still runs but its output is discarded                      | Customers see no change in behavior for 14 days; incident count doesn't increase        |
+| **4. Cron disabled** | Cron entries deleted, alerts cleaned up, runbooks updated                                    | One full quarter with zero cron-driven incidents in this category                       |
+
+The phase that always takes 3x as long as estimated is **phase 3**, and the bottleneck is never code. It's coordination: getting every team that depends on the cron's side effects to agree on the cutover date, getting the runbook updated, getting the alerts retargeted at the new metric. The engineering is the easy part.
+
+A note on **rollback**: every phase has to be rollback-able in under 15 minutes. That means the dual-write phase has to be able to disable the bus path instantly without touching the cron path, and vice versa. If you can't roll back in 15 minutes, you're not ready to move on.
+
+## The three-week bug hunt
+
+The bug that justified the entire migration slipped through every test we'd written.
+
+In the dual-write phase, we shipped the most natural-looking producer you can imagine:
+
+```typescript
+// The wrong shape — what we shipped first.
+
+async function cancelSubscriptionBroken(customerId: string) {
+  // 1. Emit the event FIRST
+  await eventBus.publish('subscription.cancelled', {
+    idempotencyKey: `subscription.cancelled:${customerId}`,
+    customerId,
+  });
+
+  // 2. THEN commit the DB transaction.
+  // If step 2 fails, the event has already gone out. A consumer
+  // racing the cron reconciliation sees a "cancelled" event while
+  // the DB still shows the subscription as active.
+  await db.transaction(async (tx) => {
+    await tx.execute('UPDATE subscriptions SET status = ? WHERE customer_id = ?', [
+      'cancelled',
+      customerId,
+    ]);
+  });
+}
+```
+
+This passed the contract test. It passed the shadow consumer. It passed the dual-write diff. **It failed in production** for a reason none of those tests covered.
+
+Here's what happened: the customer-facing cancel endpoint committed the subscription status change at T+0ms. The bus event landed at T+1ms. The cron reconciliation — still running during dual-write — fired at T+200ms, queried the database (now in the post-cancel state), and concluded "nothing to cancel." But the cron reconciliation had its own ordering assumptions: it expected a downstream notification service to be in a particular state, and that state depended on the bus event being fully processed.
+
+The bus event _had_ been processed. But the reconciliation cron's notion of "processed" was based on its own query, not on the bus's offset tracking. The two drifted. Three weeks later, a finance reconciliation caught that we'd sent "your subscription was cancelled" emails to customers whose accounts were still active — and _also_ failed to send them to customers whose accounts were correctly cancelled, because the cron's state read was racing with the bus's offset commit.
+
+The fix wasn't a one-line patch. It was the **transactional outbox pattern**:
+
+```typescript
+// The right shape — state change and outbox commit atomically,
+// bus publish happens separately and is idempotent on retry.
+
+async function cancelSubscriptionFixed(customerId: string) {
+  await db.transaction(async (tx) => {
+    await tx.execute('UPDATE subscriptions SET status = ? WHERE customer_id = ?', [
+      'cancelled',
+      customerId,
+    ]);
+    await tx.execute(
+      `INSERT INTO event_outbox (id, idempotency_key, type, payload, created_at)
+       VALUES (?, ?, ?, ?, NOW())`,
+      [
+        crypto.randomUUID(),
+        `subscription.cancelled:${customerId}`,
+        'subscription.cancelled',
+        JSON.stringify({ customerId }),
+      ],
+    );
+  });
+}
+
+// A separate worker drains the outbox. If the publish fails, the row
+// stays unpublished and a retry loop picks it up. Either the event
+// lands or the operator sees a backlog — no more silent partial state.
+async function dispatchOutbox() {
+  const unpublished = await db.query(
+    `SELECT id, idempotency_key, type, payload
+     FROM event_outbox
+     WHERE published_at IS NULL
+     ORDER BY created_at ASC LIMIT 100`,
+  );
+
+  for (const row of unpublished.rows) {
+    try {
+      await eventBus.publish(row.type, JSON.parse(row.payload), {
+        messageDeduplicationId: row.idempotency_key,
+      });
+      await db.execute('UPDATE event_outbox SET published_at = NOW() WHERE id = ?', [row.id]);
+    } catch (err) {
+      logger.warn({ err, eventId: row.id }, 'outbox publish failed');
+    }
+  }
+}
+```
+
+The lesson is sharper than "use the outbox pattern." The lesson is: **dual-write is correct in principle and dangerous in practice.** Without the transactional outbox, you have a race window between the event emit and the state commit. With it, you have a durable queue that can never get ahead of — or behind — your state. The pattern is one of the most-cited tools in [this canonical Stripe writeup on idempotency](https://stripe.com/blog/idempotency), and it's worth the read in full if you're going to do a migration like this.
+
+## What I'd do differently
+
+Three concrete lessons, not platitudes.
+
+**1. Underestimate coordination, not engineering.** The engineering for this migration was about 25% of the calendar time. The other 75% was coordinating across teams — getting sign-off on cutover dates, updating runbooks, retargeting alerts, getting finance to agree on what "reconciliation passed" means. If I'd modeled the project realistically, I'd have budgeted 6 engineers for 6 months, not 3 engineers for 4 months. I've written before about [how I underestimated migration timelines](https://piyushmehta.com/blog/zero-downtime-database-migration-at-scale/) for a database move — same lesson, different stack.
+
+**2. Add the transactional outbox from day one.** I would not do a dual-write phase without the outbox in place from the first commit. We added it after the three-week bug hunt. The cost of the bug hunt was larger than the cost of building the outbox first. A senior+ reader I respect has written about [similar migration patterns for legacy codebases](https://piyushmehta.com/blog/migrating-legacy-codebase-to-astro/) that reinforce this — the migration shape you start with shapes the failure modes you discover.
+
+**3. Cut anything that isn't moving state or shaping the cutover.** The plan we shipped had three deliverables that turned out to be pure overhead: a "migration dashboard" (nobody read it), a "weekly stakeholder update" (three weeks in, everyone stopped opening it), and a "rollback dry-run" (we never ran it; we ran a real rollback once and that was the test). If you're planning a similar migration, your three deliverables should be: contract tests, the outbox, and the cutover playbook. Everything else is decoration.
+
+## The quiet win
+
+Twelve months after the migration completed:
+
+- **Missed-window incidents**: 8 per quarter → **0 per quarter** in the categories that moved to the bus
+- **Deploy frequency**: from once a week to **twice a day**, because deploys no longer had to coordinate with cron schedules
+- **On-call burden**: one engineer reported sleeping through the night for the first time in eighteen months
+- **Cross-team integration**: adding a new consumer used to require a code change to the cron-emitting service; now it requires a subscription, which is a config change
+
+<p>
+  <img
+    src="/blog/cron-to-event-driven/images/event-driven-after.svg"
+    alt="After migration: producers emit events to a bus with explicit subscriptions per consumer, no hidden dependencies"
+    width="900"
+    height="480"
+    loading="lazy"
+  />
+</p>
+
+The class of bug that disappeared is the one that lived in the _space between crons_ — the implicit ordering, the silent race between reconciliation and event publication, the daylight-saving double-fires, the cascading retry storms. The migration didn't add features. It removed a category of failure.
+
+The honest version of when _not_ to do this: if your crons are time-based on purpose (monthly statements, daily digests, weekly backups), the migration buys you nothing and costs you the operational simplicity of cron. The win is in the cases where time was always a proxy for an event you couldn't yet express — and now you can.
+
+---
+
+## Appendix: what to read next
+
+If you're planning a similar migration, three reads will save you weeks:
+
+- **AWS Containers Blog: [Migrate cron jobs to event-driven architectures using Amazon ECS and Amazon EventBridge](https://aws.amazon.com/blogs/containers/migrate-cron-jobs-to-event-driven-architectures-using-amazon-elastic-container-service-and-amazon-eventbridge/)** — the canonical vendor-endorsed pattern for the first two steps of this playbook (scheduler → serverless containers, then trigger-by-event).
+
+- **Stripe Engineering: [Designing robust and predictable APIs with idempotency](https://stripe.com/blog/idempotency)** — Brandur Leach's classic on making processing logic idempotent. Models the mental shift from \"the job ran\" (cron's success signal) to \"the side effect happened once\" (event-driven's success signal).
+
+- **Confluent Schema Registry: [Schema Evolution and Compatibility](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)** — the BACKWARD/FORWARD compatibility cookbook. Maps directly onto \"add the field first, switch the consumer second, remove the old field last.\"
+
+For the patterns around [zero-downtime database migrations](https://piyushmehta.com/blog/zero-downtime-database-migration-at-scale/) and [migrating a legacy codebase to Astro](https://piyushmehta.com/blog/migrating-legacy-codebase-to-astro/), the same playbook applies — coordination is the bottleneck, not engineering.
+
+For the broader system-design context — when event-driven is the right answer vs. when a queue or a simple cron is — the [system design patterns cheatsheet](https://piyushmehta.com/blog/system-design-patterns-cheatsheet/) covers the decision tree.
+
+---
+
+_If you're doing a migration like this and want to compare notes, my [contact form](https://piyushmehta.com/contact/) is the fastest way to reach me. I read everything that comes through it._
