@@ -70,3 +70,8 @@ tests/*.ts-snapshots
 .omx/*
 .playwright-mcp/*env.d.ts
 src/varlock.env.d.ts
+# Local draft material and tooling artifacts (not part of the blog content)
+.drafts/
+.codex/
+skills-lock.json
+env.d.ts

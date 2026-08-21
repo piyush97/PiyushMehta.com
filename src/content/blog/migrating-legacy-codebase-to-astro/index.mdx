@@ -327,8 +327,6 @@ const { className = '' } = Astro.props;
 
 This approach ensured the form works for everyone while providing enhanced functionality for users with JavaScript.
 
-````
-
 ### **3. Build Performance Optimization**
 
 Implementing parallel processing and caching strategies:
@@ -345,14 +343,10 @@ async function optimizeBuild() {
     (image) =>
       new Worker('./scripts/optimize-image.js', {
         workerData: { imagePath: image },
-      })
+      }),
   );
 
-  await Promise.all(
-    workers.map(
-      (worker) => new Promise((resolve) => worker.on('exit', resolve))
-    )
-  );
+  await Promise.all(workers.map((worker) => new Promise((resolve) => worker.on('exit', resolve))));
 
   // Generate critical CSS
   await generateCriticalCSS();
@@ -360,7 +354,7 @@ async function optimizeBuild() {
   // Preload key resources
   await generatePreloadManifest();
 }
-````
+```
 
 ## Advanced Optimization Techniques
 
