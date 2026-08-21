@@ -108,6 +108,8 @@ const commentId = `giscus-${Math.random().toString(36).slice(2, 11)}`;
 </section>
 
 <script>
+  // Defer initialization until browser is idle so it doesn't compete with
+  // hero paint and core blog content rendering for the main thread.
   type AnalyticsWindow = Window &
     typeof globalThis & {
       gtag?: (command: string, eventName: string, properties?: Record<string, unknown>) => void;
@@ -349,17 +351,26 @@ const commentId = `giscus-${Math.random().toString(36).slice(2, 11)}`;
     }
   }
 
-  // Initialize Giscus when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
+  // Initialize Giscus when the browser is idle. The IntersectionObserver
+  // inside GiscusManager further delays the actual giscus.app fetch
+  // until the comments section scrolls into view, so this handler
+  // can wait without blocking initial render or hero/interaction metrics.
+  const initGiscus = () => {
     const giscusContainers = document.querySelectorAll('[data-comment-id]');
-    
-    giscusContainers.forEach(container => {
+
+    giscusContainers.forEach((container) => {
       const commentId = container.getAttribute('data-comment-id');
       if (commentId) {
         new GiscusManager(commentId);
       }
     });
-  });
+  };
+
+  if ('requestIdleCallback' in window) {
+    (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(initGiscus, { timeout: 2000 });
+  } else {
+    window.addEventListener('load', () => setTimeout(initGiscus, 1500));
+  }
 </script>
 
 <style>

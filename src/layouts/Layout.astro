@@ -7,6 +7,7 @@ import Navbar from '../components/Navbar.astro';
 import SEO from '../components/SEO.astro';
 import type { JsonLdData } from '../types/schema';
 import '../styles/global.css';
+import { initSiteMotion } from '../scripts/site-motion';
 
 export interface Props {
   title: string;
@@ -105,191 +106,29 @@ const {
     </main>
     <Footer />
     <SpeedInsights />
-    <script is:inline>
-      const getMotionState = () => {
-        if (!window.__portfolioMotionState) {
-          window.__portfolioMotionState = {
-            revealObserver: null,
-            parallaxFrame: 0,
-            parallaxHandler: null,
-          };
-        }
-        return window.__portfolioMotionState;
-      };
-
-      const normalizePath = (value) => {
-        if (!value) return "/";
-        const clean = value.replace(/\/+$/, "");
-        return clean === "" ? "/" : clean;
-      };
-
-      const getRouteWeight = (pathname) => {
-        const routeOrder = {
-          "/": 0,
-          "/projects": 10,
-          "/blog": 20,
-          "/resume": 30,
-          "/services": 40,
-          "/react-developer": 50,
-          "/uses": 60,
-          "/videos": 70,
-          "/about": 80,
-          "/contact-me": 90,
-        };
-
-        const normalizedPath = normalizePath(pathname);
-        const segments = normalizedPath.split("/").filter(Boolean);
-        const topLevel = segments.length ? `/${segments[0]}` : "/";
-        return routeOrder[topLevel] ?? 50;
-      };
-
-      const initRouteDirection = () => {
-        document.addEventListener("astro:before-preparation", (event) => {
-          const from = event.from;
-          const to = event.to;
-          if (!from || !to) return;
-
-          const fromDepth = normalizePath(from.pathname).split("/").filter(Boolean).length;
-          const toDepth = normalizePath(to.pathname).split("/").filter(Boolean).length;
-          const fromWeight = getRouteWeight(from.pathname);
-          const toWeight = getRouteWeight(to.pathname);
-
-          const direction =
-            toDepth < fromDepth || (toDepth === fromDepth && toWeight < fromWeight)
-              ? "backward"
-              : "forward";
-
-          document.documentElement.setAttribute("data-route-direction", direction);
-        });
-      };
-
-      const initReveal = (reducedMotion, state) => {
-        state.revealObserver?.disconnect();
-        const revealElements = Array.from(document.querySelectorAll("[data-reveal]"));
-
-        if (reducedMotion || !("IntersectionObserver" in window)) {
-          revealElements.forEach((element) => element.classList.add("is-visible"));
-          return;
-        }
-
-        // Track scroll velocity so fast scrolling skips animation delays.
-        let fastScroll = false;
-        let fastScrollTimer = 0;
-        let lastScrollY = window.scrollY;
-        const onScrollVelocity = () => {
-          const delta = Math.abs(window.scrollY - lastScrollY);
-          lastScrollY = window.scrollY;
-          if (delta > 60) {
-            fastScroll = true;
-            clearTimeout(fastScrollTimer);
-            fastScrollTimer = window.setTimeout(() => { fastScroll = false; }, 200);
+    <script>
+      // Defer all motion/interaction logic until the browser is idle.
+      // The reveal, parallax, and hero typography work is non-critical for
+      // FCP/LCP — only the theme + route direction touch initial paint.
+      import('../scripts/site-motion').then(({ initSiteMotion }) => {
+        const runWhenIdle = () => {
+          const idle = (window as unknown as {
+            requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void;
+          }).requestIdleCallback;
+          if (typeof idle === 'function') {
+            idle(initSiteMotion, { timeout: 2000 });
+          } else {
+            window.setTimeout(initSiteMotion, 1500);
           }
         };
-        window.addEventListener("scroll", onScrollVelocity, { passive: true });
 
-        state.revealObserver = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (!entry.isIntersecting) continue;
-              if (fastScroll) {
-                entry.target.style.setProperty("--reveal-delay", "0ms");
-              }
-              entry.target.classList.add("is-visible");
-              state.revealObserver?.unobserve(entry.target);
-            }
-          },
-          { threshold: 0.05, rootMargin: "0px 0px 0px 0px" }
-        );
-
-        revealElements.forEach((element, index) => {
-          const hasCustomDelay = element.hasAttribute("data-reveal-delay");
-          const customDelay = Number(element.getAttribute("data-reveal-delay") || "0");
-          const staggerDelay = Number(element.getAttribute("data-reveal-stagger") || "");
-          const delay = hasCustomDelay && Number.isFinite(customDelay) && customDelay >= 0
-            ? customDelay
-            : index * 20;
-          element.style.setProperty("--reveal-delay", `${Math.min(delay + staggerDelay, 120)}ms`);
-          state.revealObserver.observe(element);
-        });
-      };
-
-      const initParallax = (reducedMotion, state) => {
-        if (state.parallaxHandler) {
-          window.removeEventListener("scroll", state.parallaxHandler);
-          window.removeEventListener("resize", state.parallaxHandler);
-          cancelAnimationFrame(state.parallaxFrame);
+        document.addEventListener('astro:page-load', runWhenIdle);
+        if (document.readyState !== 'loading') {
+          runWhenIdle();
+        } else {
+          document.addEventListener('DOMContentLoaded', runWhenIdle, { once: true });
         }
-
-        const parallaxElements = Array.from(document.querySelectorAll("[data-parallax]"));
-        if (reducedMotion || parallaxElements.length === 0) {
-          parallaxElements.forEach((element) => {
-            element.style.removeProperty("--parallax-offset");
-          });
-          return;
-        }
-
-        const updateParallax = () => {
-          const viewportHeight = window.innerHeight;
-          for (const element of parallaxElements) {
-            const rect = element.getBoundingClientRect();
-            const speed = Number(element.getAttribute("data-parallax-speed") || "0.12");
-            const progress = (viewportHeight * 0.5 - (rect.top + rect.height * 0.5)) * speed;
-            element.style.setProperty("--parallax-offset", `${progress.toFixed(2)}px`);
-          }
-          state.parallaxFrame = 0;
-        };
-
-        const onScroll = () => {
-          if (state.parallaxFrame) return;
-          state.parallaxFrame = requestAnimationFrame(updateParallax);
-        };
-
-        state.parallaxHandler = onScroll;
-        window.addEventListener("scroll", onScroll, { passive: true });
-        window.addEventListener("resize", onScroll);
-        onScroll();
-      };
-
-      const initHeroTypography = (reducedMotion) => {
-        const titles = document.querySelectorAll("[data-hero-title]");
-        titles.forEach((el) => {
-          if (el.getAttribute("data-hero-split") === "done") return;
-          el.setAttribute("data-hero-split", "done");
-
-          const text = (el.textContent || "").trim();
-
-          if (reducedMotion) return;
-
-          const startDelay = 60;
-          const perChar = 28;
-
-          const charsHtml = text.split("").map((char, i) => {
-            const delay = startDelay + i * perChar;
-            const escaped = char.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            return `<span class="tw-char" style="animation-delay:${delay}ms">${escaped}</span>`;
-          }).join("");
-
-          const totalDuration = startDelay + text.length * perChar;
-          el.innerHTML = charsHtml + `<span class="tw-cursor"></span>`;
-
-          const cursor = el.querySelector(".tw-cursor");
-          if (cursor) {
-            setTimeout(() => cursor.classList.add("is-done"), totalDuration + 900);
-          }
-        });
-      };
-
-      const initSiteMotion = () => {
-        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const state = getMotionState();
-        initRouteDirection();
-        initHeroTypography(reducedMotion);
-        initReveal(reducedMotion, state);
-        initParallax(reducedMotion, state);
-      };
-
-      document.addEventListener("astro:page-load", initSiteMotion);
-      initSiteMotion();
+      });
     </script>
   </body>
 </html>

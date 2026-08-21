@@ -15,8 +15,12 @@ export default defineConfig({
   site: 'https://piyushmehta.com',
   output: 'server',
   prefetch: {
-    prefetchAll: true,
+    // Prefetch only on explicit hover/focus/touchstart to reduce
+    // initial network/ISR load and avoid hammering Vercel functions
+    // on pages with many links (blog index, footer nav).
+    prefetchAll: false,
     defaultStrategy: 'hover',
+    prefetchOnHover: true,
   },
   // Astro v7 stable caching — enables Astro.cache.set() on server routes and APIs
   cache: {
@@ -97,7 +101,11 @@ export default defineConfig({
   build: {
     // Incremental static builds currently require concurrency: 1 to use the cache.
     concurrency: 1,
-    assetsInlineLimit: 1024,
+    // Inline small CSS (under 4KB) directly into HTML to reduce render-blocking
+    // round-trips on first paint. Layout.css (108KB) stays external so it
+    // can be cached and parallel-downloaded.
+    inlineStylesheets: 'auto',
+    assetsInlineLimit: 4096,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
