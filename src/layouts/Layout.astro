@@ -51,6 +51,7 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
     <link rel="icon" type="image/svg+xml" href={favicon.src} />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link
@@ -87,8 +88,11 @@ const {
           (window.matchMedia('(prefers-color-scheme: light)').matches
             ? 'professional-light'
             : 'professional-dark');
+        const colorScheme = preferredTheme === 'professional-light' ? 'light' : 'dark';
         document.documentElement.classList.remove('professional-dark', 'professional-light', 'light', 'dark');
         document.documentElement.classList.add(preferredTheme);
+        document.documentElement.style.colorScheme = colorScheme;
+        document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', colorScheme);
         if (preferredTheme === 'professional-light') {
           document.documentElement.classList.add('light');
         }
