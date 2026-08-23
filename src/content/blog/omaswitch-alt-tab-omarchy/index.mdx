@@ -1,0 +1,187 @@
+---
+title: 'OmaSwitch: The Alt+Tab Omarchy Has Been Missing'
+description: 'Meet OmaSwitch: a Windows-style Alt+Tab overlay for Omarchy with MRU ordering, type-to-search, live previews, and no daemon or extra packages.'
+date: 2026-08-23
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'omarchy'
+  - 'hyprland'
+  - 'wayland'
+  - 'linux'
+  - 'productivity'
+  - 'keyboard-driven'
+  - 'open source'
+draft: false
+---
+
+Most window switchers make one of two compromises: they are fast but blind, or visual but slow. **[OmaSwitch](https://github.com/piyush97/omaswitch)** is the small piece of desktop infrastructure I wanted for Omarchy: a familiar, keyboard-first `Alt+Tab` overlay that keeps your most recent windows first, lets you search by name, and shows a live preview of the window you are about to enter.
+
+It is an independent, MIT-licensed Omarchy plugin. No daemon. No additional packages. No elevated privileges. Install it, bind it, and it follows the Omarchy theme you already use.
+
+> **The short version:** OmaSwitch turns “where did that window go?” into `Alt+Tab`, type a few characters, `Enter`.
+
+![OmaSwitch displaying a live preview of a terminal window](https://raw.githubusercontent.com/piyush97/omaswitch/main/preview.png)
+
+## The problem with ordinary window cycling
+
+Omarchy's default `Alt+Tab` binding directly cycles through windows. That is excellent when the next window is obvious. It gets less useful when a work session has a browser, two terminals, an editor, a database client, a chat app, and a monitor all open—or when several of them have the same icon.
+
+The mental work is not moving focus. It is remembering:
+
+- which window you used most recently;
+- which terminal is running the process you need;
+- whether the browser window is documentation, a pull request, or the app you are testing; and
+- whether the “right” window is on another workspace.
+
+OmaSwitch exposes that context instead of making you cycle until you recognize it. The selected item is the only one that receives a capture stream, so the overlay can provide a live preview without trying to render every open window at once.
+
+## What OmaSwitch does
+
+### Recent windows first
+
+The list is ordered from Hyprland focus history—the same order your attention usually follows. Open the switcher with `Alt+Tab` and it selects the next most recently used window, not an arbitrary item in a static list.
+
+Repeated `Alt+Tab` presses keep cycling. `Alt+Shift+Tab` moves in the other direction. That preserves the muscle memory of a conventional desktop switcher while making the current target visible.
+
+### Search without leaving the keyboard
+
+Start typing as soon as the overlay opens. OmaSwitch filters by window title, application name, and workspace. That makes it practical to jump directly to a project terminal, a browser tab group, or an application on another workspace without reaching for the mouse.
+
+- `Backspace` removes one character.
+- `Ctrl+Backspace` removes a word.
+- `Ctrl+U` clears the query.
+- `Enter` focuses the selected result.
+
+### See the target before you switch
+
+A title is often not enough. The preview updates as you change the highlighted row, so you can distinguish two terminals with the same application name or verify a dashboard before committing to it.
+
+![OmaSwitch showing a live btop preview before switching windows](https://raw.githubusercontent.com/piyush97/omaswitch/main/screenshots/btop-preview.png)
+
+The preview is deliberately conservative: **one selected window, one live stream**. It avoids the cost and visual noise of a live thumbnail for every row while retaining the information that matters at the decision point.
+
+### Look native, not bolted on
+
+OmaSwitch is an Omarchy overlay plugin. It uses the active Omarchy theme rather than shipping a competing theme, and it remains entirely local to your user configuration. The result is a switcher that feels like part of the desktop instead of a separate launcher layered on top of it.
+
+## Install it
+
+Add and enable the plugin:
+
+```bash
+omarchy plugin add https://github.com/piyush97/omaswitch.git --enable
+```
+
+That is enough to install OmaSwitch. It does not add a service or require a separate configuration file.
+
+If you only want a searchable picker on a custom shortcut, summon it directly:
+
+```bash
+omarchy-shell shell toggle piyush.omaswitch
+```
+
+For example, bind that command to a key you do not already use. The default Omarchy `Alt+Tab` behavior remains untouched until you replace its bindings.
+
+## Make it your `Alt+Tab` switcher
+
+To replace direct cycling, add the following to `~/.config/hypr/bindings.lua`:
+
+```lua
+hl.unbind("ALT + TAB")
+hl.unbind("ALT + SHIFT + TAB")
+
+o.bind("ALT + TAB", "OmaSwitch", "omarchy-shell shell summon piyush.omaswitch '{\"mode\":\"cycle\",\"direction\":1}'")
+o.bind("ALT + SHIFT + TAB", "OmaSwitch (reverse)", "omarchy-shell shell summon piyush.omaswitch '{\"mode\":\"cycle\",\"direction\":-1}'")
+```
+
+Reload Hyprland and check the configuration:
+
+```bash
+hyprctl reload
+hyprctl configerrors
+```
+
+`configerrors` should report no errors. If it does, fix the Lua configuration before relying on the new binding.
+
+The unbind lines matter: without them, the existing direct-cycle shortcuts may still win. If you prefer Omarchy's defaults, keep them and bind one of the summon commands to a different shortcut instead.
+
+## The complete keyboard reference
+
+| Key                            | Result                                           |
+| ------------------------------ | ------------------------------------------------ |
+| `Alt+Tab`                      | Open OmaSwitch and select the next recent window |
+| `Alt+Shift+Tab`                | Open OmaSwitch and select the previous window    |
+| `Tab`, `Down`, `Right`         | Move selection forward                           |
+| `Shift+Tab`, `Up`, `Left`      | Move selection backward                          |
+| Type                           | Filter by title, application, or workspace       |
+| `Backspace` / `Ctrl+Backspace` | Delete a character / word from the filter        |
+| `Ctrl+U`                       | Clear the filter                                 |
+| `Enter` or click               | Focus the selected window                        |
+| `Esc` or click outside         | Close without switching                          |
+
+In cycle mode, releasing `Alt` can also select the highlighted window when the compositor forwards that release event. `Enter` is the explicit, dependable option when you want to confirm a selection.
+
+## How it behaves when previews are unavailable
+
+Live previews use Hyprland's `hyprland-toplevel-export-v1` protocol. If the compositor does not expose that protocol, or the selected window cannot provide a frame, OmaSwitch does not fail or freeze. It falls back to its full-width list layout; recent-window ordering, filtering, keyboard navigation, and focusing still work.
+
+That fallback is intentional. A window switcher must remain useful when a preview is unavailable—not make the preview a prerequisite for switching.
+
+![OmaSwitch filtering for a project terminal while retaining a live preview](https://raw.githubusercontent.com/piyush97/omaswitch/main/screenshots/terminal-preview.png)
+
+## Where it changes the workflow
+
+OmaSwitch earns its place in a few common situations:
+
+- **Many similarly named windows:** confirm the exact terminal or browser context before switching.
+- **Cross-workspace jumps:** type the app, title, or workspace rather than navigating workspace-by-workspace.
+- **Fast context changes:** use MRU cycling for the last window, then type only when the target is farther away.
+- **Screen sharing or demos:** verify the window contents before putting it on screen.
+
+Direct cycling is still a great default for a two-window loop. OmaSwitch is for the moment your desktop becomes a working set instead of a pair.
+
+## Keep it current and recover quickly
+
+Update the installed plugin with:
+
+```bash
+omarchy plugin update piyush.omaswitch --yes
+```
+
+Disable or remove it without touching the rest of your setup:
+
+```bash
+omarchy plugin disable piyush.omaswitch
+omarchy plugin remove piyush.omaswitch --yes
+```
+
+If the plugin does not appear after installation, refresh the Omarchy Shell plugin registry:
+
+```bash
+omarchy-shell shell rescanPlugins
+omarchy plugin list --json
+```
+
+If `Alt+Tab` still directly cycles windows, revisit the unbind lines, reload Hyprland, and inspect the registered shortcuts:
+
+```bash
+hyprctl reload
+hyprctl configerrors
+omarchy menu keybindings --print | grep -E 'ALT \+ TAB|SHIFT ALT \+ TAB|OmaSwitch'
+```
+
+## Help make it the switcher Omarchy users recommend
+
+The most useful project feedback is concrete: a window type that does not preview, a shortcut conflict, a theme edge case, or the one workflow where you still reach for something else. [Open an issue or contribute on GitHub](https://github.com/piyush97/omaswitch).
+
+If OmaSwitch removes friction from your daily loop, share the result—not just the link. A screenshot of the moment it helps people find the right context communicates more than a feature list:
+
+> OmaSwitch is a Windows-style `Alt+Tab` for Omarchy: recent windows first, type-to-search, and live previews—without a daemon or extra packages.
+
+[Install OmaSwitch from GitHub](https://github.com/piyush97/omaswitch), bind it to the key your hands already know, and make window switching a decision instead of a hunt.
+
+---
+
+OmaSwitch is an independent community plugin and is not affiliated with Omarchy.
