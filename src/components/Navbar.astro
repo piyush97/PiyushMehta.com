@@ -103,6 +103,12 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
   (() => {
     const root = document.documentElement;
 
+    function syncColorScheme(isDark) {
+      const colorScheme = isDark ? 'dark' : 'light';
+      root.style.colorScheme = colorScheme;
+      document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', colorScheme);
+    }
+
     function syncIcons() {
       const btn = document.getElementById('theme-toggle-btn');
       const sun = btn?.querySelector('.theme-icon-sun');
@@ -132,6 +138,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
         root.classList.remove('light');
         localStorage.setItem('theme', 'professional-dark');
       }
+      syncColorScheme(!currentlyDark);
       syncIcons();
       btn.style.transform = 'scale(0.9)';
       setTimeout(() => { btn.style.transform = ''; }, 150);
