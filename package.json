@@ -28,10 +28,10 @@
     "doctor": "react-doctor"
   },
   "dependencies": {
-    "@astrojs/mdx": "7.0.5",
-    "@astrojs/react": "6.0.2",
+    "@astrojs/mdx": "7.0.7",
+    "@astrojs/react": "6.0.4",
     "@astrojs/rss": "4.0.19",
-    "@astrojs/vercel": "11.0.5",
+    "@astrojs/vercel": "11.0.7",
     "@resvg/resvg-js": "^2.6.2",
     "@sentry/astro": "^10.70.0",
     "@tailwindcss/vite": "^4.3.3",
@@ -45,7 +45,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "resend": "^6.20.0",
-    "satori": "^0.29.0",
+    "satori": "^0.33.0",
     "tailwindcss": "^4.3.3",
     "varlock": "^1.17.0"
   },
