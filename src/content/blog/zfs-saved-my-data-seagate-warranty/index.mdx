@@ -1,0 +1,251 @@
+---
+title: 'My 12TB Drive Failed. ZFS Saved 3.4TB of Data'
+description: 'A Seagate IronWolf developed 52 bad sectors. Here is how a Proxmox ZFS mirror kept my homelab online and rebuilt onto a 16TB warranty replacement.'
+date: 2026-08-25
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'zfs'
+  - 'proxmox'
+  - 'homelab'
+  - 'seagate'
+  - 'hard drive failure'
+  - 'data recovery'
+  - 'raid'
+  - 'storage'
+draft: false
+---
+
+One of my 12TB Seagate IronWolf drives developed 52 bad sectors. At that point, about 3.4TB of homelab data was depending on the surviving half of my ZFS mirror.
+
+The Proxmox server stayed online. My media and application data remained available, Seagate replaced the failed drive without hassle, and ZFS rebuilt the mirror onto a new 16TB IronWolf.
+
+This is the sequence I followed, including the USB enclosure reset that briefly suspended the pool and the checksum errors ZFS caught after a later reboot.
+
+ZFS could not stop the drive from failing. It did stop that failure from deleting my data.
+
+## TL;DR: the recovery in numbers
+
+- Failed disk: 12TB Seagate IronWolf with 52 bad sectors
+- Data at risk: 3.37TiB allocated on a degraded ZFS mirror
+- Warranty replacement: new 16TB Seagate IronWolf
+- Resilver: 3.38TiB in 5 hours 30 minutes
+- Resilver result: zero errors and the mirror returned `ONLINE`
+- Usable capacity: still 10.9TiB because the other mirror member is 12TB
+
+The mirror supplied another copy, ZFS checked the blocks, and Seagate supplied the replacement drive.
+
+## My Proxmox ZFS mirror before the failure
+
+My `vault` pool lives on a Proxmox server. It stores media, application configuration, and other homelab data. I built it as a two-drive ZFS mirror:
+
+```text
+vault
+└── mirror-0
+    ├── 12TB IronWolf
+    └── 12TB IronWolf
+```
+
+Both drives sit in a TerraMaster USB DAS. The enclosure exposes each disk to ZFS instead of hiding them behind hardware RAID. ZFS needs that direct access to manage the mirror and verify checksums.
+
+The pool held about 3.37TiB of allocated data when I replaced the drive. A mirror gets the capacity of its smallest member, with another copy of each block on the other disk. When one drive started failing, that second copy kept the pool alive.
+
+## The 12TB IronWolf had 52 bad sectors
+
+SMART showed 52 bad sectors on one of the 12TB drives. I was not going to clear the warning and keep using it. Once a disk cannot reliably read its own sectors, I do not want it holding the only copy of anything.
+
+I removed it from service and opened a Seagate warranty claim. The process was painless, and Seagate honored the warranty. They sent a 16TB Seagate IronWolf to replace the failed 12TB drive.
+
+The replacement arrived with the clean baseline I wanted:
+
+```text
+SMART overall health:       PASSED
+Power-on hours:             0
+Reallocated sectors:        0
+Current pending sectors:    0
+Offline uncorrectable:      0
+Reported uncorrectable:     0
+Command timeouts:           0
+Interface CRC errors:       0
+```
+
+Its short SMART self-test also completed without error.
+
+The Seagate part was refreshingly easy. A failed drive already gives you enough to worry about. I did not have to fight the warranty process too.
+
+## The degraded mirror kept serving data
+
+After I removed the failed disk, ZFS showed the pool as `DEGRADED`:
+
+```text
+pool: vault
+state: DEGRADED
+
+mirror-0
+  missing  UNAVAIL
+  survivor ONLINE
+```
+
+The warning was serious. The pool had no redundancy left, so another disk failure would have meant data loss. The datasets were still available from the surviving member.
+
+The disk had failed, the mirror had lost redundancy, and ZFS made both facts obvious without taking my data offline.
+
+## Hot-plugging the replacement reset the USB enclosure
+
+The recovery got more stressful when I inserted the 16TB drive. The TerraMaster enclosure reset its shared USB connection, and the surviving 12TB disk disappeared for a moment.
+
+ZFS suspended the pool:
+
+```text
+pool: vault
+state: SUSPENDED
+```
+
+That was the right response. With its only available member temporarily gone, ZFS stopped accepting I/O rather than claiming that writes had succeeded.
+
+Once both disks were visible again, I checked their model, serial, WWN, SMART state, and partition signatures. Then I resumed the pool:
+
+```bash
+zpool clear vault
+```
+
+The pool returned to `DEGRADED` with the surviving member online. `zpool clear` removed the suspended state. It did not restore redundancy.
+
+This incident also exposed a weakness in my setup. Both mirrored disks share the same enclosure, cable, controller, and power supply. The mirror protects against one disk failing, but those shared components can still affect both drives at once.
+
+## The replacement command was `zpool replace`
+
+The 16TB disk had to replace the missing mirror member. Adding it as another top-level vdev would have changed the pool topology instead of repairing the mirror. `zpool add` was the wrong command for this job.
+
+I used:
+
+```bash
+zpool replace vault \
+  <missing-vdev-guid> \
+  /dev/disk/by-id/wwn-<replacement-disk>
+```
+
+The WWN path under `/dev/disk/by-id/` identifies the physical disk. I did not use `/dev/sdc` because Linux can assign a different device letter after a reboot or USB reconnect.
+
+ZFS partitioned the blank replacement and started resilvering it.
+
+## ZFS resilvered 3.38TiB with zero errors
+
+The resilver copied the allocated data from the surviving 12TB drive to the new 16TB drive:
+
+```text
+scan: resilvered 3.38T in 05:30:27 with 0 errors
+state: ONLINE
+errors: No known data errors
+```
+
+Both drives finished online. ZFS recorded zero read, write, and checksum errors during the resilver. The datasets mounted normally, Proxmox reported the storage entries as active, and the pool had redundancy again.
+
+Usable capacity remains about 10.9TiB. The smaller member limits a mirror, so the extra space on the 16TB disk cannot be used yet. If I eventually replace the remaining 12TB drive with another 16TB or larger disk, the mirror can expand.
+
+I would rather have redundancy now than extra capacity I cannot safely use.
+
+## ZFS caught 11 checksum mismatches after reboot
+
+A later Proxmox reboot imported the pool and recorded 11 checksum mismatches on the new member. The pool remained `ONLINE`, and applications were unaffected because the other mirror member had a valid copy.
+
+ZFS compared the data with its stored checksum, rejected the incorrect bytes, and read the correct copy from the other disk.
+
+The surrounding hardware evidence remained clean. SMART passed, the reallocated, pending, and uncorrectable sector counts stayed at zero, and the interface CRC count did not increase. The kernel showed no new USB reset or I/O failure, and ZFS reported no known data errors.
+
+A full scrub began checking every allocated block. I am keeping the checksum counters until it finishes because clearing them now would discard useful evidence. If the scrub finishes cleanly and the count stays at 11, I can clear the historical device errors. If the count keeps rising, I will investigate the TerraMaster bay, USB bridge, cable, power delivery, and the replacement drive.
+
+I liked seeing ZFS do what I had set it up to do. A successful read was not enough. The bytes also had to match.
+
+## What ZFS and the mirror each did
+
+The mirror and ZFS handled different parts of the failure.
+
+### The mirror kept another copy
+
+The surviving disk still contained the pool after the first drive became untrustworthy. Later, when one copy failed a checksum, the mirror gave ZFS another copy to read.
+
+Checksums can detect bad data, but they cannot recreate the correct bytes. That requires redundancy or a backup.
+
+### ZFS checked the data
+
+ZFS checksums data and metadata. It can tell the difference between a drive returning data and a drive returning the correct data. During a scrub, ZFS checks allocated blocks and repairs a bad copy when another valid copy exists.
+
+### ZFS made the failures visible
+
+`DEGRADED` told me the pool had lost redundancy. `SUSPENDED` stopped I/O when the only available member vanished during the USB reset. Neither state was pleasant, but neither hid the problem.
+
+### Stable disk IDs kept me on the right drive
+
+The WWN path kept pointing to the replacement even when `/dev/sda`, `/dev/sdb`, and `/dev/sdc` changed after reconnects and reboots.
+
+A filesystem cannot protect you if you run the right command against the wrong disk.
+
+## What I will keep doing
+
+### RAID is not a backup
+
+The mirror protected me from one disk failure. It would not protect me from accidental deletion, ransomware, theft, fire, a destructive command, or corruption copied to both members.
+
+Anything irreplaceable still needs an independent backup.
+
+### Run scrubs and read the result
+
+A scrub verifies data while another copy is available for repair. I care whether it repaired anything, found permanent errors, or caused a device counter to increase, not only whether the scheduled job ran.
+
+### Use SMART and ZFS together
+
+SMART identified the original failing drive and gave me a hardware baseline for the replacement. The later checksum events showed why filesystem checks still matter. A drive can report healthy while ZFS detects incorrect data.
+
+### Use `/dev/disk/by-id/`
+
+Device letters are convenient labels, not stable identities. Replacement commands should use persistent disk IDs.
+
+### Treat the enclosure as shared hardware
+
+Hot-plugging one bay reset the USB path for both disks. The enclosure, USB controller, cable, and power supply need the same attention as the drives.
+
+### Check the pool topology before changing it
+
+`zpool replace` repairs a missing mirror member. `zpool add` changes the topology. I checked the command and target before pressing Enter.
+
+## Frequently asked questions
+
+### Can ZFS recover from a failed drive?
+
+Yes, if the pool still has a valid copy. One member of my two-disk mirror failed, while the other kept the pool available. I replaced the missing member and ZFS resilvered the allocated data onto it.
+
+A single-disk ZFS pool can detect corruption with checksums, but it has no second copy to repair from.
+
+### Is a ZFS mirror the same as RAID 1?
+
+Both provide two-copy redundancy. ZFS also manages the filesystem, block checksums, scrubs, repairs, snapshots, and the pool itself. When two copies disagree, ZFS can verify which one matches the stored checksum and repair the other.
+
+### Does a 12TB + 16TB ZFS mirror provide 28TB?
+
+No. The smallest member limits the mirror. My 12TB + 16TB mirror remains about 10.9TiB usable. Replacing the remaining 12TB disk with another 16TB or larger drive will allow the mirror to expand.
+
+### Does ZFS or RAID replace a backup?
+
+No. My mirror handled one disk failure. It cannot protect both copies from deletion, ransomware, theft, fire, or a destructive command. Irreplaceable data still needs an independent backup.
+
+### Should I use `zpool add` when replacing a failed mirror disk?
+
+No. `zpool add` changes the pool topology. Use `zpool replace` with the missing vdev and the replacement disk's stable `/dev/disk/by-id/` path.
+
+## The recovery was boring, which is what I wanted
+
+The working sequence was straightforward:
+
+1. identify the failing disk;
+2. keep the degraded pool stable;
+3. get the warranty replacement;
+4. verify its identity and SMART baseline;
+5. replace the missing vdev by stable ID;
+6. monitor the resilver until it finishes; and
+7. check the pool, datasets, mounts, and disk health afterward.
+
+Seagate honored the warranty without hassle. ZFS and the mirror kept the drive failure from becoming a data-loss event.
+
+The drive failed, I replaced it, and my data stayed put. That is what I wanted when I built the mirror.
