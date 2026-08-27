@@ -16,11 +16,12 @@
  * public/_redirects that Astro already placed in dist/client/.
  */
 
-import { readdir, appendFile, access } from 'node:fs/promises';
+import { readdir, readFile, writeFile } from 'node:fs/promises';
 
 const CONTENT_DIR = 'src/content/blog';
 const REDIRECTS_FILE = 'dist/client/_redirects';
-const MARKER_BEGIN = '# BEGIN generated: legacy blog slug redirects (scripts/generate-legacy-redirects.mjs)';
+const MARKER_BEGIN =
+  '# BEGIN generated: legacy blog slug redirects (scripts/generate-legacy-redirects.mjs)';
 const MARKER_END = '# END generated: legacy blog slug redirects';
 
 // Historical slugs that no longer exist as a src/content/blog directory at all (renames, typo
@@ -59,13 +60,21 @@ async function main() {
   lines.push('/twitter-image /og/default.png 301');
   lines.push(MARKER_END, '');
 
+  // Read the existing (Astro-built) file and write back its content plus the generated block in
+  // one operation, rather than a separate existence check followed by an append — a
+  // check-then-act pair on the same path is a TOCTOU race, and appendFile's default flag would
+  // silently create the file if missing anyway, masking a build-order mistake instead of erroring.
+  let existing;
   try {
-    await access(REDIRECTS_FILE);
-  } catch {
-    throw new Error(`${REDIRECTS_FILE} does not exist — did astro build run first?`);
+    existing = await readFile(REDIRECTS_FILE, 'utf-8');
+  } catch (error) {
+    if (error?.code === 'ENOENT') {
+      throw new Error(`${REDIRECTS_FILE} does not exist — did astro build run first?`);
+    }
+    throw error;
   }
 
-  await appendFile(REDIRECTS_FILE, `\n${lines.join('\n')}`);
+  await writeFile(REDIRECTS_FILE, `${existing}\n${lines.join('\n')}`);
   console.log(`Appended ${pairs.size} legacy blog redirect(s) to ${REDIRECTS_FILE}:`);
   for (const [from, to] of pairs) {
     console.log(`  /blog/${from} -> /blog/${to}`);

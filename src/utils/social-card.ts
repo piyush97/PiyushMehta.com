@@ -164,7 +164,7 @@ export const STATIC_SOCIAL_PAGES: Record<string, SocialCardData> = {
     path: '/terms-of-service',
   },
   '404': {
-    title: "404 \u2013 Page Not Found \u00b7 Piyush Mehta",
+    title: '404 \u2013 Page Not Found \u00b7 Piyush Mehta',
     description: "This page doesn't exist.",
     type: 'website',
     template: 'minimal',

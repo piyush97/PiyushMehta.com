@@ -49,16 +49,21 @@ function extractImageUrls(html) {
 }
 
 async function checkImageUrl(url) {
-  if (!url.startsWith(SITE_ORIGIN)) {
-    return { url, ok: true, skipped: 'external' };
-  }
-
-  let pathname;
+  // Parse and compare the actual origin rather than a string prefix check
+  // (url.startsWith(SITE_ORIGIN) would wrongly treat https://piyushmehta.com.evil.example/x as
+  // internal — an incomplete-substring-sanitization bug).
+  let parsed;
   try {
-    pathname = new URL(url).pathname; // deliberately strips the ?v= cache-bust query
+    parsed = new URL(url);
   } catch {
     return { url, ok: false, why: 'not a valid URL' };
   }
+
+  if (parsed.origin !== SITE_ORIGIN) {
+    return { url, ok: true, skipped: 'external' };
+  }
+
+  const pathname = parsed.pathname; // deliberately strips the ?v= cache-bust query
 
   const file = path.join(CLIENT_DIR, decodeURIComponent(pathname));
   let buf;
@@ -77,7 +82,11 @@ async function checkImageUrl(url) {
     const width = buf.readUInt32BE(16);
     const height = buf.readUInt32BE(20);
     if (width !== OG_CARD_EXPECT.width || height !== OG_CARD_EXPECT.height) {
-      return { url, ok: false, why: `${width}x${height}, expected 1200x630 (dist/client${pathname})` };
+      return {
+        url,
+        ok: false,
+        why: `${width}x${height}, expected 1200x630 (dist/client${pathname})`,
+      };
     }
     if (buf.byteLength < OG_CARD_MIN_BYTES) {
       return {
@@ -112,7 +121,10 @@ async function checkRedirectsFile() {
         'scripts/generate-legacy-redirects.mjs run after the Astro build?',
     );
   }
-  for (const required of ['/opengraph-image /og/default.png 301', '/twitter-image /og/default.png 301']) {
+  for (const required of [
+    '/opengraph-image /og/default.png 301',
+    '/twitter-image /og/default.png 301',
+  ]) {
     if (!text.includes(required)) {
       problems.push(`dist/client/_redirects is missing required rule: ${required}`);
     }
@@ -164,7 +176,9 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`✅ All social-card / OG image references resolve (${ogCardResults.length} card file(s) checked).`);
+  console.log(
+    `✅ All social-card / OG image references resolve (${ogCardResults.length} card file(s) checked).`,
+  );
 }
 
 main().catch((error) => {

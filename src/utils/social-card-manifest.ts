@@ -50,12 +50,14 @@ async function buildManifest(): Promise<SocialCardManifest> {
     };
     // post.digest changes whenever the post's frontmatter or body changes, so editing a
     // title/description/tag/theme automatically rotates this card's ?v= and forces a re-fetch.
-    const seed = post.digest ?? JSON.stringify(card);
+    const seed = post.digest !== undefined ? String(post.digest) : JSON.stringify(card);
     entries.set(key, { key, card, version: hashSocialCardVersion(key, seed) });
   }
 
   if (!entries.has('default')) {
-    throw new Error('Social card manifest is missing the "default" entry — /og/default.png would 404.');
+    throw new Error(
+      'Social card manifest is missing the "default" entry — /og/default.png would 404.',
+    );
   }
 
   return entries;
