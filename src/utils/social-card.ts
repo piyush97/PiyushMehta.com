@@ -138,7 +138,52 @@ export const STATIC_SOCIAL_PAGES: Record<string, SocialCardData> = {
     tags: ['Open Graph', 'Preview', 'Metadata'],
     path: '/og-showcase',
   },
+  newsletter: {
+    title: 'Newsletter - Piyush Mehta',
+    description:
+      'Subscribe for occasional notes on software architecture, AI workflows, and web platforms.',
+    type: 'website',
+    template: 'minimal',
+    tags: ['Newsletter', 'Writing', 'Updates'],
+    path: '/newsletter',
+  },
+  'privacy-policy': {
+    title: 'Privacy Policy - Piyush Mehta',
+    description: 'How piyushmehta.com collects, uses, and protects your information.',
+    type: 'website',
+    template: 'minimal',
+    tags: ['Privacy', 'Policy', 'Legal'],
+    path: '/privacy-policy',
+  },
+  'terms-of-service': {
+    title: 'Terms of Service - Piyush Mehta',
+    description: 'The terms that govern use of piyushmehta.com.',
+    type: 'website',
+    template: 'minimal',
+    tags: ['Terms', 'Policy', 'Legal'],
+    path: '/terms-of-service',
+  },
+  '404': {
+    title: "404 \u2013 Page Not Found \u00b7 Piyush Mehta",
+    description: "This page doesn't exist.",
+    type: 'website',
+    template: 'minimal',
+    tags: ['Not Found'],
+    path: '/404',
+  },
+  default: {
+    title: 'Piyush Mehta - Senior Software Engineer',
+    description:
+      'Reliable web platforms, enterprise AI workflows, product systems, and technical writing from a software engineer in Canada.',
+    type: 'website',
+    template: 'professional',
+    tags: ['TypeScript', 'AI Workflows', 'Architecture'],
+    path: '/',
+  },
 };
+
+/** Guaranteed to exist in STATIC_SOCIAL_PAGES; the fallback card for any page without one. */
+export const DEFAULT_SOCIAL_CARD_KEY = 'default';
 
 export function normalizePathname(pathname = '/'): string {
   const withoutQuery = pathname.split('?')[0]?.split('#')[0] || '/';
@@ -159,15 +204,65 @@ export function pageKeyFromPathname(pathname = '/'): string {
   return normalized.replace(/^\/+/, '').replace(/\/+/g, '/');
 }
 
-export function getSocialCardPathForPathname(pathname = '/'): string {
-  const key = pageKeyFromPathname(pathname);
+export function socialCardPathForKey(key: string): string {
   const segments = key.split('/').filter(Boolean).map(encodeURIComponent);
 
   return `/og/${segments.join('/')}.png`;
 }
 
+/**
+ * @deprecated Optimistic \u2014 builds a path for any pathname without verifying a card was
+ * actually prerendered for it. Prefer `resolveSocialCardForPathname`, which is backed by the
+ * build's social-card manifest and always resolves to a key that exists. Kept for callers (and
+ * tests) that need a path with no manifest available.
+ */
+export function getSocialCardPathForPathname(pathname = '/'): string {
+  return socialCardPathForKey(pageKeyFromPathname(pathname));
+}
+
 export function getSocialCardUrlForPathname(pathname: string, baseUrl: string): string {
   return new URL(getSocialCardPathForPathname(pathname), baseUrl).toString();
+}
+
+export interface SocialCardManifestLookup {
+  has(key: string): boolean;
+  get(key: string): { key: string; version: string } | undefined;
+}
+
+export interface ResolvedSocialCard {
+  key: string;
+  path: string;
+  version: string;
+  /** True when no dedicated card existed and this resolved to DEFAULT_SOCIAL_CARD_KEY. */
+  isFallback: boolean;
+}
+
+/**
+ * Resolve a pathname to a card that is guaranteed to exist in the given manifest. Falls back to
+ * the lowercase form of the key (rescues legacy mixed-case URLs) and finally to the `default`
+ * card, so this can never point at a card that was not prerendered.
+ */
+export function resolveSocialCardForPathname(
+  pathname: string,
+  manifest: SocialCardManifestLookup,
+): ResolvedSocialCard {
+  const key = pageKeyFromPathname(pathname);
+  const lowerKey = key.toLowerCase();
+  const hit = manifest.get(key) ?? (lowerKey !== key ? manifest.get(lowerKey) : undefined);
+  const entry = hit ?? manifest.get(DEFAULT_SOCIAL_CARD_KEY);
+
+  if (!entry) {
+    throw new Error(
+      `Social card manifest has no "${DEFAULT_SOCIAL_CARD_KEY}" entry \u2014 /og/${DEFAULT_SOCIAL_CARD_KEY}.png would 404.`,
+    );
+  }
+
+  return {
+    key: entry.key,
+    path: `${socialCardPathForKey(entry.key)}?v=${entry.version}`,
+    version: entry.version,
+    isFallback: !hit,
+  };
 }
 
 export function createSocialCardMetadata(params: {
@@ -175,8 +270,12 @@ export function createSocialCardMetadata(params: {
   baseUrl: string;
   title: string;
   author?: string;
+  manifest?: SocialCardManifestLookup;
 }): SocialCardMetadata {
-  const url = getSocialCardUrlForPathname(params.pathname, params.baseUrl);
+  const path = params.manifest
+    ? resolveSocialCardForPathname(params.pathname, params.manifest).path
+    : getSocialCardPathForPathname(params.pathname);
+  const url = new URL(path, params.baseUrl).toString();
   const author = params.author || 'Piyush Mehta';
 
   return {
@@ -187,6 +286,25 @@ export function createSocialCardMetadata(params: {
     height: SOCIAL_CARD_SIZE.height,
     type: SOCIAL_CARD_CONTENT_TYPE,
   };
+}
+
+// Bump this whenever social-card-renderer.ts changes visual output (fonts, layout, templates,
+// truncation budgets). It is folded into every card's version hash, so a single bump rotates
+// every /og/**.png URL and forces LinkedIn/X/Facebook/Slack/Discord/WhatsApp to re-fetch instead
+// of continuing to serve a stale (or, historically, blank) cached image.
+export const SOCIAL_CARD_RENDERER_VERSION = '2026-08-27.1';
+
+/** Deterministic 8-hex-char change-detection hash (FNV-1a). Not for security, just cache-busting. */
+export function hashSocialCardVersion(key: string, seed: string): string {
+  const input = `${SOCIAL_CARD_RENDERER_VERSION}|${key}|${seed}`;
+  let hash = 0x811c9dc5;
+
+  for (let i = 0; i < input.length; i += 1) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+
+  return (hash >>> 0).toString(16).padStart(8, '0');
 }
 
 export function decodeSocialCardParams(value?: string): string[] {
@@ -316,6 +434,32 @@ export function truncateText(value: string | undefined, maxLength: number): stri
   }
 
   return `${clipped}...`;
+}
+
+/**
+ * Like truncateText, but prefers cutting at a sentence boundary (. ! ?) within budget so
+ * descriptions don't end mid-thought ("...and the shocking reason they can lie to..."). Falls
+ * back to truncateText's word-boundary behaviour when no sentence end falls in range.
+ */
+export function truncateToSentence(value: string | undefined, maxLength: number): string {
+  const clean = cleanText(value);
+
+  if (clean.length <= maxLength) {
+    return clean;
+  }
+
+  const clipped = clean.slice(0, maxLength);
+  const lastSentenceEnd = Math.max(
+    clipped.lastIndexOf('. '),
+    clipped.lastIndexOf('! '),
+    clipped.lastIndexOf('? '),
+  );
+
+  if (lastSentenceEnd > maxLength * 0.5) {
+    return clipped.slice(0, lastSentenceEnd + 1);
+  }
+
+  return truncateText(value, maxLength);
 }
 
 export function formatSocialDate(value?: string | Date): string | undefined {

@@ -11,6 +11,7 @@ import {
   SOCIAL_CARD_SIZE,
   type SocialCardData,
   truncateText,
+  truncateToSentence,
 } from './social-card';
 
 const CACHE_HEADERS = {
@@ -18,7 +19,6 @@ const CACHE_HEADERS = {
   'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
   'CDN-Cache-Control': 'max-age=31536000',
   'Access-Control-Allow-Origin': '*',
-  'X-Robots-Tag': 'noindex',
 } as const;
 
 type ThemeConfig = {
@@ -113,9 +113,18 @@ function getTheme(theme?: SocialCardData['theme']): ThemeConfig {
 }
 
 function titleSize(title: string, template?: SocialCardData['template']): number {
-  const base = title.length > 96 ? 46 : title.length > 72 ? 52 : title.length > 48 ? 60 : 68;
+  const base =
+    title.length > 112
+      ? 38
+      : title.length > 96
+        ? 44
+        : title.length > 72
+          ? 50
+          : title.length > 48
+            ? 58
+            : 68;
 
-  return template === 'tech' ? Math.max(42, base - 4) : base;
+  return template === 'tech' ? Math.max(36, base - 4) : base;
 }
 
 function descriptionSize(description: string): number {
@@ -235,12 +244,15 @@ function createMetaItems(data: SocialCardData, theme: ThemeConfig) {
 }
 
 function createRightPanel(data: SocialCardData, theme: ThemeConfig) {
-  const skills =
+  // Prefer the post's real tags so the panel is about this piece, not a generic template blurb
+  // (e.g. a Bloom filters article was previously labelled "TypeScript / AI Workflows / Platform").
+  const templateFallback =
     data.template === 'blog'
       ? ['Systems', 'Tradeoffs', 'Field Notes']
       : data.template === 'tech'
         ? ['TypeScript', 'AI Workflows', 'Platform']
         : ['Reliable Web', 'Architecture', 'Canada'];
+  const skills = data.tags?.length ? data.tags.slice(0, 3) : templateFallback;
 
   return React.createElement(
     'div',
@@ -260,52 +272,67 @@ function createRightPanel(data: SocialCardData, theme: ThemeConfig) {
       },
     },
     [
+      // Monogram + tag list grouped at the top so the panel reads top-down instead of leaving a
+      // large empty gap above the domain footer.
       React.createElement(
         'div',
         {
-          key: 'monogram',
-          style: {
-            display: 'flex',
-            width: '116px',
-            height: '116px',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: theme.accent,
-            color: theme.accentText,
-            fontSize: 42,
-            fontWeight: 900,
-            lineHeight: 1,
-          },
-        },
-        'PM',
-      ),
-      React.createElement(
-        'div',
-        {
-          key: 'skills',
+          key: 'top',
           style: {
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px',
+            gap: '28px',
           },
         },
-        skills.map((skill) =>
+        [
           React.createElement(
             'div',
             {
-              key: skill,
+              key: 'monogram',
               style: {
                 display: 'flex',
-                borderTop: `1px solid ${theme.border}`,
-                paddingTop: '12px',
-                color: theme.muted,
-                fontSize: 20,
-                fontWeight: 720,
+                width: '116px',
+                height: '116px',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: theme.accent,
+                color: theme.accentText,
+                fontSize: 42,
+                fontWeight: 900,
+                lineHeight: 1,
               },
             },
-            skill,
+            'PM',
           ),
-        ),
+          React.createElement(
+            'div',
+            {
+              key: 'skills',
+              style: {
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+              },
+            },
+            skills.map((skill, index) =>
+              React.createElement(
+                'div',
+                {
+                  key: `${skill}-${index}`,
+                  style: {
+                    display: 'flex',
+                    borderTop: `1px solid ${theme.border}`,
+                    paddingTop: '12px',
+                    color: theme.muted,
+                    fontSize: 20,
+                    fontWeight: 720,
+                  },
+                },
+                truncateText(skill, 26),
+              ),
+            ),
+          ),
+        ],
       ),
       React.createElement(
         'div',
@@ -340,8 +367,8 @@ export function createSocialCardElement(input: SocialCardData) {
       }) || [],
   };
   const theme = getTheme(data.theme);
-  const title = truncateText(data.title, data.type === 'article' ? 92 : 82);
-  const description = truncateText(data.description, data.type === 'article' ? 150 : 136);
+  const title = truncateText(data.title, data.type === 'article' ? 118 : 100);
+  const description = truncateToSentence(data.description, data.type === 'article' ? 170 : 150);
   const label = templateLabel(data.type, data.template);
 
   return React.createElement(

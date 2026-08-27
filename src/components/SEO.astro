@@ -8,7 +8,8 @@ import {
   sanitizeDescription,
   validateImageForSocialSharing,
 } from '../utils/og-generator';
-import { createSocialCardMetadata } from '../utils/social-card';
+import { createSocialCardMetadata, resolveSocialCardForPathname } from '../utils/social-card';
+import { getSocialCardManifest } from '../utils/social-card-manifest';
 
 export interface Props {
   title: string;
@@ -61,28 +62,53 @@ const requestBaseUrl = (
 ).replace(/\/$/, '');
 const productionBaseUrl = (Astro.site?.toString() || 'https://piyushmehta.com').replace(/\/$/, '');
 const canonicalBaseUrl = import.meta.env.DEV ? requestBaseUrl : productionBaseUrl;
-const imageBaseUrl = requestBaseUrl;
+// Use the same base as the canonical URL, not the raw request origin. A page served through a
+// non-canonical host (a *.workers.dev / Cloudflare preview URL) must still advertise og:image on
+// piyushmehta.com — an og:image on an unreachable preview host is another way to end up blank.
+const imageBaseUrl = canonicalBaseUrl;
 
 // Optimize and sanitize content
 const optimizedDescription = sanitizeDescription(description);
 const canonicalUrl = canonical || generateCanonicalUrl(Astro.url.pathname, canonicalBaseUrl);
 
+// The manifest is the single source of truth for which /og/**.png files actually got
+// prerendered. Resolving through it (rather than optimistically building a path) means a page
+// with no dedicated card degrades to the branded /og/default.png instead of a 404.
+const socialCardManifest = await getSocialCardManifest();
+const canonicalPathname = new URL(canonicalUrl).pathname;
+
 const generatedImageMetadata = createSocialCardMetadata({
-  pathname: new URL(canonicalUrl).pathname,
+  pathname: canonicalPathname,
   baseUrl: imageBaseUrl,
   title,
   author,
+  manifest: socialCardManifest,
 });
+
+if (import.meta.env.DEV) {
+  const resolved = resolveSocialCardForPathname(canonicalPathname, socialCardManifest);
+  if (resolved.isFallback) {
+    console.warn(
+      `[social-card] No dedicated card for "${canonicalPathname}" — falling back to /og/default.png. ` +
+        'Add an entry to STATIC_SOCIAL_PAGES in src/utils/social-card.ts (or to the blog collection).',
+    );
+  }
+}
 
 // Handle image metadata with full OG Protocol compliance.
 // Prefer explicit raster overrides only when crawlers can reliably render them.
 let providedImageMetadata: ImageMetadata | undefined;
+// PNG vs JPEG inferred from the URL rather than hardcoded — a .png override previously always
+// advertised og:image:type "image/jpeg", which some scrapers reject outright.
+const inferImageType = (url: string): string => (/\.png(?:[?#]|$)/i.test(url) ? 'image/png' : 'image/jpeg');
+
 if (image && typeof image === 'string') {
   // Use the provided image URL directly
+  const imageUrl = image.startsWith('http') ? image : `${imageBaseUrl}${image}`;
   providedImageMetadata = {
-    url: image.startsWith('http') ? image : `${imageBaseUrl}${image}`,
-    secureUrl: image.startsWith('http') ? image : `${imageBaseUrl}${image}`,
-    type: 'image/jpeg',
+    url: imageUrl,
+    secureUrl: imageUrl,
+    type: inferImageType(imageUrl),
     width: 1200,
     height: 630,
     alt: `${title} - ${author}`,
@@ -96,14 +122,15 @@ if (image && typeof image === 'string') {
     alt: image.alt || `${title} - ${author}`,
     width: image.width || 1200,
     height: image.height || 630,
-    type: image.type || 'image/jpeg',
+    type: image.type || inferImageType(imageUrl),
   };
 }
 
 const isCrawlerSafeRasterImage = (metadata?: ImageMetadata) => {
   if (!metadata?.url) return false;
   if (metadata.type === 'image/svg+xml') return false;
-  return /\.(png|jpe?g|webp|gif)(?:[?#].*)?$/i.test(metadata.url);
+  // .webp deliberately excluded: X/Twitter and LinkedIn do not reliably render WebP og:image.
+  return /\.(png|jpe?g)(?:[?#].*)?$/i.test(metadata.url);
 };
 
 const imageMetadata = isCrawlerSafeRasterImage(providedImageMetadata)
@@ -199,7 +226,6 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta name="theme-color" content="#1a1a2e" />
 <meta name="msapplication-TileColor" content="#1a1a2e" />
 <meta name="format-detection" content="telephone=no" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
 
 <!-- Preconnect to external domains -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -280,7 +306,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
         jobTitle: 'Senior Software Engineer',
         description:
           'Senior software engineer in Canada building reliable web platforms, enterprise AI workflows, and scalable product systems.',
-        image: 'https://piyushmehta.com/images/piyush-profile.jpg',
+        image: 'https://piyushmehta.com/images/icon-512.png',
         sameAs: [
           'https://github.com/piyush97',
           'https://linkedin.com/in/piyush24',
