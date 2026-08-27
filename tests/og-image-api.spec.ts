@@ -504,7 +504,6 @@ test.describe('OG Image API', () => {
       const response = await fetch(url);
 
       expect(response.headers.get('CDN-Cache-Control')).toBe('max-age=31536000');
-      expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe('max-age=31536000');
     });
 
     test('should include content length header', async () => {

@@ -120,7 +120,7 @@ export default defineConfig({
             if (id.includes('@sentry/')) {
               return 'vendor-monitoring';
             }
-            if (id.includes('satori') || id.includes('@resvg') || id.includes('@vercel/og')) {
+            if (id.includes('satori') || id.includes('@resvg')) {
               return 'vendor-images';
             }
             // Other third-party packages

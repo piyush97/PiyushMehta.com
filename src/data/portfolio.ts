@@ -358,7 +358,7 @@ export const resumeSkillGroups: SkillGroup[] = [
   },
   {
     title: 'Cloud and delivery',
-    items: ['Azure', 'AWS', 'Cloudflare', 'Vercel', 'Docker', 'Kubernetes', 'Terraform'],
+    items: ['Azure', 'AWS', 'Cloudflare', 'Docker', 'Kubernetes', 'Terraform'],
   },
 ];
 
@@ -496,7 +496,7 @@ export const usesCategories: ToolCategory[] = [
     title: 'Systems and operations',
     description:
       'Infrastructure tools that help me practice production habits outside a narrow app surface.',
-    items: ['Docker', 'Kubernetes', 'Terraform', 'AWS', 'Azure', 'Cloudflare', 'Vercel', 'Sentry'],
+    items: ['Docker', 'Kubernetes', 'Terraform', 'AWS', 'Azure', 'Cloudflare', 'Sentry'],
   },
   {
     title: 'Data and backend',
