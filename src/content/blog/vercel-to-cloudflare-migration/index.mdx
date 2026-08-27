@@ -1,0 +1,133 @@
+---
+title: 'I Moved This Site From Vercel to Cloudflare. Here Is What Broke.'
+description: 'A first-person account of migrating this site from Vercel to Cloudflare Workers: the adapter swap, the Upstash Redis client that had to change, the native binary that could not run in a Worker, and the blank social-card bug it caused.'
+date: 2026-08-27
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'Cloudflare'
+  - 'Vercel'
+  - 'Astro'
+  - 'Edge Computing'
+  - 'Web Platforms'
+  - 'Migration'
+image:
+  url: '/blog/vercel-to-cloudflare-migration/images/cover.svg'
+  alt: 'A single Vercel region migrating to a Cloudflare edge network with nodes spread across a globe, captioned "one region to three hundred, and what broke on the way"'
+draft: false
+---
+
+import NewsletterSignup from '../../../components/NewsletterSignup.tsx';
+
+This site ran on Vercel for years without much drama. Then I moved it to Cloudflare Workers, and for about a day, every link I shared to a new post rendered as a blank blue rectangle. Not broken in an obvious way: the request came back `200 OK`, the content type was `image/png`, the dimensions were exactly right. There was just nothing on it. No title, no text, nothing.
+
+That single bug turned into the best possible tour of what actually changes when you move a site off a Node.js serverless platform and onto a V8 isolate. This is the record of what moved, what broke, and why.
+
+> **The short version:** the adapter swap was the easy part. The hard part was a native Rust binary that only works at build time now, and a caching layer that kept an old broken image alive long after the underlying bug was fixed.
+
+## Why leave Vercel at all
+
+Nothing was on fire. The honest reason is that I wanted one platform instead of two: Cloudflare already sat in front of DNS and a couple of other side projects, and running the actual site somewhere else meant a second dashboard, a second set of environment variables, and a second mental model for "how does a request get served." Workers also don't have the cold-start-after-idle behavior that Vercel's regional functions do, and I liked the idea of the site living on Cloudflare's edge network instead of one region. None of that is a knock on Vercel. It's a genuinely good platform, and this migration was about consolidation, not escaping something broken.
+
+## The adapter swap
+
+The actual config change is small. `astro.config.mjs` went from the Vercel adapter to the Cloudflare one:
+
+```diff
+-import vercel from '@astrojs/vercel';
++import cloudflare from '@astrojs/cloudflare';
+
+-adapter: vercel({
+-  webAnalytics: { enabled: process.env.NODE_ENV === 'production' },
+-  imageService: true,
+-  isr: { expiration: 60 * 60 * 24 },
+-}),
++adapter: cloudflare({
++  imageService: { build: 'compile', runtime: 'passthrough' },
++  prerenderEnvironment: 'node',
++}),
+```
+
+Vercel's ISR (incremental static regeneration) doesn't have a Cloudflare equivalent, so that config just disappears: pages are either prerendered at build time or served on demand from the Worker, with no middle ground where a page gets cached and silently regenerated later. A new `wrangler.jsonc` shows up alongside it, describing the Worker itself: the entrypoint, the assets binding, and (this detail mattered more than it looked like it would) where the static output actually lives.
+
+```jsonc
+{
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "binding": "ASSETS", "directory": "./dist" },
+}
+```
+
+Where Vercel produced one build output, Cloudflare produces two: `dist/client` for everything Workers Assets serves directly, and `dist/server` for the actual Worker script. The CI build-verification step had to change to match, because checking for a single `dist` directory was no longer enough to know the build actually worked:
+
+```diff
+-[ -d "dist" ] && echo "Build directory exists" || exit 1
++[ -d "dist/client" ] || { echo "Static asset output missing"; exit 1; }
++[ -f "dist/server/entry.mjs" ] || { echo "Worker entrypoint missing"; exit 1; }
+```
+
+## Redis had to get edge-native too
+
+The post-reactions endpoint uses Upstash Redis, and the default `@upstash/redis` client assumes a Node.js runtime; it isn't guaranteed to work inside a Worker's fetch-based environment. Upstash ships a dedicated entrypoint for exactly this:
+
+```diff
+-import { Redis } from '@upstash/redis';
++import { Redis } from '@upstash/redis/cloudflare';
+
+ const redis = new Redis({
+   url,
+   token,
++  signal: () => AbortSignal.timeout(2500),
++  retry: { retries: 1, backoff: (retryCount) => retryCount * 50 },
+ });
+```
+
+I also added an explicit timeout and a single retry. Vercel's regional functions had generous defaults that papered over slow Redis round-trips; a Worker doesn't, so an unbounded request is a much easier way to leave a user staring at a spinner.
+
+The rate limiter's IP detection flipped order too. On Vercel, `clientAddress` was the trustworthy source. On Cloudflare, it's `cf-connecting-ip`, set by Cloudflare's own edge and not forwardable by the client, with `x-forwarded-for` kept only as a last-resort fallback:
+
+```diff
+ const ip =
+-  clientAddress ||
+   request.headers.get('cf-connecting-ip') ||
++  clientAddress ||
+   request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+   'anonymous';
+```
+
+Get this ordering wrong on a rate limiter and it isn't a cosmetic bug. It's a rate limiter a client can bypass by setting its own `x-forwarded-for` header.
+
+## The bug that actually cost me a day
+
+This site generates its own Open Graph images (the cards you see when a link gets shared on LinkedIn or X) using [Satori](https://github.com/vercel/satori) to lay out a React-ish element tree as SVG, then [`@resvg/resvg-js`](https://github.com/thx/resvg-js) to rasterize that SVG to a PNG. `resvg-js` is a Rust library exposed to Node through a native addon. That's fine in a Node.js serverless function. It is not fine in a Worker: a V8 isolate has no filesystem and can't load a compiled native binary.
+
+![Two lanes: a build machine where a native Rust binary runs freely and bakes static PNGs, versus a Cloudflare Worker where the same binary cannot execute and a silent fallback renders a blank card](/blog/vercel-to-cloudflare-migration/images/build-vs-worker.svg)
+
+So every OG-image route had to move from generating an image per request (`prerender = false`, fine on Vercel) to generating every possible image once, at build time, via `getStaticPaths` (`prerender = true`, the only thing that works on Workers). That's the right fix, and by itself it's not even a hard one.
+
+The actual bug was subtler, and it's the reason this took a day instead of an hour. The font file was being resolved with `path.join(process.cwd(), 'InterVariable.ttf')`, a path that happens to work when you run `node` from the project root and does not reliably resolve to the same place inside a build runner's working directory. When the font failed to load, the code didn't throw. It fell through to a fallback renderer that draws the card with plain SVG `<text>` and no font attached, which resvg silently renders as nothing. Correct dimensions, correct content type, `200 OK`, and zero visible pixels of text: a blank blue card that looks, to any monitoring you might have, like a complete success.
+
+The fix was to resolve the font relative to the module's own file instead of the process's working directory, and to give the fallback path an explicit, always-available font so it can never again silently render invisible text. But by the time that shipped, the damage was already cached: LinkedIn, Slack, and Discord had all fetched the blank version and stored it under an image URL that never changes. Fixing the renderer doesn't un-cache anything on someone else's server. I ended up building a whole second layer on top of the fix just for that: a content-hash query parameter on every card URL so the URL itself changes when the card does, plus a manifest so a page can never again advertise a card that was never actually generated, plus a build step that walks every rendered HTML page and fails the build if a single `og:image` doesn't resolve to a real, correctly sized PNG.
+
+## What I'd do differently
+
+Two things, if I were starting this migration over.
+
+First, I'd audit every dependency for native bindings before touching the adapter, not after the blank cards showed up. `@resvg/resvg-js` was the only one in this codebase, and it's exactly the kind of dependency that keeps working right up until the moment your architecture changes underneath it. Nothing about "it built successfully in CI" tells you whether it'll run in the target runtime.
+
+Second, I'd write the build-time coverage check first, not as a response to a production bug. It's about forty lines of Node that walk the built output and confirm every generated asset a page claims to have actually exists on disk. It would have caught the missing-card class of bug on the very first build, instead of after a report from someone whose link preview looked broken.
+
+If you're mid-migration on something similar, this is the pattern I'd watch for: it's rarely the framework config that bites you. It's the dependency you forgot was doing something clever behind a "just works" abstraction.
+
+<NewsletterSignup client:visible variant="card" source="cloudflare-migration-mid" />
+
+## Sources
+
+- [Astro's Cloudflare adapter docs](https://docs.astro.build/en/guides/integrations-guide/cloudflare/): adapter options, `imageService`, `prerenderEnvironment`
+- [Cloudflare Workers: nodejs_compat](https://developers.cloudflare.com/workers/runtime-apis/nodejs/): what the Node.js compatibility flag does and does not cover
+- [Upstash Redis for Cloudflare Workers](https://upstash.com/docs/redis/sdks/ts/cloudflare): the `@upstash/redis/cloudflare` entrypoint
+- [`resvg-js` on GitHub](https://github.com/thx/resvg-js): native binding architecture
+- This repo's own history: [#267](https://github.com/piyush97/PiyushMehta.com/pull/267) (the migration), [#266](https://github.com/piyush97/PiyushMehta.com/pull/266) (the font-path fix), [#268](https://github.com/piyush97/PiyushMehta.com/pull/268) (the manifest, cache-busting, and build gate)
+
+<NewsletterSignup client:visible variant="card" source="cloudflare-migration-cta" />

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F1221"/>
+      <stop offset="1" stop-color="#171A2F"/>
+    </linearGradient>
+    <linearGradient id="boxFill" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#222640"/>
+      <stop offset="1" stop-color="#1B1F36"/>
+    </linearGradient>
+    <radialGradient id="globeFill" cx="0.35" cy="0.3" r="0.9">
+      <stop stop-color="#2B3050"/>
+      <stop offset="1" stop-color="#171A2F"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <path d="M0 82H1200M0 164H1200M0 246H1200M0 328H1200M0 410H1200M0 492H1200M0 574H1200" stroke="#343A5F" stroke-opacity=".28"/>
+  <path d="M74 0V630M148 0V630M222 0V630M296 0V630M370 0V630M444 0V630M518 0V630M592 0V630M666 0V630M740 0V630M814 0V630M888 0V630M962 0V630M1036 0V630M1110 0V630" stroke="#343A5F" stroke-opacity=".20"/>
+
+  <!-- Left: single Vercel region -->
+  <g transform="translate(70, 180)">
+    <rect x="0" y="0" width="270" height="220" rx="12" fill="url(#boxFill)" stroke="#343A5F" stroke-width="2"/>
+    <circle cx="135" cy="70" r="16" fill="#B4BAD8" filter="url(#glow)"/>
+    <text x="135" y="115" text-anchor="middle" fill="#F6F7FF" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" font-weight="700">Vercel</text>
+    <text x="135" y="140" text-anchor="middle" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">1 region · serverless fn</text>
+    <text x="135" y="164" text-anchor="middle" fill="#8F96BA" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">us-east-1</text>
+    <text x="135" y="192" text-anchor="middle" fill="#8F96BA" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">cold start · ISR cache</text>
+  </g>
+
+  <!-- Migration arrow -->
+  <g stroke-linecap="round" fill="none">
+    <path d="M356 290 C 420 290 420 290 480 290" stroke="#FFCC68" stroke-width="3"/>
+    <path d="M462 276 L 480 290 L 462 304" stroke="#FFCC68" stroke-width="3" fill="none"/>
+  </g>
+  <text x="418" y="264" text-anchor="middle" fill="#FFCC68" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700">migrate</text>
+
+  <!-- Right: Cloudflare global edge -->
+  <g transform="translate(560, 90)">
+    <ellipse cx="270" cy="200" rx="270" ry="200" fill="url(#globeFill)" stroke="#343A5F" stroke-width="2"/>
+    <ellipse cx="270" cy="200" rx="270" ry="80" fill="none" stroke="#343A5F" stroke-opacity=".55"/>
+    <ellipse cx="270" cy="200" rx="150" ry="200" fill="none" stroke="#343A5F" stroke-opacity=".55"/>
+    <line x1="0" y1="200" x2="540" y2="200" stroke="#343A5F" stroke-opacity=".55"/>
+
+    <!-- edge nodes scattered across the globe -->
+    <circle cx="130" cy="110" r="8" fill="#67E8F9" filter="url(#glow)"/>
+    <circle cx="330" cy="90" r="8" fill="#67E8F9" filter="url(#glow)"/>
+    <circle cx="420" cy="180" r="8" fill="#67E8F9" filter="url(#glow)"/>
+    <circle cx="90" cy="230" r="8" fill="#67E8F9" filter="url(#glow)"/>
+    <circle cx="230" cy="290" r="8" fill="#67E8F9" filter="url(#glow)"/>
+    <circle cx="400" cy="300" r="8" fill="#67E8F9" filter="url(#glow)"/>
+    <circle cx="300" cy="220" r="8" fill="#67E8F9" filter="url(#glow)"/>
+
+    <rect x="90" y="380" width="360" height="72" rx="10" fill="#0B1024" stroke="#FFCC68" stroke-opacity=".55" stroke-width="1.5"/>
+    <text x="270" y="410" text-anchor="middle" fill="#FFCC68" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" font-weight="700">Cloudflare Workers</text>
+    <text x="270" y="434" text-anchor="middle" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">300+ edge locations · no cold start</text>
+  </g>
+
+  <!-- Title caption -->
+  <text x="600" y="593" text-anchor="middle" fill="#F6F7FF" font-family="Arial, sans-serif" font-size="33" font-weight="700">One region to three hundred, and what broke on the way</text>
+</svg>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="520" viewBox="0 0 1200 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1200" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F1221"/>
+      <stop offset="1" stop-color="#171A2F"/>
+    </linearGradient>
+    <linearGradient id="laneFill" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#222640"/>
+      <stop offset="1" stop-color="#1B1F36"/>
+    </linearGradient>
+    <filter id="glow2" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="520" fill="url(#bg2)"/>
+  <path d="M0 68H1200M0 136H1200M0 204H1200M0 272H1200M0 340H1200M0 408H1200M0 476H1200" stroke="#343A5F" stroke-opacity=".22"/>
+
+  <text x="600" y="46" text-anchor="middle" fill="#F6F7FF" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" font-weight="700">where a native binary is allowed to run</text>
+
+  <!-- Lane 1: Build machine -->
+  <g transform="translate(70, 90)">
+    <rect x="0" y="0" width="500" height="380" rx="12" fill="url(#laneFill)" stroke="#67E8F9" stroke-opacity=".55" stroke-width="1.5"/>
+    <text x="250" y="46" text-anchor="middle" fill="#67E8F9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700">build machine · Node.js</text>
+
+    <rect x="40" y="80" width="420" height="72" rx="10" fill="#0B1024" stroke="#343A5F" stroke-width="1.5"/>
+    <text x="250" y="112" text-anchor="middle" fill="#F6F7FF" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">satori + @resvg/resvg-js</text>
+    <text x="250" y="134" text-anchor="middle" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">Rust binary, loaded as a native addon</text>
+
+    <path d="M250 152 V 190" stroke="#67E8F9" stroke-width="2.5"/>
+    <path d="M240 180 L 250 192 L 260 180" stroke="#67E8F9" stroke-width="2.5" fill="none"/>
+
+    <rect x="40" y="200" width="420" height="72" rx="10" fill="#0B1024" stroke="#343A5F" stroke-width="1.5"/>
+    <text x="250" y="232" text-anchor="middle" fill="#F6F7FF" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">getStaticPaths()</text>
+    <text x="250" y="254" text-anchor="middle" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">every card baked once, at build time</text>
+
+    <path d="M250 272 V 310" stroke="#67E8F9" stroke-width="2.5"/>
+    <path d="M240 300 L 250 312 L 260 300" stroke="#67E8F9" stroke-width="2.5" fill="none"/>
+
+    <rect x="40" y="320" width="420" height="44" rx="8" fill="#0F1221" stroke="#67E8F9" stroke-opacity=".7" stroke-width="1.5"/>
+    <text x="250" y="348" text-anchor="middle" fill="#67E8F9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">dist/client/og/**.png</text>
+  </g>
+
+  <!-- Lane 2: Worker -->
+  <g transform="translate(630, 90)">
+    <rect x="0" y="0" width="500" height="380" rx="12" fill="url(#laneFill)" stroke="#FF8A8A" stroke-opacity=".55" stroke-width="1.5"/>
+    <text x="250" y="46" text-anchor="middle" fill="#FF8A8A" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700">Cloudflare Worker · V8 isolate</text>
+
+    <rect x="40" y="80" width="420" height="72" rx="10" fill="#0B1024" stroke="#FF8A8A" stroke-opacity=".7" stroke-width="1.5"/>
+    <text x="250" y="112" text-anchor="middle" fill="#F6F7FF" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">@resvg/resvg-js on request</text>
+    <text x="250" y="134" text-anchor="middle" fill="#FF8A8A" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">no native addons in a V8 isolate</text>
+    <line x1="60" y1="90" x2="440" y2="142" stroke="#FF8A8A" stroke-width="2.5"/>
+    <line x1="440" y1="90" x2="60" y2="142" stroke="#FF8A8A" stroke-width="2.5"/>
+
+    <path d="M250 152 V 190" stroke="#343A5F" stroke-width="2.5"/>
+    <path d="M240 180 L 250 192 L 260 180" stroke="#343A5F" stroke-width="2.5" fill="none"/>
+
+    <rect x="40" y="200" width="420" height="72" rx="10" fill="#0B1024" stroke="#343A5F" stroke-width="1.5"/>
+    <text x="250" y="232" text-anchor="middle" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">silent fallback SVG</text>
+    <text x="250" y="254" text-anchor="middle" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">font never loaded → invisible text</text>
+
+    <path d="M250 272 V 310" stroke="#343A5F" stroke-width="2.5"/>
+    <path d="M240 300 L 250 312 L 260 300" stroke="#343A5F" stroke-width="2.5" fill="none"/>
+
+    <rect x="40" y="320" width="420" height="44" rx="8" fill="#0F1221" stroke="#FFCC68" stroke-opacity=".7" stroke-width="1.5"/>
+    <text x="250" y="348" text-anchor="middle" fill="#FFCC68" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">200 OK · blank blue card</text>
+  </g>
+
+  <text x="600" y="498" text-anchor="middle" fill="#8F96BA" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">fix: keep every card on the left lane (prerender = true), never on-demand</text>
+</svg>
