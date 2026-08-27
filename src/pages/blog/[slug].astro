@@ -9,6 +9,7 @@ import PostReactions from '../../components/PostReactions.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
 import Layout from '../../layouts/Layout.astro';
 import { createSocialCardMetadata } from '../../utils/social-card';
+import { getSocialCardManifest } from '../../utils/social-card-manifest';
 
 export const prerender = true;
 
@@ -41,6 +42,7 @@ const socialImage = createSocialCardMetadata({
   baseUrl,
   title,
   author: author || 'Piyush Mehta',
+  manifest: await getSocialCardManifest(),
 });
 
 // Generate canonical URL

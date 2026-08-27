@@ -35,10 +35,18 @@ step('Astro build', 'astro build', {
   env: { ...process.env, FORCE_COLOR: '1' },
 });
 
-// 4. Post-build scripts (pagefind, resume PDF)
+// 4. Rescue legacy mixed-case blog URLs (must run after the Astro build copies public/_redirects
+//    into dist/client/, and before deploy — see scripts/generate-legacy-redirects.mjs)
+step('Legacy blog redirects', 'node scripts/generate-legacy-redirects.mjs');
+
+// 5. Fail the build if any og:image/twitter:image/JSON-LD image reference is missing, wrong
+//    size, or looks like the blank-fallback card — see scripts/verify-og.mjs
+step('OG image coverage check', 'node scripts/verify-og.mjs');
+
+// 6. Post-build scripts (pagefind, resume PDF)
 step('Pagefind search index', 'pagefind --site dist/client', { optional: true });
 
-// 5. Optional: generate resume PDF
+// 7. Optional: generate resume PDF
 step('Resume PDF', 'node scripts/generate-resume-pdf.mjs', { optional: true });
 
 console.log(`\n🎉 Build complete`);
