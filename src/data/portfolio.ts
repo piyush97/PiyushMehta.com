@@ -173,7 +173,7 @@ export const caseStudies: CaseStudy[] = [
       'A reusable structure for adding future case studies and migration notes.',
       'A stronger base for lint, type, build, RSS, and browser verification.',
     ],
-    stack: ['Astro', 'TypeScript', 'MDX', 'Tailwind CSS', 'React islands', 'Vercel'],
+    stack: ['Astro', 'TypeScript', 'MDX', 'Tailwind CSS', 'React islands', 'Cloudflare Workers'],
     links: [
       { label: 'Live site', href: 'https://piyushmehta.com/' },
       { label: 'Source', href: 'https://github.com/piyush97/PiyushMehta.com' },
@@ -358,7 +358,7 @@ export const resumeSkillGroups: SkillGroup[] = [
   },
   {
     title: 'Cloud and delivery',
-    items: ['Azure', 'AWS', 'Vercel', 'Docker', 'Kubernetes', 'Terraform'],
+    items: ['Azure', 'AWS', 'Cloudflare', 'Vercel', 'Docker', 'Kubernetes', 'Terraform'],
   },
 ];
 
@@ -496,7 +496,7 @@ export const usesCategories: ToolCategory[] = [
     title: 'Systems and operations',
     description:
       'Infrastructure tools that help me practice production habits outside a narrow app surface.',
-    items: ['Docker', 'Kubernetes', 'Terraform', 'AWS', 'Azure', 'Vercel', 'Sentry'],
+    items: ['Docker', 'Kubernetes', 'Terraform', 'AWS', 'Azure', 'Cloudflare', 'Vercel', 'Sentry'],
   },
   {
     title: 'Data and backend',

@@ -6,7 +6,7 @@ import {
 } from '../utils/social-card';
 import { createSocialCardResponse } from '../utils/social-card-renderer';
 
-export const prerender = false;
+export const prerender = true;
 
 export const alt = 'Piyush Mehta - Senior Software Engineer social preview';
 export const size = SOCIAL_CARD_SIZE;

@@ -60,7 +60,6 @@ export function getCacheHeaders(options: CacheOptions = {}): Record<string, stri
   const headers: Record<string, string> = {
     'Cache-Control': `public, max-age=${ttl}, s-maxage=${ttl}, stale-while-revalidate=${staleWhileRevalidate}, immutable`,
     'CDN-Cache-Control': `max-age=${ttl}`,
-    'Vercel-CDN-Cache-Control': `max-age=${ttl}`,
     'X-Cache-Status': 'MISS',
   };
 

@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { Resend } from 'resend';
+import { ENV } from 'varlock/env';
 
 export const prerender = false;
 
@@ -96,53 +96,55 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       return json({ error: 'All fields are required and must be valid.' }, 422);
     }
 
-    const apiKey = process.env.RESEND_API_KEY ?? import.meta.env.RESEND_API_KEY;
-    const fromAddress =
-      process.env.CONTACT_FROM_EMAIL ??
-      import.meta.env.CONTACT_FROM_EMAIL ??
-      'onboarding@resend.dev';
-    const toAddress =
-      process.env.CONTACT_TO_EMAIL ?? import.meta.env.CONTACT_TO_EMAIL ?? 'contact@piyushmehta.com';
+    const apiKey = ENV.RESEND_API_KEY;
+    const fromAddress = ENV.CONTACT_FROM_EMAIL || 'onboarding@resend.dev';
+    const toAddress = ENV.CONTACT_TO_EMAIL || 'contact@piyushmehta.com';
 
     if (!apiKey) {
       console.error('[contact] RESEND_API_KEY missing');
       return json({ error: 'Email service not configured.' }, 503);
     }
 
-    const resend = new Resend(apiKey);
-
     const cleanName = name.trim();
     const cleanEmail = email.trim();
     const cleanSubject = subject.trim();
     const cleanMessage = message.trim();
 
-    let result: Awaited<ReturnType<typeof resend.emails.send>>;
+    let response: Response;
     try {
-      result = await resend.emails.send({
-        from: `Contact Form <${fromAddress}>`,
-        to: toAddress,
-        replyTo: cleanEmail,
-        subject: `[Portfolio] ${cleanSubject}`,
-        text: [
-          `From: ${cleanName} <${cleanEmail}>`,
-          `Subject: ${cleanSubject}`,
-          '',
-          cleanMessage,
-        ].join('\n'),
-        html: `
-          <p><strong>From:</strong> ${escapeHtml(cleanName)} &lt;${escapeHtml(cleanEmail)}&gt;</p>
-          <p><strong>Subject:</strong> ${escapeHtml(cleanSubject)}</p>
-          <hr />
-          <p style="white-space:pre-wrap">${escapeHtml(cleanMessage)}</p>
-        `,
+      response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: `Contact Form <${fromAddress}>`,
+          to: [toAddress],
+          reply_to: cleanEmail,
+          subject: `[Portfolio] ${cleanSubject}`,
+          text: [
+            `From: ${cleanName} <${cleanEmail}>`,
+            `Subject: ${cleanSubject}`,
+            '',
+            cleanMessage,
+          ].join('\n'),
+          html: `
+            <p><strong>From:</strong> ${escapeHtml(cleanName)} &lt;${escapeHtml(cleanEmail)}&gt;</p>
+            <p><strong>Subject:</strong> ${escapeHtml(cleanSubject)}</p>
+            <hr />
+            <p style="white-space:pre-wrap">${escapeHtml(cleanMessage)}</p>
+          `,
+        }),
       });
     } catch (err) {
-      console.error('[contact] resend.send threw:', err);
+      console.error('[contact] Resend request failed:', err);
       return json({ error: 'Failed to send. Try again or email directly.' }, 502);
     }
 
-    if (result.error) {
-      console.error('[contact] resend error:', result.error);
+    if (!response.ok) {
+      const body = await response.text();
+      console.error('[contact] Resend error:', response.status, body.slice(0, 200));
       return json({ error: 'Failed to send. Try again or email directly.' }, 502);
     }
 

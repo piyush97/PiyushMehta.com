@@ -1,6 +1,6 @@
 # piyushmehta.com
 
-Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, deployed on Vercel.
+Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, deployed on Cloudflare Workers.
 
 ![](.github/demo.gif)
 
@@ -8,18 +8,18 @@ Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, depl
 
 | Tech | Role |
 |---|---|
-| [Astro](https://astro.build/) | Framework — SSR via Vercel adapter |
+| [Astro](https://astro.build/) | Framework — prerendered pages plus Worker API routes |
 | [TypeScript](https://www.typescriptlang.org/) | Language |
 | [React](https://react.dev/) | Interactive islands |
 | [Tailwind CSS](https://tailwindcss.com/) | Styling |
 | [MDX](https://mdxjs.com/) | Blog content |
-| [Vercel](https://vercel.com/) | Deployment |
+| [Cloudflare Workers](https://workers.cloudflare.com/) | Deployment |
 
 ## Stack
 
 | Layer | Technology |
 |---|---|
-| Framework | [Astro 7](https://astro.build/) — SSR via Vercel adapter |
+| Framework | [Astro 7](https://astro.build/) — Cloudflare adapter |
 | UI | [React 19](https://react.dev/) — interactive islands |
 | Styling | [Tailwind CSS v4](https://tailwindcss.com/) — via `@tailwindcss/vite` |
 | Language | TypeScript 7 |
@@ -28,11 +28,11 @@ Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, depl
 | Email | [Resend](https://resend.com/) — contact form + newsletter (audience + confirmation) |
 | Rate limiting | [Upstash Redis](https://upstash.com/) — serverless Redis |
 | Monitoring | [Sentry](https://sentry.io/) — errors + performance |
-| Analytics | Vercel Web Analytics + Speed Insights |
+| Analytics | Cloudflare Workers Observability |
 | Env management | [varlock](https://varlock.dev/) — schema validation + secret scanning |
 | Code quality | [Vite+](https://viteplus.dev/) — Oxfmt + Oxlint + type checks |
 | Testing | [Playwright](https://playwright.dev/) — E2E |
-| Deployment | [Vercel](https://vercel.com/) |
+| Deployment | [Cloudflare Workers](https://workers.cloudflare.com/) — Static Assets + API routes |
 | Package manager | [Bun](https://bun.sh/) |
 
 ## Local dev
@@ -45,10 +45,10 @@ cd PiyushMehta.com
 bun install
 ```
 
-Pull environment variables from Vercel (requires `vercel link` first):
+Create a local environment file from the checked-in template:
 
 ```bash
-vercel env pull .env.local
+cp .env.example .env
 ```
 
 Start dev server:
@@ -83,7 +83,8 @@ See `.env.schema` for the full list.
 ```bash
 bun dev              # Dev server
 bun build            # Production build (typegen → image migration → Astro build → Pagefind → resume PDF)
-bun preview          # Preview production build locally
+bun preview          # Run the production build in the local Workers runtime
+bun run deploy       # Build and deploy with varlock-managed Cloudflare secrets
 
 bun run lint         # Oxlint via Vite+
 bun run lint:fix     # Oxlint auto-fix via Vite+
@@ -163,14 +164,32 @@ image:
 
 ## Deployment
 
-Deploys to Vercel automatically on push to `main`. Preview deployments on all PRs.
+Deploys to Cloudflare Workers with `bun run deploy`. Varlock uploads sensitive values as Cloudflare secrets and non-sensitive values as Worker variables.
 
 Build command: `bun run build`  
-Output: `.vercel/output` (Vercel Build Output API)
+Output: `dist/client` static assets plus `dist/server` Worker modules
+
+The production configuration uses only Workers Free products: Static Assets, lightweight API routes, custom domains, and included observability. Social cards and images are generated at build time rather than using Cloudflare Images or runtime rasterization.
+
+### Cloudflare Workers Builds
+
+Cloudflare's GitHub App owns deployment. Pull requests and non-production branches upload preview versions; pushes to `main` deploy production after the Cloudflare build succeeds. GitHub Actions remains the independent code-quality and build-verification gate and does not deploy.
+
+Recommended Cloudflare build settings:
+
+- Production branch: `main`
+- Build command: `bun run check && bun run build`
+- Deploy command: `bunx wrangler deploy`
+- Version command: `bunx wrangler versions upload`
+- Root directory: `/`
+- Non-production branch builds: enabled
+- Build cache: enabled
+
+Runtime credentials remain in the Worker's Variables and Secrets settings; they are not stored in GitHub Actions.
 
 ## Contributing
 
-Contributions are welcome! PRs are reviewed and preview deployments are created automatically for every pull request.
+Contributions are welcome! PRs are reviewed and validated by CI.
 
 - **Install with Bun** — this repo uses [Bun](https://bun.sh/) exclusively (`bun@1.3.13`): `bun install`
 - **Run the dev server** — `bun dev` → `http://localhost:4321`
@@ -183,7 +202,7 @@ git checkout -b feature/your-feature
 # make changes
 git commit -m "feat: description"   # triggers Vite+ + varlock pre-commit hooks
 git push origin feature/your-feature
-# open PR → preview deploy created automatically
+# open PR → CI validates checks and the production build
 ```
 
 ## Support / Sponsor

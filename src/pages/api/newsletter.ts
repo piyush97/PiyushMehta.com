@@ -4,26 +4,42 @@
  */
 import * as Sentry from '@sentry/astro';
 import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+import { Redis } from '@upstash/redis/cloudflare';
 import type { APIRoute } from 'astro';
+import { ENV } from 'varlock/env';
 import { addToResendAudience, sendConfirmationEmail } from '@/utils/newsletter';
 
 export const prerender = false;
 
-// ponytail: single Upstash Redis-based rate limiter. No ioredis fallback, no
-// in-memory Map, no DB fallback. The Upstash client is HTTP-based and works
-// in serverless. Add multi-layer fallback only if this proves insufficient.
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, '15 m'),
-  analytics: true,
-  prefix: 'ratelimit:newsletter',
-});
+// Upstash's analytics submission is asynchronous. Keep it disabled here because
+// Astro's route contract does not expose a waitUntil hook for that background work.
+const redis =
+  ENV.UPSTASH_REDIS_REST_URL && ENV.UPSTASH_REDIS_REST_TOKEN
+    ? new Redis({
+        url: ENV.UPSTASH_REDIS_REST_URL,
+        token: ENV.UPSTASH_REDIS_REST_TOKEN,
+        signal: () => AbortSignal.timeout(2500),
+        retry: {
+          retries: 1,
+          backoff: (retryCount) => retryCount * 50,
+        },
+      })
+    : null;
+const ratelimit = redis
+  ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(5, '15 m'),
+      prefix: 'ratelimit:newsletter',
+    })
+  : null;
 
 function getClientIP(request: Request): string {
-  const forwardedFor = request.headers.get('x-forwarded-for');
-  if (forwardedFor) return forwardedFor.split(',')[0].trim();
-  return request.headers.get('x-real-ip') || request.headers.get('cf-connecting-ip') || 'unknown';
+  return (
+    request.headers.get('cf-connecting-ip') ||
+    request.headers.get('x-real-ip') ||
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+    'unknown'
+  );
 }
 
 function sanitizeEmail(email: string): string {
@@ -41,7 +57,13 @@ export const POST: APIRoute = async ({ request }) => {
   const clientIP = getClientIP(request);
 
   try {
-    // Rate limiting
+    if (!ratelimit) {
+      return new Response(JSON.stringify({ error: 'Newsletter service unavailable' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const { success: allowed } = await ratelimit.limit(clientIP);
     if (!allowed) {
       return new Response(
@@ -50,7 +72,6 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Parse body
     const bodyText = await request.text();
     if (!bodyText.trim()) {
       return new Response(JSON.stringify({ success: false, message: 'Request body is empty' }), {
@@ -59,7 +80,7 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    let data: { email?: string };
+    let data: unknown;
     try {
       data = JSON.parse(bodyText);
     } catch {
@@ -69,7 +90,7 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    if (!data.email || typeof data.email !== 'string') {
+    if (!data || typeof data !== 'object' || !('email' in data) || typeof data.email !== 'string') {
       return new Response(JSON.stringify({ success: false, message: 'Email is required' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -85,16 +106,14 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    // Subscribe via Resend
-    const apiKey = process.env.RESEND_API_KEY;
-    const segmentId = process.env.RESEND_SEGMENT_ID;
+    const apiKey = ENV.RESEND_API_KEY;
+    const segmentId = ENV.RESEND_SEGMENT_ID;
     if (!apiKey) throw new Error('RESEND_API_KEY is not set');
     if (!segmentId) throw new Error('RESEND_SEGMENT_ID is not set');
 
     await addToResendAudience(email, apiKey, segmentId);
 
-    // Welcome email (non-fatal if it fails)
-    const fromAddress = process.env.RESEND_FROM;
+    const fromAddress = ENV.RESEND_FROM;
     if (fromAddress) {
       await sendConfirmationEmail(email, apiKey, fromAddress).catch((err) => {
         console.warn('Welcome email failed:', err);

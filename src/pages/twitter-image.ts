@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-export const prerender = false;
+export const prerender = true;
 
-export const GET: APIRoute = ({ url }) =>
-  Response.redirect(new URL(`/opengraph-image${url.search}`, url), 308);
+export const GET: APIRoute = () =>
+  Response.redirect(new URL('/opengraph-image', 'https://piyushmehta.com'), 308);

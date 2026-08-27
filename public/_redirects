@@ -1,0 +1,6 @@
+/contact /contact-me 301
+/contact/ /contact-me/ 301
+/blog/kubenetes-docker /blog/kubernetes-docker 301
+/sitemap_index.xml /sitemap.xml 301
+/writing /blog 301
+/writing/* /blog/:splat 301

@@ -1,6 +1,5 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import SpeedInsights from '@vercel/speed-insights/astro';
 import favicon from '../assets/favicon.svg';
 import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
@@ -109,7 +108,6 @@ const {
       <slot />
     </main>
     <Footer />
-    <SpeedInsights />
     <script>
       // Defer all motion/interaction logic until the browser is idle.
       // The reveal, parallax, and hero typography work is non-critical for

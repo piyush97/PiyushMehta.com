@@ -3,10 +3,10 @@ dist/
 public/resume.pdf
 *.tsbuildinfo
 .DS_Store
-.vercel
 .netlify
 _site/
 .astro/
+.wrangler/
 scripts/smoke/*-main/
 scripts/memory/project/src/pages/
 benchmark/projects/
@@ -75,3 +75,5 @@ src/varlock.env.d.ts
 .codex/
 skills-lock.json
 env.d.ts
+.vercel
+.env*
