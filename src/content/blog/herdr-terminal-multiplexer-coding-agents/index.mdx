@@ -1,0 +1,246 @@
+---
+title: 'Herdr Is the Runtime Your Coding Agents Live On'
+description: 'Herdr is the runtime your coding agents live on. It holds real terminals open on your laptop, your desktop or a box you rent, so the work survives the lid closing — and you can attach again from anything with a keyboard.'
+date: 2026-08-26
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'Developer Tools'
+  - 'Productivity'
+  - 'Terminal Multiplexer'
+  - 'Coding Agents'
+  - 'Open Source'
+  - 'AI'
+image:
+  url: '/blog/herdr-terminal-multiplexer-coding-agents/images/cover.svg'
+  alt: 'Herdr runtime: a background terminal server holding multiple coding-agent panes alive across laptop closes, with a workspace > tab > pane > agent hierarchy drawn on the side'
+draft: false
+---
+
+import NewsletterSignup from '../../../components/NewsletterSignup.tsx';
+
+I closed the lid, drove to a coffee shop, and the agent that had been refactoring a two-hundred-file monorepo for ninety minutes was still running when I opened it back up. The terminal was sitting in the same pane, the same scrollback, the same place in the diff. The only thing that had changed was the Wi-Fi network.
+
+The thing that had been quietly killing me was not the answer the agent eventually produced. It was the ninety minutes it had been working while I was not, and the five minutes I would have spent restarting it every time the laptop slept. Coding agents are good now. They run for hours. They refactor whole trees, they run test suites, they wait on pull-request reviews. The bottleneck, again, was not the model. It was the terminal.
+
+[Herdr](https://herdr.dev/) is the runtime that makes this routine. It is a single Rust binary that holds your coding agents' terminals open across laptop closes, network drops, and machine restarts — and tells you, without you to clicking, which one is stuck. After a few weeks it has changed how I think about agent work entirely.
+
+> **The short version:** Herdr is one Rust binary that keeps your coding agents' terminals alive when the laptop sleeps, the SSH drops, and the Wi-Fi changes — and twenty agents show up the moment you install it.
+
+## Why every agent session is a borrowed process
+
+Here is the part that was wearing me down. A coding agent runs in a terminal. A terminal belongs to a TTY. A TTY dies when the SSH session drops, when the lid closes, when the laptop sleeps, when the Wi-Fi flips to a captive portal, when the user's shell exits because they closed their emulator. Every "session" for an agent is a borrowed process. The agent is a tenant in someone else's house, and the landlord can evict it any time.
+
+The hidden cost of that eviction is not the lost compute. It is the lost context. The agent had read the diff, planned the refactor, hit the first migration, decided to keep the old behavior for the second one, and was halfway through the third. The eviction kills the reasoning, not the work — and the model has to start the reasoning over.
+
+I do not want a desktop Electron app to manage my agents. I do not want a hosted SaaS IDE. I want the terminal to keep being the terminal, and I want the agents to keep being the agents, and I want neither of them to be at the mercy of my lid. The author of Herdr described the same trap in the [announcement post about joining Y Combinator](https://herdr.dev/blog/herdr-is-joining-y-combinator/): the bottleneck on his own agents was himself.
+
+## What Herdr actually is
+
+Herdr is one Rust binary. No Electron, no daemon that ships its own GUI, no installer that pulls a kernel module. It runs on macOS, Linux, and Windows from the same binary, and it owns the terminals your agents live in.
+
+The architecture is the part that matters. From the [Herdr concepts doc](https://herdr.dev/docs/concepts/):
+
+> "By default, Herdr runs as a background server plus one or more attached clients. The server owns panes and process state. The client is the terminal UI attached to that server. Detach the client with `ctrl+b q`. The server and agents continue running."
+
+Read that twice. The server is the runtime. The client is just a view onto it. You can attach a client from your laptop, walk away, close the laptop, open it on a different network, and `herdr` again. The server is still there. The agents are still there. The pane layout comes back exactly as you left it.
+
+The README headlines it: **"the runtime your coding agents live on"** ([github.com/herdrdev/herdr](https://github.com/herdrdev/herdr)). The marketing subhead on the site captures it tighter: _Run them anywhere. Leave them running._
+
+## Install in sixty seconds
+
+```bash
+curl -fsSL https://herdr.dev/install.sh | sh
+```
+
+That is the whole pitch on Linux and macOS. Homebrew also has it: `brew install herdr`. Nix users can pin a version with `nix profile install github:herdrdev/herdr/v0.x.y`. Windows has a PowerShell variant. All of these are documented at [herdr.dev/docs/install](https://herdr.dev/docs/install/).
+
+After install, `herdr` launches or attaches to the default background session. From the [quick start doc](https://herdr.dev/docs/quick-start/): "You do not manage sockets. If you detach, agents keep running."
+
+## The runtime mental model
+
+The Herdr author gave the cleanest version of the model in the [YC announcement post](https://herdr.dev/blog/herdr-is-joining-y-combinator/):
+
+> "A terminal pane belongs to an agent. A pane belongs to a tab. Tabs belong to a project."
+
+Four nested objects, four operators moves. They are not abstractions; they are the things you actually split, name, and attach to.
+
+| Concept       | What it is                                                                                                                                                                                                                    | How you make one                                                              |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Workspace** | The top-level project container. One workspace per repo, task, or investigation. The sidebar rolls up agent state from inside it so you can see which project needs attention. ([concepts](https://herdr.dev/docs/concepts/)) | `herdr workspace create --cwd ~/project --label api`                          |
+| **Tab**       | A layout inside a workspace. Use tabs to separate views like `agents`, `logs`, `server`, or `review`. Addressable from the CLI and the socket API.                                                                            | `herdr tab create --label logs`                                               |
+| **Pane**      | A real terminal. Splittable, addressable as `w<n>:p<n>`. Renders output, sends input back, and survives client detach.                                                                                                        | `herdr pane split w1:p1 --direction right`                                    |
+| **Agent**     | A process Herdr recognizes inside a pane. Twenty detected kinds out of the box — Claude Code, Codex, Cursor, opencode, Grok, the rest. ([agents](https://herdr.dev/docs/agents/))                                             | `herdr agent start reviewer --kind codex --pane "$review_pane" -- -m gpt-5.4` |
+
+If you have used tmux or zellij, the verbs will feel familiar. The keyboard prefix is `ctrl+b`, and the bindings out of the box are:
+
+| Action               | Key                     |
+| -------------------- | ----------------------- |
+| Split right          | `prefix+v`              |
+| Split down           | `prefix+minus`          |
+| New tab              | `prefix+c`              |
+| Next / previous tab  | `prefix+n` / `prefix+p` |
+| Workspace navigation | `prefix+w`              |
+| New workspace        | `prefix+shift+n`        |
+| Detach client        | `prefix+q`              |
+
+If you have not, the [quick start](https://herdr.dev/docs/quick-start/) is mouse-first; you do not have to learn the prefix to get going.
+
+<NewsletterSignup client:visible variant="card" source="herdr-post-mental-model" />
+
+## Never hunt for the stuck one
+
+This was the second thing that wore me down, and it is the one Herdr fixes most directly. From the [homepage](https://herdr.dev/):
+
+> "Herdr reads every pane and marks each agent working, blocked or idle. When one stops and needs an answer it says so, so you don't go pane by pane looking for whoever is waiting on you."
+
+The five states, per the [concepts doc](https://herdr.dev/docs/concepts/):
+
+- `blocked` — needs input or approval
+- `working` — actively running
+- `done` — finished, unseen
+- `idle` — finished, seen
+- `unknown` — Herdr cannot classify it
+
+For most agents the state comes from lifecycle hooks or session identity. For a few it comes from a screen-manifest match on the bottom of the buffer. For a custom agent that Herdr does not recognize, the CLI inside the pane can publish its own state — see the section below on custom integrations.
+
+You can read state without scripting:
+
+```bash
+herdr agent get w1:p2                       # snapshot one pane
+herdr agent wait reviewer --until blocked   # wait until the agent genuinely needs you
+```
+
+That `wait` primitive is the one I now use most. It blocks until another agent is in a state worth your attention, instead of firing keystrokes into a pane and hoping. From the [agent automation docs](https://herdr.dev/docs/agent-automation/): "A script can control them, or one agent can create work for other agents, inspect their state, and collect their results."
+
+## The always-running story
+
+Let me retell the lid-closed story as the technical story, because that is what Herdr actually buys you. From the [homepage](https://herdr.dev/):
+
+> "Herdr isn't an app you keep open. It's a server running in the background, and the terminals live inside it. Close the lid or drop the network and the agents keep working; restart the machine and Herdr brings the layout back and resumes their sessions."
+
+Three concrete operator paths, all documented at [herdr.dev/docs/how-to-work](https://herdr.dev/docs/how-to-work/):
+
+1. **Local.** `herdr` launches and attaches to the default session. `prefix+q` detaches the client. The server and every agent keep running.
+2. **Plain SSH, tmux-style.** Run Herdr on a remote box, attach from your laptop over SSH. The remote server owns the panes; the local client just renders.
+3. **Thin client.** `herdr --remote workbox` — or `herdr --remote ssh://you@server:2222` — attaches to a server elsewhere and renders the panes locally. Reattach from any device with a keyboard.
+
+There is even a `Work from your phone` subsection in that doc, paired with SSH clients like moshi. I have not used it in anger, but the fact it is documented is the point: the runtime has stopped caring where you are.
+
+## The runtime is also an automation layer
+
+This is the section that turned Herdr from a multiplexer I was trying into a multiplexer I keep. The CLI surface is the same surface agents drive, which means a script — or another agent — can drive it.
+
+```bash
+# Workspace + tab + pane
+herdr workspace create --cwd ~/project --label api
+herdr tab create --label logs
+herdr pane split w1:p1 --direction right --ratio 0.333
+herdr pane run w1:p2 "npm test"
+herdr pane read w1:p2 --source recent --lines 50
+
+# Agent primitives (the headline CLI surface)
+herdr agent start reviewer --kind codex --pane "$review_pane" -- -m gpt-5.4
+herdr agent prompt reviewer "Review the current diff" --wait --timeout 120000
+herdr agent wait reviewer --until blocked --timeout 120000
+herdr agent read reviewer --source recent-unwrapped --lines 120
+herdr pane wait-output w1:p3 --regex "passed|failed" --timeout 120000
+```
+
+That is a working reviewer loop. Start an agent in a pane, prompt it, wait until it is blocked, read its recent output, branch on what it says. A second agent can be scripted to do the same in another pane.
+
+For agents Herdr does not natively recognize, every pane ships with a runtime contract: `HERDR_ENV`, `HERDR_PANE_ID`, `HERDR_BIN_PATH`, `HERDR_SOCKET_PATH`. A pane can publish its own lifecycle state:
+
+```bash
+"$HERDR_BIN_PATH" pane report-agent "$HERDR_PANE_ID" \
+  --source custom:my-agent --agent my-agent --state working
+```
+
+That is enough to wire your home-grown agent into Herdr's state sidebar, the wait primitive, and the socket API. The full contract is at [herdr.dev/docs/integrations](https://herdr.dev/docs/integrations/).
+
+If you want to talk to the runtime as data, not as a process:
+
+```bash
+herdr api snapshot                           # live session.snapshot as JSON
+herdr api schema --output herdr-api.schema.json  # pin the socket protocol
+```
+
+Both are documented at [herdr.dev/docs/socket-api](https://herdr.dev/docs/socket-api/). Treat the runtime like a database.
+
+## When NOT to use it
+
+I would not trust this post if it did not say so.
+
+1. **You do not run coding agents.** Herdr is opinionated for terminal-resident agent workflows. If you are happy in VS Code + Copilot and your agent never runs longer than a coffee, the runtime is overkill. A `tmux` session is fine.
+2. **You need a host with the agent GUI, not the terminal.** Herdr does not render Claude Code's TUI prettier; it keeps the real TUI alive. If you want a managed IDE experience, Herdr is the wrong shape.
+3. **You want plug-and-play agent coordination across machines.** Herdr runs everywhere and persists across machines, but cross-machine orchestration is not the v0.8.x story. Use the runtime for durability, not for fleet coordination.
+4. **You are on Windows ARM64.** Windows ARM64 runs the x86_64 build under emulation; functional but not native. ([herdr.dev/docs/install](https://herdr.dev/docs/install/))
+
+For everything else — Claude Code, Codex, Cursor, opencode, Grok, the rest — Herdr is what makes the agent workflow survivable. From the [homepage](https://herdr.dev/): "Runs what you already run. Claude Code, Codex, Cursor, opencode, Grok and the rest. Herdr doesn't wrap them or replace them, it just owns their terminals."
+
+## The Herdr cheat sheet
+
+Pin this. Drop it in your shell rc. Add the aliases that match how you actually work.
+
+```text
+# 1. Install (Linux / macOS)
+curl -fsSL https://herdr.dev/install.sh | sh
+
+# 2. Lifecycle
+herdr                 # launch / attach to the default background session
+prefix + q            # detach the client (server + agents keep running)
+herdr server stop     # end the session
+
+# 3. The runtime hierarchy
+herdr workspace create --cwd ~/project --label api
+herdr tab create --label logs
+herdr pane split w1:p1 --direction right --ratio 0.333
+herdr pane run w1:p2 "npm test"
+
+# 4. Agent scripting
+herdr agent start reviewer --kind codex --pane "$review_pane" -- -m gpt-5.4
+herdr agent prompt reviewer "Review the current diff" --wait --timeout 120000
+herdr agent wait reviewer --until blocked --timeout 120000
+
+# 5. Remote attach
+herdr --remote workbox
+herdr --remote ssh://you@server:2222
+
+# 6. Debug / inspect
+herdr api snapshot
+herdr agent explain reviewer
+```
+
+And if you want it shorter, aliases:
+
+```bash
+alias h='herdr'
+alias hs='herdr server stop'
+alias ha='herdr --remote'
+alias hap='herdr agent prompt'
+alias haw='herdr agent wait'
+alias hws='herdr workspace create --cwd "$(pwd)" --label'
+```
+
+## Get the runtime, then keep going
+
+[Herdr](https://herdr.dev/) is Y Combinator-backed, open source, and at v0.8.2 as of this week. It is one Rust binary. It does not replace your terminal, your editor, or your agents; it owns the place they all live so they survive everything you do to your laptop.
+
+If you want one CLI that keeps your coding agents alive across the lid closes you are going to keep doing, install it before lunch. If you want to read more first, the [concepts doc](https://herdr.dev/docs/concepts/) is the right next stop — five minutes, and you will know what every verb in this post means.
+
+If this changed how you think about agent runtimes, the next post will change how you think about something else. One email when there is something worth saying.
+
+<NewsletterSignup client:visible variant="card" source="herdr-post-cta" />
+
+And if Herdr ends up earning its place on your machine, [star the repo](https://github.com/herdrdev/herdr) so the maintainers know their bet on a one-binary runtime landed.
+
+---
+
+### Sources
+
+- [herdr.dev](https://herdr.dev/) — tagline, features, meta description
+- [github.com/herdrdev/herdr](https://github.com/herdrdev/herdr) — README, "one Rust binary, no Electron", releases
+- [herdr.dev/docs/concepts/](https://herdr.dev/docs/concepts/) — workspace / tab / pane / agent definitions
+- [herdr.dev/docs/agent-automation/](https://herdr.dev/docs/agent-automation/) — agent start / prompt / wait primitives
+- [herdr.dev/blog/herdr-is-joining-y-combinator](https://herdr.dev/blog/herdr-is-joining-y-combinator) — YC framing and the canonical "pane → tab → project" sentence

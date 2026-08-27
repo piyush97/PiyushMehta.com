@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F1221"/>
+      <stop offset="1" stop-color="#171A2F"/>
+    </linearGradient>
+    <linearGradient id="serverFill" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#222640"/>
+      <stop offset="1" stop-color="#1B1F36"/>
+    </linearGradient>
+    <linearGradient id="screenFill" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#0B1024"/>
+      <stop offset="1" stop-color="#101630"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <path d="M0 82H1200M0 164H1200M0 246H1200M0 328H1200M0 410H1200M0 492H1200M0 574H1200" stroke="#343A5F" stroke-opacity=".28"/>
+  <path d="M74 0V630M148 0V630M222 0V630M296 0V630M370 0V630M444 0V630M518 0V630M592 0V630M666 0V630M740 0V630M814 0V630M888 0V630M962 0V630M1036 0V630M1110 0V630" stroke="#343A5F" stroke-opacity=".20"/>
+
+  <!-- Left third: laptop with partially closed lid -->
+  <g transform="translate(80, 130)">
+    <!-- Laptop base -->
+    <rect x="0" y="270" width="360" height="22" rx="6" fill="#222640" stroke="#343A5F" stroke-width="2"/>
+    <!-- Lid (closed at angle, slightly open so screen shows) -->
+    <polygon points="40,270 320,270 290,30 70,30" fill="url(#screenFill)" stroke="#343A5F" stroke-width="2"/>
+    <!-- Hinge shadow -->
+    <line x1="40" y1="270" x2="320" y2="270" stroke="#0B1024" stroke-width="3"/>
+    <!-- Screen pane tree: workspace > tab > pane > agent -->
+    <text x="86" y="68" fill="#67E8F9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700">workspace</text>
+    <line x1="86" y1="74" x2="170" y2="74" stroke="#343A5F" stroke-width="1"/>
+    <text x="100" y="98" fill="#FFCC68" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">tab</text>
+    <line x1="100" y1="104" x2="170" y2="104" stroke="#343A5F" stroke-width="1"/>
+    <text x="114" y="128" fill="#E0F2FE" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">pane</text>
+    <line x1="114" y1="134" x2="170" y2="134" stroke="#343A5F" stroke-width="1"/>
+    <text x="128" y="158" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">agent</text>
+    <!-- terminal caret blink hint -->
+    <text x="86" y="210" fill="#FFCC68" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">&gt;</text>
+    <line x1="100" y1="208" x2="200" y2="208" stroke="#FFCC68" stroke-width="2"/>
+    <text x="86" y="232" fill="#67E8F9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">claude-code refactoring</text>
+    <!-- Lid status: closed but running -->
+    <rect x="20" y="300" width="320" height="36" rx="6" fill="#0F1221" stroke="#343A5F" stroke-opacity=".6"/>
+    <circle cx="42" cy="318" r="5" fill="#67E8F9"/>
+    <text x="58" y="324" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">lid closed · agent running · 90m</text>
+  </g>
+
+  <!-- Center: server cylinder -->
+  <g transform="translate(500, 160)">
+    <!-- top ellipse -->
+    <ellipse cx="100" cy="0" rx="100" ry="22" fill="#2B3050" stroke="#343A5F" stroke-width="2"/>
+    <!-- body -->
+    <rect x="0" y="0" width="200" height="240" fill="url(#serverFill)" stroke="#343A5F" stroke-width="2"/>
+    <!-- bottom ellipse -->
+    <ellipse cx="100" cy="240" rx="100" ry="22" fill="#1B1F36" stroke="#343A5F" stroke-width="2"/>
+    <!-- server label -->
+    <rect x="14" y="86" width="172" height="68" rx="10" fill="#0B1024" stroke="#FFCC68" stroke-opacity=".55" stroke-width="1.5"/>
+    <text x="100" y="112" text-anchor="middle" fill="#FFCC68" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" font-weight="700">herdr</text>
+    <text x="100" y="138" text-anchor="middle" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">background server</text>
+    <!-- blinking caret -->
+    <text x="100" y="184" text-anchor="middle" fill="#FFCC68" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" font-weight="700">&gt;</text>
+    <line x1="0" y1="240" x2="200" y2="240" stroke="#0B1024" stroke-width="3"/>
+  </g>
+
+  <!-- Three streams from laptop to server, then from server to agents -->
+  <g stroke-linecap="round" stroke-width="2.5" fill="none">
+    <path d="M440 230 C 470 230 480 200 500 200" stroke="#67E8F9" stroke-opacity=".65"/>
+    <path d="M440 280 C 470 280 480 250 500 250" stroke="#FFCC68" stroke-opacity=".65"/>
+    <path d="M440 330 C 470 330 480 300 500 300" stroke="#B4BAD8" stroke-opacity=".55"/>
+    <path d="M700 200 C 740 200 770 200 800 200" stroke="#67E8F9" stroke-opacity=".65"/>
+    <path d="M700 250 C 740 250 770 250 800 250" stroke="#FFCC68" stroke-opacity=".65"/>
+    <path d="M700 300 C 740 300 770 300 800 300" stroke="#B4BAD8" stroke-opacity=".55"/>
+  </g>
+
+  <!-- Right third: three agent chips -->
+  <g transform="translate(800, 158)">
+    <!-- claude-code working (cyan) -->
+    <rect x="0" y="0" width="320" height="56" rx="10" fill="#0F1221" stroke="#67E8F9" stroke-opacity=".7" stroke-width="1.5"/>
+    <circle cx="22" cy="28" r="7" fill="#67E8F9" filter="url(#glow)"/>
+    <text x="44" y="34" fill="#F6F7FF" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700">claude-code</text>
+    <text x="270" y="34" fill="#67E8F9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">working</text>
+
+    <!-- codex blocked (amber) -->
+    <rect x="0" y="74" width="320" height="56" rx="10" fill="#0F1221" stroke="#FFCC68" stroke-opacity=".7" stroke-width="1.5"/>
+    <circle cx="22" cy="102" r="7" fill="#FFCC68" filter="url(#glow)"/>
+    <text x="44" y="108" fill="#F6F7FF" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700">codex</text>
+    <text x="278" y="108" fill="#FFCC68" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">blocked</text>
+
+    <!-- opencode idle (slate) -->
+    <rect x="0" y="148" width="320" height="56" rx="10" fill="#0F1221" stroke="#B4BAD8" stroke-opacity=".55" stroke-width="1.5"/>
+    <circle cx="22" cy="176" r="7" fill="#B4BAD8"/>
+    <text x="44" y="182" fill="#F6F7FF" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700">opencode</text>
+    <text x="284" y="182" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">idle</text>
+
+    <!-- caption -->
+    <text x="160" y="246" text-anchor="middle" fill="#B4BAD8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">20 agents detected out of the box</text>
+  </g>
+
+  <!-- Title caption -->
+  <text x="600" y="593" text-anchor="middle" fill="#F6F7FF" font-family="Arial, sans-serif" font-size="35" font-weight="700">The runtime your coding agents live on</text>
+</svg>
