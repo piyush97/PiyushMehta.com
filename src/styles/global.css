@@ -88,7 +88,37 @@
 .prose a:hover {
   opacity: 0.8;
 }
-
+/* Inline code chip: accent-tinted background, monospace text. Uses a fixed
+   yellow tint that reads as "yellow on dark" (the typical view) and as a
+   faint yellow on light, so the chip is recognizable across themes. Code
+   blocks (`pre code`) override this via the rule below. */
+code {
+  background: rgba(255, 204, 104, 0.15);
+  color: var(--color-accent);
+  border: 1px solid rgba(255, 204, 104, 0.3);
+  border-radius: 0.3rem;
+  padding: 0.12rem 0.32rem;
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  font-weight: 500;
+}
+/* Tailwind typography injects `code::before { content: "`" }` and the matching
+   `::after` on inline code so the markdown backticks render in prose. For this
+   site's chip-style inline code, suppress them — the chip is the chip. Code
+   blocks already use `pre code` which Tailwind does not augment with
+   pseudo-elements. */
+code::before,
+code::after {
+  content: none;
+}
+pre code {
+  background: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
 /* MDX Content Styling */
 @layer components {
   /* List styling for MDX content */
@@ -1115,21 +1145,11 @@ html {
   li {
     @apply mb-2;
   }
-
-  /* Code blocks */
+  /* Code blocks — the inline code chip is set in the un-layered `code` rule
+     above (line 91). The `pre` block style below applies to fenced blocks. */
   pre {
     @apply bg-light-950 border border-card-border rounded-lg p-4 overflow-x-auto;
   }
-
-  code {
-    @apply bg-light-800 px-1 py-0.5 rounded text-sm font-mono;
-  }
-
-  pre code {
-    @apply bg-transparent p-0;
-  }
-
-  /* Horizontal rules */
   hr {
     @apply border-0 h-px bg-light-500 my-6;
   }
@@ -1156,11 +1176,9 @@ html {
     );
     @apply border border-card-border rounded-lg p-6 shadow-card;
     transition:
-      border-color 200ms ease-in-out,
-      box-shadow 200ms ease-in-out,
-      background-image 200ms ease-in-out;
+      transform 200ms ease,
+      box-shadow 200ms ease;
   }
-
   .card:hover {
     @apply border-card-border-hover;
   }
