@@ -67,10 +67,19 @@ test.describe('astro v6 migration smoke', () => {
     }
   });
 
-  test('twitter image requests use the shared Open Graph handler', async ({ request }) => {
-    const response = await request.get('/twitter-image?title=Hello', { maxRedirects: 0 });
-    expect(response.status()).toBe(308);
-    expect(new URL(response.headers().location || '').pathname).toBe('/opengraph-image');
+  test('legacy /twitter-image and /opengraph-image routes are gone', async ({ request }) => {
+    // Both used to be prerendered per-page static files under `output: 'server'` +
+    // @astrojs/cloudflare, which cannot serve them correctly (an extensionless PNG with no
+    // Content-Type, and an HTML meta-refresh page where an image was expected, respectively).
+    // They're removed now; a 301 to /og/default.png for any old share still pointing at them is
+    // implemented via public/_redirects, a Cloudflare-edge mechanism the Astro dev server this
+    // suite runs against does not process — that coverage lives in scripts/verify-og.mjs
+    // (checkRedirectsFile) against the real built dist/client/_redirects, plus the manual curl
+    // checks in the deploy runbook. Here we only confirm the routes no longer exist as pages.
+    for (const path of ['/twitter-image', '/opengraph-image']) {
+      const response = await request.get(path, { maxRedirects: 0 });
+      expect(response.status(), `${path} should not resolve as a page`).toBe(404);
+    }
   });
 
   test('service worker artifact available', async ({ request }) => {
