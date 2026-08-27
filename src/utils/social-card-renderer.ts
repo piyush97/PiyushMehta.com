@@ -1,6 +1,7 @@
 import { Resvg } from '@resvg/resvg-js';
 import fs from 'fs';
-import { join } from 'path';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import React from 'react';
 import satori from 'satori';
 import {
@@ -36,9 +37,32 @@ type ThemeConfig = {
 
 let interFont: Buffer | undefined;
 
+// process.cwd() inside a deployed serverless function does not reliably
+// point at the project root, so the font is located relative to this
+// module's own file (stable regardless of the caller's cwd) with cwd kept
+// as a fallback for local/dev invocations.
+function resolveInterFontPath(): string {
+  const moduleDir = dirname(fileURLToPath(import.meta.url));
+  const candidates = [
+    join(process.cwd(), 'InterVariable.ttf'),
+    join(moduleDir, 'InterVariable.ttf'),
+    join(moduleDir, '..', 'InterVariable.ttf'),
+    join(moduleDir, '..', '..', 'InterVariable.ttf'),
+    join(moduleDir, '..', '..', '..', 'InterVariable.ttf'),
+    join(moduleDir, '..', '..', '..', '..', 'InterVariable.ttf'),
+  ];
+
+  const found = candidates.find((candidate) => fs.existsSync(candidate));
+  if (!found) {
+    throw new Error(`InterVariable.ttf not found. Checked: ${candidates.join(', ')}`);
+  }
+
+  return found;
+}
+
 function getInterFont(): Buffer {
   if (!interFont) {
-    interFont = fs.readFileSync(join(process.cwd(), 'InterVariable.ttf'));
+    interFont = fs.readFileSync(resolveInterFontPath());
   }
 
   return interFont;
@@ -568,19 +592,29 @@ export async function createSocialCardResponse(data: SocialCardData): Promise<Re
   }
 }
 
-function renderFallbackPng(title?: string): Buffer {
+export function renderFallbackPng(title?: string): Buffer {
   const safeTitle = escapeXml(truncateText(title || 'Piyush Mehta', 58));
   const svg = `
     <svg width="${SOCIAL_CARD_SIZE.width}" height="${SOCIAL_CARD_SIZE.height}" xmlns="http://www.w3.org/2000/svg">
       <rect width="1200" height="630" fill="#171a2f"/>
       <rect x="0" y="0" width="1200" height="12" fill="#ffcc68"/>
-      <text x="96" y="300" fill="#f6f7ff" font-family="Arial" font-size="56" font-weight="700">${safeTitle}</text>
-      <text x="96" y="368" fill="#c8cbe8" font-family="Arial" font-size="28">Piyush Mehta - Senior Software Engineer</text>
-      <text x="96" y="520" fill="#8f96ba" font-family="Arial" font-size="22">piyushmehta.com</text>
+      <text x="96" y="300" fill="#f6f7ff" font-family="Inter" font-size="56" font-weight="700">${safeTitle}</text>
+      <text x="96" y="368" fill="#c8cbe8" font-family="Inter" font-size="28">Piyush Mehta - Senior Software Engineer</text>
+      <text x="96" y="520" fill="#8f96ba" font-family="Inter" font-size="22">piyushmehta.com</text>
     </svg>
   `;
 
-  return Buffer.from(new Resvg(svg).render().asPng());
+  return Buffer.from(
+    new Resvg(svg, {
+      font: {
+        fontFiles: [resolveInterFontPath()],
+        loadSystemFonts: false,
+        defaultFontFamily: 'Inter',
+      },
+    })
+      .render()
+      .asPng(),
+  );
 }
 
 function escapeXml(value: string): string {
