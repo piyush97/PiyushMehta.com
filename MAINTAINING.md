@@ -3,7 +3,7 @@
 Maintenance runbook for the [PiyushMehta.com](https://github.com/piyush97/PiyushMehta.com)
 repository — personal website and blog for Piyush Mehta, built with **Astro 7.x**
 (SSR), **TypeScript 6.x**, **React 19** islands, **MDX**, **Tailwind CSS v4**,
-deployed to **Vercel** (ISR, 24h expiration).
+deployed to **Cloudflare Workers** with prerendered Static Assets and lightweight API routes.
 
 ## Local development
 
@@ -105,11 +105,10 @@ Never hardcode secrets; add any new variable to `.env.schema` first, then
 2. Make changes; add/update Playwright tests in `tests/` for behavior changes.
 3. `bun run check` — format, lint, and type checks must pass.
 4. `bun run build` — full pipeline must produce `dist/`.
-5. Push and open a PR; wait for `ci-cd.yml` (Code Quality → Build Verification →
-   Security Configuration Check) plus CodeQL and Dependency Review to pass.
-6. Merge with **squash**; Vercel deploys automatically from `main`.
-7. After deploy, spot-check the live site: blog post, homepage, and one API
-   route (e.g. `/api/reactions`).
+5. Push and open a PR; wait for `ci-cd.yml` (Code Quality → Build Verification → Security Configuration Check) plus CodeQL and Dependency Review to pass.
+6. Merge with **squash**; Cloudflare Workers Builds deploys the `main` commit through the installed GitHub App.
+7. After deploy, spot-check the live site: blog post, homepage, and one API route (for example, `/api/reactions`).
+8. Keep runtime application credentials in the Worker's Variables and Secrets settings; GitHub Actions does not receive the Cloudflare deployment token.
 
 ## Contact / ownership
 

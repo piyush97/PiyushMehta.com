@@ -341,12 +341,12 @@ curl -X POST https://yourdomain.com/api/newsletter \
 
 ## 🚀 Production Deployment
 
-### Vercel Deployment
+### Cloudflare Workers deployment
 
-Add environment variables in Vercel dashboard:
-1. Go to Project Settings → Environment Variables
-2. Add all required variables from `.env.newsletter.example`
-3. Redeploy your application
+Add the runtime environment variables under the `piyushmehta-com` Worker settings:
+1. Open Workers & Pages → `piyushmehta-com` → Settings → Variables and Secrets
+2. Add all required values from `.env.newsletter.example` as encrypted secrets
+3. Deploy a new Worker version
 
 ### Performance Considerations
 

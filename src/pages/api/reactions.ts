@@ -1,18 +1,28 @@
 import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+import { Redis } from '@upstash/redis/cloudflare';
 import type { APIRoute } from 'astro';
 import { ENV } from 'varlock/env';
 
 export const prerender = false;
 
 const VALID_REACTIONS = ['like', 'helpful', 'insightful', 'bookmark'] as const;
+const JSON_HEADERS = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } as const;
 
 // Module-level singletons — initialised once per cold start, reused across requests.
 const redis = (() => {
   const url = ENV.UPSTASH_REDIS_REST_URL;
   const token = ENV.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
-  return new Redis({ url, token });
+
+  return new Redis({
+    url,
+    token,
+    signal: () => AbortSignal.timeout(2500),
+    retry: {
+      retries: 1,
+      backoff: (retryCount) => retryCount * 50,
+    },
+  });
 })();
 
 const ratelimit = redis
@@ -23,26 +33,33 @@ const ratelimit = redis
     })
   : null;
 
-const JSON_HEADERS = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } as const;
+function isValidPostId(value: unknown): value is string {
+  return typeof value === 'string' && value.length > 0 && value.length <= 200;
+}
+
+function safeCount(value: unknown): number {
+  const count = Number(value ?? 0);
+  return Number.isSafeInteger(count) && count >= 0 ? count : 0;
+}
 
 export const GET: APIRoute = async ({ url }) => {
   const postId = url.searchParams.get('postId');
-  if (!postId) {
-    return new Response(JSON.stringify({ error: 'postId required' }), {
+  if (!isValidPostId(postId)) {
+    return new Response(JSON.stringify({ error: postId ? 'Invalid postId' : 'postId required' }), {
       status: 400,
       headers: JSON_HEADERS,
     });
   }
 
   if (!redis) {
-    const empty = Object.fromEntries(VALID_REACTIONS.map((r) => [r, 0]));
+    const empty = Object.fromEntries(VALID_REACTIONS.map((reaction) => [reaction, 0]));
     return new Response(JSON.stringify(empty), { headers: JSON_HEADERS });
   }
 
   try {
-    const counts = await redis.hgetall(`reactions:${postId}`);
+    const counts = await redis.hgetall<Record<string, string | number>>(`reactions:${postId}`);
     const result = Object.fromEntries(
-      VALID_REACTIONS.map((r) => [r, counts ? Number(counts[r] ?? 0) : 0]),
+      VALID_REACTIONS.map((reaction) => [reaction, safeCount(counts?.[reaction])]),
     );
     return new Response(JSON.stringify(result), { headers: JSON_HEADERS });
   } catch {
@@ -61,23 +78,30 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     });
   }
 
-  // Prefer a real IP from edge/proxy headers; fall back to 'anonymous' as a
-  // last resort so we never collapse all traffic into one rate-limit bucket.
+  // Cloudflare supplies the connecting address; use it before forwarded headers
+  // so a client cannot bypass the limiter by spoofing x-forwarded-for.
   const ip =
-    clientAddress ||
     request.headers.get('cf-connecting-ip') ||
+    clientAddress ||
     request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
     'anonymous';
 
-  const { success } = await ratelimit.limit(ip);
-  if (!success) {
-    return new Response(JSON.stringify({ error: 'Too many requests' }), {
-      status: 429,
+  try {
+    const { success } = await ratelimit.limit(ip);
+    if (!success) {
+      return new Response(JSON.stringify({ error: 'Too many requests' }), {
+        status: 429,
+        headers: JSON_HEADERS,
+      });
+    }
+  } catch {
+    return new Response(JSON.stringify({ error: 'Rate limit unavailable' }), {
+      status: 503,
       headers: JSON_HEADERS,
     });
   }
 
-  let body: { postId: string; reaction: string; action: 'add' | 'remove' };
+  let body: unknown;
   try {
     body = await request.json();
   } catch {
@@ -87,9 +111,22 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     });
   }
 
-  const { postId, reaction, action } = body;
+  if (!body || typeof body !== 'object') {
+    return new Response(JSON.stringify({ error: 'Invalid request' }), {
+      status: 400,
+      headers: JSON_HEADERS,
+    });
+  }
+
+  const { postId, reaction, action } = body as {
+    postId?: unknown;
+    reaction?: unknown;
+    action?: unknown;
+  };
+
   if (
-    !postId ||
+    !isValidPostId(postId) ||
+    typeof reaction !== 'string' ||
     !VALID_REACTIONS.includes(reaction as (typeof VALID_REACTIONS)[number]) ||
     (action !== 'add' && action !== 'remove')
   ) {

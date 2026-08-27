@@ -19,11 +19,9 @@ For local development, create a `.env` file in the root of your project with:
 GITHUB_TOKEN=your_token_here
 ```
 
-For deployment, add this environment variable to your hosting platform:
+For local deployment, add the value to your Varlock environment, then run `bun run deploy`. Production deployment is owned by Cloudflare Workers Builds through the installed GitHub App.
 
-- **Vercel**: Project Settings → Environment Variables
-- **Netlify**: Site Settings → Build & Deploy → Environment
-- **Cloudflare Pages**: Settings → Environment Variables
+The configuration in `wrangler.jsonc` deploys `main` to production and creates preview URLs for non-production branches. Runtime integration secrets stay in the Worker's Variables and Secrets settings using the names in `.env.schema`.
 
 ## Customizing the GitHub Integration
 

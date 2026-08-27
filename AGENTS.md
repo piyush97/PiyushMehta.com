@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-`piyushmehta.com` is Piyush Mehta's personal site: portfolio, technical blog, newsletter, contact/consulting pages, resume, and generated social cards. It uses Astro server output on Vercel, strict TypeScript, React islands, MDX content, and Tailwind CSS v4.
+`piyushmehta.com` is Piyush Mehta's personal site: portfolio, technical blog, newsletter, contact/consulting pages, resume, and generated social cards. It uses Astro server output on Cloudflare Workers, strict TypeScript, React islands, MDX content, and Tailwind CSS v4.
 
 Core integrations:
 
@@ -53,7 +53,7 @@ Important content caveat: `draft: true` hides posts from listings, tags, RSS, an
 | `tests/` | Playwright E2E plus the newsletter unit test |
 | `public/` | Static assets and maintained blog-image mirrors |
 
-Do not edit generated or ignored output under `dist/`, `.vercel/`, `.astro/`, Playwright report/result directories, or `public/resume.pdf`.
+Do not edit generated or ignored output under `dist/`, `.wrangler/`, `.astro/`, Playwright report/result directories, or `public/resume.pdf`.
 
 ## Development Commands
 
@@ -127,7 +127,7 @@ Install browser binaries when needed with `bunx playwright install --with-deps`.
 
 | File | Why it matters |
 | --- | --- |
-| `astro.config.mjs` | Vercel server output, integrations, aliases, ISR, image and chunk settings |
+| `astro.config.mjs` | Cloudflare Workers server output, integrations, aliases, build-time images, and chunk settings |
 | `vite.config.ts` | Vite+ formatting, linting, and type-check policy |
 | `playwright.config.ts` | E2E projects, dev server, retries, artifacts, and timeouts |
 | `.env.schema` | Operational environment contract |
@@ -153,7 +153,7 @@ Install browser binaries when needed with `bunx playwright install --with-deps`.
 - Package lock: `bun.lock`; do not introduce npm, pnpm, or Yarn lockfiles.
 - Toolchain: Vite+ (`vp`) with Oxlint/Oxfmt. Do not add ESLint, Prettier, or Biome alongside it.
 - Environment typing: Varlock. Run code generation before type-sensitive checks/builds.
-- Deployment: Vercel server output with one-day ISR. GitHub Actions validates checks/builds but does not deploy.
+- Deployment: Cloudflare Workers Static Assets on the Free plan through Workers Builds GitHub integration. Pages and social cards are prerendered; only API routes execute Worker code. GitHub Actions validates checks/builds but does not deploy.
 - `scripts/send-newsletter.mjs` creates and sends a real Resend broadcast. Never run it as validation or without explicit authorization.
 
 ## Testing & QA
@@ -165,3 +165,17 @@ Install browser binaries when needed with `bunx playwright install --with-deps`.
 - Do not copy fixed sleeps or `if (locator.count() > 0)` guards; both can hide failures.
 - No coverage provider or threshold is configured. Accessibility tests assert zero critical Axe findings, not complete WCAG conformance.
 - Do not assume the full suite is a green gate. Current legacy OG suites target removed API routes; command-palette and reading-progress specs target removed selectors; `simple.spec.ts` targets production; and the E2E CI job is commented out. Validate the changed behavior directly and report scoped results accurately.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues at github.com/piyush97/PiyushMehta.com. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

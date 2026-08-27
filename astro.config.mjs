@@ -1,6 +1,6 @@
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
-import vercel from '@astrojs/vercel';
+import cloudflare from '@astrojs/cloudflare';
 import sentry from '@sentry/astro';
 import tailwindcss from '@tailwindcss/vite';
 import varlock from '@varlock/astro-integration';
@@ -13,11 +13,11 @@ const hasServerSentryDsn = Boolean(process.env.SENTRY_DSN || process.env.PUBLIC_
 
 export default defineConfig({
   site: 'https://piyushmehta.com',
+  trailingSlash: 'never',
   output: 'server',
   prefetch: {
     // Prefetch only on explicit hover/focus/touchstart to reduce
-    // initial network/ISR load and avoid hammering Vercel functions
-    // on pages with many links (blog index, footer nav).
+    // initial network/server load on pages with many links.
     prefetchAll: false,
     defaultStrategy: 'hover',
     prefetchOnHover: true,
@@ -120,7 +120,7 @@ export default defineConfig({
             if (id.includes('@sentry/')) {
               return 'vendor-monitoring';
             }
-            if (id.includes('satori') || id.includes('@resvg') || id.includes('@vercel/og')) {
+            if (id.includes('satori') || id.includes('@resvg')) {
               return 'vendor-images';
             }
             // Other third-party packages
@@ -149,26 +149,11 @@ export default defineConfig({
     },
   },
 
-  adapter: vercel({
-    webAnalytics: {
-      enabled: process.env.NODE_ENV === 'production',
+  adapter: cloudflare({
+    imageService: {
+      build: 'compile',
+      runtime: 'passthrough',
     },
-    imageService: true,
-    imagesConfig: {
-      sizes: [320, 640, 768, 1024, 1280, 1536],
-      formats: ['image/webp', 'image/avif'],
-      minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-      domains: ['piyushmehta.com'],
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: '**.githubusercontent.com',
-        },
-      ],
-    },
-    isr: {
-      // caches all pages on first request and saves for 1 day
-      expiration: 60 * 60 * 24,
-    },
+    prerenderEnvironment: 'node',
   }),
 });

@@ -17,7 +17,6 @@ const CACHE_HEADERS = {
   'Content-Type': SOCIAL_CARD_CONTENT_TYPE,
   'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
   'CDN-Cache-Control': 'max-age=31536000',
-  'Vercel-CDN-Cache-Control': 'max-age=31536000',
   'Access-Control-Allow-Origin': '*',
   'X-Robots-Tag': 'noindex',
 } as const;

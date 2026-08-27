@@ -23,9 +23,9 @@ const SAMPLE_DATA: SocialCardData = {
 
 describe('renderSocialCardPng', () => {
   it('renders successfully when process.cwd() is not the project root', async () => {
-    // Reproduces the serverless failure mode: on Vercel, process.cwd() inside
-    // the deployed function does not reliably point at the project root, so
-    // font loading must not depend on it.
+    // Reproduces the serverless failure mode: the deployed runtime does not
+    // reliably use the project root as its working directory, so font loading
+    // must not depend on it.
     const originalCwd = process.cwd();
     process.chdir('/tmp');
     try {

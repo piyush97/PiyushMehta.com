@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "piyushmehta-com",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-08-26",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": true,
+  "vars": {
+    "NODE_ENV": "production",
+    "RESEND_FROM": "news@piyushmehta.com",
+    "RESEND_REPLY_TO": "contact@piyushmehta.com",
+    "CONTACT_FROM_EMAIL": "contact@piyushmehta.com",
+    "CONTACT_TO_EMAIL": "contact@piyushmehta.com",
+  },
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist",
+  },
+  "observability": {
+    "enabled": true,
+  },
+}
