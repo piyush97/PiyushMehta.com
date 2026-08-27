@@ -613,7 +613,7 @@ export function renderFallbackPng(title?: string): Buffer {
       },
     })
       .render()
-      .asPng()
+      .asPng(),
   );
 }
 
