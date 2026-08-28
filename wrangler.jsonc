@@ -16,10 +16,8 @@
   "assets": {
     "binding": "ASSETS",
     "directory": "./dist",
-    // trailingSlash is 'never' in astro.config.mjs, so canonical/og:url/twitter:url all emit
-    // non-trailing-slash URLs (e.g. /blog/bloom-filters). Workers Assets' default
-    // ("auto-trailing-slash") 307-redirects those to the trailing-slash form, contradicting
-    // every URL the site itself advertises. This makes the served URL match.
+    // Astro accepts both slash forms in development and on-demand rendering.
+    // Workers Assets canonicalizes static directory-index requests to slashless URLs.
     "html_handling": "drop-trailing-slash",
   },
   "observability": {

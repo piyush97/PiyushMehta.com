@@ -34,9 +34,7 @@ const typedTags: string[] = tags ?? [];
 // Calculate reading time (rough estimate)
 const readingTime = Math.ceil(postBody.split(' ').length / 200);
 
-const baseUrl = (
-  import.meta.env.DEV ? Astro.url.origin : Astro.site?.toString() || 'https://piyushmehta.com'
-).replace(/\/$/, '');
+const baseUrl = import.meta.env.DEV ? Astro.url.origin : Astro.site?.toString() || 'https://piyushmehta.com';
 const socialImage = createSocialCardMetadata({
   pathname: `/blog/${currentSlug}`,
   baseUrl,

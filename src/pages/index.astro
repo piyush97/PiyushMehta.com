@@ -1,5 +1,6 @@
 ---
-import { caseStudies, portfolioMetrics, socialLinks, writingHighlights } from '../data/portfolio';
+import { getCollection } from 'astro:content';
+import { caseStudies, portfolioMetrics, socialLinks } from '../data/portfolio';
 import speakerPhoto from '../images/piyush-devfest.jpg';
 import speakerPhotoAvif320 from '../images/responsive/piyush-devfest-320.avif';
 import speakerPhotoAvif640 from '../images/responsive/piyush-devfest-640.avif';
@@ -17,6 +18,11 @@ import Layout from '../layouts/Layout.astro';
 export const prerender = true;
 
 const featuredCaseStudies = caseStudies.slice(0, 3);
+const latestPosts = (await getCollection('blog', ({ data }) => data.draft !== true))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+const toPostHref = (id: string) =>
+  `/blog/${id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '')}`;
 ---
 
 <Layout
@@ -123,6 +129,63 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
       </article>
     ))}
   </section>
+  <section class="section-block" data-reveal>
+    <div class="section-heading" data-reveal data-reveal-delay="40">
+      <p class="eyebrow">Writing</p>
+      <h2>Current notebook</h2>
+      <p>Notes on building reliable systems, shipping software, and the tools behind the work.</p>
+    </div>
+
+    {latestPosts.length > 0 && (
+      <div class="notebook-grid">
+        {latestPosts[0] && (
+          <article class="notebook-card notebook-card--lead" data-reveal data-reveal-stagger="0">
+            <div>
+              {latestPosts[0].data.tags[0] && <span>{latestPosts[0].data.tags[0]}</span>}
+              <h3>
+                <a href={toPostHref(latestPosts[0].id)}>{latestPosts[0].data.title}</a>
+              </h3>
+              {latestPosts[0].data.description && <p>{latestPosts[0].data.description}</p>}
+            </div>
+            <div class="notebook-card__meta">
+              <time datetime={latestPosts[0].data.date.toISOString()}>
+                {latestPosts[0].data.date.toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </time>
+              <a href={toPostHref(latestPosts[0].id)}>Read article</a>
+            </div>
+          </article>
+        )}
+
+        {latestPosts.slice(1).length > 0 && (
+          <div class="notebook-card__secondary">
+            {latestPosts.slice(1).map((post, index) => (
+              <article class="notebook-card" data-reveal data-reveal-stagger={String((index + 1) * 90)}>
+                <div>
+                  {post.data.tags[0] && <span>{post.data.tags[0]}</span>}
+                  <h3>
+                    <a href={toPostHref(post.id)}>{post.data.title}</a>
+                  </h3>
+                </div>
+                <time datetime={post.data.date.toISOString()}>
+                  {post.data.date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </time>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    )}
+
+    <a class="notebook-archive" href="/blog">Read all writing</a>
+  </section>
 
   <section class="section-block" data-reveal>
     <div class="section-heading" data-reveal data-reveal-delay="40">
@@ -158,27 +221,6 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
     </div>
   </section>
 
-  <section class="section-block" data-reveal>
-    <div class="section-heading" data-reveal data-reveal-delay="40">
-      <p class="eyebrow">Writing</p>
-      <h2>How I explain systems.</h2>
-      <p>
-        Writing is part of the work: it shows how I decompose ambiguity, name tradeoffs, and help
-        other engineers build mental models.
-      </p>
-    </div>
-
-    <div class="writing-grid">
-      {writingHighlights.map((post, index) => (
-        <article data-reveal data-reveal-stagger={String(index * 90)}>
-          <span>{post.theme}</span>
-          <h3><a href={post.href}>{post.title}</a></h3>
-          <p>{post.description}</p>
-        </article>
-      ))}
-    </div>
-  </section>
-
   <section class="closing-cta" data-reveal>
     <p class="eyebrow">Available for focused engineering conversations</p>
     <h2>Bring me a hard product constraint, a messy system, or a team that needs technical clarity.</h2>
@@ -204,7 +246,7 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
     grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
     gap: clamp(2rem, 5vw, 5rem);
     align-items: center;
-    min-height: 76vh;
+    min-height: clamp(36rem, 64vh, 44rem);
     padding-block: clamp(4rem, 7vw, 5.5rem);
   }
 
@@ -239,10 +281,10 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
   }
 
   .home-hero h1 {
-    max-width: 12ch;
+    max-width: 14ch;
     margin: 0;
     color: var(--color-text-primary);
-    font-size: 5.6rem;
+    font-size: clamp(3.5rem, 5vw, 5rem);
     line-height: 0.98;
     letter-spacing: 0;
   }
@@ -343,7 +385,7 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
   .metrics-band p,
   .case-card p,
   .section-heading p,
-  .writing-grid p {
+  .notebook-card p {
     color: var(--color-text-secondary);
     line-height: 1.65;
   }
@@ -364,16 +406,22 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
     line-height: 1.05;
   }
 
-  .case-grid,
-  .writing-grid {
+  .case-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
     margin-top: 2.5rem;
   }
 
+  .notebook-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
   .case-card,
-  .writing-grid article {
+  .notebook-card {
     border: 1px solid var(--color-card-border);
     background: var(--color-surface-raised);
   }
@@ -386,8 +434,47 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
     padding: 1.4rem;
   }
 
+  .notebook-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 20rem;
+    padding: 1.4rem;
+  }
+
+  .notebook-card--lead {
+    min-height: 30rem;
+  }
+
+  .notebook-card__secondary {
+    display: grid;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .notebook-card__meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .notebook-card time {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+  }
+
+  .notebook-archive {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--color-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
   .case-card__eyebrow,
-  .writing-grid span {
+  .notebook-card span {
     color: var(--color-accent);
     font-size: 0.78rem;
     font-weight: 800;
@@ -396,7 +483,7 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
   }
 
   .case-card h3,
-  .writing-grid h3 {
+  .notebook-card h3 {
     margin: 0.7rem 0 0;
     color: var(--color-text-primary);
     font-size: 1.35rem;
@@ -423,15 +510,12 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
   }
 
   .case-card a,
-  .writing-grid a {
+  .notebook-card a {
     color: var(--color-accent);
     font-weight: 800;
     text-decoration: none;
   }
 
-  .writing-grid article {
-    padding: 1.3rem;
-  }
 
   .closing-cta {
     padding-block: clamp(5rem, 10vw, 8rem);
@@ -441,6 +525,7 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
   @media (max-width: 920px) {
     .home-hero {
       grid-template-columns: 1fr;
+      min-height: auto;
     }
 
     .home-hero h1 {
@@ -461,13 +546,14 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
     }
 
     .metrics-band,
-    .case-grid,
-    .writing-grid {
+    .case-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .notebook-grid {
+      grid-template-columns: 1fr;
+    }
   }
-
   @media (max-width: 620px) {
     .home-hero h1 {
       max-width: 10ch;
@@ -488,13 +574,13 @@ const featuredCaseStudies = caseStudies.slice(0, 3);
     }
 
     .metrics-band,
-    .case-grid,
-    .writing-grid {
+    .case-grid {
       grid-template-columns: 1fr;
     }
 
     .metrics-band article,
-    .case-card {
+    .case-card,
+    .notebook-card {
       min-height: 0;
     }
   }
