@@ -15,6 +15,9 @@ test-results/
 *.log
 package-lock.json
 .turbo/
+
+# Local Vite and build-tool caches
+.vite/
 .eslintcache
 .pnpm-store
 

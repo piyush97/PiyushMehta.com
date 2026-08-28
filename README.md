@@ -37,7 +37,7 @@ Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, depl
 
 ## Local dev
 
-**Requirements:** Node.js 22+, Bun
+**Requirements:** Node.js 26.8.1+, Bun
 
 ```bash
 git clone https://github.com/piyush97/PiyushMehta.com.git
