@@ -13,7 +13,7 @@ const hasServerSentryDsn = Boolean(process.env.SENTRY_DSN || process.env.PUBLIC_
 
 export default defineConfig({
   site: 'https://piyushmehta.com',
-  trailingSlash: 'never',
+  trailingSlash: 'ignore',
   output: 'server',
   prefetch: {
     // Prefetch only on explicit hover/focus/touchstart to reduce

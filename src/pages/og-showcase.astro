@@ -3,9 +3,7 @@ export const prerender = true;
 
 import Layout from '../layouts/Layout.astro';
 
-const baseUrl = (
-  import.meta.env.DEV ? Astro.url.origin : Astro.site?.toString() || 'https://piyushmehta.com'
-).replace(/\/$/, '');
+const baseUrl = import.meta.env.DEV ? Astro.url.origin : Astro.site?.toString() || 'https://piyushmehta.com';
 
 const cards = [
   {
