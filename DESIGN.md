@@ -59,8 +59,8 @@ spacing:
   section: "clamp(4rem, 8vw, 7rem)"
 components:
   button-primary:
-    backgroundColor: "{colors.amber-signal}"
-    textColor: "{colors.ink-night}"
+    backgroundColor: "var(--color-accent)"
+    textColor: "var(--color-accent-foreground)"
     rounded: "{rounded.sm}"
     padding: "0.625rem 1rem"
   button-secondary:
@@ -88,14 +88,14 @@ components:
 
 PiyushMehta.com is a public engineering record, not a generic personal brand template. The visual system treats every page as a legible ledger of decisions: cool ink surfaces hold the work, warm amber marks the signal, and typography carries the authority. The result is technical and editorial without pretending to be a dashboard. It should feel useful to an engineering leader evaluating judgment, a reader staying with a difficult idea, or a collaborator looking for proof.
 
-The incumbent world is compact at the navigation level and spacious at section boundaries. It uses a dark-first palette with a warm paper/light theme, semantic tokens shared across both, and small tonal shifts rather than decorative noise. Motion is brief and state-oriented: opacity and transforms reveal content, controls respond with restrained translation, and reduced motion preserves hierarchy without blocking access. The current authored direction avoids gradient text, emoji-led visual language, thick colored side rails, and bounce-heavy feedback; older and content-specific surfaces may retain legacy treatments and must be evaluated in context.
+The incumbent world is compact at the navigation level and spacious at section boundaries. It uses a dark-first palette with a warm paper/light theme, semantic tokens shared across both, and small tonal shifts rather than decorative noise. Motion is brief and state-oriented: opacity and transforms reveal content, controls respond with restrained translation, and reduced motion preserves hierarchy without blocking access. The authored direction generally avoids gradient text, emoji-led visual language, thick colored side rails, and bounce-heavy feedback, but the incumbent still has scoped exceptions: ArticleMeta and blog explainers retain Unicode/emoji glyphs, PostReactions uses a 1.28× reaction-pop overshoot, TechComparison uses a 1.05× selected-control scale, and body/legacy card/newsletter surfaces retain background gradients. Treat these as content- or component-specific legacy treatments, not defaults for new UI.
 
 **Key Characteristics:**
 - Evidence-first editorial hierarchy
 - Cool ink surfaces with a rare amber signal
 - Muli for voice; Source Code Pro for code and measured data
 - Tonal layering and thin borders before heavy shadows
-- Responsive grids that collapse deliberately at 920px and 620px
+- Route-scoped responsive grids: homepage at 920px/620px, writing at 860px/640px, and about/contact at 960px/640px
 
 ## Colors
 
@@ -149,13 +149,13 @@ The palette is a high-contrast ink-and-signal system: deep blue-violet surfaces 
 
 ## Layout
 
-The primary content container is 784px for reading-focused surfaces and 1200px for broad portfolio layouts; the newer shell uses a fluid width capped at 1120px with 1rem side padding. Homepage content uses a two-column hero (`1.08fr / 0.92fr`) with a minimum 320px media column, then a four-column metric band and three-column case-study grid. Section spacing uses `clamp(4rem, 8vw, 7rem)`-scale vertical rhythm rather than uniform short gaps.
+The primary content container is 784px for reading-focused surfaces and 1200px for broad portfolio layouts; the active portfolio shell uses a fluid width capped at 1120px with 1rem side padding. The homepage uses a two-column hero (1.08fr / 0.92fr) with a minimum 320px media column, a four-column metric band, and a three-column case-study grid. About and contact share the same 1120px shell and two-column hero; writing uses the same shell with a narrower two-column hero and a three-column featured grid. Spacing is route-specific rather than one universal token: homepage section blocks use clamp(4.5rem, 9vw, 7rem), about sections use clamp(3rem, 7vw, 5rem), contact sections use clamp(2.5rem, 6vw, 4.5rem), and writing sections use clamp(2.5rem, 6vw, 5rem).
 
-At 920px, the homepage hero becomes one column, metrics and case studies become two columns, and the notebook becomes one column. At 620px, metrics and case studies become one column and display type contracts to approximately 3rem. The navigation switches to its mobile panel at 767px; mobile links use full-width rows, a fixed overlay, focus restoration, and a scrollable panel capped by the viewport.
+The homepage changes at 920px: its hero becomes one column, metrics and case studies become two columns, and the notebook becomes one column; at 620px, metrics and case studies become one column and display type contracts to approximately 3rem. Writing changes at 860px, collapsing its hero and featured grid, then at 640px contracts the shell side padding, newsletter to one column, and hero type. About and contact change at 960px, collapsing their hero and secondary grids; about metrics become one column at 640px. Independently, the navigation switches to its mobile panel at 767px (the CSS hides desktop links at that width); mobile links use full-width rows, a fixed overlay, focus restoration, and a scrollable panel capped by the viewport.
 
 ## Elevation & Depth
 
-The system uses tonal layering with restrained elevation. Raised surfaces change background and border before reaching for a shadow. The core shadows are `0 2px 6px 0 rgba(0, 0, 0, 0.1)` for quiet surfaces and `5px 5px 15px rgba(0, 0, 0, 0.12)` for legacy card emphasis. The homepage portrait also uses a deliberate ambient hero shadow; that is an authored focal treatment, not a default card elevation. Hover states may use a larger soft shadow, but rest states should remain calm. Backdrop blur is reserved for the sticky navigation and overlays where separation from scrolling content is functional.
+The system uses tonal layering with restrained elevation. Raised surfaces change background and border before reaching for a shadow. The core shadows are 0 2px 6px 0 rgba(0, 0, 0, 0.1) for quiet surfaces and 5px 5px 15px rgba(0, 0, 0, 0.12) for legacy card emphasis. The homepage portrait actively uses a deliberate ambient hero shadow (0 24px 80px rgba(0, 0, 0, 0.22)); that is an authored focal treatment, not a default card elevation. The homepage east accent also carries a smaller accent-colored shadow. Writing-hero guidance uses a scoped shadow, and hover states may use a larger soft shadow, but rest states should remain calm. Backdrop blur is functional on the sticky navigation and is also used by the content-specific PostReactions controls; do not generalize either treatment to every surface.
 
 ### Shadow Vocabulary
 - **Soft surface** (`0 2px 6px 0 rgba(0, 0, 0, 0.1)`): Newsletter cards and low-elevation grouped controls.
@@ -199,8 +199,7 @@ The shape language is compact and practical: 6px controls, 8px grouped content, 
 - **Default / Hover / Active:** Secondary text at rest; accent text and a subtle accent-tinted surface for hover and current-page state. Keep transforms to a small upward nudge.
 - **Mobile:** Hide desktop links below 767px; expose the labeled hamburger, fixed overlay, and scrollable panel. Opening the panel must trap focus, close on Escape or overlay click, and restore focus to the toggle.
 
-### Writing List
-The blog index uses readable article rows with metadata, title, description, tags, and a clear read action. It is a reading surface first: use open spacing, strong heading contrast, and a small hover lift rather than a dense dashboard grid.
+The blog index uses readable article rows with metadata, title, description, tags, and a clear read action. Its featured writing cards and BlogFilter writing list are reading surfaces first: use open spacing, strong heading contrast, compact tag/chip labels, and a small hover lift rather than a dense dashboard grid.
 
 ### Evidence Blocks
 Metric bands, case-study panels, risk matrices, and interactive explainers are signature evidence components. They may use color to encode status or compare values, but the encoded meaning must also be present in text, labels, or state attributes.
@@ -218,8 +217,9 @@ Metric bands, case-study panels, risk matrices, and interactive explainers are s
 
 ### Don't:
 - **Don't** invent testimonials, clients, metrics, credentials, or outcomes to fill visual space.
-- **Don't** use gradient text as decoration. Background gradients and content-specific motion may remain where they are part of an existing surface; do not generalize them into a new visual language.
-- **Don't** make emoji or Unicode glyphs the default icon system. Existing content-specific status glyphs are legacy exceptions; new interface icons should use authored SVG.
+- **Don't** use gradient text as decoration. Background gradients remain in the body wash, legacy cards, newsletter shell, reaction sheen, and some content surfaces; they are scoped exceptions, not a general component recipe.
+- **Don't** make emoji or Unicode glyphs the default icon system. ArticleMeta share actions and blog explainers retain legacy/content-specific glyphs (including quiz feedback and TechComparison logos); new interface icons should use authored SVG.
+- **Don't** use interaction overshoot as a general feedback pattern. PostReactions' 1.28× icon pop and TechComparison's 1.05× selected scale are incumbent exceptions; ordinary controls should use restrained translation or color change.
 - **Don't** animate width, height, or other layout properties when a transform can express the same state.
 - **Don't** use bounce or spring motion for ordinary navigation, feedback, or reveal states.
 - **Don't** use thick colored `border-left` or `border-right` treatments on cards, callouts, list items, or alerts.
