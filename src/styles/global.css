@@ -182,7 +182,7 @@ pre code {
   --motion-base: 240ms;
   --motion-slow: 560ms;
   --motion-page: 420ms;
-  --motion-spring: cubic-bezier(0.2, 0.9, 0.2, 1);
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --color-bg: #171a2f;
   --color-bg-rgb: 23, 26, 47;
   --color-surface-raised: #222640;
@@ -370,9 +370,9 @@ main {
   opacity: 0;
   transform: translate3d(0, calc(0.6rem + var(--parallax-offset, 0px)), 0) scale(0.992);
   transition:
-    opacity var(--motion-base, 240ms) var(--motion-spring, cubic-bezier(0.2, 0.9, 0.2, 1)),
+    opacity var(--motion-base, 240ms) var(--motion-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
     transform calc(var(--motion-base, 240ms) + 40ms)
-      var(--motion-spring, cubic-bezier(0.2, 0.9, 0.2, 1));
+      var(--motion-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
   transition-delay: var(--reveal-delay, 0ms);
   will-change: opacity, transform;
 }
@@ -1249,7 +1249,7 @@ html {
 
   /* Blockquotes */
   blockquote {
-    @apply border-l-4 border-accent pl-4 italic text-light-200 my-4;
+    @apply border border-accent/40 px-4 italic text-light-200 my-4 rounded-lg;
   }
 }
 
@@ -1710,7 +1710,8 @@ html {
 
   .search-result-item.selected {
     background: rgba(255, 204, 104, 0.1);
-    border-left: 3px solid var(--color-accent);
+    outline: 1px solid var(--color-accent);
+    outline-offset: -1px;
   }
 
   /* Search input focus styles */
@@ -1753,7 +1754,6 @@ html {
 
   :root.retro-tech .search-result-item.selected {
     background: rgba(0, 255, 0, 0.1);
-    border-left-color: #00ff00;
   }
 
   :root.minimalist #search-modal {
@@ -1766,7 +1766,6 @@ html {
 
   :root.high-contrast .search-result-item.selected {
     background: rgba(255, 255, 0, 0.2);
-    border-left-color: #ffff00;
   }
 
   /* Mobile Navigation Styles */
@@ -2049,13 +2048,6 @@ html {
 
   .bg-background {
     background-color: var(--color-bg);
-  }
-
-  .text-gradient {
-    background: linear-gradient(135deg, var(--color-accent), var(--color-light-300));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
 
   .bg-gradient-card {

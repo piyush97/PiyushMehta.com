@@ -39,7 +39,7 @@ export const prerender = true;
     <h2 class="newsletter-pillars__title">What you get</h2>
     <div class="newsletter-pillars__grid">
       <article class="newsletter-pillar">
-        <div class="newsletter-pillar__icon" aria-hidden="true">⚡</div>
+        <div class="newsletter-pillar__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-9 12h6l-1 8 9-12h-6l1-8Z"/></svg></div>
         <h3>AI without the hype</h3>
         <p>
           New models, real benchmarks, what actually works in production. Skip the
@@ -47,7 +47,7 @@ export const prerender = true;
         </p>
       </article>
       <article class="newsletter-pillar">
-        <div class="newsletter-pillar__icon" aria-hidden="true">🛠️</div>
+        <div class="newsletter-pillar__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14.7 6.3 3 3M4 20l4.8-1.2L18.5 9a2.1 2.1 0 0 0-3-3L5.8 15.8 4 20Z"/><path d="m13 8 3 3"/></svg></div>
         <h3>Build notes</h3>
         <p>
           Patterns, anti-patterns, and gotchas from shipping real systems. Code I wish
@@ -55,7 +55,7 @@ export const prerender = true;
         </p>
       </article>
       <article class="newsletter-pillar">
-        <div class="newsletter-pillar__icon" aria-hidden="true">📚</div>
+        <div class="newsletter-pillar__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"/><path d="M4 5.5V18M8 7h8M8 11h8"/></svg></div>
         <h3>Learnings in public</h3>
         <p>
           What I'm reading, building, and breaking. If you're an engineer who likes
@@ -140,10 +140,7 @@ export const prerender = true;
     line-height: 1.1;
     margin: 0 auto 1.5rem;
     max-width: 48rem;
-    background: linear-gradient(135deg, rgb(var(--text)), rgb(var(--accent)));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: rgb(var(--text));
   }
   .newsletter-hero__lede {
     font-size: 1.125rem;
@@ -189,8 +186,15 @@ export const prerender = true;
     border-color: rgb(var(--accent) / 0.5);
   }
   .newsletter-pillar__icon {
-    font-size: 1.75rem;
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
     margin-bottom: 0.75rem;
+    color: rgb(var(--accent));
+  }
+  .newsletter-pillar__icon svg {
+    width: 100%;
+    height: 100%;
   }
   .newsletter-pillar h3 {
     font-size: 1.125rem;

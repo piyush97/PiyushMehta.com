@@ -169,7 +169,8 @@ const LayoffEconomyExplainer: React.FC = () => {
         <div className="layoff-economy__progress">
           <span
             style={{
-              width: `${((activeStep + 1) / impactSteps.length) * 100}%`,
+              width: '100%',
+              transform: `scaleX(${(activeStep + 1) / impactSteps.length})`,
               backgroundColor: selectedStep.color,
             }}
           />
@@ -470,7 +471,8 @@ const LayoffEconomyExplainer: React.FC = () => {
           display: block;
           height: 100%;
           border-radius: inherit;
-          transition: width 260ms ease;
+          transform-origin: left center;
+          transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .layoff-economy__detail > div:nth-child(2) {
@@ -482,9 +484,11 @@ const LayoffEconomyExplainer: React.FC = () => {
           display: grid;
           align-content: center;
           margin: 0;
-          border-left: 3px solid currentColor;
+          border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+          border-radius: 0.6rem;
+          background: color-mix(in srgb, currentColor 7%, transparent);
           color: var(--color-text-primary);
-          padding-left: 0.85rem;
+          padding: 0.85rem;
           font-size: 0.98rem;
           font-weight: 750;
           line-height: 1.45;

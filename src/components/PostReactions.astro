@@ -60,9 +60,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
       aria-label="Like this post"
       title="Like this post"
     >
-      <span class="reaction-icon text-gray-400 group-hover:text-red-500 transition-colors duration-200">
-        ❤️
-      </span>
+      <span class="reaction-icon text-gray-400 group-hover:text-red-500 transition-colors duration-200"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 8.6c0 5.4-8.8 11-8.8 11s-8.8-5.6-8.8-11A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg></span>
       <span class="reaction-label font-medium text-gray-700 group-hover:text-red-600">Like</span>
       {showCount && (
         <span class="reaction-count bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full min-w-[1.5rem] text-center">0</span>
@@ -80,9 +78,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
       aria-label="Mark as helpful"
       title="This post was helpful"
     >
-      <span class="reaction-icon text-gray-400 group-hover:text-green-500 transition-colors duration-200">
-        👍
-      </span>
+      <span class="reaction-icon text-gray-400 group-hover:text-green-500 transition-colors duration-200"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11v9H4v-9h3Zm0 9h9.6a2 2 0 0 0 1.9-1.4l1.7-5.1A2 2 0 0 0 18.3 11H14l.7-3.2A2.3 2.3 0 0 0 12.5 5L7 11v9Z"/></svg></span>
       <span class="reaction-label font-medium text-gray-700 group-hover:text-green-600">Helpful</span>
       {showCount && (
         <span class="reaction-count bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full min-w-[1.5rem] text-center">0</span>
@@ -100,9 +96,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
       aria-label="Mark as insightful"
       title="This post was insightful"
     >
-      <span class="reaction-icon text-gray-400 group-hover:text-blue-500 transition-colors duration-200">
-        💡
-      </span>
+      <span class="reaction-icon text-gray-400 group-hover:text-blue-500 transition-colors duration-200"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 17.5h5M10 20h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8h5c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3Z"/><path d="M12 1v1M4.2 4.2l.7.7M19.8 4.2l-.7.7"/></svg></span>
       <span class="reaction-label font-medium text-gray-700 group-hover:text-blue-600">Insightful</span>
       {showCount && (
         <span class="reaction-count bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full min-w-[1.5rem] text-center">0</span>
@@ -120,9 +114,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
       aria-label="Bookmark this post"
       title="Bookmark for later"
     >
-      <span class="reaction-icon text-gray-400 group-hover:text-yellow-500 transition-colors duration-200">
-        🔖
-      </span>
+      <span class="reaction-icon text-gray-400 group-hover:text-yellow-500 transition-colors duration-200"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-3-6 3V4.5Z"/></svg></span>
       <span class="reaction-label font-medium text-gray-700 group-hover:text-yellow-600">Bookmark</span>
       {showCount && (
         <span class="reaction-count bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full min-w-[1.5rem] text-center">0</span>
@@ -140,9 +132,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
       aria-label="Share this post"
       title="Share this post"
     >
-      <span class="reaction-icon text-gray-400 group-hover:text-purple-500 transition-colors duration-200">
-        📤
-      </span>
+      <span class="reaction-icon text-gray-400 group-hover:text-purple-500 transition-colors duration-200"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 13.2 7.6 4.6M15.8 6.2 8.2 10.8"/></svg></span>
       <span class="reaction-label font-medium text-gray-700 group-hover:text-purple-600">Share</span>
     </button>
   </div>
@@ -424,9 +414,9 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
         // Update icon animation
         const iconElement = button.querySelector('.reaction-icon');
         if (iconElement && isActive) {
-          iconElement.classList.add('animate-bounce');
+          iconElement.classList.add('reaction-pop');
           setTimeout(() => {
-            iconElement.classList.remove('animate-bounce');
+            iconElement.classList.remove('reaction-pop');
           }, 600);
         }
       });
@@ -568,8 +558,21 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
   /* Icon animations */
   .reaction-icon {
-    font-size: 1.25em;
+    display: inline-flex;
+    width: 1.35em;
+    height: 1.35em;
+    align-items: center;
+    justify-content: center;
     transition: transform 0.2s ease;
+  }
+
+  .reaction-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .reaction-pop {
+    animation: reactionPop 420ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .reaction-btn:hover .reaction-icon {
@@ -597,6 +600,17 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
     animation: slideIn 0.3s ease-out;
   }
 
+  @keyframes reactionPop {
+    0% {
+      transform: scale(1);
+    }
+    45% {
+      transform: scale(1.28) rotate(-6deg);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
   @keyframes slideIn {
     from {
       opacity: 0;
@@ -645,6 +659,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
   @media (prefers-reduced-motion: reduce) {
     .reaction-btn,
     .reaction-icon,
+    .reaction-pop,
     .reaction-count,
     .feedback-message {
       transition: none;

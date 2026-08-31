@@ -237,7 +237,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
     border-bottom: 1px solid var(--color-card-border);
     background: rgba(var(--color-bg-rgb), 0.86);
     backdrop-filter: blur(16px);
-    animation: nav-slide-in var(--motion-slow, 560ms) var(--motion-spring, cubic-bezier(0.2, 0.9, 0.2, 1));
+    animation: nav-slide-in var(--motion-slow, 560ms) var(--motion-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
   }
 
   .site-nav__brand, .site-nav__links, .site-nav__actions { display: flex; align-items: center; }
