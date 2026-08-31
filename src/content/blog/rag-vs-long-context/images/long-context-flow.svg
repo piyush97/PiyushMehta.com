@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360" role="img" aria-labelledby="title desc">
+  <title id="title">Long context flow</title>
+  <desc id="desc">System instructions, conversation history, project specification, and source files enter one context window before reaching the model.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F1221"/>
+      <stop offset="1" stop-color="#171A2F"/>
+    </linearGradient>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M30 0H0V30" fill="none" stroke="#343A5F" stroke-opacity=".22"/>
+    </pattern>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0L8 4L0 8Z" fill="#67E8F9"/>
+    </marker>
+    <style>
+      text { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .primary { fill: #F6F7FF; }
+      .secondary { fill: #B4BAD8; }
+      .muted { fill: #8F96BA; }
+    </style>
+  </defs>
+  <rect width="900" height="360" rx="12" fill="url(#bg)"/>
+  <rect width="900" height="360" rx="12" fill="url(#grid)"/>
+  <text x="450" y="35" text-anchor="middle" font-size="17" font-weight="700" letter-spacing="3" fill="#67E8F9">LONG CONTEXT</text>
+  <circle cx="570" cy="29" r="4" fill="#67E8F9" filter="url(#glow)"/>
+
+  <rect x="28" y="70" width="224" height="42" rx="8" fill="#222640" stroke="#343A5F"/>
+  <rect x="28" y="125" width="224" height="42" rx="8" fill="#222640" stroke="#343A5F"/>
+  <rect x="28" y="180" width="224" height="42" rx="8" fill="#222640" stroke="#343A5F"/>
+  <rect x="28" y="235" width="224" height="42" rx="8" fill="#222640" stroke="#343A5F"/>
+  <circle cx="48" cy="91" r="4" fill="#67E8F9" filter="url(#glow)"/>
+  <circle cx="48" cy="146" r="4" fill="#67E8F9" filter="url(#glow)"/>
+  <circle cx="48" cy="201" r="4" fill="#67E8F9" filter="url(#glow)"/>
+  <circle cx="48" cy="256" r="4" fill="#67E8F9" filter="url(#glow)"/>
+  <text x="64" y="97" font-size="14" class="primary">system instructions</text>
+  <text x="64" y="152" font-size="14" class="primary">conversation history</text>
+  <text x="64" y="207" font-size="14" class="primary">project specification</text>
+  <text x="64" y="262" font-size="14" class="primary">source files</text>
+
+  <line x1="252" y1="173" x2="300" y2="173" stroke="#67E8F9" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="316" y="77" width="300" height="192" rx="12" fill="#0B1024" stroke="#67E8F9" stroke-width="2"/>
+  <text x="466" y="112" text-anchor="middle" font-size="16" font-weight="700" class="primary">context window</text>
+  <text x="466" y="137" text-anchor="middle" font-size="12" class="muted">one prompt</text>
+  <rect x="348" y="158" width="236" height="24" rx="6" fill="#222640" stroke="#343A5F"/>
+  <rect x="348" y="190" width="236" height="24" rx="6" fill="#222640" stroke="#343A5F"/>
+  <rect x="348" y="222" width="236" height="24" rx="6" fill="#222640" stroke="#343A5F"/>
+  <text x="466" y="175" text-anchor="middle" font-size="11" class="secondary">all inputs included</text>
+  <text x="466" y="207" text-anchor="middle" font-size="11" class="secondary">relationships stay visible</text>
+  <text x="466" y="239" text-anchor="middle" font-size="11" class="secondary">no retrieval step</text>
+
+  <line x1="616" y1="173" x2="670" y2="173" stroke="#67E8F9" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="686" y="143" width="176" height="60" rx="30" fill="#0F1221" stroke="#67E8F9" stroke-width="2"/>
+  <circle cx="714" cy="173" r="5" fill="#67E8F9" filter="url(#glow)"/>
+  <text x="734" y="179" font-size="16" class="primary">model</text>
+</svg>

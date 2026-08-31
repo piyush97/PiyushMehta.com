@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360" role="img" aria-labelledby="title desc">
+  <title id="title">RAG flow</title>
+  <desc id="desc">A user question moves through query preparation, vector and keyword search, ranking and filtering, selected passages, and the model.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F1221"/>
+      <stop offset="1" stop-color="#171A2F"/>
+    </linearGradient>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M30 0H0V30" fill="none" stroke="#343A5F" stroke-opacity=".22"/>
+    </pattern>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0L8 4L0 8Z" fill="#FFCC68"/>
+    </marker>
+    <style>
+      text { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .primary { fill: #F6F7FF; }
+      .secondary { fill: #B4BAD8; }
+      .muted { fill: #8F96BA; }
+    </style>
+  </defs>
+  <rect width="900" height="360" rx="12" fill="url(#bg)"/>
+  <rect width="900" height="360" rx="12" fill="url(#grid)"/>
+  <text x="450" y="35" text-anchor="middle" font-size="17" font-weight="700" letter-spacing="3" fill="#FFCC68">RAG</text>
+  <circle cx="497" cy="29" r="4" fill="#FFCC68" filter="url(#glow)"/>
+
+  <rect x="20" y="140" width="120" height="72" rx="10" fill="#222640" stroke="#FFCC68" stroke-width="2"/>
+  <rect x="165" y="140" width="120" height="72" rx="10" fill="#222640" stroke="#343A5F"/>
+  <rect x="310" y="140" width="120" height="72" rx="10" fill="#222640" stroke="#343A5F"/>
+  <rect x="455" y="140" width="120" height="72" rx="10" fill="#222640" stroke="#343A5F"/>
+  <rect x="600" y="140" width="120" height="72" rx="10" fill="#222640" stroke="#FFCC68" stroke-opacity=".8"/>
+  <rect x="745" y="140" width="135" height="72" rx="36" fill="#0F1221" stroke="#FFCC68" stroke-width="2"/>
+
+  <circle cx="42" cy="176" r="5" fill="#FFCC68" filter="url(#glow)"/>
+  <text x="80" y="171" text-anchor="middle" font-size="13" class="primary">user</text>
+  <text x="80" y="191" text-anchor="middle" font-size="13" class="primary">question</text>
+  <text x="225" y="171" text-anchor="middle" font-size="12" class="primary">query</text>
+  <text x="225" y="191" text-anchor="middle" font-size="12" class="primary">preparation</text>
+  <text x="370" y="166" text-anchor="middle" font-size="11" class="primary">vector +</text>
+  <text x="370" y="186" text-anchor="middle" font-size="11" class="primary">keyword search</text>
+  <text x="515" y="171" text-anchor="middle" font-size="12" class="primary">rank &amp;</text>
+  <text x="515" y="191" text-anchor="middle" font-size="12" class="primary">filter</text>
+  <text x="660" y="171" text-anchor="middle" font-size="12" class="primary">selected</text>
+  <text x="660" y="191" text-anchor="middle" font-size="12" class="primary">passages</text>
+  <circle cx="770" cy="176" r="5" fill="#FFCC68" filter="url(#glow)"/>
+  <text x="824" y="181" text-anchor="middle" font-size="15" class="primary">model</text>
+
+  <line x1="140" y1="176" x2="157" y2="176" stroke="#FFCC68" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="285" y1="176" x2="302" y2="176" stroke="#FFCC68" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="430" y1="176" x2="447" y2="176" stroke="#FFCC68" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="575" y1="176" x2="592" y2="176" stroke="#FFCC68" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="720" y1="176" x2="737" y2="176" stroke="#FFCC68" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <text x="450" y="272" text-anchor="middle" font-size="12" class="muted">search narrows the evidence before generation</text>
+</svg>
