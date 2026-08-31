@@ -146,7 +146,13 @@ const initReveal = (reducedMotion: boolean, state: MotionState): void => {
     const delay =
       hasCustomDelay && Number.isFinite(customDelay) && customDelay >= 0 ? customDelay : index * 20;
     element.style.setProperty('--reveal-delay', `${Math.min(delay + staggerDelay, 120)}ms`);
-    state.revealObserver?.observe(element);
+    // Reveal elements already in the viewport immediately (hero above the fold)
+    // instead of waiting for an intersection event — keeps LCP paint snappy.
+    if (element.getBoundingClientRect().top < window.innerHeight) {
+      element.classList.add('is-visible');
+    } else {
+      state.revealObserver?.observe(element);
+    }
   });
 };
 

@@ -71,7 +71,6 @@ test.describe('astro v6 migration smoke', () => {
     await page.goto('/');
     await navigateViaNav('/blog/');
     await expect(page).toHaveURL(/\/blog\/?$/);
-
     const search = page.locator('#blog-search');
     await search.fill('zzzz-no-match');
     await expect(page.locator('[data-result-count]')).toHaveText('0');
