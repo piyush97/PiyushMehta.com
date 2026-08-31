@@ -24,6 +24,25 @@ test.describe('astro v6 migration smoke', () => {
     expect(page.url()).toContain('/blog/');
     await expect(page.locator('article').first()).toBeVisible();
   });
+  test('RAG article images load as SVG assets', async ({ page }) => {
+    await page.goto('/blog/rag-vs-long-context', { waitUntil: 'networkidle' });
+
+    const imageAlts = [
+      'A two-panel comparison of long context, where all documents enter one prompt, and RAG, where selected passages reach the model',
+      'RAG vs long context hero',
+      'Long context: everything goes into one prompt',
+      'RAG: retrieve only relevant passages',
+    ];
+
+    for (const alt of imageAlts) {
+      const image = page.locator('article img[alt="' + alt + '"]');
+      await expect(image).toHaveCount(1);
+      const src = await image.getAttribute('src');
+      expect(src, alt + ' should have a source URL').toBeTruthy();
+      expect(src, alt + ' should not use Astro image optimization for SVG').not.toContain('/_image');
+      await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    }
+  });
 
   test('blog index shows non-zero published pieces', async ({ page }) => {
     await page.goto('/blog/', { waitUntil: 'domcontentloaded' });

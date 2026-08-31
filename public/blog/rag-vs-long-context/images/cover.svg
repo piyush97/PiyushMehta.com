@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">RAG vs. Long Context</title>
+  <desc id="desc">A dark two-panel comparison showing all documents entering one long context window on the left, and retrieval selecting passages before the model on the right.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F1221"/>
+      <stop offset="1" stop-color="#171A2F"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#222640"/>
+      <stop offset="1" stop-color="#1B1F36"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#343A5F" stroke-opacity=".2"/>
+    </pattern>
+    <filter id="glowCyan" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowAmber" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrowCyan" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0L8 4L0 8Z" fill="#67E8F9"/>
+    </marker>
+    <marker id="arrowAmber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0L8 4L0 8Z" fill="#FFCC68"/>
+    </marker>
+    <style>
+      text { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .muted { fill: #8F96BA; }
+      .secondary { fill: #B4BAD8; }
+      .primary { fill: #F6F7FF; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="500" fill="url(#grid)"/>
+
+  <rect x="44" y="42" width="508" height="420" rx="12" fill="url(#panel)" stroke="#343A5F" stroke-width="2"/>
+  <rect x="648" y="42" width="508" height="420" rx="12" fill="url(#panel)" stroke="#343A5F" stroke-width="2"/>
+
+  <text x="76" y="82" font-size="18" font-weight="700" letter-spacing="2" fill="#67E8F9">LONG CONTEXT</text>
+  <circle cx="518" cy="76" r="4" fill="#67E8F9" filter="url(#glowCyan)"/>
+  <text x="680" y="82" font-size="18" font-weight="700" letter-spacing="2" fill="#FFCC68">RAG</text>
+  <circle cx="1122" cy="76" r="4" fill="#FFCC68" filter="url(#glowAmber)"/>
+
+  <rect x="86" y="104" width="424" height="246" rx="10" fill="#0B1024" stroke="#67E8F9" stroke-opacity=".55" stroke-width="2"/>
+  <text x="108" y="132" font-size="12" letter-spacing="1" fill="#8F96BA">context window / one prompt</text>
+  <rect x="108" y="148" width="380" height="48" rx="8" fill="#222640" stroke="#343A5F"/>
+  <rect x="108" y="208" width="380" height="48" rx="8" fill="#222640" stroke="#343A5F"/>
+  <rect x="108" y="268" width="380" height="48" rx="8" fill="#222640" stroke="#343A5F"/>
+  <circle cx="128" cy="172" r="5" fill="#67E8F9" filter="url(#glowCyan)"/>
+  <circle cx="128" cy="232" r="5" fill="#67E8F9" filter="url(#glowCyan)"/>
+  <circle cx="128" cy="292" r="5" fill="#67E8F9" filter="url(#glowCyan)"/>
+  <text x="146" y="177" font-size="14" class="primary">document 01</text>
+  <text x="146" y="237" font-size="14" class="primary">document 02</text>
+  <text x="146" y="297" font-size="14" class="primary">document 03</text>
+  <text x="476" y="177" text-anchor="end" font-size="12" class="muted">fits</text>
+  <text x="476" y="237" text-anchor="end" font-size="12" class="muted">fits</text>
+  <text x="476" y="297" text-anchor="end" font-size="12" class="muted">fits</text>
+  <line x1="298" y1="350" x2="298" y2="374" stroke="#67E8F9" stroke-width="2" marker-end="url(#arrowCyan)"/>
+  <rect x="220" y="382" width="156" height="42" rx="21" fill="#0F1221" stroke="#67E8F9" stroke-width="2"/>
+  <circle cx="244" cy="403" r="4" fill="#67E8F9" filter="url(#glowCyan)"/>
+  <text x="260" y="408" font-size="15" class="primary">model</text>
+
+  <rect x="690" y="104" width="424" height="246" rx="10" fill="#0B1024" stroke="#FFCC68" stroke-opacity=".55" stroke-width="2"/>
+  <text x="712" y="132" font-size="12" letter-spacing="1" fill="#8F96BA">source collection</text>
+  <rect x="712" y="142" width="380" height="22" rx="6" fill="#222640" stroke="#343A5F"/>
+  <rect x="712" y="170" width="380" height="22" rx="6" fill="#222640" stroke="#343A5F"/>
+  <rect x="712" y="198" width="380" height="22" rx="6" fill="#222640" stroke="#343A5F"/>
+  <circle cx="728" cy="153" r="3" fill="#FFCC68" filter="url(#glowAmber)"/>
+  <circle cx="728" cy="181" r="3" fill="#FFCC68" filter="url(#glowAmber)"/>
+  <circle cx="728" cy="209" r="3" fill="#FFCC68" filter="url(#glowAmber)"/>
+  <text x="740" y="158" font-size="11" class="primary">document 01</text>
+  <text x="740" y="186" font-size="11" class="primary">document 02</text>
+  <text x="740" y="214" font-size="11" class="primary">document 03</text>
+  <rect x="712" y="232" width="380" height="34" rx="8" fill="#222640" stroke="#FFCC68" stroke-opacity=".8"/>
+  <text x="732" y="254" font-size="12" class="primary">vector + keyword search</text>
+  <circle cx="1068" cy="249" r="4" fill="#FFCC68" filter="url(#glowAmber)"/>
+  <rect x="712" y="278" width="180" height="38" rx="8" fill="#222640" stroke="#FFCC68" stroke-opacity=".75"/>
+  <rect x="912" y="278" width="180" height="38" rx="8" fill="#222640" stroke="#FFCC68" stroke-opacity=".75"/>
+  <text x="732" y="302" font-size="12" class="primary">passage 01</text>
+  <text x="932" y="302" font-size="12" class="primary">passage 02</text>
+  <text x="1068" y="302" text-anchor="end" font-size="11" fill="#FFCC68">selected</text>
+  <line x1="902" y1="316" x2="902" y2="374" stroke="#FFCC68" stroke-width="2" marker-end="url(#arrowAmber)"/>
+  <rect x="824" y="382" width="156" height="42" rx="21" fill="#0F1221" stroke="#FFCC68" stroke-width="2"/>
+  <circle cx="848" cy="403" r="4" fill="#FFCC68" filter="url(#glowAmber)"/>
+  <text x="864" y="408" font-size="15" class="primary">model</text>
+
+  <rect x="579" y="242" width="42" height="42" rx="21" fill="#0F1221" stroke="#343A5F" stroke-width="2"/>
+  <text x="600" y="268" text-anchor="middle" font-size="15" font-weight="700" class="secondary">vs</text>
+
+  <text x="600" y="535" text-anchor="middle" font-size="40" font-weight="700" letter-spacing="-1" class="primary">RAG vs. Long Context</text>
+  <text x="600" y="574" text-anchor="middle" font-size="18" class="secondary">When do you actually need retrieval?</text>
+</svg>
