@@ -91,6 +91,20 @@ test.describe('astro v6 migration smoke', () => {
     await expect(readLink).toHaveAttribute('aria-label', /Read “.+”/);
     await expect(readLink).toHaveCSS('min-height', '44px');
   });
+  test('newsletter forms expose unique labelled email fields', async ({ page }) => {
+    await page.goto('/newsletter/', { waitUntil: 'domcontentloaded' });
+
+    const emailIds = await page.locator('input[type="email"]').evaluateAll((inputs) =>
+      inputs.map((input) => input.id),
+    );
+
+    expect(emailIds).toHaveLength(2);
+    expect(new Set(emailIds).size).toBe(emailIds.length);
+    for (const id of emailIds) {
+      expect(id).toBeTruthy();
+      await expect(page.locator(`label[for="${id}"]`)).toHaveCount(1);
+    }
+  });
   test('rss and sitemap return xml', async ({ request }) => {
     const rss = await request.get('/rss.xml');
     expect(rss.ok()).toBeTruthy();
