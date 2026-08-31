@@ -40,10 +40,15 @@
   --color-surface-primary: var(--color-bg);
   --color-surface-secondary: var(--color-light-800);
   --color-surface-tertiary: var(--color-light-700);
+  --color-surface-100: var(--color-surface-100);
+  --color-surface-200: var(--color-surface-200);
   --color-text-primary: var(--color-light-100);
   --color-text-secondary: var(--color-light-300);
+  --color-text-tertiary: var(--color-text-tertiary);
   --color-border: var(--color-card-border);
   --color-bg: var(--color-bg);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-accent-darker: var(--color-accent-darker);
   --color-danger: #ff5252;
   --color-card-border: var(--color-card-border);
   --color-card-border-hover: var(--color-card-border-hover);
@@ -625,6 +630,19 @@ main {
   }
 }
 
+.site-nav__links a,
+.site-footer a,
+.social-row a,
+.notebook-card__meta a,
+.link-row a,
+.info-card a,
+.blog-post-back__link,
+.blog-post-breadcrumbs a,
+.related-posts-section > div:first-child > a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+}
 .blog-filter {
   display: grid;
   gap: 1.25rem;
@@ -916,6 +934,11 @@ html {
   --color-navbar-bg: rgba(34, 38, 74, 0.9);
   --color-shadow: rgba(255, 204, 104, 0.25);
   --color-shadow-dark: rgba(0, 0, 0, 0.25);
+  --color-surface-100: var(--color-surface-raised, var(--color-light-900));
+  --color-surface-200: var(--color-light-800);
+  --color-bg-secondary: var(--color-light-950);
+  --color-text-tertiary: var(--color-light-500);
+  --color-accent-darker: color-mix(in srgb, var(--color-accent) 75%, black);
 
   /* Shadow values */
   --shadow-glow: var(--color-shadow) 0 0 0 0.25rem;

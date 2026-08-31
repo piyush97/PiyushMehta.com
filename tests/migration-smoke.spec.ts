@@ -13,7 +13,7 @@ test.describe('astro v6 migration smoke', () => {
   test('blog detail routes resolve from index links', async ({ page }) => {
     await page.goto('/blog/', { waitUntil: 'networkidle' });
 
-    const postLink = page.locator('a[href^="/blog/"]').first();
+    const postLink = page.locator('[data-writing-list] article h3 a').first();
     test.skip((await postLink.count()) === 0, 'No blog links found on /blog/');
 
     const href = await postLink.getAttribute('href');
@@ -57,17 +57,28 @@ test.describe('astro v6 migration smoke', () => {
     await expect(page.locator('[data-filter-order]')).toHaveValue('asc');
   });
   test('blog filter reinitializes after client-side navigation', async ({ page }) => {
+    const navigateViaNav = async (href: '/' | '/blog/') => {
+      const desktopLink = page.locator(`.site-nav__links a[href="${href}"]:visible`).first();
+
+      if (await desktopLink.count()) {
+        await desktopLink.click();
+      } else {
+        await page.locator('[data-mobile-toggle]').click();
+        await page.locator(`[data-mobile-panel] a[href="${href}"]`).click();
+      }
+    };
+
     await page.goto('/');
-    await page.locator('a[href="/blog/"]').first().click();
+    await navigateViaNav('/blog/');
     await expect(page).toHaveURL(/\/blog\/?$/);
 
     const search = page.locator('#blog-search');
     await search.fill('zzzz-no-match');
     await expect(page.locator('[data-result-count]')).toHaveText('0');
 
-    await page.locator('a[href="/"]').first().click();
+    await navigateViaNav('/');
     await expect(page).toHaveURL(/\/$/);
-    await page.locator('a[href="/blog/"]').first().click();
+    await navigateViaNav('/blog/');
     await expect(page).toHaveURL(/\/blog\/?$/);
 
     await page.locator('#blog-search').fill('zzzz-no-match');

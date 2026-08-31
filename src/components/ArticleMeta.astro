@@ -99,8 +99,9 @@ const shareLinks = [
         shareLinks.map((link) => (
           <a
             href={link.url}
-            class={`p-2 rounded-lg bg-card hover:bg-card-hover transition-all duration-200 ${link.color}`}
+            class={`inline-flex min-h-11 min-w-11 items-center justify-center p-2 rounded-lg bg-card hover:bg-card-hover transition-all duration-200 ${link.color}`}
             title={`Share on ${link.name}`}
+            aria-label={link.name === 'Copy Link' ? 'Copy link' : `Share on ${link.name}`}
             target={link.name !== 'Copy Link' ? '_blank' : undefined}
             rel={link.name !== 'Copy Link' ? 'noopener noreferrer' : undefined}
             data-action={link.action}
@@ -121,7 +122,7 @@ const shareLinks = [
           {tags.map((tag) => (
             <a
               href={`/blog/?theme=${encodeURIComponent(tag)}`}
-              class="px-3 py-1 text-sm transition-colors duration-200 rounded-full bg-accent/10 text-accent hover:bg-accent/20"
+              class="inline-flex min-h-11 items-center px-3 py-1 text-sm transition-colors duration-200 rounded-full bg-accent/10 text-accent hover:bg-accent/20"
             >
               #{tag}
             </a>
@@ -133,28 +134,34 @@ const shareLinks = [
 </div>
 
 <script>
-  // Copy to clipboard functionality
-  document.addEventListener('DOMContentLoaded', () => {
-    const copyButton = document.querySelector('[data-action="copy"]');
+  const initializeCopyLink = () => {
+    const copyButton = document.querySelector<HTMLElement>('[data-action="copy"]');
+    if (!copyButton || copyButton.dataset.copyInitialized === 'true') return;
 
-    if (copyButton) {
-      copyButton.addEventListener('click', async (e) => {
-        e.preventDefault();
+    copyButton.addEventListener('click', async (event) => {
+      event.preventDefault();
 
-        try {
-          await navigator.clipboard.writeText(window.location.href);
+      try {
+        await navigator.clipboard.writeText(window.location.href);
 
-          // Visual feedback
-          const originalIcon = copyButton.innerHTML;
-          copyButton.innerHTML = '<span class="text-lg">✅</span>';
+        const originalIcon = copyButton.innerHTML;
+        copyButton.innerHTML = '<span class="text-lg" aria-hidden="true">✓</span>';
+        copyButton.setAttribute('aria-label', 'Link copied');
 
-          setTimeout(() => {
-            copyButton.innerHTML = originalIcon;
-          }, 2000);
-        } catch (err) {
-          console.error('Failed to copy:', err);
-        }
-      });
-    }
-  });
+        window.setTimeout(() => {
+          copyButton.innerHTML = originalIcon;
+          copyButton.setAttribute('aria-label', 'Copy link');
+        }, 2000);
+      } catch (error) {
+        console.error('Failed to copy:', error);
+        copyButton.setAttribute('aria-label', 'Unable to copy link');
+        window.setTimeout(() => copyButton.setAttribute('aria-label', 'Copy link'), 2000);
+      }
+    });
+
+    copyButton.dataset.copyInitialized = 'true';
+  };
+
+  document.addEventListener('astro:page-load', initializeCopyLink);
+  initializeCopyLink();
 </script>
