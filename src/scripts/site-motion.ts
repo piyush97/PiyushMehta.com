@@ -6,8 +6,11 @@
 
 type MotionState = {
   revealObserver: IntersectionObserver | null;
+  revealScrollHandler: (() => void) | null;
+  revealScrollTimer: number;
   parallaxFrame: number;
   parallaxHandler: (() => void) | null;
+  routeDirectionHandler: ((event: Event) => void) | null;
 };
 
 declare global {
@@ -20,8 +23,11 @@ const getMotionState = (): MotionState => {
   if (!window.__portfolioMotionState) {
     window.__portfolioMotionState = {
       revealObserver: null,
+      revealScrollHandler: null,
+      revealScrollTimer: 0,
       parallaxFrame: 0,
       parallaxHandler: null,
+      routeDirectionHandler: null,
     };
   }
   return window.__portfolioMotionState;
@@ -53,10 +59,12 @@ const getRouteWeight = (pathname: string): number => {
   return ROUTE_ORDER[topLevel] ?? 50;
 };
 
-const initRouteDirection = (): void => {
-  document.addEventListener('astro:before-preparation', (event) => {
-    // astro:before-preparation events expose `from` and `to` as URL
-    // instances directly on the event (not on `.detail`). Treat as a
+const initRouteDirection = (state: MotionState): void => {
+  if (state.routeDirectionHandler) return;
+
+  const onBeforePreparation = (event: Event): void => {
+    // astro:before-preparation events expose from and to as URL
+    // instances directly on the event (not on .detail). Treat as a
     // structural type so we don't need to import the internal event class.
     const navEvent = event as unknown as {
       from?: { pathname: string };
@@ -77,11 +85,21 @@ const initRouteDirection = (): void => {
         : 'forward';
 
     document.documentElement.setAttribute('data-route-direction', direction);
-  });
+  };
+
+  state.routeDirectionHandler = onBeforePreparation;
+  document.addEventListener('astro:before-preparation', onBeforePreparation);
 };
 
 const initReveal = (reducedMotion: boolean, state: MotionState): void => {
   state.revealObserver?.disconnect();
+  if (state.revealScrollHandler) {
+    window.removeEventListener('scroll', state.revealScrollHandler);
+    state.revealScrollHandler = null;
+  }
+  clearTimeout(state.revealScrollTimer);
+  state.revealScrollTimer = 0;
+
   const revealElements = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
 
   if (reducedMotion || !('IntersectionObserver' in window)) {
@@ -91,19 +109,20 @@ const initReveal = (reducedMotion: boolean, state: MotionState): void => {
 
   // Track scroll velocity so fast scrolling skips animation delays.
   let fastScroll = false;
-  let fastScrollTimer = 0;
   let lastScrollY = window.scrollY;
   const onScrollVelocity = (): void => {
     const delta = Math.abs(window.scrollY - lastScrollY);
     lastScrollY = window.scrollY;
     if (delta > 60) {
       fastScroll = true;
-      clearTimeout(fastScrollTimer);
-      fastScrollTimer = window.setTimeout(() => {
+      clearTimeout(state.revealScrollTimer);
+      state.revealScrollTimer = window.setTimeout(() => {
         fastScroll = false;
+        state.revealScrollTimer = 0;
       }, 200);
     }
   };
+  state.revealScrollHandler = onScrollVelocity;
   window.addEventListener('scroll', onScrollVelocity, { passive: true });
 
   state.revealObserver = new IntersectionObserver(
@@ -208,7 +227,7 @@ const initHeroTypography = (reducedMotion: boolean): void => {
 export const initSiteMotion = (): void => {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const state = getMotionState();
-  initRouteDirection();
+  initRouteDirection(state);
   initHeroTypography(reducedMotion);
   initReveal(reducedMotion, state);
   initParallax(reducedMotion, state);

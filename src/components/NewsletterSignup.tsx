@@ -64,26 +64,20 @@ export default function NewsletterSignup({
 
   if (status === 'success') {
     return (
-      <div
-        className={`rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-700 dark:text-emerald-300 ${className}`}
-        role="status"
-      >
-        <p className="font-semibold">You're in. Check your inbox to confirm.</p>
-        <p className="mt-1 text-sm opacity-90">
+      <div className={`newsletter-signup__success ${className}`} role="status">
+        <p className="newsletter-signup__success-title">You're in. Check your inbox to confirm.</p>
+        <p className="newsletter-signup__success-description">
           Didn't see it? Peek at spam, then promote it. Next issue ships soon.
         </p>
       </div>
     );
   }
 
-  const cardStyles =
-    variant === 'card'
-      ? 'rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900'
-      : '';
+  const cardStyles = variant === 'card' ? 'newsletter-signup--card' : '';
 
   return (
-    <div className={`${cardStyles} ${className}`}>
-      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3 sm:flex-row">
+    <div className={`newsletter-signup ${cardStyles} ${className}`}>
+      <form onSubmit={handleSubmit} noValidate className="newsletter-signup__form">
         <label htmlFor="newsletter-email" className="sr-only">
           Email address
         </label>
@@ -97,7 +91,7 @@ export default function NewsletterSignup({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={status === 'sending'}
-          className="flex-1 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+          className="newsletter-signup__input"
         />
         {/* Honeypot — hidden from humans, visible to dumb bots */}
         <input
@@ -110,21 +104,17 @@ export default function NewsletterSignup({
           className="absolute left-[-9999px] h-0 w-0 opacity-0"
           aria-hidden="true"
         />
-        <button
-          type="submit"
-          disabled={status === 'sending'}
-          className="rounded-md bg-emerald-600 px-4 py-2 font-medium text-white transition hover:bg-emerald-700 disabled:opacity-60"
-        >
+        <button type="submit" disabled={status === 'sending'} className="newsletter-signup__button">
           {status === 'sending' ? 'Subscribing…' : 'Subscribe'}
         </button>
       </form>
       {error && (
-        <p className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
+        <p className="newsletter-signup__error" role="alert">
           {error}
         </p>
       )}
       {variant === 'inline' && (
-        <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+        <p className="newsletter-signup__note">
           Free. One email when there's something worth saying. Unsubscribe anytime.
         </p>
       )}
