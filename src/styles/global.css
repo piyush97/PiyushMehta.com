@@ -38,13 +38,19 @@
   --color-accent: var(--color-accent);
   --color-accent-light: var(--color-light-300);
   --color-surface-primary: var(--color-bg);
-  --color-surface-secondary: var(--color-light-800);
-  --color-surface-tertiary: var(--color-light-700);
-  --color-text-primary: var(--color-light-100);
-  --color-text-secondary: var(--color-light-300);
+  --color-surface-secondary: var(--color-surface-raised, var(--color-light-800));
+  --color-surface-tertiary: var(--color-surface-100, var(--color-light-700));
+  --color-surface-100: var(--color-surface-100);
+  --color-surface-200: var(--color-surface-200);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
   --color-border: var(--color-card-border);
   --color-bg: var(--color-bg);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-accent-darker: var(--color-accent-darker);
   --color-danger: #ff5252;
+  --color-success: var(--color-success);
   --color-card-border: var(--color-card-border);
   --color-card-border-hover: var(--color-card-border-hover);
   --color-card-gradient-light: var(--color-card-gradient-light);
@@ -176,7 +182,7 @@ pre code {
   --motion-base: 240ms;
   --motion-slow: 560ms;
   --motion-page: 420ms;
-  --motion-spring: cubic-bezier(0.2, 0.9, 0.2, 1);
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --color-bg: #171a2f;
   --color-bg-rgb: 23, 26, 47;
   --color-surface-raised: #222640;
@@ -193,6 +199,8 @@ pre code {
   --color-darker: #0f1221;
   --color-darker-rgb: 15, 18, 33;
   --color-navbar-bg: rgba(23, 26, 47, 0.9);
+  --color-shadow: rgba(255, 204, 104, 0.25);
+  --color-shadow-dark: rgba(0, 0, 0, 0.25);
   /* RGB triples for old newsletter/CTA styles (rgb(var(--surface) / …)) */
   --text: 246, 247, 255; /* --color-text-primary */
   --surface: 34, 38, 64; /* --color-surface-raised */
@@ -218,6 +226,8 @@ pre code {
   --color-darker: #fffaf0;
   --color-darker-rgb: 255, 250, 240;
   --color-navbar-bg: rgba(246, 243, 234, 0.9);
+  --color-shadow: rgba(141, 61, 31, 0.25);
+  --color-shadow-dark: rgba(0, 0, 0, 0.25);
   /* RGB triples for old newsletter/CTA styles */
   --text: 18, 24, 39; /* --color-text-primary */
   --surface: 255, 250, 240; /* --color-surface-raised */
@@ -360,9 +370,9 @@ main {
   opacity: 0;
   transform: translate3d(0, calc(0.6rem + var(--parallax-offset, 0px)), 0) scale(0.992);
   transition:
-    opacity var(--motion-base, 240ms) var(--motion-spring, cubic-bezier(0.2, 0.9, 0.2, 1)),
+    opacity var(--motion-base, 240ms) var(--motion-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
     transform calc(var(--motion-base, 240ms) + 40ms)
-      var(--motion-spring, cubic-bezier(0.2, 0.9, 0.2, 1));
+      var(--motion-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
   transition-delay: var(--reveal-delay, 0ms);
   will-change: opacity, transform;
 }
@@ -625,6 +635,19 @@ main {
   }
 }
 
+.site-nav__links a,
+.site-footer a,
+.social-row a,
+.notebook-card__meta a,
+.link-row a,
+.info-card a,
+.blog-post-back__link,
+.blog-post-breadcrumbs a,
+.related-posts-section > div:first-child > a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+}
 .blog-filter {
   display: grid;
   gap: 1.25rem;
@@ -889,7 +912,7 @@ html {
 
 /* Theme Variables */
 :root {
-  /* Default (Dark) Theme */
+  /* Compatibility palette for legacy text-light utilities */
   --color-lighter: #fff;
   --color-light-100: #dcdff7;
   --color-light-200: #c8cbe8;
@@ -901,24 +924,17 @@ html {
   --color-light-800: #282e5e;
   --color-light-900: #22264a;
   --color-light-950: #1f2347;
-  --color-darker: #000;
-  --color-accent: #ffcc68;
+  --color-success: #a8e6b8;
 
-  /* Semantic colors */
-  --color-bg: var(--color-light-900);
-  --color-text: var(--color-light-300);
-  --color-text-primary: var(--color-light-100);
-  --color-text-secondary: var(--color-light-400);
-  --color-card-border: var(--color-light-800);
-  --color-card-border-hover: var(--color-light-700);
-  --color-card-gradient-light: var(--color-light-700);
-  --color-card-gradient-dark: var(--color-light-950);
-  --color-navbar-bg: rgba(34, 38, 74, 0.9);
-  --color-shadow: rgba(255, 204, 104, 0.25);
-  --color-shadow-dark: rgba(0, 0, 0, 0.25);
-
-  /* Shadow values */
-  --shadow-glow: var(--color-shadow) 0 0 0 0.25rem;
+  /* Shared semantic fallbacks for legacy utility names */
+  --color-surface-100: var(--color-surface-raised, var(--color-light-900));
+  --color-surface-200: var(--color-surface-raised, var(--color-light-800));
+  --color-bg-secondary: var(--color-darker, var(--color-light-950));
+  --color-text-tertiary: var(--color-text-muted, var(--color-light-500));
+  --color-accent-darker: color-mix(in srgb, var(--color-accent) 75%, black);
+  --color-card-border-hover: color-mix(in srgb, var(--color-card-border) 75%, var(--color-accent));
+  --color-card-gradient-light: var(--color-surface-raised, var(--color-light-700));
+  --color-card-gradient-dark: var(--color-darker, var(--color-light-950));
 }
 
 /* Disable transitions during theme initialization to prevent flash */
@@ -938,7 +954,7 @@ html {
   animation: none !important;
 }
 
-/* Professional Light Mode (current light theme) */
+/* Compatibility palettes for legacy text-light utilities */
 :root.professional-light {
   --color-lighter: #100f4d;
   --color-light-100: #363b65;
@@ -951,23 +967,9 @@ html {
   --color-light-800: #f5f5f5;
   --color-light-900: #efeff5;
   --color-light-950: #f6f6f6;
-  --color-darker: #fff;
-  --color-accent: #b54909;
-
-  /* Light mode text colors - lighter text on light background */
-  --color-bg: var(--color-light-900);
-  --color-text: var(--color-light-300);
-  --color-text-primary: var(--color-light-100);
-  --color-text-secondary: var(--color-light-400);
-  --color-card-border: var(--color-light-800);
-  --color-card-border-hover: var(--color-light-700);
-  --color-card-gradient-light: var(--color-light-700);
-  --color-card-gradient-dark: var(--color-light-950);
-  --color-navbar-bg: rgba(239, 239, 245, 0.9);
-  --color-shadow: rgba(181, 73, 9, 0.25);
 }
 
-/* Professional Dark Mode (current dark theme) */
+/* Compatibility palette for legacy text-light utilities */
 :root.professional-dark {
   --color-lighter: #fff;
   --color-light-100: #dcdff7;
@@ -980,21 +982,6 @@ html {
   --color-light-800: #282e5e;
   --color-light-900: #22264a;
   --color-light-950: #1f2347;
-  --color-darker: #000;
-  --color-accent: #ffcc68;
-
-  /* Semantic colors */
-  --color-bg: var(--color-light-900);
-  --color-text: var(--color-light-300);
-  --color-text-primary: var(--color-light-100);
-  --color-text-secondary: var(--color-light-400);
-  --color-card-border: var(--color-light-800);
-  --color-card-border-hover: var(--color-light-700);
-  --color-card-gradient-light: var(--color-light-700);
-  --color-card-gradient-dark: var(--color-light-950);
-  --color-navbar-bg: rgba(34, 38, 74, 0.9);
-  --color-shadow: rgba(255, 204, 104, 0.25);
-  --color-shadow-dark: rgba(0, 0, 0, 0.25);
 }
 
 /* Retro Tech Theme (90s inspired) */
@@ -1134,20 +1121,6 @@ html {
   --color-light-800: #f5f5f5;
   --color-light-900: #efeff5;
   --color-light-950: #f6f6f6;
-  --color-darker: #fff;
-  --color-accent: #b54909;
-
-  /* Light mode text colors - lighter text on light background */
-  --color-bg: var(--color-light-900);
-  --color-text: var(--color-light-300);
-  --color-text-primary: var(--color-light-100);
-  --color-text-secondary: var(--color-light-400);
-  --color-card-border: var(--color-light-800);
-  --color-card-border-hover: var(--color-light-700);
-  --color-card-gradient-light: var(--color-light-700);
-  --color-card-gradient-dark: var(--color-light-950);
-  --color-navbar-bg: rgba(239, 239, 245, 0.9);
-  --color-shadow: rgba(181, 73, 9, 0.25);
 }
 
 /* Monochrome Light Mode */
@@ -1276,7 +1249,7 @@ html {
 
   /* Blockquotes */
   blockquote {
-    @apply border-l-4 border-accent pl-4 italic text-light-200 my-4;
+    @apply border border-accent/40 px-4 italic text-light-200 my-4 rounded-lg;
   }
 }
 
@@ -1737,7 +1710,8 @@ html {
 
   .search-result-item.selected {
     background: rgba(255, 204, 104, 0.1);
-    border-left: 3px solid var(--color-accent);
+    outline: 1px solid var(--color-accent);
+    outline-offset: -1px;
   }
 
   /* Search input focus styles */
@@ -1780,7 +1754,6 @@ html {
 
   :root.retro-tech .search-result-item.selected {
     background: rgba(0, 255, 0, 0.1);
-    border-left-color: #00ff00;
   }
 
   :root.minimalist #search-modal {
@@ -1793,7 +1766,6 @@ html {
 
   :root.high-contrast .search-result-item.selected {
     background: rgba(255, 255, 0, 0.2);
-    border-left-color: #ffff00;
   }
 
   /* Mobile Navigation Styles */
@@ -2076,13 +2048,6 @@ html {
 
   .bg-background {
     background-color: var(--color-bg);
-  }
-
-  .text-gradient {
-    background: linear-gradient(135deg, var(--color-accent), var(--color-light-300));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
 
   .bg-gradient-card {

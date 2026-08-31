@@ -359,12 +359,18 @@ const commentId = `giscus-${Math.random().toString(36).slice(2, 11)}`;
     const giscusContainers = document.querySelectorAll('[data-comment-id]');
 
     giscusContainers.forEach((container) => {
+      if (!(container instanceof HTMLElement) || container.dataset.giscusInitialized === 'true') return;
+
       const commentId = container.getAttribute('data-comment-id');
       if (commentId) {
+        container.dataset.giscusInitialized = 'true';
         new GiscusManager(commentId);
       }
     });
   };
+
+  document.addEventListener('astro:page-load', initGiscus);
+  initGiscus();
 
   if ('requestIdleCallback' in window) {
     (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(initGiscus, { timeout: 2000 });

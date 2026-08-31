@@ -181,13 +181,13 @@ function getRiskLevel(probability: string, impact: string): string {
 function getRiskColor(level: string): string {
   switch (level) {
     case 'critical':
-      return 'bg-light-800 border-card-border text-text-primary shadow-lg border-l-4 border-l-danger';
+      return 'bg-light-800 border-card-border text-text-primary shadow-lg ring-1 ring-inset ring-danger';
     case 'high':
-      return 'bg-light-800 border-card-border text-text-primary shadow-md border-l-4 border-l-accent';
+      return 'bg-light-800 border-card-border text-text-primary shadow-md ring-1 ring-inset ring-accent';
     case 'medium':
-      return 'bg-light-700 border-card-border text-text-primary border-l-4 border-l-text-secondary';
+      return 'bg-light-700 border-card-border text-text-primary ring-1 ring-inset ring-text-secondary';
     case 'low':
-      return 'bg-light-700 border-card-border text-text-secondary border-l-4 border-l-accent';
+      return 'bg-light-700 border-card-border text-text-secondary ring-1 ring-inset ring-accent';
     default:
       return 'bg-light-800 border-card-border text-text-secondary';
   }

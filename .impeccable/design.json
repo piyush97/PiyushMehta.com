@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-31T15:30:00Z",
+  "title": "Design System: PiyushMehta.com",
+  "extensions": {
+    "colorMeta": {
+      "ink-night": {
+        "role": "neutral",
+        "displayName": "Ink Night",
+        "canonical": "#171a2f",
+        "tonalRamp": [
+          "#0f1221",
+          "#171a2f",
+          "#1f2347",
+          "#22264a",
+          "#282e5e",
+          "#2e3360",
+          "#343a5f",
+          "#f6f7ff"
+        ]
+      },
+      "surface-night": {
+        "role": "neutral",
+        "displayName": "Surface Night",
+        "canonical": "#222640",
+        "tonalRamp": [
+          "#0f1221",
+          "#171a2f",
+          "#1f2347",
+          "#222640",
+          "#282e5e",
+          "#2e3360",
+          "#343a5f",
+          "#f6f7ff"
+        ]
+      },
+      "paper-warm": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "canonical": "#f6f3ea",
+        "tonalRamp": [
+          "#121827",
+          "#364057",
+          "#4b5871",
+          "#6e778d",
+          "#ddd3c2",
+          "#e6e8f5",
+          "#fffaf0",
+          "#f6f3ea"
+        ]
+      },
+      "amber-signal": {
+        "role": "primary",
+        "displayName": "Amber Signal",
+        "canonical": "#ffcc68",
+        "tonalRamp": [
+          "#7a4f00",
+          "#a56d00",
+          "#c58a19",
+          "#e5ad43",
+          "#ffcc68",
+          "#ffd98b",
+          "#ffe8b8",
+          "#fff5df"
+        ]
+      },
+      "rust-signal": {
+        "role": "primary",
+        "displayName": "Rust Signal",
+        "canonical": "#8d3d1f",
+        "tonalRamp": [
+          "#3b180d",
+          "#572412",
+          "#713019",
+          "#8d3d1f",
+          "#a94e2b",
+          "#c06b4c",
+          "#d99a82",
+          "#f0d0c4"
+        ]
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Success",
+        "canonical": "#a8e6b8",
+        "tonalRamp": [
+          "#194d2b",
+          "#286b3d",
+          "#3f8c55",
+          "#69b879",
+          "#a8e6b8",
+          "#c2edcc",
+          "#dcf5e2",
+          "#f2fbf4"
+        ]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Danger",
+        "canonical": "#ff5252",
+        "tonalRamp": [
+          "#6b1010",
+          "#941818",
+          "#bd2929",
+          "#e43d3d",
+          "#ff5252",
+          "#ff7777",
+          "#ff9d9d",
+          "#ffd4d4"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Homepage hero statements and first-viewport claims."
+      },
+      "body": { "displayName": "Body", "purpose": "Prose, descriptions, and explanatory content." },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Metadata, eyebrows, and compact navigation context."
+      }
+    },
+    "shadows": [
+      {
+        "name": "soft-surface",
+        "value": "0 2px 6px 0 rgba(0, 0, 0, 0.1)",
+        "purpose": "Quiet separation for newsletter and grouped controls."
+      },
+      {
+        "name": "card-emphasis",
+        "value": "5px 5px 15px rgba(0, 0, 0, 0.12)",
+        "purpose": "Legacy card separation where required by the incumbent surface."
+      },
+      {
+        "name": "interactive-hover",
+        "value": "0 16px 40px rgba(0, 0, 0, 0.18)",
+        "purpose": "Hover elevation for writing-list items."
+      }
+    ],
+    "motion": [
+      { "name": "fast", "value": "150ms", "purpose": "Small control and color transitions." },
+      { "name": "base", "value": "240ms", "purpose": "Default reveal and state transitions." },
+      {
+        "name": "slow",
+        "value": "560ms",
+        "purpose": "Navigation entrance and larger authored moments."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default easing for transforms and opacity."
+      }
+    ],
+    "breakpoints": [
+      { "name": "mobile-nav", "value": "767px" },
+      { "name": "compact", "value": "620px" },
+      { "name": "tablet", "value": "920px" },
+      { "name": "wide", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "High-contrast action with a theme-semantic signal background.",
+      "html": "<button class=\"ds-button-primary\" type=\"button\">Inspect the work</button>",
+      "css": ".ds-button-primary { min-height: 44px; padding: 10px 16px; border: 0; border-radius: 6px; background: var(--color-accent); color: var(--color-accent-foreground); font: 700 1rem/1.2 Muli, sans-serif; cursor: pointer; } .ds-button-primary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Link",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet outlined action for adjacent navigation or lower-priority work.",
+      "html": "<a class=\"ds-button-secondary\" href=\"/blog/\">Read the notebook</a>",
+      "css": ".ds-button-secondary { display: inline-flex; min-height: 44px; align-items: center; padding: 10px 16px; border: 1px solid var(--color-card-border); border-radius: 6px; color: var(--color-text-primary); font: 700 1rem/1.2 Muli, sans-serif; text-decoration: none; } .ds-button-secondary:hover { border-color: var(--color-accent); color: var(--color-accent); transform: translateY(-1px); } .ds-button-secondary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Compact labeled field for newsletter and contact flows.",
+      "html": "<label class=\"ds-field\"><span>Email address</span><input type=\"email\" placeholder=\"you@domain.com\"></label>",
+      "css": ".ds-field { display: grid; gap: 6px; color: var(--color-text-secondary); font: 700 .875rem/1.2 Muli, sans-serif; } .ds-field input { min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-card-border); border-radius: 6px; background: var(--color-bg); color: var(--color-text-primary); font: inherit; } .ds-field input:focus-visible { border-color: var(--color-accent); outline: 2px solid color-mix(in srgb, var(--color-accent) 28%, transparent); outline-offset: 1px; }"
+    },
+    {
+      "name": "Primary Navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Sticky full-width shell with centered content, brand, routes, theme action, and mobile control.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Primary navigation\"><a class=\"ds-nav-brand\" href=\"/\">PM <strong>Piyush Mehta</strong></a><div class=\"ds-nav-links\"><a href=\"/projects/\">Work</a><a href=\"/blog/\">Writing</a></div><div class=\"ds-nav-actions\"><button type=\"button\" aria-label=\"Toggle theme\">Theme</button><button type=\"button\" aria-label=\"Toggle menu\">Menu</button></div></nav>",
+      "css": ".ds-nav { position: sticky; top: 0; z-index: 50; display: grid; grid-template-columns: auto 1fr auto; gap: 16px; min-height: 64px; align-items: center; padding: 10px max(16px, calc((100vw - 1120px) / 2)); border-bottom: 1px solid var(--color-card-border); background: rgb(var(--color-bg-rgb) / .86); backdrop-filter: blur(16px); color: var(--color-text-secondary); font: 700 .92rem/1.2 Muli, sans-serif; } .ds-nav-links, .ds-nav-actions { display: flex; align-items: center; gap: 6px; } .ds-nav-links { justify-content: center; } .ds-nav a, .ds-nav button { padding: 9px 12px; border: 0; border-radius: 6px; background: transparent; color: inherit; font: inherit; text-decoration: none; } .ds-nav a:hover, .ds-nav a:focus-visible, .ds-nav button:hover, .ds-nav button:focus-visible { background: color-mix(in srgb, var(--color-accent) 8%, transparent); color: var(--color-accent); } .ds-nav-brand { color: var(--color-text-primary) !important; } @media (max-width: 767px) { .ds-nav-links { display: none; } }"
+    },
+    {
+      "name": "Evidence Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Tonal container for a case study, notebook entry, or measurable outcome.",
+      "html": "<article class=\"ds-card\"><p class=\"ds-card-label\">Outcome</p><h2>Evidence before adjectives</h2><p>Show the decision, constraint, and result.</p></article>",
+      "css": ".ds-card { padding: 22px; border: 1px solid var(--color-card-border); border-radius: 12px; background: var(--color-surface-raised); color: var(--color-text-primary); } .ds-card-label { margin: 0 0 10px; color: var(--color-accent); font: 800 .8rem/1.2 Muli, sans-serif; letter-spacing: .12em; text-transform: uppercase; } .ds-card h2 { margin: 0; font: 800 1.35rem/1.2 Muli, sans-serif; } .ds-card p:last-child { color: var(--color-text-secondary); line-height: 1.625; }"
+    },
+    {
+      "name": "Tag Chip",
+      "kind": "chip",
+      "refersTo": "chips",
+      "description": "Compact theme-semantic tag used for post metadata and filters.",
+      "html": "<a class=\"ds-chip\" href=\"/blog/?theme=systems\">#systems</a>",
+      "css": ".ds-chip { display: inline-flex; min-height: 44px; align-items: center; padding: 4px 12px; border: 1px solid color-mix(in srgb, var(--color-accent) 32%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--color-accent) 10%, transparent); color: var(--color-accent); font: 700 .875rem/1.2 Muli, sans-serif; text-decoration: none; } .ds-chip:hover, .ds-chip:focus-visible { background: color-mix(in srgb, var(--color-accent) 20%, transparent); }"
+    },
+    {
+      "name": "Writing List",
+      "kind": "custom",
+      "refersTo": "writing-list",
+      "description": "Reading-first article row with metadata, title, description, tags, and a clear action.",
+      "html": "<section class=\"ds-writing-list\"><article><div class=\"ds-writing-meta\">Aug 31, 2026 · 6 min read</div><h3><a href=\"/blog/systems/\">Evidence before adjectives</a></h3><p>Implementation notes and tradeoffs from production systems.</p><div class=\"ds-writing-footer\"><span class=\"ds-writing-tag\">systems</span><a href=\"/blog/systems/\">Read article</a></div></article></section>",
+      "css": ".ds-writing-list { display: grid; gap: 1px; border: 1px solid var(--color-card-border); background: var(--color-card-border); } .ds-writing-list article { display: grid; gap: 14px; padding: 22px; background: var(--color-surface-raised); transition: transform 220ms ease, box-shadow 220ms ease; } .ds-writing-list article:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0, 0, 0, .18); } .ds-writing-list h3, .ds-writing-list p { margin: 0; } .ds-writing-list h3 { font: 800 clamp(1.45rem, 3vw, 2.2rem)/1.08 Muli, sans-serif; } .ds-writing-list h3 a, .ds-writing-footer a { color: var(--color-text-primary); text-decoration: none; } .ds-writing-meta { color: var(--color-text-muted); font: .86rem/1.2 Muli, sans-serif; } .ds-writing-list p { color: var(--color-text-secondary); line-height: 1.7; } .ds-writing-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; } .ds-writing-tag { display: inline-flex; min-height: 44px; align-items: center; padding: 4px 12px; border: 1px solid color-mix(in srgb, var(--color-accent) 32%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--color-accent) 10%, transparent); color: var(--color-accent); font: 700 .875rem/1.2 Muli, sans-serif; } .ds-writing-footer a { color: var(--color-accent); font-weight: 800; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Evidence Ledger",
+    "overview": "PiyushMehta.com is a public engineering record, not a generic personal brand template. The visual system treats every page as a legible ledger of decisions: cool ink surfaces hold the work, warm amber marks the signal, and typography carries the authority. The result is technical and editorial without pretending to be a dashboard. It should feel useful to an engineering leader evaluating judgment, a reader staying with a difficult idea, or a collaborator looking for proof.\n\nThe incumbent world is compact at the navigation level and spacious at section boundaries. It uses a dark-first palette with a warm paper/light theme, semantic tokens shared across both, and small tonal shifts rather than decorative noise. Motion is brief and state-oriented: opacity and transforms reveal content, controls respond with restrained translation, and reduced motion preserves hierarchy without blocking access. The authored direction generally avoids gradient text, emoji-led visual language, thick colored side rails, and bounce-heavy feedback, but the incumbent still has scoped exceptions: ArticleMeta and blog explainers retain Unicode/emoji glyphs, PostReactions uses a 1.28× reaction-pop overshoot, TechComparison uses a 1.05× selected-control scale, and body/legacy card/newsletter surfaces retain background gradients. Treat these as content- or component-specific legacy treatments, not defaults for new UI.",
+    "keyCharacteristics": [
+      "Evidence-first editorial hierarchy",
+      "Cool ink surfaces with a rare amber signal",
+      "Muli for voice; Source Code Pro for code and measured data",
+      "Tonal layering and thin borders before heavy shadows",
+      "Route-scoped responsive grids: homepage at 920px/620px, writing at 860px/640px, and about/contact at 960px/640px"
+    ],
+    "rules": [
+      {
+        "name": "The Ledger Rule",
+        "body": "Use the accent to mark decisions and actions, not to decorate every surface. Let neutral hierarchy do most of the speaking.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Ink Rule",
+        "body": "Dark and light themes share semantic roles, but each theme chooses its own readable ink, surface, border, and signal values. Never paste dark-theme values into the light theme.",
+        "section": "colors"
+      },
+      {
+        "name": "The Weight Before Color Rule",
+        "body": "Establish hierarchy with size, weight, and spacing first; use the accent for a precise semantic distinction.",
+        "section": "typography"
+      },
+      {
+        "name": "The Code Means Code Rule",
+        "body": "Use the monospace face for source, commands, dates, metrics, and other measured artifacts only.",
+        "section": "typography"
+      },
+      {
+        "name": "The Quiet Rest Rule",
+        "body": "A surface should be visually calm before interaction. Depth appears through tonal separation, borders, and purposeful hover/focus state.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do make the evidence, constraint, tradeoff, or outcome the visual focal point.",
+      "Do use semantic theme tokens from src/styles/global.css instead of introducing one-off palette values.",
+      "Do preserve the dark ink / warm paper theme pairing and its readable text roles.",
+      "Do use Muli for interface and prose, and monospace only for code, data, dates, or measurements.",
+      "Do keep focus states visible, touch targets comfortable, and mobile panels keyboard-operable.",
+      "Do use authored SVG icons with consistent stroke weight when an interface icon is needed.",
+      "Do prefer 1px full borders, tonal surfaces, and restrained shadows over decorative side rails."
+    ],
+    "donts": [
+      "Don't invent testimonials, clients, metrics, credentials, or outcomes to fill visual space.",
+      "Don't use gradient text as decoration. Background gradients remain in the body wash, legacy cards, newsletter shell, reaction sheen, and some content surfaces; they are scoped exceptions, not a general component recipe.",
+      "Don't make emoji or Unicode glyphs the default icon system. ArticleMeta share actions and blog explainers retain legacy/content-specific glyphs (including quiz feedback and TechComparison logos); new interface icons should use authored SVG.",
+      "Don't use interaction overshoot as a general feedback pattern. PostReactions' 1.28× icon pop and TechComparison's 1.05× selected scale are incumbent exceptions; ordinary controls should use restrained translation or color change.",
+      "Don't animate width, height, or other layout properties when a transform can express the same state.",
+      "Don't use bounce or spring motion for ordinary navigation, feedback, or reveal states.",
+      "Don't use thick colored border-left or border-right treatments on cards, callouts, list items, or alerts.",
+      "Don't make the accent omnipresent. Its rarity is what makes an active state legible."
+    ]
+  }
+}

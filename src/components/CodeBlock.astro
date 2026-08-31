@@ -28,28 +28,28 @@ const {
       <div class="flex items-center space-x-3">
         {filename && (
           <div class="flex items-center space-x-2">
-            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <span class="text-sm font-medium text-light-200">{filename}</span>
+            <span class="text-sm font-medium text-text-secondary">{filename}</span>
           </div>
         )}
         
         {title && !filename && (
-          <span class="text-sm font-medium text-light-200">{title}</span>
+          <span class="text-sm font-medium text-text-secondary">{title}</span>
         )}
         
         {language && (
           <div class="flex items-center space-x-1">
-            <div class="w-2 h-2 rounded-full bg-green-400"></div>
-            <span class="text-xs text-light-400 uppercase font-mono">{language}</span>
+            <div class="w-2 h-2 rounded-full bg-accent"></div>
+            <span class="text-xs text-text-secondary uppercase font-mono">{language}</span>
           </div>
         )}
       </div>
       
       <!-- Copy Button -->
       <button
-        class="copy-code-btn flex items-center space-x-2 px-3 py-1.5 text-xs font-medium text-light-300 bg-light-800 hover:bg-light-700 hover:text-light-100 transition-all duration-200 rounded-md border border-light-600 hover:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/30"
+        class="copy-code-btn flex min-h-11 items-center space-x-2 px-3 py-1.5 text-xs font-medium text-text-secondary bg-surface-200 hover:bg-accent/10 hover:text-text-primary transition-all duration-200 rounded-md border border-card-border hover:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/30"
         data-code={code}
         aria-label="Copy code to clipboard"
         title="Copy to clipboard"
@@ -57,7 +57,7 @@ const {
         <svg class="copy-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
         </svg>
-        <svg class="check-icon w-4 h-4 hidden text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="check-icon w-4 h-4 hidden text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M5 13l4 4L19 7" />
         </svg>
         <span class="copy-text">Copy</span>
@@ -78,7 +78,7 @@ const {
     <!-- Copy button for headerless code blocks -->
     {!(title || filename || language) && (
       <button
-        class="copy-code-btn absolute top-3 right-3 flex items-center space-x-1 px-2 py-1 text-xs font-medium text-light-400 bg-light-800/80 hover:bg-light-700 hover:text-light-100 transition-all duration-200 rounded border border-light-600 hover:border-accent/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-accent/30"
+        class="copy-code-btn absolute top-3 right-3 flex min-h-11 min-w-11 items-center justify-center space-x-1 px-2 py-1 text-xs font-medium text-text-secondary bg-surface-200/80 hover:bg-accent/10 hover:text-text-primary transition-all duration-200 rounded border border-card-border hover:border-accent/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-accent/30"
         data-code={code}
         aria-label="Copy code to clipboard"
         title="Copy to clipboard"
@@ -86,7 +86,7 @@ const {
         <svg class="copy-icon w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
         </svg>
-        <svg class="check-icon w-3 h-3 hidden text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="check-icon w-3 h-3 hidden text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M5 13l4 4L19 7" />
         </svg>
       </button>
@@ -95,8 +95,12 @@ const {
 </div>
 
 <script is:inline>
-  // Enhanced Code Block Functionality
-  class CodeBlockEnhancer {
+  (() => {
+    if (document.documentElement.dataset.codeBlockBound === 'true') return;
+    document.documentElement.dataset.codeBlockBound = 'true';
+
+    // Enhanced Code Block Functionality
+    class CodeBlockEnhancer {
     constructor() {
       this.initializeCopyButtons();
       this.enhanceCodeBlocks();
@@ -166,6 +170,7 @@ const {
       // Add group class for hover effects
       const codeContainers = document.querySelectorAll('.code-block-container');
       codeContainers.forEach(container => {
+        if (!(container instanceof HTMLElement) || container.dataset.codeBlockEnhanced === 'true') return;
         container.classList.add('group');
         
         // Add language-specific styling
@@ -184,6 +189,7 @@ const {
           code.setAttribute('aria-label', `Code snippet${language ? ` in ${language}` : ''}`);
           code.setAttribute('aria-readonly', 'true');
         }
+        container.dataset.codeBlockEnhanced = 'true';
       });
 
       // Add line numbers if requested
@@ -198,11 +204,12 @@ const {
       
       codeBlocksWithLineNumbers.forEach(pre => {
         const code = pre.querySelector('code');
-        if (!code) return;
+        const parent = pre.parentElement;
+        if (!code || !parent || parent.querySelector('.line-numbers')) return;
         
         const lines = code.textContent.split('\n');
         const lineNumbersDiv = document.createElement('div');
-        lineNumbersDiv.className = 'line-numbers absolute left-0 top-0 bottom-0 w-12 bg-code-header border-r border-card-border flex flex-col text-xs text-light-500 select-none';
+        lineNumbersDiv.className = 'line-numbers absolute left-0 top-0 bottom-0 w-12 bg-code-header border-r border-card-border flex flex-col text-xs text-text-tertiary select-none';
         
         lines.forEach((_, index) => {
           if (index === lines.length - 1 && lines[index] === '') return; // Skip last empty line
@@ -214,8 +221,8 @@ const {
         });
         
         pre.style.paddingLeft = '3.5rem';
-        pre.parentElement.style.position = 'relative';
-        pre.parentElement.insertBefore(lineNumbersDiv, pre);
+        parent.style.position = 'relative';
+        parent.insertBefore(lineNumbersDiv, pre);
       });
     }
 
@@ -275,55 +282,35 @@ const {
     }
   }
 
-  // Initialize code block enhancer
-  document.addEventListener('DOMContentLoaded', () => {
-    new CodeBlockEnhancer();
-  });
+  const enhancer = new CodeBlockEnhancer();
+  document.addEventListener('astro:page-load', () => enhancer.enhanceCodeBlocks());
 
-  // Re-initialize on dynamic content
   const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.addedNodes.length > 0) {
-        const hasCodeBlocks = Array.from(mutation.addedNodes).some(node => 
-          node.nodeType === 1 && (
-            node.matches?.('.code-block-container') || 
-            node.querySelector?.('.code-block-container')
-          )
-        );
-        
-        if (hasCodeBlocks) {
-          new CodeBlockEnhancer();
-        }
-      }
-    });
+    const hasCodeBlocks = mutations.some((mutation) =>
+      Array.from(mutation.addedNodes).some((node) =>
+        node.nodeType === 1 &&
+        (node.matches?.('.code-block-container') || node.querySelector?.('.code-block-container'))
+      )
+    );
+
+    if (hasCodeBlocks) enhancer.enhanceCodeBlocks();
   });
 
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
+  if (document.body) {
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+  })();
 </script>
 
 <style>
   .code-block-container {
-    --code-bg: #1a1b26;
-    --code-header: #24283b;
-    --code-text: #a9b1d6;
-    --code-comment: #565f89;
-    --code-string: #9ece6a;
-    --code-number: #ff9e64;
-    --code-keyword: #7aa2f7;
-  }
-
-  /* Theme adjustments */
-  .professional-light .code-block-container {
-    --code-bg: #f8fafc;
-    --code-header: #f1f5f9;
-    --code-text: #334155;
-    --code-comment: #64748b;
-    --code-string: #059669;
-    --code-number: #dc2626;
-    --code-keyword: #3b82f6;
+    --code-bg: var(--color-darker, var(--color-bg));
+    --code-header: var(--color-bg);
+    --code-text: var(--color-text-primary, var(--color-light-100));
+    --code-comment: var(--color-text-muted, var(--color-text-secondary, var(--color-light-400)));
+    --code-string: var(--color-success, var(--color-accent));
+    --code-number: var(--color-accent);
+    --code-keyword: var(--color-accent);
   }
 
   .code-block-container {
@@ -340,7 +327,7 @@ const {
 
   .code-content {
     color: var(--code-text);
-    font-family: 'SF Mono', Monaco, 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace;
+    font-family: var(--font-mono);
     font-size: 0.875rem;
     line-height: 1.5;
   }
@@ -414,12 +401,12 @@ const {
   }
 
   .code-content::-webkit-scrollbar-thumb {
-    background: #4a5568;
+    background: var(--color-card-border);
     border-radius: 4px;
   }
 
   .code-content::-webkit-scrollbar-thumb:hover {
-    background: #718096;
+    background: var(--color-card-border-hover);
   }
 
   /* High contrast mode */

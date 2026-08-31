@@ -226,86 +226,76 @@ function calculateReadingTime(content: string) {
 <script is:inline>
   // Related Posts Analytics and Interactions
   class RelatedPostsAnalytics {
-    constructor() {
+    section;
+
+    constructor(section) {
+      this.section = section;
       this.initializeTracking();
       this.addInteractiveFeatures();
     }
 
     initializeTracking() {
-      // Track related post views
-      const relatedSection = document.querySelector('.related-posts-section');
-      if (!relatedSection) return;
-
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             this.trackEvent('related_posts_viewed', {
-              posts_shown: document.querySelectorAll('.related-post-card').length
+              posts_shown: this.section.querySelectorAll('.related-post-card').length,
             });
           }
         });
       }, { threshold: 0.5 });
 
-      observer.observe(relatedSection);
+      observer.observe(this.section);
 
-      // Track related post clicks
-      document.addEventListener('click', (e) => {
-        const postCard = e.target.closest('.related-post-card');
-        if (postCard) {
-          const similarity = parseFloat(postCard.dataset.similarity || '0');
-          const title = postCard.querySelector('h3')?.textContent || '';
-          
-          this.trackEvent('related_post_clicked', {
-            post_title: title,
-            similarity_score: similarity,
-            position: Array.from(postCard.parentElement.children).indexOf(postCard)
-          });
-        }
+      this.section.addEventListener('click', (event) => {
+        if (!(event.target instanceof Element)) return;
+        const postCard = event.target.closest('.related-post-card');
+        if (!postCard) return;
+
+        const similarity = Number.parseFloat(postCard.getAttribute('data-similarity') || '0');
+        const title = postCard.querySelector('h3')?.textContent || '';
+        this.trackEvent('related_post_clicked', {
+          post_title: title,
+          similarity_score: similarity,
+          position: Array.from(postCard.parentElement?.children ?? []).indexOf(postCard),
+        });
       });
     }
 
     addInteractiveFeatures() {
-      // Add hover animations
-      const postCards = document.querySelectorAll('.related-post-card');
-      
-      postCards.forEach(card => {
-        card.addEventListener('mouseenter', () => {
-          this.highlightSimilarTags(card);
-        });
-        
-        card.addEventListener('mouseleave', () => {
-          this.unhighlightTags();
-        });
+      const postCards = this.section.querySelectorAll('.related-post-card');
+
+      postCards.forEach((card) => {
+        card.addEventListener('mouseenter', () => this.highlightSimilarTags(card));
+        card.addEventListener('mouseleave', () => this.unhighlightTags());
       });
 
-      // Add keyboard navigation
       postCards.forEach((card, index) => {
         const link = card.querySelector('.stretched-link');
-        if (link) {
-          link.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' && index < postCards.length - 1) {
-              e.preventDefault();
-              postCards[index + 1].querySelector('.stretched-link')?.focus();
-            } else if (e.key === 'ArrowLeft' && index > 0) {
-              e.preventDefault();
-              postCards[index - 1].querySelector('.stretched-link')?.focus();
-            }
-          });
-        }
+        if (!link) return;
+
+        link.addEventListener('keydown', (event) => {
+          if (event.key === 'ArrowRight' && index < postCards.length - 1) {
+            event.preventDefault();
+            postCards[index + 1].querySelector('.stretched-link')?.focus();
+          } else if (event.key === 'ArrowLeft' && index > 0) {
+            event.preventDefault();
+            postCards[index - 1].querySelector('.stretched-link')?.focus();
+          }
+        });
       });
     }
 
     highlightSimilarTags(hoveredCard) {
-      const hoveredTags = Array.from(hoveredCard.querySelectorAll('.bg-accent\\/20')).map(
-        tag => tag.textContent.trim()
+      const hoveredTags = Array.from(hoveredCard.querySelectorAll('span[class*="bg-accent"]')).map((tag) =>
+        tag.textContent?.trim()
       );
-      
-      // Highlight matching tags in other cards
-      document.querySelectorAll('.related-post-card').forEach(card => {
+
+      this.section.querySelectorAll('.related-post-card').forEach((card) => {
         if (card === hoveredCard) return;
-        
-        card.querySelectorAll('span[class*="bg-accent"]').forEach(tag => {
-          if (hoveredTags.includes(tag.textContent.trim())) {
+
+        card.querySelectorAll('span[class*="bg-accent"]').forEach((tag) => {
+          if (hoveredTags.includes(tag.textContent?.trim())) {
             tag.style.transform = 'scale(1.05)';
             tag.style.boxShadow = '0 0 8px rgba(255, 215, 0, 0.3)';
           }
@@ -314,29 +304,34 @@ function calculateReadingTime(content: string) {
     }
 
     unhighlightTags() {
-      document.querySelectorAll('.related-post-card span[class*="bg-accent"]').forEach(tag => {
+      this.section.querySelectorAll('.related-post-card span[class*="bg-accent"]').forEach((tag) => {
         tag.style.transform = '';
         tag.style.boxShadow = '';
       });
     }
 
     trackEvent(eventName, properties = {}) {
-      // Send analytics event (integrate with your analytics service)
       if (typeof gtag !== 'undefined') {
         gtag('event', eventName, properties);
       }
-      
-      // Console log for development
+
       if (window.location.hostname === 'localhost') {
         console.log('Related Posts Event:', eventName, properties);
       }
     }
   }
 
-  // Initialize when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    new RelatedPostsAnalytics();
-  });
+  const initRelatedPosts = () => {
+    document.querySelectorAll('.related-posts-section').forEach((section) => {
+      if (section.dataset.relatedPostsInitialized === 'true') return;
+
+      section.dataset.relatedPostsInitialized = 'true';
+      new RelatedPostsAnalytics(section);
+    });
+  };
+
+  document.addEventListener('astro:page-load', initRelatedPosts);
+  initRelatedPosts();
 </script>
 
 <style>

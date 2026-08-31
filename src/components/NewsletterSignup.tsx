@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useRef, useState } from 'react';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -18,6 +18,8 @@ export default function NewsletterSignup({
   const [error, setError] = useState('');
   // Honeypot — bots fill all fields, humans don't see this
   const [website, setWebsite] = useState('');
+  const emailId = `newsletter-email-${useId().replace(/:/g, '')}`;
+  const isSubmittingRef = useRef(false);
 
   function validate(): boolean {
     if (!email.trim()) {
@@ -34,9 +36,12 @@ export default function NewsletterSignup({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isSubmittingRef.current) return;
+    if (status === 'sending') return;
     if (!validate()) return;
     if (website) return; // honeypot tripped
 
+    isSubmittingRef.current = true;
     setStatus('sending');
 
     try {
@@ -59,6 +64,8 @@ export default function NewsletterSignup({
     } catch {
       setError('Network error. Check your connection and try again.');
       setStatus('error');
+    } finally {
+      isSubmittingRef.current = false;
     }
   }
 
@@ -78,11 +85,11 @@ export default function NewsletterSignup({
   return (
     <div className={`newsletter-signup ${cardStyles} ${className}`}>
       <form onSubmit={handleSubmit} noValidate className="newsletter-signup__form">
-        <label htmlFor="newsletter-email" className="sr-only">
+        <label htmlFor={emailId} className="sr-only">
           Email address
         </label>
         <input
-          id="newsletter-email"
+          id={emailId}
           type="email"
           name="email"
           autoComplete="email"
