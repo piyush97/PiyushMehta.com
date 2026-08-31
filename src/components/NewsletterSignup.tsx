@@ -35,6 +35,7 @@ export default function NewsletterSignup({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (status === 'sending') return;
     if (!validate()) return;
     if (website) return; // honeypot tripped
 
