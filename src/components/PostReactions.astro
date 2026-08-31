@@ -481,7 +481,6 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
     });
   };
 
-  document.addEventListener('DOMContentLoaded', initPostReactions);
   document.addEventListener('astro:page-load', initPostReactions);
   initPostReactions();
 
