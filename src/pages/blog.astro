@@ -169,6 +169,7 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
 
   .writing-hero {
     position: relative;
+    overflow: clip;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
     gap: clamp(1.5rem, 4vw, 3.5rem);

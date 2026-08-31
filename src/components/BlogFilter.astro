@@ -107,7 +107,7 @@ const formatDate = (dateString: string) =>
               <span>{category}</span>
             ))}
           </div>
-          <a href={`/blog/${post.slug}/`}>Read</a>
+          <a href={`/blog/${post.slug}/`} aria-label={`Read “${post.title}”`}>Read</a>
         </div>
       </article>
     ))}
@@ -115,100 +115,107 @@ const formatDate = (dateString: string) =>
 </div>
 
 <script>
-  const roots = document.querySelectorAll<HTMLElement>('[data-blog-filter]');
+  const initializeBlogFilters = () => {
+    const roots = document.querySelectorAll<HTMLElement>('[data-blog-filter]');
 
-  for (const root of roots) {
-    const search = root.querySelector<HTMLInputElement>('[data-filter-search]');
-    const category = root.querySelector<HTMLSelectElement>('[data-filter-category]');
-    const sort = root.querySelector<HTMLSelectElement>('[data-filter-sort]');
-    const order = root.querySelector<HTMLSelectElement>('[data-filter-order]');
-    const reset = root.querySelector<HTMLButtonElement>('[data-filter-reset]');
-    const list = root.querySelector<HTMLElement>('[data-writing-list]');
-    const resultCount = root.querySelector<HTMLElement>('[data-result-count]');
-    const activeFilters = root.querySelector<HTMLElement>('[data-active-filters]');
-    const emptyState = root.querySelector<HTMLElement>('[data-empty-state]');
-    const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-post-card]'));
+    for (const root of roots) {
+      if (root.dataset.blogFilterInitialized === 'true') continue;
+      const search = root.querySelector<HTMLInputElement>('[data-filter-search]');
+      const category = root.querySelector<HTMLSelectElement>('[data-filter-category]');
+      const sort = root.querySelector<HTMLSelectElement>('[data-filter-sort]');
+      const order = root.querySelector<HTMLSelectElement>('[data-filter-order]');
+      const reset = root.querySelector<HTMLButtonElement>('[data-filter-reset]');
+      const list = root.querySelector<HTMLElement>('[data-writing-list]');
+      const resultCount = root.querySelector<HTMLElement>('[data-result-count]');
+      const activeFilters = root.querySelector<HTMLElement>('[data-active-filters]');
+      const emptyState = root.querySelector<HTMLElement>('[data-empty-state]');
+      const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-post-card]'));
 
-    if (!search || !category || !sort || !order || !reset || !list || !resultCount || !activeFilters || !emptyState) {
-      continue;
-    }
-
-    const hasOption = (select: HTMLSelectElement, value: string) =>
-      Array.from(select.options).some((option) => option.value === value);
-
-    const queryParams = new URLSearchParams(window.location.search);
-    const initialQuery = queryParams.get('q');
-    const initialCategory = queryParams.get('theme');
-    const initialSort = queryParams.get('sort');
-    const initialOrder = queryParams.get('order');
-
-    if (initialQuery) {
-      search.value = initialQuery;
-    }
-    if (initialCategory && hasOption(category, initialCategory)) {
-      category.value = initialCategory;
-    }
-    if (initialSort && hasOption(sort, initialSort)) {
-      sort.value = initialSort;
-    }
-    if (initialOrder && hasOption(order, initialOrder)) {
-      order.value = initialOrder;
-    }
-
-    const applyFilters = () => {
-      const query = search.value.trim().toLowerCase();
-      const selectedCategory = category.value;
-      const sortKey = sort.value;
-      const direction = order.value === 'asc' ? 1 : -1;
-
-      const sortedCards = [...cards].sort((a, b) => {
-        const aValue = getSortValue(a, sortKey);
-        const bValue = getSortValue(b, sortKey);
-
-        if (aValue < bValue) return -1 * direction;
-        if (aValue > bValue) return 1 * direction;
-        return 0;
-      });
-
-      let visibleCount = 0;
-
-      for (const card of sortedCards) {
-        const searchable = `${card.dataset.title ?? ''} ${card.dataset.excerpt ?? ''} ${card.dataset.categories ?? ''}`;
-        const categoryValues = (card.dataset.categoryValues ?? '').split('|');
-        const matchesSearch = !query || searchable.includes(query);
-        const matchesCategory = selectedCategory === 'all' || categoryValues.includes(selectedCategory);
-        const isVisible = matchesSearch && matchesCategory;
-
-        card.hidden = !isVisible;
-        list.append(card);
-
-        if (isVisible) {
-          visibleCount += 1;
-        }
+      if (!search || !category || !sort || !order || !reset || !list || !resultCount || !activeFilters || !emptyState) {
+        continue;
       }
 
-      resultCount.textContent = String(visibleCount);
-      emptyState.hidden = visibleCount > 0;
-      list.hidden = visibleCount === 0;
-      renderActiveFilters(activeFilters, query, selectedCategory);
-      syncFiltersToUrl(query, selectedCategory, sortKey, order.value);
-    };
+      const hasOption = (select: HTMLSelectElement, value: string) =>
+        Array.from(select.options).some((option) => option.value === value);
 
-    search.addEventListener('input', applyFilters);
-    category.addEventListener('change', applyFilters);
-    sort.addEventListener('change', applyFilters);
-    order.addEventListener('change', applyFilters);
-    reset.addEventListener('click', () => {
-      search.value = '';
-      category.value = 'all';
-      sort.value = 'date';
-      order.value = 'desc';
+      const queryParams = new URLSearchParams(window.location.search);
+      const initialQuery = queryParams.get('q');
+      const initialCategory = queryParams.get('theme');
+      const initialSort = queryParams.get('sort');
+      const initialOrder = queryParams.get('order');
+
+      if (initialQuery) {
+        search.value = initialQuery;
+      }
+      if (initialCategory && hasOption(category, initialCategory)) {
+        category.value = initialCategory;
+      }
+      if (initialSort && hasOption(sort, initialSort)) {
+        sort.value = initialSort;
+      }
+      if (initialOrder && hasOption(order, initialOrder)) {
+        order.value = initialOrder;
+      }
+
+      const applyFilters = () => {
+        const query = search.value.trim().toLowerCase();
+        const selectedCategory = category.value;
+        const sortKey = sort.value;
+        const direction = order.value === 'asc' ? 1 : -1;
+
+        const sortedCards = [...cards].sort((a, b) => {
+          const aValue = getSortValue(a, sortKey);
+          const bValue = getSortValue(b, sortKey);
+
+          if (aValue < bValue) return -1 * direction;
+          if (aValue > bValue) return 1 * direction;
+          return 0;
+        });
+
+        let visibleCount = 0;
+
+        for (const card of sortedCards) {
+          const searchable = `${card.dataset.title ?? ''} ${card.dataset.excerpt ?? ''} ${card.dataset.categories ?? ''}`;
+          const categoryValues = (card.dataset.categoryValues ?? '').split('|');
+          const matchesSearch = !query || searchable.includes(query);
+          const matchesCategory = selectedCategory === 'all' || categoryValues.includes(selectedCategory);
+          const isVisible = matchesSearch && matchesCategory;
+
+          card.hidden = !isVisible;
+          list.append(card);
+
+          if (isVisible) {
+            visibleCount += 1;
+          }
+        }
+
+        resultCount.textContent = String(visibleCount);
+        emptyState.hidden = visibleCount > 0;
+        list.hidden = visibleCount === 0;
+        renderActiveFilters(activeFilters, query, selectedCategory);
+        syncFiltersToUrl(query, selectedCategory, sortKey, order.value);
+      };
+
+      search.addEventListener('input', applyFilters);
+      category.addEventListener('change', applyFilters);
+      sort.addEventListener('change', applyFilters);
+      order.addEventListener('change', applyFilters);
+      reset.addEventListener('click', () => {
+        search.value = '';
+        category.value = 'all';
+        sort.value = 'date';
+        order.value = 'desc';
+        applyFilters();
+        search.focus();
+      });
+
       applyFilters();
-      search.focus();
-    });
+      root.dataset.blogFilterInitialized = 'true';
+    }
+  };
 
-    applyFilters();
-  }
+document.addEventListener('astro:page-load', initializeBlogFilters);
+initializeBlogFilters();
 
   function getSortValue(card: HTMLElement, sortKey: string) {
     if (sortKey === 'title') return card.dataset.title ?? '';

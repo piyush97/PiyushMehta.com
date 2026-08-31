@@ -56,7 +56,31 @@ test.describe('astro v6 migration smoke', () => {
     await expect(page.locator('[data-filter-sort]')).toHaveValue('title');
     await expect(page.locator('[data-filter-order]')).toHaveValue('asc');
   });
+  test('blog filter reinitializes after client-side navigation', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('a[href="/blog/"]').first().click();
+    await expect(page).toHaveURL(/\/blog\/?$/);
 
+    const search = page.locator('#blog-search');
+    await search.fill('zzzz-no-match');
+    await expect(page.locator('[data-result-count]')).toHaveText('0');
+
+    await page.locator('a[href="/"]').first().click();
+    await expect(page).toHaveURL(/\/$/);
+    await page.locator('a[href="/blog/"]').first().click();
+    await expect(page).toHaveURL(/\/blog\/?$/);
+
+    await page.locator('#blog-search').fill('zzzz-no-match');
+    await expect(page.locator('[data-result-count]')).toHaveText('0');
+  });
+
+  test('blog read links expose post-specific names and touch targets', async ({ page }) => {
+    await page.goto('/blog/', { waitUntil: 'domcontentloaded' });
+
+    const readLink = page.locator('.writing-list__footer a').first();
+    await expect(readLink).toHaveAttribute('aria-label', /Read “.+”/);
+    await expect(readLink).toHaveCSS('min-height', '44px');
+  });
   test('rss and sitemap return xml', async ({ request }) => {
     const rss = await request.get('/rss.xml');
     expect(rss.ok()).toBeTruthy();
