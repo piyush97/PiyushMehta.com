@@ -38,14 +38,14 @@
     "@types/react-dom": "^19.2.5",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.3",
-    "@varlock/astro-integration": "^1.4.0",
+    "@varlock/astro-integration": "^1.4.1",
     "@varlock/cloudflare-integration": "1.5.0",
     "astro": "^7.2.10",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "satori": "^0.33.4",
     "tailwindcss": "^4.3.3",
-    "varlock": "^1.17.1"
+    "varlock": "^1.18.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
