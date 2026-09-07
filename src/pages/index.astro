@@ -64,9 +64,12 @@ const toPostHref = (id: string) =>
         developer education. This portfolio is for engineering leaders who want to inspect
         judgment: what shipped, which constraints mattered, and how tradeoffs were handled.
       </p>
+      <p class="home-hero__availability">
+        Open to senior software engineering and applied AI opportunities.
+      </p>
       <div class="hero-actions" aria-label="Primary actions">
         <a class="btn-primary" href="/projects/">Inspect the work</a>
-        <a class="btn-secondary" href="/resume/">Read the resume</a>
+        <a class="btn-secondary" href="/contact-me/">Discuss an opportunity</a>
       </div>
       <div class="social-row" aria-label="Professional links">
         {socialLinks.map((link) => <a href={link.href}>{link.label}</a>)}
@@ -116,7 +119,7 @@ const toPostHref = (id: string) =>
         />
       </picture>
       <figcaption>
-        Developer education, production systems, and hands-on infrastructure practice.
+        Speaking, building, and operating production systems.
       </figcaption>
     </figure>
   </section>
@@ -130,6 +133,49 @@ const toPostHref = (id: string) =>
       </article>
     ))}
   </section>
+
+  <section class="section-block" data-reveal>
+    <div class="section-heading" data-reveal data-reveal-delay="40">
+      <p class="eyebrow">Case Studies</p>
+      <h2>Evidence over adjectives.</h2>
+      <p>
+        Strong engineering portfolios are not walls of technologies. They are decisions made under
+        pressure, with constraints and outcomes attached.
+      </p>
+    </div>
+
+    <div class="case-grid">
+      {featuredCaseStudies.map((study, index) => (
+        <article
+          class:list={['case-card', { 'case-card--featured': index === 0 }]}
+          data-reveal
+          data-reveal-stagger={String(index * 90)}
+        >
+          <div>
+            <p class="case-card__eyebrow">{study.eyebrow}</p>
+            <h3>{study.title}</h3>
+            <p>{study.summary}</p>
+          </div>
+          <dl>
+            <div>
+              <dt>Outcome</dt>
+              <dd>{study.outcomes[0]}</dd>
+            </div>
+            <div>
+              <dt>Role</dt>
+              <dd>{study.role}</dd>
+            </div>
+            <div>
+              <dt>Stack</dt>
+              <dd>{study.stack.slice(0, 4).join(' · ')}</dd>
+            </div>
+          </dl>
+          <a href={`/projects/#case-${index + 1}`}>Read the case study</a>
+        </article>
+      ))}
+    </div>
+  </section>
+
   <section class="section-block" data-reveal>
     <div class="section-heading" data-reveal data-reveal-delay="40">
       <p class="eyebrow">Writing</p>
@@ -188,51 +234,18 @@ const toPostHref = (id: string) =>
     <a class="notebook-archive" href="/blog">Read all writing</a>
   </section>
 
-  <section class="section-block" data-reveal>
-    <div class="section-heading" data-reveal data-reveal-delay="40">
-      <p class="eyebrow">Case Studies</p>
-      <h2>Evidence over adjectives.</h2>
-      <p>
-        Strong engineering portfolios are not walls of technologies. They are decisions made under
-        pressure, with constraints and outcomes attached.
-      </p>
-    </div>
-
-    <div class="case-grid">
-      {featuredCaseStudies.map((study, index) => (
-        <article class="case-card" data-reveal data-reveal-stagger={String(index * 90)}>
-          <div>
-            <p class="case-card__eyebrow">{study.eyebrow}</p>
-            <h3>{study.title}</h3>
-            <p>{study.summary}</p>
-          </div>
-          <dl>
-            <div>
-              <dt>Role</dt>
-              <dd>{study.role}</dd>
-            </div>
-            <div>
-              <dt>Stack</dt>
-              <dd>{study.stack.slice(0, 4).join(' · ')}</dd>
-            </div>
-          </dl>
-          <a href="/projects/">Read the case study</a>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <section class="closing-cta" data-reveal>
-    <p class="eyebrow">Available for focused engineering conversations</p>
-    <h2>Bring me a hard product constraint, a messy system, or a team that needs technical clarity.</h2>
+  <section class="closing-cta">
+    <p class="eyebrow">Open to senior software engineering and applied AI opportunities</p>
+    <h2>Building reliable AI systems and web platforms. Based in Canada, open to remote teams.</h2>
     <div class="hero-actions">
-      <a class="btn-primary" href="/contact-me/">Start a conversation</a>
+      <a class="btn-primary" href="/contact-me/">Discuss an opportunity</a>
       <a class="btn-secondary" href="/blog/">Read the technical writing</a>
     </div>
   </section>
 </Layout>
 
 <style>
+  .closing-cta .btn-primary { color: var(--color-accent-foreground); }
   .home-hero,
   .section-block,
   .metrics-band,
@@ -247,8 +260,8 @@ const toPostHref = (id: string) =>
     grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
     gap: clamp(2rem, 5vw, 5rem);
     align-items: center;
-    min-height: clamp(36rem, 64vh, 44rem);
-    padding-block: clamp(4rem, 7vw, 5.5rem);
+    min-height: clamp(33rem, 58vh, 40rem);
+    padding-block: clamp(3rem, 6vw, 4.5rem);
   }
 
   .home-hero__accent {
@@ -313,6 +326,15 @@ const toPostHref = (id: string) =>
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 2rem;
+  }
+
+  .home-hero__availability {
+    max-width: 34rem;
+    margin: 1.5rem 0 0;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    font-weight: 800;
+    line-height: 1.5;
   }
 
   .social-row {
@@ -409,7 +431,7 @@ const toPostHref = (id: string) =>
 
   .case-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
     margin-top: 2.5rem;
   }
@@ -431,8 +453,18 @@ const toPostHref = (id: string) =>
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 28rem;
+    min-height: 23rem;
     padding: 1.4rem;
+  }
+
+  .case-card--featured {
+    grid-column: 1 / -1;
+    min-height: 20rem;
+  }
+
+  .case-card--featured dl {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 1rem;
   }
 
   .notebook-card {
@@ -551,6 +583,10 @@ const toPostHref = (id: string) =>
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .case-card--featured {
+      grid-column: 1 / -1;
+    }
+
     .notebook-grid {
       grid-template-columns: 1fr;
     }
@@ -576,6 +612,14 @@ const toPostHref = (id: string) =>
 
     .metrics-band,
     .case-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .case-card--featured {
+      grid-column: auto;
+    }
+
+    .case-card--featured dl {
       grid-template-columns: 1fr;
     }
 
