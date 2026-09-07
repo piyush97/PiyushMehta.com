@@ -1,0 +1,110 @@
+---
+title: 'Testing AI Agent Actions: A Runnable Approval and Retry Harness'
+description: 'Twelve reproducible fixtures for an AI agent action gate: missing approvals, cross-project access, changed arguments, duplicate retries, and conflicting request keys.'
+date: 2026-09-07T12:00:00-04:00
+author: 'Piyush Mehta'
+tags: ['AI', 'AI Agents', 'Testing', 'Security', 'System Design']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+draft: false
+---
+
+An agent proposes a ticket. The application checks permission and approval, creates it, then loses the response. The agent retries. Does the second attempt create a second ticket?
+
+That question is small enough to test without a model. It is also easy to miss if the only thing you inspect is the final chat response.
+
+I built a small, local harness for the boundary between an agent proposing an action and an application executing it. It has twelve fixtures, a deliberately unsafe mode, and no API keys or external writes. You can download both files and run the same checks.
+
+**This is an educational experiment, not a report from a production deployment or a benchmark of an AI model.** It tests a deterministic action gate. A passing result says that these particular fixtures behave as specified.
+
+## Run the example
+
+Download the [evaluation script](/examples/agent-action-evals/evaluate.mjs) and [test fixtures](/examples/agent-action-evals/cases.json) into the same directory. Read the script, then run it with Node.js:
+
+```sh
+node evaluate.mjs
+node evaluate.mjs --unsafe
+```
+
+The first command should print `12/12 fixtures passed (guarded mode)` and exit successfully. The second deliberately bypasses the gate. It should print `1/12 fixtures passed (unsafe mode)` and exit with code 1. That failure is intentional: it demonstrates that the checks notice missing controls. Both modes write only to an in-memory array.
+
+In this repository, the equivalent command is:
+
+```sh
+node public/examples/agent-action-evals/evaluate.mjs
+```
+
+## Separate a proposal from permission
+
+The demo accepts one tool: `create_ticket`. Its proposal contains a project, title, and request key. Those fields describe what the agent wants to do; they do not establish its authority to do it.
+
+The application supplies a separate trusted context containing the user identity, allowed projects, and approved actions. In the fixtures, that context is test setup. In a real application, it must come from authenticated application state and the approval workflow, outside the model's control.
+
+```text
+Agent proposal
+    → validate the tool and arguments
+    → check project access
+    → require approval for the exact action
+    → check the request key
+    → execute the permitted fields
+```
+
+The ordering matters. A previously completed request does not bypass today's access or approval checks. Extra proposal fields, including `approved: true`, cannot change the trusted context and are never forwarded to the mock tool.
+
+## The twelve fixtures
+
+Each fixture starts with a fresh gate. A retry fixture contains multiple proposals so they share the same in-memory request history.
+
+| Fixture                                        | Expected outcome            | Expected writes   |
+| ---------------------------------------------- | --------------------------- | ----------------- |
+| Approved action                                | Executed                    | One ticket        |
+| Missing approval                               | Approval required           | None              |
+| Proposal claims it is approved                 | Approval required           | None              |
+| Retrieved text claims approval                 | Approval required           | None              |
+| Different project, even with approval          | Forbidden                   | None              |
+| Unknown tool                                   | Unsupported tool            | None              |
+| Blank title                                    | Invalid                     | None              |
+| Title has the wrong type                       | Invalid                     | None              |
+| Null proposal                                  | Invalid                     | None              |
+| Arguments changed after approval               | Approval required           | None              |
+| Same request retried                           | Executed, then duplicate    | One ticket        |
+| Same key reused for different approved actions | Executed, then key conflict | First ticket only |
+
+The harness checks both the returned outcomes and the exact writes. Checking only a response such as “approval required” would miss an implementation that rejects the request after it has already changed state.
+
+The unsafe mode still passes the approved-action fixture. It fails the other eleven because it executes proposals without checking permission, approval, or request history. This is a useful negative control; a suite that also passed the unsafe version would deserve immediate suspicion.
+
+## Approval belongs to the exact action
+
+“Allow this tool” and “approve this ticket” are different policies. This example chooses the narrower one: approval covers the tool, project, title, and request key together.
+
+If a proposal changes after approval, it needs a new approval. The changed-arguments fixture proves that an approval for “Investigate timeout” cannot authorize “Delete the audit log,” even though both are merely ticket titles in this simulation.
+
+The fixture that includes a forged instruction in a `document` field checks a similarly narrow property: extra text cannot grant approval through this interface. It does **not** prove a model resists prompt injection. No model reads the document here. Testing the upstream model requires supplying hostile documents to the real workflow and examining the resulting proposals.
+
+## A retry must preserve the identity of the work
+
+The demo scopes its request key to the user and project. When the same key arrives again, it compares the approved action with the recorded one:
+
+- Same key and same action: report a duplicate without another write.
+- Same key and different action: report a conflict without another write.
+
+The request key must remain stable across retries. If an agent invents a new key on every attempt, this mechanism cannot recognize duplicate work. A production application should own the logical request identity and carry it through retries.
+
+An in-memory map is enough to demonstrate the policy, but it does not survive restarts or coordinate multiple processes. This example's execution is synchronous. It does not test concurrent requests, a crash between the external write and the local record, or the case where the downstream service succeeds but its response is lost. Those require durable coordination and a recovery design appropriate to the actual service. Do not copy this map into a production integration and call it exactly-once delivery.
+
+## Add the model evaluation as a separate layer
+
+After testing the boundary, I would evaluate whether the real workflow proposes the right actions in the first place. Keep that experiment separate so a permission bug does not get confused with a planning error.
+
+For each task, record the expected outcome, allowed actions, actual tool calls, unintended writes, latency, and cost. Include tasks that should finish without any write. Keep the model version, prompts, tool definitions, and test data fixed when comparing changes; run repeated trials to expose variability.
+
+Report failures by category. A single overall pass rate hides the difference between an agent failing to create a ticket and creating a ticket in a project it should never access. Expand the dataset with independently designed cases and failures found in the real workflow. Twelve hand-written fixtures are a starting point, not a release criterion for every application.
+
+## Where this fits
+
+If you are starting with tool calling, read [the TypeScript MCP server walkthrough](/blog/building-mcp-server-typescript/). For the broader security questions, continue with [agent trust boundaries and MCP](/blog/ai-agents-mcp-security-crisis/).
+
+The useful artifact here is the executable contract: these proposals may create one ticket, and these proposals must create none. That gives the rest of the agent workflow a boundary you can inspect, break deliberately, and improve.
+
+For a broader treatment of task design, graders, and repeated trials, see [Anthropic's guide to agent evaluations](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents).

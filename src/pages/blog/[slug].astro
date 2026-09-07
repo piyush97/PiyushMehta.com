@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import ArticleCareerCard from '../../components/ArticleCareerCard.astro';
 import ArticleMeta from '../../components/ArticleMeta.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import GiscusComments from '../../components/GiscusComments.astro';
@@ -147,86 +148,7 @@ const articleSchema = {
           <div data-pagefind-meta="type" class="hidden">blog</div>
           {typedTags.map((tag) => <div data-pagefind-meta="tag" class="hidden">{tag}</div>)}
 
-          <div class="blog-post-meta">
-            <div>
-              <svg
-                aria-hidden="true"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                ></path>
-              </svg>
-              <time datetime={date.toISOString()} itemprop="datePublished">
-                {
-                  date.toLocaleDateString('en-US', {
-                    timeZone: 'America/Toronto',
-                  })
-                }
-              </time>
-            </div>
-
-            {
-              author && (
-                <div
-                  itemprop="author"
-                  itemscope
-                  itemtype="https://schema.org/Person"
-                >
-                  <svg
-                    aria-hidden="true"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <span itemprop="name">by {author}</span>
-                </div>
-              )
-            }
-
-            <div>
-              <svg
-                aria-hidden="true"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              <span>{readingTime} min read</span>
-            </div>
-          </div>
-
-          {
-            typedTags.length > 0 && (
-              <div class="blog-post-tags">
-                {typedTags.map((tag) => (
-                  <span
-                    class="blog-post-tag"
-                    itemprop="keywords"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )
-          }
+          <ArticleMeta title={title} author={author} readingTime={readingTime} date={date} tags={typedTags} url={canonicalUrl} />
         </header>
 
         <!-- Featured Image -->
@@ -249,17 +171,6 @@ const articleSchema = {
             </figure>
           )
         }
-
-        <!-- Article Meta with Share Buttons -->
-        <div class="blog-post-share">
-          <ArticleMeta
-            title={title}
-            readingTime={readingTime}
-            date={date}
-            tags={typedTags}
-            url={canonicalUrl}
-          />
-        </div>
 
         <!-- Post Content -->
         <div class="blog-post-content prose mdx-content" itemprop="articleBody">
@@ -306,9 +217,12 @@ const articleSchema = {
           postId={currentSlug}
           title="Was this post helpful?"
           showCount={true}
-          size="md"
+          size="sm"
+          compact={true}
           orientation="horizontal"
         />
+
+        <ArticleCareerCard />
 
         <!-- Newsletter Signup -->
         <div class="newsletter-cta-card" data-reveal>
@@ -367,7 +281,7 @@ const articleSchema = {
   .blog-post-share,
   .blog-post-footer,
   .blog-post-after {
-    width: min(100%, 78ch);
+    width: min(100%, 48rem);
     margin-inline: auto;
   }
 
@@ -405,68 +319,23 @@ const articleSchema = {
   }
 
   .blog-post-header {
-    width: min(100%, 980px);
-    margin: 0 auto clamp(2.5rem, 5vw, 4rem);
+    width: min(100%, 48rem);
+    margin: 0 auto 2rem;
     padding-bottom: clamp(1.75rem, 4vw, 2.75rem);
     border-bottom: 1px solid color-mix(in srgb, var(--color-card-border) 76%, transparent);
-    text-align: center;
+    text-align: left;
   }
 
   .blog-post-title {
-    max-width: 22ch;
-    margin: 0 auto 1.25rem;
+    text-align: left;
+    max-width: 26ch;
+    margin: 0 0 1.5rem;
     color: var(--color-text-primary);
-    font-size: clamp(2.45rem, 5vw, 4.35rem);
+    font-size: clamp(2rem, 4.2vw, 3.5rem);
     font-weight: 900;
-    line-height: 0.98;
+    line-height: 1.08;
     letter-spacing: 0;
     text-wrap: balance;
-  }
-
-  .blog-post-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 0.85rem 1.25rem;
-    margin: 0 auto 1.25rem;
-    color: var(--color-text-secondary);
-    font-size: 0.96rem;
-    font-weight: 650;
-  }
-
-  .blog-post-meta > div {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-  }
-
-  .blog-post-meta svg {
-    width: 1rem;
-    height: 1rem;
-    flex: 0 0 auto;
-    color: var(--color-accent);
-  }
-
-  .blog-post-tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  .blog-post-tag {
-    display: inline-flex;
-    align-items: center;
-    min-height: 1.85rem;
-    border: 1px solid rgba(var(--color-accent-rgb), 0.26);
-    border-radius: 999px;
-    background: rgba(var(--color-accent-rgb), 0.1);
-    color: color-mix(in srgb, var(--color-accent) 88%, white);
-    padding: 0.34rem 0.68rem;
-    font-size: 0.84rem;
-    font-weight: 800;
-    line-height: 1;
   }
 
   .blog-post-hero-image {
