@@ -1,167 +1,71 @@
 ---
 export interface Props {
   title: string;
+  author?: string;
   readingTime?: number;
   date?: Date;
   tags?: string[];
   url?: string;
 }
-
-const { title, readingTime, date, tags = [], url = Astro.url.toString() } = Astro.props;
-
+const { title, author, readingTime, date, tags = [], url = Astro.url.toString() } = Astro.props;
 const shareLinks = [
-  {
-    name: 'Twitter',
-    url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}&via=piyushmehtas`,
-    icon: '𝕏',
-    color: 'hover:text-blue-400',
-  },
-  {
-    name: 'LinkedIn',
-    url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-    icon: '💼',
-    color: 'hover:text-blue-600',
-  },
-  {
-    name: 'Facebook',
-    url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-    icon: '📘',
-    color: 'hover:text-blue-500',
-  },
-  {
-    name: 'Copy Link',
-    url: '#',
-    icon: '🔗',
-    color: 'hover:text-green-500',
-    action: 'copy',
-  },
+  { name: 'LinkedIn', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}` },
+  { name: 'X / Twitter', url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}` },
+  { name: 'Facebook', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },
 ];
 ---
-
-<div class="py-6 my-8 border-t border-b border-card-border">
-  <div class="flex flex-wrap items-center justify-between gap-4">
-    <!-- Article Meta -->
-    <div class="flex flex-wrap items-center gap-4 text-sm text-text-secondary">
-      {
-        date && (
-          <div class="flex items-center gap-1">
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            <time datetime={date.toISOString()}>
-              {date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                timeZone: 'America/Toronto',
-              })}
-            </time>
-          </div>
-        )
-      }
-
-      {
-        readingTime && (
-          <div class="flex items-center gap-1">
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>{readingTime} min read</span>
-          </div>
-        )
-      }
+<div class="article-meta">
+  <div class="article-meta__line">
+    <div class="article-meta__byline">
+      {author && <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">{author}</span></span>}
+      {date && <time itemprop="datePublished" datetime={date.toISOString()}>{date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'America/Toronto' })}</time>}
+      {readingTime && <span>{readingTime} min read</span>}
     </div>
-
-    <!-- Share Buttons -->
-    <div class="flex items-center gap-2">
-      <span class="mr-2 text-sm text-text-secondary">Share:</span>
-      {
-        shareLinks.map((link) => (
-          <a
-            href={link.url}
-            class={`inline-flex min-h-11 min-w-11 items-center justify-center p-2 rounded-lg bg-card hover:bg-card-hover transition-all duration-200 ${link.color}`}
-            title={`Share on ${link.name}`}
-            aria-label={link.name === 'Copy Link' ? 'Copy link' : `Share on ${link.name}`}
-            target={link.name !== 'Copy Link' ? '_blank' : undefined}
-            rel={link.name !== 'Copy Link' ? 'noopener noreferrer' : undefined}
-            data-action={link.action}
-          >
-            <span class="text-lg">{link.icon}</span>
-          </a>
-        ))
-      }
-    </div>
-  </div>
-
-  <!-- Tags -->
-  {
-    tags.length > 0 && (
-      <div class="pt-4 mt-4 border-t border-card-border">
-        <div class="flex flex-wrap gap-2">
-          <span class="text-sm text-text-secondary">Tags:</span>
-          {tags.map((tag) => (
-            <a
-              href={`/blog/?theme=${encodeURIComponent(tag)}`}
-              class="inline-flex min-h-11 items-center px-3 py-1 text-sm transition-colors duration-200 rounded-full bg-accent/10 text-accent hover:bg-accent/20"
-            >
-              #{tag}
-            </a>
-          ))}
-        </div>
+    <details class="article-share">
+      <summary>Share <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V3m-5 5 5-5 5 5M5 14v6h14v-6" /></svg></summary>
+      <div class="article-share__options">
+        {shareLinks.map((link) => <a href={link.url} target="_blank" rel="noopener noreferrer">{link.name}</a>)}
+        <button type="button" data-copy-article data-url={url}>Copy link</button>
+        <span class="article-share__status" role="status" aria-live="polite"></span>
       </div>
-    )
-  }
+    </details>
+  </div>
+  {tags.length > 0 && <nav class="article-meta__topics" aria-label="Article topics">{tags.map((tag) => <a href={`/blog/?theme=${encodeURIComponent(tag)}`}>{tag}</a>)}</nav>}
 </div>
-
 <script>
-  const initializeCopyLink = () => {
-    const copyButton = document.querySelector<HTMLElement>('[data-action="copy"]');
-    if (!copyButton || copyButton.dataset.copyInitialized === 'true') return;
-
-    copyButton.addEventListener('click', async (event) => {
-      event.preventDefault();
-
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-
-        const originalIcon = copyButton.innerHTML;
-        copyButton.innerHTML = '<span class="text-lg" aria-hidden="true">✓</span>';
-        copyButton.setAttribute('aria-label', 'Link copied');
-
-        window.setTimeout(() => {
-          copyButton.innerHTML = originalIcon;
-          copyButton.setAttribute('aria-label', 'Copy link');
-        }, 2000);
-      } catch (error) {
-        console.error('Failed to copy:', error);
-        copyButton.setAttribute('aria-label', 'Unable to copy link');
-        window.setTimeout(() => copyButton.setAttribute('aria-label', 'Copy link'), 2000);
-      }
+  function initializeArticleSharing() {
+    document.querySelectorAll<HTMLButtonElement>('[data-copy-article]').forEach((button) => {
+      if (button.dataset.initialized) return;
+      button.dataset.initialized = 'true';
+      button.addEventListener('click', async () => {
+        const status = button.parentElement?.querySelector<HTMLElement>('[role="status"]');
+        try {
+          await navigator.clipboard.writeText(button.dataset.url || window.location.href);
+          if (status) status.textContent = 'Link copied.';
+        } catch {
+          if (status) status.textContent = 'Could not copy. Copy the address from your browser.';
+        }
+      });
     });
-
-    copyButton.dataset.copyInitialized = 'true';
-  };
-
-  document.addEventListener('astro:page-load', initializeCopyLink);
-  initializeCopyLink();
+  }
+  document.addEventListener('astro:page-load', initializeArticleSharing);
+  initializeArticleSharing();
 </script>
+<style>
+  .article-meta { text-align: left; font-size: 0.875rem; color: var(--color-text-secondary); }
+  .article-meta__line { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .article-meta__byline { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; padding-block: 0.75rem; }
+  .article-meta__byline > :first-child { color: var(--color-text-primary); font-weight: 700; }
+  .article-meta__topics { display: flex; flex-wrap: wrap; column-gap: 1rem; margin-top: 0.5rem; }
+  .article-meta__topics a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--color-text-secondary); text-decoration: underline; text-underline-offset: 0.3em; }
+  .article-meta__topics a:hover { color: var(--color-accent); }
+  .article-share { position: relative; flex-shrink: 0; }
+  .article-share summary { display: flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; cursor: pointer; color: var(--color-text-primary); list-style: none; }
+  .article-share summary::-webkit-details-marker { display: none; }
+  .article-share svg { width: 1.125rem; height: 1.125rem; }
+  .article-share__options { position: absolute; right: 0; top: 100%; z-index: 10; width: 13rem; padding: 0.5rem; border: 1px solid var(--color-card-border); border-radius: 0.5rem; background: var(--color-surface-raised); }
+  .article-share__options a, .article-share__options button { display: flex; align-items: center; width: 100%; min-height: 2.75rem; padding: 0.5rem 0.75rem; color: var(--color-text-primary); font: inherit; text-align: left; background: transparent; border: 0; cursor: pointer; }
+  .article-share__options a:hover, .article-share__options button:hover { background: var(--color-bg); }
+  .article-share__status { display: block; padding-inline: 0.75rem; line-height: 1.5; }
+  :is(a, button, summary):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+</style>

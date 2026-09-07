@@ -79,3 +79,6 @@ src/varlock.env.d.ts
 skills-lock.json
 env.d.ts
 .env*
+
+# Content growth plan and prepared distribution copy
+!docs/growth/2026-09-content-and-career-plan.md
