@@ -9,13 +9,14 @@ import OptimizedImage from '../../components/OptimizedImage.astro';
 import PostReactions from '../../components/PostReactions.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
 import Layout from '../../layouts/Layout.astro';
+import { generateCanonicalUrl } from '../../utils/og-generator';
 import { createSocialCardMetadata } from '../../utils/social-card';
 import { getSocialCardManifest } from '../../utils/social-card-manifest';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
   const toPostSlug = (id: string) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
   return posts.map((post) => ({
     params: { slug: toPostSlug(post.id) },
@@ -29,7 +30,7 @@ const currentSlug = Astro.params.slug ?? post.id.replace(/\/index$/, '').replace
 const postBody = post.body ?? '';
 const { Content } = await render(post);
 
-const { title, description, date, author, tags, image, ogTemplate, ogTheme } = post.data;
+const { title, description, date, updatedDate, author, tags, image, ogTemplate, ogTheme } = post.data;
 const typedTags: string[] = tags ?? [];
 
 // Calculate reading time (rough estimate)
@@ -45,7 +46,7 @@ const socialImage = createSocialCardMetadata({
 });
 
 // Generate canonical URL
-const canonicalUrl = new URL(`/blog/${currentSlug}`, Astro.site).toString();
+const canonicalUrl = generateCanonicalUrl(`/blog/${currentSlug}`, Astro.site?.toString() || 'https://piyushmehta.com');
 
 // Create structured data for the article
 const articleSchema = {
@@ -59,7 +60,7 @@ const articleSchema = {
     url: 'https://piyushmehta.com',
   },
   datePublished: date.toISOString(),
-  dateModified: date.toISOString(),
+  dateModified: (updatedDate || date).toISOString(),
   url: canonicalUrl,
   keywords: typedTags.join(', '),
   wordCount: postBody.split(' ').length,
@@ -92,7 +93,7 @@ const articleSchema = {
   type="article"
   author={author}
   publishedTime={date}
-  modifiedTime={date}
+  modifiedTime={updatedDate || date}
   tags={typedTags}
   canonical={canonicalUrl}
   image={socialImage}

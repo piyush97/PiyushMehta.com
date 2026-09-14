@@ -22,15 +22,10 @@ export function generateCanonicalUrl(path: string = '', baseUrl?: string): strin
   if (!baseUrl) {
     throw new Error('baseUrl is required for generateCanonicalUrl');
   }
-  const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  const url = `${baseUrl}${cleanPath}`;
-
-  // Ensure consistent trailing slash handling
-  if (cleanPath !== '/' && url.endsWith('/')) {
-    return url.slice(0, -1);
-  }
-
-  return url;
+  // All discovery surfaces use the same root-host URL without query strings or fragments.
+  const pathname = `/${path.split(/[?#]/, 1)[0]}`.replace(/\/+/g, '/');
+  const canonicalPath = pathname === '/' ? '/' : pathname.replace(/\/+$/, '');
+  return new URL(canonicalPath, new URL(baseUrl).origin).toString();
 }
 
 /**

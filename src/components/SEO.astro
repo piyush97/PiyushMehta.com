@@ -34,7 +34,6 @@ const {
   description = 'Piyush Mehta is a senior software engineer in Canada building reliable web platforms, enterprise AI workflows, and scalable product systems.',
   type = 'website',
   image,
-  url = Astro.url.toString(),
   author = 'Piyush Mehta',
   publishedTime,
   modifiedTime,
@@ -256,7 +255,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
             '@type': 'ListItem',
             position: 3,
             name: title,
-            item: url,
+            item: canonicalUrl,
           },
         ],
       })}
