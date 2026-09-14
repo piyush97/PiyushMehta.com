@@ -1,5 +1,5 @@
 /**
- * Site motion orchestration (reveal animations, parallax, route direction, hero typography).
+ * Site motion orchestration (reveal animations, parallax, route direction).
  * Loaded as a non-blocking deferred script by the layout so it never competes with the
  * hero LCP image for the main thread.
  */
@@ -151,6 +151,7 @@ const initReveal = (reducedMotion: boolean, state: MotionState): void => {
     if (element.getBoundingClientRect().top < window.innerHeight) {
       element.classList.add('is-visible');
     } else {
+      element.classList.add('reveal-pending');
       state.revealObserver?.observe(element);
     }
   });
@@ -193,42 +194,10 @@ const initParallax = (reducedMotion: boolean, state: MotionState): void => {
   onScroll();
 };
 
-const initHeroTypography = (reducedMotion: boolean): void => {
-  const titles = document.querySelectorAll<HTMLElement>('[data-hero-title]');
-  titles.forEach((el) => {
-    if (el.getAttribute('data-hero-split') === 'done') return;
-    el.setAttribute('data-hero-split', 'done');
-
-    const text = (el.textContent || '').trim();
-    if (reducedMotion) return;
-
-    const startDelay = 60;
-    const perChar = 28;
-
-    const charsHtml = text
-      .split('')
-      .map((char, i) => {
-        const delay = startDelay + i * perChar;
-        const escaped = char.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return `<span class="tw-char" style="animation-delay:${delay}ms">${escaped}</span>`;
-      })
-      .join('');
-
-    const totalDuration = startDelay + text.length * perChar;
-    el.innerHTML = charsHtml + `<span class="tw-cursor"></span>`;
-
-    const cursor = el.querySelector<HTMLElement>('.tw-cursor');
-    if (cursor) {
-      setTimeout(() => cursor.classList.add('is-done'), totalDuration + 900);
-    }
-  });
-};
-
 export const initSiteMotion = (): void => {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const state = getMotionState();
   initRouteDirection(state);
-  initHeroTypography(reducedMotion);
   initReveal(reducedMotion, state);
   initParallax(reducedMotion, state);
 };

@@ -43,6 +43,8 @@ step('Legacy blog redirects', 'node scripts/generate-legacy-redirects.mjs');
 //    size, or looks like the blank-fallback card — see scripts/verify-og.mjs
 step('OG image coverage check', 'node scripts/verify-og.mjs');
 
+step('Search discovery check', 'node scripts/verify-discovery.mjs');
+
 // 6. Post-build scripts (pagefind, resume PDF)
 step('Pagefind search index', 'pagefind --site dist/client', { optional: true });
 

@@ -34,7 +34,7 @@ Browser -> Astro routes -> Layout.astro -> server-rendered HTML
 - There is no global state store or dependency-injection container. State stays in component hooks, DOM/data attributes, `localStorage`, or server module singletons.
 - `scripts/build.mjs` runs Varlock code generation, image migration, Astro build, then optional Pagefind and resume-PDF steps. The build can rewrite MDX image paths and copy images into `public/blog/`; inspect source changes after image-related builds.
 
-Important content caveat: `draft: true` hides posts from listings, tags, RSS, and sitemap, but does not currently prevent direct post generation or related-post exposure.
+Content visibility: `draft: true` excludes posts from listings, tags, RSS, sitemap, direct post generation, related posts, and social cards. Use optional `updatedDate` only for substantive article revisions; sitemap and article metadata share that date.
 
 ## Key Directories
 

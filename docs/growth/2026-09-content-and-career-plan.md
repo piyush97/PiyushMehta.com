@@ -2,6 +2,10 @@
 
 Positioning: senior software engineer building reliable AI systems and web platforms, based in Canada and open to remote teams.
 
+## September 14 discovery follow-up
+
+The [discovery audit](2026-09-discovery-audit.md) fixes malformed sitemap/RSS URLs, makes landing content visible without JavaScript, and adds consulting links to the existing reading journey. Track qualified consulting inquiries alongside the hiring outcomes below. The publishing sequence and prepared agent-action distribution packet remain the starting point.
+
 ## Prepared in this change
 
 - Explicit hiring invitation on the homepage and after articles.

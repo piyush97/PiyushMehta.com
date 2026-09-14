@@ -12,7 +12,7 @@ const { currentSlug, currentTags = [], maxPosts = 3 } = Astro.props;
 const toPostSlug = (id: string) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
 
 // Get all blog posts
-const allPosts = await getCollection('blog');
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 
 // Calculate similarity scores for each post
 function calculateSimilarity(post: { data: { tags?: string[] } }, targetTags: string[]) {

@@ -1,120 +1,44 @@
 import { getCollection } from 'astro:content';
 import rss from '@astrojs/rss';
+import { generateCanonicalUrl } from '../utils/og-generator';
+import { toPostSlug } from '../utils/social-card-manifest';
+import { escapeXml } from '../utils/xml';
+
+export const prerender = true;
 
 export async function GET(context) {
-  try {
-    const posts = await getCollection('blog');
-    const toPostSlug = (id) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
-    const publishedPosts = posts
-      .filter((post) => !post.data.draft)
-      .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  const site = context.site?.toString() || 'https://piyushmehta.com';
 
-    const siteUrl = context.site || 'https://piyushmehta.com';
-    const siteUrlString = typeof siteUrl === 'string' ? siteUrl : siteUrl.toString();
-
-    // Log how many posts were found (for debugging)
-    console.log(`Found ${publishedPosts.length} published blog posts for RSS feed`);
-
-    const rssResponse = await rss({
-      title: 'Piyush Mehta - Blog',
-      description:
-        'Thoughts on software development, technology, and the art of building great products. Articles about React, Node.js, DevOps, and modern web development.',
-      site: siteUrl,
-      items: publishedPosts.map((post) => {
-        const slug = toPostSlug(post.id).replace(/^\/+|\/+$/g, '');
-        const postUrl = `${siteUrlString}/blog/${slug}/`;
-
-        // Extract image for the post if available
-        const imageUrl = post.data.image
-          ? post.data.image.url.startsWith('http')
-            ? post.data.image.url
-            : `${siteUrlString}${post.data.image.url}`
-          : null;
-
-        // Extract banner for the post if available
-        const bannerUrl = post.data.banner
-          ? post.data.banner.startsWith('http')
-            ? post.data.banner
-            : `${siteUrlString}${post.data.banner}`
-          : null;
-
-        return {
-          title: post.data.title,
-          pubDate: post.data.date,
-          description: post.data.description || `Article by ${post.data.author || 'Piyush Mehta'}`,
-          author: `${post.data.author || 'Piyush Mehta'} (hello@piyushmehta.com)`,
-          link: postUrl,
-          guid: postUrl,
-          categories: post.data.tags || [],
-          customData: `
-            ${imageUrl ? `<media:content url="${imageUrl}" medium="image" />` : ''}
-            ${bannerUrl ? `<media:content url="${bannerUrl}" medium="image" />` : ''}
-            <dc:creator>${post.data.author || 'Piyush Mehta'}</dc:creator>
-            ${post.data.tags ? post.data.tags.map((tag) => `<category>${tag}</category>`).join('') : ''}
-          `,
-        };
-      }),
-      customData: `
-        <language>en-us</language>
-        <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-        <generator>Astro v${process.env.npm_package_dependencies__astrojs_core || '4.0.0'}</generator>
-        <webMaster>hello@piyushmehta.com (Piyush Mehta)</webMaster>
-        <managingEditor>hello@piyushmehta.com (Piyush Mehta)</managingEditor>
-        <copyright>Copyright ${new Date().getFullYear()} Piyush Mehta. All rights reserved.</copyright>
-        <ttl>60</ttl>
-        <image>
-          <url>${siteUrlString}/favicon.svg</url>
-          <title>Piyush Mehta - Blog</title>
-          <link>${siteUrlString}</link>
-          <description>Piyush Mehta's blog about software development and technology</description>
-        </image>
-        <atom:link href="${siteUrlString}/rss.xml" rel="self" type="application/rss+xml" />
-      `,
-      xmlns: {
-        content: 'http://purl.org/rss/1.0/modules/content/',
-        dc: 'http://purl.org/dc/elements/1.1/',
-        atom: 'http://www.w3.org/2005/Atom',
-        media: 'http://search.yahoo.com/mrss/',
-      },
-      // Explicitly disable the stylesheet to prevent HTML rendering
-      stylesheet: false,
-    });
-
-    // Ensure proper content type
-    return new Response(rssResponse.body, {
-      headers: {
-        'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600',
-      },
-    });
-  } catch (error) {
-    console.error('Error generating RSS feed:', error);
-
-    // Return a valid XML response even in case of error
-    return new Response(
-      `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Piyush Mehta - Blog</title>
-    <link>https://piyushmehta.com</link>
-    <description>Error generating RSS feed</description>
-    <language>en-us</language>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <atom:link href="https://piyushmehta.com/rss.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>RSS Feed Generation Error</title>
-      <link>https://piyushmehta.com/blog</link>
-      <description>There was an error generating the RSS feed. Please check back later or visit the blog directly.</description>
-      <pubDate>${new Date().toUTCString()}</pubDate>
-    </item>
-  </channel>
-</rss>`,
-      {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/xml; charset=utf-8',
-        },
-      },
-    );
-  }
+  // Fail the build on feed errors instead of publishing an error feed.
+  return rss({
+    title: 'Piyush Mehta - Blog',
+    description:
+      'Practical guides to software architecture, AI workflows, web platforms, and developer tooling by Piyush Mehta.',
+    site,
+    items: posts.map((post) => {
+      const link = generateCanonicalUrl(`/blog/${toPostSlug(post.id)}`, site);
+      const image = post.data.image?.url || post.data.banner;
+      // Keep the identifier emitted by the old feed; treat it as an opaque ID,
+      // not a navigable URL, so existing subscribers don't receive duplicates.
+      const legacyGuid = `${new URL(site).origin}//blog/${toPostSlug(post.id)}/`;
+      return {
+        title: post.data.title,
+        pubDate: post.data.date,
+        description: post.data.description || `Article by ${post.data.author}`,
+        author: `hello@piyushmehta.com (${post.data.author})`,
+        link,
+        categories: post.data.tags,
+        customData: `<guid isPermaLink="false">${escapeXml(legacyGuid)}</guid><dc:creator>${escapeXml(post.data.author)}</dc:creator>${image ? `<media:content url="${escapeXml(new URL(image, site).toString())}" medium="image" />` : ''}`,
+      };
+    }),
+    customData: `<language>en-us</language><atom:link href="${escapeXml(new URL('/rss.xml', site).toString())}" rel="self" type="application/rss+xml" />`,
+    xmlns: {
+      dc: 'http://purl.org/dc/elements/1.1/',
+      atom: 'http://www.w3.org/2005/Atom',
+      media: 'http://search.yahoo.com/mrss/',
+    },
+    stylesheet: false,
+  });
 }
