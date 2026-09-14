@@ -1,29 +1,10 @@
 import type { APIRoute } from 'astro';
 import { ENV } from 'varlock/env';
+import { createRatelimit, getClientIp } from '@/utils/redis';
 
 export const prerender = false;
 
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function pruneExpired(): void {
-  const now = Date.now();
-  for (const [key, entry] of rateLimitMap) {
-    if (now > entry.resetAt) rateLimitMap.delete(key);
-  }
-}
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  if (rateLimitMap.size > 1000) pruneExpired();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
-    return false;
-  }
-  if (entry.count >= 5) return true;
-  entry.count += 1;
-  return false;
-}
+const ratelimit = createRatelimit('ratelimit:contact', 5, '1 h');
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -62,15 +43,13 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       return json({ error: 'Forbidden.' }, 403);
     }
 
-    const ip = (() => {
-      try {
-        return clientAddress ?? 'unknown';
-      } catch {
-        return 'unknown';
-      }
-    })();
+    // Fail closed: without a limiter this endpoint would send unbounded email.
+    if (!ratelimit) {
+      return json({ error: 'Contact service unavailable.' }, 503);
+    }
 
-    if (isRateLimited(ip)) {
+    const { success } = await ratelimit.limit(getClientIp(request, clientAddress));
+    if (!success) {
       return json({ error: 'Too many requests. Try again in an hour.' }, 429);
     }
 

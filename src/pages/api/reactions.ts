@@ -1,37 +1,19 @@
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis/cloudflare';
 import type { APIRoute } from 'astro';
-import { ENV } from 'varlock/env';
+import { createRatelimit, getClientIp, redis } from '@/utils/redis';
 
 export const prerender = false;
 
 const VALID_REACTIONS = ['like', 'helpful', 'insightful', 'bookmark'] as const;
 const JSON_HEADERS = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } as const;
 
-// Module-level singletons — initialised once per cold start, reused across requests.
-const redis = (() => {
-  const url = ENV.UPSTASH_REDIS_REST_URL;
-  const token = ENV.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
+// Counts are a vanity metric: a few seconds of edge staleness is invisible to
+// readers but collapses repeat reads onto one Redis round-trip per PoP.
+const GET_HEADERS = {
+  'Content-Type': 'application/json',
+  'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=60',
+} as const;
 
-  return new Redis({
-    url,
-    token,
-    signal: () => AbortSignal.timeout(2500),
-    retry: {
-      retries: 1,
-      backoff: (retryCount) => retryCount * 50,
-    },
-  });
-})();
-
-const ratelimit = redis
-  ? new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(30, '1 m'),
-      prefix: 'reactions:ratelimit',
-    })
-  : null;
+const ratelimit = createRatelimit('reactions:ratelimit', 30, '1 m');
 
 function isValidPostId(value: unknown): value is string {
   return typeof value === 'string' && value.length > 0 && value.length <= 200;
@@ -53,7 +35,7 @@ export const GET: APIRoute = async ({ url }) => {
 
   if (!redis) {
     const empty = Object.fromEntries(VALID_REACTIONS.map((reaction) => [reaction, 0]));
-    return new Response(JSON.stringify(empty), { headers: JSON_HEADERS });
+    return new Response(JSON.stringify(empty), { headers: GET_HEADERS });
   }
 
   try {
@@ -61,7 +43,7 @@ export const GET: APIRoute = async ({ url }) => {
     const result = Object.fromEntries(
       VALID_REACTIONS.map((reaction) => [reaction, safeCount(counts?.[reaction])]),
     );
-    return new Response(JSON.stringify(result), { headers: JSON_HEADERS });
+    return new Response(JSON.stringify(result), { headers: GET_HEADERS });
   } catch {
     return new Response(JSON.stringify({ error: 'Internal error' }), {
       status: 500,
@@ -78,13 +60,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     });
   }
 
-  // Cloudflare supplies the connecting address; use it before forwarded headers
-  // so a client cannot bypass the limiter by spoofing x-forwarded-for.
-  const ip =
-    request.headers.get('cf-connecting-ip') ||
-    clientAddress ||
-    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
-    'anonymous';
+  const ip = getClientIp(request, clientAddress);
 
   try {
     const { success } = await ratelimit.limit(ip);
