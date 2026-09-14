@@ -21,6 +21,10 @@ test('crawler discovery URLs agree with canonical HTML', async ({ request }) => 
   const robots = await request.get(`${preview}/robots.txt`);
   expect(await robots.text()).toContain('Sitemap: https://piyushmehta.com/sitemap.xml');
   expect(await robots.text()).not.toContain('piyushmehta.com//');
+
+  const sitemapAlias = await request.get(`${preview}/sitemap-index.xml`, { maxRedirects: 0 });
+  expect(sitemapAlias.status()).toBe(301);
+  expect(sitemapAlias.headers().location).toBe('/sitemap.xml');
 });
 
 test('readers can reach consulting and recruiting information from an article', async ({ page }) => {
