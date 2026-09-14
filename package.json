@@ -26,20 +26,20 @@
     "doctor": "react-doctor"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.2.5",
+    "@astrojs/cloudflare": "14.3.1",
     "@astrojs/mdx": "7.0.7",
-    "@astrojs/react": "6.0.4",
+    "@astrojs/react": "6.0.5",
     "@astrojs/rss": "4.0.19",
     "@resvg/resvg-js": "2.6.2",
     "@sentry/astro": "^10.73.0",
-    "@sentry/cloudflare": "10.71.0",
+    "@sentry/cloudflare": "10.74.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.3",
     "@varlock/astro-integration": "^1.4.0",
-    "@varlock/cloudflare-integration": "1.5.0",
+    "@varlock/cloudflare-integration": "1.5.1",
     "astro": "^7.2.10",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
-    "@cloudflare/workers-types": "5.20260827.1",
+    "@cloudflare/workers-types": "5.20260911.1",
     "@playwright/test": "^1.62.1",
     "@tailwindcss/typography": "^0.5.20",
     "@types/node": "^26.4.0",
@@ -58,8 +58,8 @@
     "react-doctor": "^0.9.12",
     "typescript": "^7.0.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9",
-    "vite-plus": "0.2.9",
-    "wrangler": "4.126.0"
+    "vite-plus": "0.3.1",
+    "wrangler": "4.131.0"
   },
   "overrides": {
     "estree-walker": "2.0.2",
