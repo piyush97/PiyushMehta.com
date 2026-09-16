@@ -3,6 +3,7 @@ export async function GET(context) {
 
   const robotsTxt = `User-agent: *
 Allow: /
+Content-Signal: ai-train=no, search=yes, ai-input=no
 
 # Sitemaps
 Sitemap: ${siteUrl}/sitemap.xml
