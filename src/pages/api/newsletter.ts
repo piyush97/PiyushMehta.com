@@ -3,44 +3,14 @@
  * Wraps Resend Contacts API with rate limiting via @upstash/ratelimit.
  */
 import * as Sentry from '@sentry/astro';
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis/cloudflare';
 import type { APIRoute } from 'astro';
 import { ENV } from 'varlock/env';
 import { addToResendAudience, sendConfirmationEmail } from '@/utils/newsletter';
+import { createRatelimit, getClientIp } from '@/utils/redis';
 
 export const prerender = false;
 
-// Upstash's analytics submission is asynchronous. Keep it disabled here because
-// Astro's route contract does not expose a waitUntil hook for that background work.
-const redis =
-  ENV.UPSTASH_REDIS_REST_URL && ENV.UPSTASH_REDIS_REST_TOKEN
-    ? new Redis({
-        url: ENV.UPSTASH_REDIS_REST_URL,
-        token: ENV.UPSTASH_REDIS_REST_TOKEN,
-        signal: () => AbortSignal.timeout(2500),
-        retry: {
-          retries: 1,
-          backoff: (retryCount) => retryCount * 50,
-        },
-      })
-    : null;
-const ratelimit = redis
-  ? new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(5, '15 m'),
-      prefix: 'ratelimit:newsletter',
-    })
-  : null;
-
-function getClientIP(request: Request): string {
-  return (
-    request.headers.get('cf-connecting-ip') ||
-    request.headers.get('x-real-ip') ||
-    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
-    'unknown'
-  );
-}
+const ratelimit = createRatelimit('ratelimit:newsletter', 5, '15 m');
 
 function sanitizeEmail(email: string): string {
   return email.trim().toLowerCase();
@@ -54,7 +24,7 @@ function validateEmail(email: string): { valid: boolean; reason?: string } {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  const clientIP = getClientIP(request);
+  const clientIP = getClientIp(request);
 
   try {
     if (!ratelimit) {

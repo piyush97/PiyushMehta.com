@@ -366,7 +366,14 @@ main {
   min-height: 70vh;
 }
 
+/* Content is visible before JavaScript and when scripts fail or are disabled.
+   Motion only opts offscreen elements into a reveal after the observer is ready. */
 [data-reveal] {
+  opacity: 1;
+  transform: translate3d(0, var(--parallax-offset, 0px), 0);
+}
+
+[data-reveal].reveal-pending:not(.is-visible) {
   opacity: 0;
   transform: translate3d(0, calc(0.6rem + var(--parallax-offset, 0px)), 0) scale(0.992);
   transition:
@@ -377,7 +384,11 @@ main {
   will-change: opacity, transform;
 }
 
-[data-reveal].is-visible {
+[data-reveal].reveal-pending.is-visible {
+  transition:
+    opacity var(--motion-base, 240ms) var(--motion-ease-out),
+    transform var(--motion-base, 240ms) var(--motion-ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
   opacity: 1;
   transform: translate3d(0, var(--parallax-offset, 0px), 0) scale(1);
 }
@@ -484,31 +495,6 @@ main {
   animation-name: route-in-backward;
 }
 
-/* ─── Hero Typography Animation System ─── */
-
-@keyframes tw-char-in {
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes tw-cursor-blink {
-  0%,
-  49.9% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes tw-cursor-out {
-  to {
-    opacity: 0;
-  }
-}
-
 @keyframes hero-eyebrow-fade {
   from {
     opacity: 0;
@@ -529,37 +515,10 @@ main {
   overflow: visible;
 }
 
-[data-hero-title] .tw-char {
-  opacity: 0;
-  animation: tw-char-in 1ms linear both;
-}
-
-[data-hero-title] .tw-cursor {
-  display: inline-block;
-  width: 0.055em;
-  height: 0.85em;
-  background: var(--color-accent);
-  vertical-align: middle;
-  margin-left: 0.08em;
-  border-radius: 1px;
-  animation: tw-cursor-blink 530ms step-start infinite;
-}
-
-[data-hero-title] .tw-cursor.is-done {
-  animation: tw-cursor-out 250ms ease forwards;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .eyebrow[data-hero-eyebrow] {
     opacity: 1;
     animation: none;
-  }
-  [data-hero-title] .tw-char {
-    opacity: 1;
-    animation: none;
-  }
-  [data-hero-title] .tw-cursor {
-    display: none;
   }
 }
 
@@ -864,7 +823,9 @@ html {
     scroll-behavior: auto;
   }
 
-  [data-reveal] {
+  [data-reveal],
+  [data-reveal].reveal-pending:not(.is-visible),
+  [data-reveal].reveal-pending.is-visible {
     opacity: 1;
     transform: none;
     transition: none;

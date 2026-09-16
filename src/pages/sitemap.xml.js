@@ -1,61 +1,41 @@
 import { getCollection } from 'astro:content';
+import { generateCanonicalUrl } from '../utils/og-generator';
+import { toPostSlug } from '../utils/social-card-manifest';
+import { escapeXml } from '../utils/xml';
+
+export const prerender = true;
 
 export async function GET(context) {
-  try {
-    const posts = await getCollection('blog');
-    const toPostSlug = (id) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
-    const publishedPosts = posts.filter((post) => !post.data.draft);
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const site = context.site?.toString() || 'https://piyushmehta.com';
+  const staticPages = [
+    '/',
+    '/about',
+    '/blog',
+    '/projects',
+    '/contact-me',
+    '/services',
+    '/react-developer',
+    '/resume',
+    '/newsletter',
+    '/videos',
+    '/uses',
+  ];
 
-    const siteUrl = context.site || 'https://piyushmehta.com';
+  // Request/build time is not evidence of an editorial change. Omit unknown dates.
+  const entries = [
+    ...staticPages.map((pathname) => ({ url: generateCanonicalUrl(pathname, site) })),
+    ...posts.map((post) => ({
+      url: generateCanonicalUrl(`/blog/${toPostSlug(post.id)}`, site),
+      lastmod: (post.data.updatedDate || post.data.date).toISOString(),
+    })),
+  ];
 
-    // Static pages
-    const staticPages = [
-      '',
-      '/about/',
-      '/blog/',
-      '/projects/',
-      '/contact-me/',
-      '/videos/',
-      '/uses/',
-    ];
-
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml"
-        xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-${staticPages
-  .map(
-    (page) => `  <url>
-    <loc>${siteUrl}${page}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-    <changefreq>${page === '' || page === '/blog/' ? 'weekly' : 'monthly'}</changefreq>
-    <priority>${page === '' ? '1.0' : page === '/blog/' ? '0.9' : '0.8'}</priority>
-  </url>`,
-  )
-  .join('\n')}
-${publishedPosts
-  .map(
-    (post) => `  <url>
-    <loc>${siteUrl}/blog/${toPostSlug(post.id)}/</loc>
-    <lastmod>${post.data.date.toISOString()}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>`,
-  )
-  .join('\n')}
-</urlset>`;
-
-    return new Response(sitemap, {
-      headers: {
-        'Content-Type': 'application/xml',
-        'Cache-Control': 'public, max-age=3600',
-      },
-    });
-  } catch (error) {
-    console.error('Error generating sitemap:', error);
-    return new Response('Error generating sitemap', { status: 500 });
-  }
+  return new Response(
+    `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${entries.map(({ url, lastmod }) => `  <url><loc>${escapeXml(url)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}</url>`).join('\n')}
+</urlset>`,
+    { headers: { 'Content-Type': 'application/xml; charset=utf-8' } },
+  );
 }
