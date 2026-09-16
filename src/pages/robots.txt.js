@@ -5,6 +5,7 @@ export function GET(context) {
   return new Response(
     `User-agent: *
 Allow: /
+Content-Signal: ai-train=no, search=yes, ai-input=no
 Disallow: /api/
 Disallow: /admin/
 Disallow: /*.tmp

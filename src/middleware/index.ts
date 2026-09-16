@@ -6,8 +6,9 @@
  */
 
 import { sequence } from 'astro/middleware';
+import { onRequest as markdownNegotiation } from './markdown';
 import { onRequest as securityHeaders } from './security';
 
-export const onRequest = sequence(securityHeaders);
+export const onRequest = sequence(markdownNegotiation, securityHeaders);
 
 export default onRequest;
