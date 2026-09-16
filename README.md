@@ -1,207 +1,216 @@
 # piyushmehta.com
 
-Personal portfolio and blog. Astro 7 on Cloudflare Workers — static pages at the edge, four Worker routes for the parts that need a server.
+Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, deployed on Cloudflare Workers.
 
-__omp_shell("[](.github/demo.gif)")
+![](.github/demo.gif)
 
-## How it works
+## Built with
 
-Almost everything is prerendered at build time and served from Cloudflare's static asset store. Four routes execute Worker code:
-
-```
-                    ┌─ 18 page routes                    ─┐
-                    │  39 blog posts (MDX)                │
-Request ────────────│  /og/*.png social cards             │──> Cloudflare static assets
-                    │  rss.xml, sitemap.xml, robots.txt   │
-                    └─ Pagefind search index             ─┘
-
-                    ┌─ /api/contact                      ─┐
-                    │  /api/newsletter                    │
-                    │  /api/reactions                     │──> Worker ──> Resend / Upstash Redis
-                    └─ /api/newsletter-metrics (stub)    ─┘
-```
-
-That split is the main design constraint. Pages cost nothing to serve and cannot fail at runtime; anything dynamic has to justify a Worker invocation.
-
-| Layer | Choice |
+| Tech | Role |
 |---|---|
-| Framework | [Astro 7](https://astro.build/) — `@astrojs/cloudflare` adapter, server output |
-| UI | [React 19](https://react.dev/) islands — only where interaction needs state |
-| Styling | [Tailwind CSS v4](https://tailwindcss.com/) via `@tailwindcss/vite`, design tokens in `src/styles/global.css` |
-| Language | TypeScript 7, Astro strict mode |
-| Content | MDX with interactive components |
-| Social cards | [Satori](https://github.com/vercel/satori) + [`@resvg/resvg-js`](https://github.com/thx/resvg-js) — rendered at build, not per request |
-| Search | [Pagefind](https://pagefind.app/) — index built post-build over `data-pagefind-body` |
-| Email | [Resend](https://resend.com/) — contact form and newsletter |
-| Rate limiting | [Upstash Redis](https://upstash.com/) — `@upstash/ratelimit` on newsletter and reactions |
-| Comments | [Giscus](https://giscus.app/) — GitHub Discussions |
-| Monitoring | [Sentry](https://sentry.io/) — enabled only when a DSN is present |
-| Env | [varlock](https://varlock.dev/) — schema validation, typed access, secret scanning |
-| Tooling | [Vite+](https://viteplus.dev/) — Oxfmt, Oxlint, type checks in one pass |
-| Tests | [Playwright](https://playwright.dev/) E2E + `bun test` units |
-| Runtime | [Bun](https://bun.sh/) 1.4.0, Node 26.8.1 |
+| [Astro](https://astro.build/) | Framework — prerendered pages plus Worker API routes |
+| [TypeScript](https://www.typescriptlang.org/) | Language |
+| [React](https://react.dev/) | Interactive islands |
+| [Tailwind CSS](https://tailwindcss.com/) | Styling |
+| [MDX](https://mdxjs.com/) | Blog content |
+| [Cloudflare Workers](https://workers.cloudflare.com/) | Deployment |
 
-## Quick start
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | [Astro 7](https://astro.build/) — Cloudflare adapter |
+| UI | [React 19](https://react.dev/) — interactive islands |
+| Styling | [Tailwind CSS v4](https://tailwindcss.com/) — via `@tailwindcss/vite` |
+| Language | TypeScript 7 |
+| Content | MDX — blog posts with component support |
+| Search | [Pagefind](https://pagefind.app/) — static full-text search |
+| Email | [Resend](https://resend.com/) — contact form + newsletter (audience + confirmation) |
+| Rate limiting | [Upstash Redis](https://upstash.com/) — serverless Redis |
+| Monitoring | [Sentry](https://sentry.io/) — errors + performance |
+| Analytics | Cloudflare Workers Observability |
+| Env management | [varlock](https://varlock.dev/) — schema validation + secret scanning |
+| Code quality | [Vite+](https://viteplus.dev/) — Oxfmt + Oxlint + type checks |
+| Testing | [Playwright](https://playwright.dev/) — E2E |
+| Deployment | [Cloudflare Workers](https://workers.cloudflare.com/) — Static Assets + API routes |
+| Package manager | [Bun](https://bun.sh/) |
+
+## Local dev
+
+**Requirements:** Node.js 26.8.1+, Bun
 
 ```bash
 git clone https://github.com/piyush97/PiyushMehta.com.git
 cd PiyushMehta.com
 bun install
-cp .env.example .env
-bun dev                  # http://localhost:4321
 ```
 
-The site runs without credentials. Routes that need a service degrade explicitly rather than crashing — reactions read as zero, contact and newsletter return 503 when Resend is unconfigured. Contact rate-limits in memory; newsletter and reactions use Redis.
+Create a local environment file from the checked-in template:
+
+```bash
+cp .env.example .env
+```
+
+Start dev server:
+
+```bash
+bun dev
+```
+
+→ `http://localhost:4321`
+
+## Environment variables
+
+All variables are documented in [`.env.schema`](.env.schema) with types, sensitivity markers, and descriptions. `varlock` validates them on every dev/build startup.
+
+Key variables:
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `POSTGRES_URL` | Production | Newsletter DB |
+| `RESEND_API_KEY` | Production | Contact form + email |
+| `UPSTASH_REDIS_REST_URL` | Optional | Rate limiting |
+| `UPSTASH_REDIS_REST_TOKEN` | Optional | Rate limiting |
+| `PUBLIC_SENTRY_DSN` | Optional | Client error tracking |
+| `SENTRY_DSN` | Optional | Server error tracking |
+| `SENTRY_AUTH_TOKEN` | Build-time | Sourcemap upload |
+| `GITHUB_TOKEN` | Optional | GitHub project showcase |
+
+See `.env.schema` for the full list.
 
 ## Scripts
 
 ```bash
-bun dev                  # Dev server
-bun run build            # Full pipeline (see below)
-bun run preview          # Serve the build in the local Workers runtime
-bun run deploy           # Build + deploy with varlock-managed secrets
+bun dev              # Dev server
+bun build            # Production build (typegen → image migration → Astro build → Pagefind → resume PDF)
+bun preview          # Run the production build in the local Workers runtime
+bun run deploy       # Build and deploy with varlock-managed Cloudflare secrets
 
-bun run check            # Format, lint, and type checks (astro sync + varlock codegen first)
-bun run check:write      # Same, applying fixes
-bun run lint             # Oxlint only
-bun run format           # Oxfmt write mode
-bun run ci               # Read-only check for CI
+bun run lint         # Oxlint via Vite+
+bun run lint:fix     # Oxlint auto-fix via Vite+
+bun run format       # Oxfmt via Vite+
+bun run check        # Vite+ format, lint, and type checks
+bun run ci           # Read-only Vite+ check for CI
 
-bun test                 # Playwright, all projects
-bun run test:smoke       # tests/portfolio-smoke.spec.ts only
-bun run test:ui          # Playwright UI mode
-bun run test:report      # Open the last HTML report
+bun test             # Playwright E2E tests
+bun run test:smoke   # Smoke tests only
+bun run test:headed  # Tests in headed mode
+bun run test:ui      # Playwright UI mode
 
-bun run migrate:images   # Copy post-local images into public/blog/
-bun run cf:types         # Regenerate Cloudflare Worker types
-bun run doctor           # react-doctor
+bun run migrate:images    # Migrate blog images to public/
+bun run test-seo          # Validate SEO meta files
 ```
 
-`bun run build` is `scripts/build.mjs`, not a bare `astro build`:
-
-| Step | Purpose | Required |
-|---|---|---|
-| Type generation | `varlock codegen` — regenerates `src/varlock.env.d.ts` | yes |
-| Image migration | Copies `src/content/blog/<slug>/images/` into `public/blog/` | yes |
-| Astro build | Static pages + Worker bundle | yes |
-| Legacy blog redirects | Appends old capitalised slugs to `dist/client/_redirects` | yes |
-| OG image coverage check | Fails on missing or fallback-sized social cards | yes |
-| Pagefind search index | Indexes `dist/client` | optional |
-| Resume PDF | Renders `/resume` with Playwright Chromium | optional |
-
-Image migration rewrites MDX image paths in place. Check `git status` after an image-heavy build.
-
-## Environment
-
-[`.env.schema`](.env.schema) is the contract — every variable carries a type, sensitivity marker, and description, and varlock validates it on every dev and build start. `.env.example` still lists variables from removed integrations; trust the schema.
-
-Consumed at runtime:
-
-| Variable | Needed for | Without it |
-|---|---|---|
-| `RESEND_API_KEY` | Contact form, newsletter | Both return 503 |
-| `RESEND_SEGMENT_ID` | Newsletter audience | Signup fails |
-| `RESEND_FROM` | Confirmation email | Signup succeeds, no email |
-| `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` | Contact delivery | Falls back to defaults |
-| `UPSTASH_REDIS_REST_URL` / `_TOKEN` | Newsletter rate limiting, reaction counts | Reactions read as zero and refuse writes; newsletter refuses signups |
-| `SENTRY_DSN` / `PUBLIC_SENTRY_DSN` | Error tracking | Sentry stays off |
-
-Never edit `src/varlock.env.d.ts` by hand — regenerate with `bun run check`.
-
-## Writing a post
-
-Posts live at `src/content/blog/<slug>/index.mdx`, images alongside in `images/`.
-
-```yaml
----
-title: 'Post Title'              # required
-date: 2026-01-15                 # required
-description: 'One-line summary'
-tags: ['react', 'typescript']
-author: 'Piyush Mehta'           # defaults to this
-draft: false                     # true hides it from listings, tags, RSS, sitemap
-ogTemplate: 'tech'               # default | minimal | tech | blog | modern | professional
-ogTheme: 'dark'                  # dark | light | retro
-image:
-  url: '/blog/post-slug/images/cover.png'
-  alt: 'Cover image description'
----
-```
-
-Reference images as `/blog/<slug>/images/...`. The build copies them; `public/blog/**` is a mirror, not a source.
-
-MDX can import React components from `src/components/blog/` — quizzes, architecture diagrams, comparison tables, live demos.
-
-## Structure
+## Project structure
 
 ```
 /
-├── .env.schema                  # Env contract (varlock)
-├── astro.config.mjs             # Adapter, integrations, aliases, chunking
-├── vite.config.ts               # Vite+ format/lint/typecheck policy
-├── lefthook.yml                 # Pre-commit: react-doctor, vp check, varlock scan
-├── playwright.config.ts         # 5 browser projects, dev server on :4321
-├── scripts/                     # build.mjs and friends
-├── public/                      # Static assets, mirrored blog images
-├── tests/                       # 13 Playwright specs + 2 unit suites
+├── .env.schema              # Env var schema (varlock)
+├── astro.config.mjs         # Astro config
+├── lefthook.yml             # Git hooks (Vite+ check + varlock scan)
+├── public/                  # Static assets
+├── scripts/                 # Build and maintenance scripts
 └── src/
-    ├── components/              # 27 components (15 Astro, 12 React)
-    │   └── blog/                # Interactive MDX components
-    ├── content/blog/            # 39 posts
-    ├── content.config.ts        # Frontmatter schema
-    ├── data/portfolio.ts        # Typed project and case-study data
-    ├── layouts/Layout.astro     # Shell: SEO, nav, footer, theme, ClientRouter
-    ├── middleware/security.ts   # Response security headers
+    ├── components/          # 42 UI components (Astro + React)
+    ├── content/
+    │   └── blog/            # MDX blog posts
+    ├── layouts/
+    │   └── Layout.astro     # Root layout with SEO, skip link
+    ├── middleware/          # Request middleware
     ├── pages/
-    │   ├── api/                 # The four Worker routes
-    │   ├── blog/                # Listing, [slug], tag pages
-    │   └── og/                  # Prerendered social cards
-    ├── scripts/site-motion.ts   # Transition-aware reveal and parallax
-    ├── styles/global.css        # Tailwind entry, tokens, themes
-    └── utils/                   # Newsletter, SEO/schema, social cards
+    │   ├── api/             # API routes (contact, newsletter, OG images)
+    │   ├── blog/            # Blog listing + post pages
+    │   ├── index.astro      # Homepage
+    │   ├── about.astro
+    │   ├── projects.astro
+    │   ├── resume.astro
+    │   ├── uses.astro
+    │   ├── videos.astro
+    │   └── services.astro
+    ├── styles/
+    │   └── global.css       # Global styles + design tokens
+    ├── types/               # TypeScript type definitions
+    └── utils/               # OG generation, SEO helpers
 ```
 
-## Testing
+## Blog post frontmatter
 
-```bash
-bunx playwright test tests/portfolio-smoke.spec.ts --project=chromium
-bun test tests/newsletter.test.ts
+```yaml
+---
+title: "Post Title"
+description: "Post description"
+date: 2026-01-15
+author: "Piyush Mehta"
+tags: ["react", "typescript"]
+ogTemplate: "tech"        # default | minimal | tech | blog
+ogTheme: "dark"           # dark | light | retro
+image:
+  url: "/blog/post-slug/images/cover.png"
+  alt: "Cover image description"
+---
 ```
 
-Start with the narrowest spec on Chromium; widen to the other four projects only for compatibility-sensitive work. Accessibility specs assert zero critical Axe findings, which is a floor, not full WCAG conformance.
+## Features
 
-The suite is not a clean gate — some legacy specs target routes and selectors that no longer exist, and `simple.spec.ts` points at production. Validate the behaviour you changed and report that scope honestly.
+- **⌘K Command palette** — global search and navigation
+- **Full-text search** — Pagefind, client-side, instant results
+- **Dynamic OG images** — per-post generated via Satori + `@resvg/resvg-js`
+- **Contact form** — Resend, CSRF protection, in-memory + Redis rate limiting
+- **Newsletter** — multi-provider (Resend, Mailchimp, ConvertKit, Substack) with bot protection
+- **Skip link** — keyboard accessibility, WCAG 2 AA
+- **Structured data** — JSON-LD Person, Article, WebSite, BreadcrumbList schemas
+- **Sitemap + RSS** — native `@astrojs/rss` and `@astrojs/sitemap` endpoints
+- **Secret scanning** — varlock pre-commit hook blocks sensitive values in staged files
 
 ## Deployment
 
-Cloudflare Workers Static Assets on the Free plan, via the Workers Builds GitHub integration:
+Deploys to Cloudflare Workers with `bun run deploy`. Varlock uploads sensitive values as Cloudflare secrets and non-sensitive values as Worker variables.
 
-```
-main ──> Workers Builds ──> bun run check && bun run build ──> wrangler deploy
-```
+Build command: `bun run build`
 
-GitHub Actions ([`ci-cd.yml`](.github/workflows/ci-cd.yml)) runs quality, build, and security-config jobs but does not deploy. Runtime credentials live in the Worker's Variables and Secrets, never in Actions.
+Output: `dist/client` static assets plus `dist/server` Worker modules
 
-For manual deploys, `bun run deploy` uploads sensitive values as Cloudflare secrets and the rest as plain Worker variables.
+The production configuration uses only Workers Free products: Static Assets, lightweight API routes, custom domains, and included observability. Social cards and images are generated at build time rather than using Cloudflare Images or runtime rasterization.
+
+### Cloudflare Workers Builds
+
+Cloudflare's GitHub App owns deployment. Pull requests and non-production branches upload preview versions; pushes to `main` deploy production after the Cloudflare build succeeds. GitHub Actions remains the independent code-quality and build-verification gate and does not deploy.
+
+Recommended Cloudflare build settings:
+
+- Production branch: `main`
+- Build command: `bun run check && bun run build`
+- Deploy command: `bunx wrangler deploy`
+- Version command: `bunx wrangler versions upload`
+- Root directory: `/`
+- Non-production branch builds: enabled
+- Build cache: enabled
+
+Runtime credentials remain in the Worker's Variables and Secrets settings; they are not stored in GitHub Actions.
 
 ## Contributing
 
-PRs welcome. Bun only — no npm, pnpm, or Yarn lockfiles.
+Contributions are welcome! PRs are reviewed and validated by CI.
+
+- **Install with Bun** — this repo uses [Bun](https://bun.sh/) exclusively (`bun@1.3.13`): `bun install`
+- **Run the dev server** — `bun dev` → `http://localhost:4321`
+- **Build locally** — `bun build` runs the full pipeline (typegen → image migration → Astro build → Pagefind → resume PDF)
+- **Follow the existing style** — Vite+ (Oxfmt + Oxlint) format and lint are enforced via pre-commit hooks; run `bun run check` before pushing
+- **PRs welcome** — keep changes scoped, update the README if behavior changes, and make sure tests pass (`bun test`)
 
 ```bash
-bun install --frozen-lockfile
 git checkout -b feature/your-feature
-# ...
-bun run check                      # do this before pushing
-git commit -m 'feat: description'  # pre-commit hooks run react-doctor, Vite+, varlock scan
+# make changes
+git commit -m "feat: description"   # triggers Vite+ + varlock pre-commit hooks
 git push origin feature/your-feature
+# open PR → CI validates checks and the production build
 ```
 
-Match the conventions already in the file you are editing rather than introducing a second one. [`AGENTS.md`](AGENTS.md) documents these in detail.
+## Support / Sponsor
 
-## Support
+If you find this project useful, consider sponsoring:
 
-[Sponsor on GitHub](https://github.com/sponsors/piyush97) if this is useful to you.
+[💖 Sponsor Piyush on GitHub Sponsors](https://github.com/sponsors/piyush97)
 
 ## License
 
