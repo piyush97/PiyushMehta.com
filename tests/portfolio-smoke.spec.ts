@@ -72,6 +72,27 @@ test.describe('portfolio smoke', () => {
     expect(consoleErrors).toEqual([]);
   });
 
+  test('FocusTube appears as a project and links to its technical article', async ({ page }) => {
+    await page.goto('/projects/', { waitUntil: 'domcontentloaded' });
+
+    const focusTube = page.locator('article').filter({
+      has: page.getByRole('heading', { name: 'FocusTube' }),
+    });
+
+    await expect(focusTube).toBeVisible();
+    await expect(focusTube.getByText('TypeSafe Jev', { exact: true })).toBeVisible();
+    await expect(focusTube.getByRole('link', { name: 'GitHub' })).toHaveAttribute(
+      'href',
+      'https://github.com/piyush97/focus-tube',
+    );
+
+    await focusTube.getByRole('link', { name: 'Technical article' }).click();
+    await expect(page).toHaveURL(/\/blog\/building-focustube-typesafe-jev\/$/);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Building FocusTube with TypeSafe Jev' }),
+    ).toBeVisible();
+  });
+
   test('work page presents curated case studies and engineering outcomes', async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on('console', (message) => {
