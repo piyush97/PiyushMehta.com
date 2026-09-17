@@ -1,0 +1,241 @@
+---
+title: 'Building FocusTube with TypeSafe Jev'
+description: 'How I built a browser extension that turns YouTube into a strict learning feed using Jev, TypeSafe Noul probabilities, a Cloudflare Worker, and local decision caching.'
+date: 2026-09-17T12:00:00-04:00
+author: 'Piyush Mehta'
+tags:
+  - 'TypeSafe AI'
+  - 'Jev'
+  - 'System One'
+  - 'Browser Extensions'
+  - 'Cloudflare Workers'
+  - 'AI Engineering'
+image:
+  url: '/blog/building-focustube-typesafe-jev/images/cover.svg'
+  alt: 'FocusTube architecture showing YouTube video metadata passing through a Cloudflare Worker to TypeSafe Jev and returning a typed probability'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+draft: false
+---
+
+YouTube is one of my best sources for programming tutorials, conference talks, and interview preparation. It is also very good at placing a Short, a product launch, or an unrelated recommendation beside the thing I opened it to learn.
+
+I wanted a stricter interface: show a recommendation only when it is clearly useful for coding, software engineering, studying, or professional upskilling. Hide everything uncertain. Do it before the card flashes on screen.
+
+That became [FocusTube](https://github.com/piyush97/focus-tube), an open-source Chrome and Firefox extension powered by **Jev**, TypeSafe AI’s first System One model.
+
+![FocusTube sends small batches of video metadata through a Cloudflare Worker to Jev, then reveals or hides each card from its probability.](/blog/building-focustube-typesafe-jev/images/cover.svg)
+
+This is a small project, but it captures a useful AI engineering pattern: let the model make one semantic judgment and keep every product decision in ordinary code.
+
+## The decision was the product
+
+The first version did not need summaries, generated recommendations, or a chat interface. It needed an answer to one question:
+
+> Is this video directly useful for focused learning or career upskilling?
+
+A keyword list looked tempting. It also failed quickly. “React” can mean a React tutorial or a reaction video. “AI” appears in research lectures, product announcements, hype, and entertainment. A channel name helps, but it is not enough to classify every video from that channel.
+
+A general LLM could return `yes` or `no`, but then I would need to constrain and parse its response, handle malformed output, and decide how much to trust an unexplained binary answer. FocusTube needed a calibrated score it could compare with a threshold.
+
+That maps directly to TypeSafe’s [`Noul`](https://docs.typesafe.ai/primitives/noul) primitive. A Noul evaluates a yes-or-no question and returns the probability that the answer is yes:
+
+```json
+{
+  "type": "noul",
+  "noul": 0.91
+}
+```
+
+No generated explanation enters the product path. `0.91` is data. The extension can reveal the card at a threshold of `0.82`, hide it at `0.61`, and let the user raise or lower that boundary.
+
+## Why System One fit
+
+[TypeSafe System One](https://docs.typesafe.ai/concepts/system-one) models are built for fast, structured decisions. Jev accepts natural-language state and returns typed answers with probabilities instead of prose and reasoning.
+
+That distinction gave each part of FocusTube one job:
+
+- **Jev owns semantic judgment.** It reads the title, channel, and YouTube surface and estimates whether the video fits the learning policy.
+- **Code applies the policy.** The extension defines the threshold, caching, fail-closed behavior, pause control, and which YouTube surfaces are in scope.
+- **The browser handles presentation.** Cards stay concealed until code has enough evidence to reveal them.
+
+The model is not an autonomous agent. It cannot decide to navigate, block a channel, or alter settings. Its full authority is one probability for one named question.
+
+## Architecture
+
+FocusTube has two deployable pieces: a Manifest V3 extension and a Cloudflare Worker.
+
+![Browser extension, local cache, authenticated Cloudflare Worker, and TypeSafe Jev evaluation flow.](/blog/building-focustube-typesafe-jev/images/evaluation-flow.svg)
+
+The extension watches YouTube’s home feed, search results, and watch-page recommendations. When YouTube adds cards to the page, FocusTube:
+
+1. Conceals each new card.
+2. Extracts its title, channel, and current surface.
+3. Hides Shorts locally without calling the model.
+4. Checks a seven-day browser cache.
+5. Sends uncached records to the Worker in batches of at most twenty.
+6. Reveals only cards whose probability meets the configured threshold.
+
+The content script does not ship with a TypeSafe API key. It calls the user’s Worker with a separate extension token. The Worker validates the request, builds typed questions, calls `jev-latest`, and returns only the probabilities the UI needs.
+
+## One state, several narrow questions
+
+TypeSafe can evaluate several questions against one state in a request. FocusTube uses that to classify a batch without turning the task into one vague, multi-video answer.
+
+The Worker sends the videos as structured state:
+
+```ts
+const state = {
+  videos: [
+    {
+      title: 'Designing a rate limiter from first principles',
+      channel: 'Engineering Notes',
+      surface: 'home',
+    },
+    {
+      title: 'My new desk setup is unbelievable',
+      channel: 'Daily Tech Life',
+      surface: 'home',
+    },
+  ],
+};
+```
+
+It then creates one Noul question for each array position:
+
+```ts
+const questions = Object.fromEntries(
+  videos.map((_, index) => [
+    `video_${index}`,
+    {
+      type: 'noul',
+      instructions: {
+        question: `Is videos[${index}] directly useful for focused learning or career upskilling?`,
+        include: [
+          'programming and coding',
+          'software engineering, architecture, tooling, security, data, cloud, or AI engineering',
+          'coding interviews, system design interviews, and technical career preparation',
+          'academic study, tutorials, courses, lectures, and substantive explainers',
+        ],
+        exclude: [
+          'general entertainment, reactions, gaming, sports, lifestyle, or celebrity content',
+          'product launches, desk setups, unboxings, or creator vlogs without substantial instruction',
+          'vague motivation or content whose educational value is unclear',
+        ],
+      },
+    },
+  ]),
+);
+```
+
+The API call stays direct and inspectable:
+
+```ts
+const response = await fetch('https://api.typesafe.ai/v1/systemone', {
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${env.TYPESAFE_API_KEY}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    state,
+    model: 'jev-latest',
+    questions,
+  }),
+});
+```
+
+Each answer comes back under the same key as its question. The Worker maps `answers.video_0.noul` to the first video and returns a compact result to the extension.
+
+## Strict means fail closed
+
+The default threshold is `0.82`. That number is a product control, not a claim that every result above it is correct. TypeSafe describes probabilities as calibrated across groups of predictions; an individual prediction can still be wrong.
+
+The two classification errors do not cost the same:
+
+- A false positive puts a distraction back into the feed.
+- A false negative hides a useful recommendation that remains available through direct navigation, subscriptions, history, or a less strict threshold.
+
+For this product, the second failure is cheaper. So an unavailable Worker, a malformed response, or a low probability keeps an unclassified card hidden. The toolbar makes the strictness visible and gives the user a pause switch when they want the original feed back.
+
+I would not reuse that policy blindly. A moderation queue, accessibility tool, or high-stakes workflow may have very different error costs. Probability is useful because application code can express those costs instead of pretending every result is equally certain.
+
+## Preventing the flash of distraction
+
+Classification would feel broken if an entertainment thumbnail appeared for half a second and then vanished. The content script marks discovered cards as pending before network work starts:
+
+```css
+.focustube-pending,
+.focustube-hidden,
+.focustube-shorts-hidden {
+  display: none !important;
+}
+```
+
+A `MutationObserver` rescans as YouTube updates its client-rendered page. Cached decisions resolve immediately. New records wait for their batch. A card receives the visible class only after its probability clears the threshold.
+
+This makes model latency less important to the interface. Users see a feed fill with accepted material rather than watching rejected cards disappear.
+
+## Shorts do not need AI
+
+FocusTube blocks Shorts by URL and YouTube renderer type:
+
+```js
+function isShort(card) {
+  return Boolean(card.querySelector("ytd-reel-item-renderer, a[href^='/shorts/']"));
+}
+```
+
+That check is deterministic, cheap, and more reliable than asking a model whether a known Short should be hidden. Shorts never enter a TypeSafe request.
+
+This is an important boundary when adding AI to software: use the model only where normal code cannot make the decision cleanly. DOM structure can identify a Short. Semantic relevance needs Jev.
+
+## Keeping secrets outside the extension
+
+Browser extensions are distributed client code. Anything bundled with one should be treated as public. The TypeSafe API key therefore lives only in the Cloudflare Worker’s secret store.
+
+The extension uses a separate, user-configured token to authenticate to its Worker. This is not a perfect identity system—the local user can inspect their own token—but it prevents an unauthenticated public Worker URL from becoming free access to someone else’s TypeSafe quota.
+
+The Worker also enforces small input boundaries:
+
+- One to twenty videos per request
+- Title capped at 300 characters
+- Channel capped at 200 characters
+- Surface capped at 40 characters
+- Only the expected route and methods accepted
+
+FocusTube sends no YouTube cookies, account identity, watch history, comments, or transcript. The model sees the visible metadata needed for the judgment and nothing else.
+
+## Caching changed both speed and cost
+
+Recommendation cards repeat. Search results reappear. YouTube can rerender the same card during navigation. Calling Jev each time would add avoidable latency and spend.
+
+The extension stores each probability in `localStorage`, keyed by normalized title and channel, for seven days. It caches the probability rather than the final boolean. If the user raises the threshold from `0.82` to `0.90`, FocusTube can reapply the stricter policy without another model call.
+
+There is a tradeoff: a title can change, and channel-plus-title is not a permanent video identifier. For this first version, it is available across the card types in scope and degrades safely. A future version can prefer YouTube’s video ID when every supported renderer exposes it consistently.
+
+## What I would test next
+
+The repository contains a working implementation, not a published accuracy benchmark. Before treating its defaults as settled, I would create a labeled evaluation set from real recommendations and measure:
+
+1. Precision at several thresholds, especially how much entertainment leaks through.
+2. Recall for coding, system design, academic, and career-preparation subsets.
+3. Disagreements around tech news, conference keynotes, and career commentary.
+4. Latency and cache-hit rate across home, search, and watch sessions.
+5. DOM selector breakage as YouTube changes renderers.
+
+Those results could justify separate policies by surface. Search intent may tolerate a lower threshold than the home feed. Watch recommendations may benefit from the current video’s metadata as extra state. Both are measurable changes; neither requires replacing the architecture.
+
+## What this project taught me
+
+The useful part of AI here is not generated content. It is the semantic branch ordinary code could not write:
+
+```ts
+const visible = probability >= threshold;
+```
+
+Everything around that line remains conventional software engineering: narrow inputs, explicit authority, secret isolation, caching, failure policy, browser state, and a control the user can understand.
+
+That is why Jev worked well for FocusTube. It returned exactly the missing primitive—a typed judgment with a probability—and stopped there.
+
+The full extension and Worker are available in the [FocusTube repository](https://github.com/piyush97/focus-tube). TypeSafe’s [System One documentation](https://docs.typesafe.ai/concepts/system-one) and [API reference](https://docs.typesafe.ai/api) cover the model and response contracts used here.

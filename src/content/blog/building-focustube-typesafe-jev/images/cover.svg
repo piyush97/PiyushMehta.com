@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Building FocusTube with TypeSafe Jev</title>
+  <desc id="desc">Editorial diagram showing YouTube metadata flowing to TypeSafe Jev and returning a typed probability.</desc>
+  <rect width="1200" height="630" fill="#171a2f"/>
+  <path d="M0 76h1200M0 554h1200" stroke="#343a5f"/>
+  <path d="M76 0v630M1124 0v630" stroke="#343a5f"/>
+  <rect x="76" y="76" width="1048" height="478" rx="18" fill="#222640" stroke="#4a5077"/>
+  <rect x="112" y="112" width="102" height="102" rx="22" fill="#b6f36b"/>
+  <path d="M145 137v52l43-26-43-26Z" fill="#172019"/>
+  <text x="246" y="144" fill="#ffcc68" font-family="ui-monospace, monospace" font-size="18" font-weight="700" letter-spacing="3">SYSTEM ONE / CASE STUDY</text>
+  <text x="246" y="196" fill="#f6f7ff" font-family="Arial, sans-serif" font-size="54" font-weight="800">Building FocusTube</text>
+  <text x="112" y="284" fill="#b4bad8" font-family="Georgia, serif" font-size="27">A strict YouTube learning feed powered by</text>
+  <text x="112" y="326" fill="#f6f7ff" font-family="Georgia, serif" font-size="34" font-weight="700">TypeSafe Jev</text>
+  <g transform="translate(112 388)">
+    <rect width="250" height="74" rx="10" fill="#171a2f" stroke="#4a5077"/>
+    <text x="22" y="32" fill="#8f96ba" font-family="ui-monospace, monospace" font-size="13">YOUTUBE METADATA</text>
+    <text x="22" y="55" fill="#f6f7ff" font-family="Arial, sans-serif" font-size="16">title · channel · surface</text>
+    <path d="M274 37h62" stroke="#ffcc68" stroke-width="3"/>
+    <path d="m329 29 11 8-11 8" fill="none" stroke="#ffcc68" stroke-width="3"/>
+    <rect x="362" width="232" height="74" rx="10" fill="#171a2f" stroke="#4a5077"/>
+    <text x="384" y="32" fill="#8f96ba" font-family="ui-monospace, monospace" font-size="13">JEV / NOUL</text>
+    <text x="384" y="55" fill="#f6f7ff" font-family="Arial, sans-serif" font-size="16">semantic judgment</text>
+    <path d="M618 37h62" stroke="#ffcc68" stroke-width="3"/>
+    <path d="m673 29 11 8-11 8" fill="none" stroke="#ffcc68" stroke-width="3"/>
+    <rect x="706" width="236" height="74" rx="10" fill="#b6f36b"/>
+    <text x="728" y="32" fill="#27633b" font-family="ui-monospace, monospace" font-size="13" font-weight="700">TYPED ANSWER</text>
+    <text x="728" y="58" fill="#172019" font-family="Arial, sans-serif" font-size="22" font-weight="800">probability: 0.91</text>
+  </g>
+  <text x="112" y="516" fill="#8f96ba" font-family="ui-monospace, monospace" font-size="14">PIYUSHMEHTA.COM  /  TYPESAFE AI  /  CLOUDFLARE WORKERS</text>
+</svg>
