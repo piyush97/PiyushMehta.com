@@ -112,6 +112,32 @@ export const portfolioMetrics: PortfolioMetric[] = [
 
 export const caseStudies: CaseStudy[] = [
   {
+    title: 'FocusTube',
+    eyebrow: 'TypeSafe Jev, browser extension, open source',
+    role: 'Product Engineer',
+    timeframe: '2026',
+    summary:
+      'Built a Chrome and Firefox extension that turns YouTube recommendations into a strict learning feed using typed probability judgments from TypeSafe’s Jev System One model.',
+    problem:
+      'YouTube mixes useful engineering tutorials with entertainment, hype, and short-form distractions. Keyword filters miss the semantic difference, while a generative model would add latency and prose the product does not need.',
+    approach: [
+      'Concealed new recommendation cards before evaluation so blocked content never flashed on screen.',
+      'Asked Jev one narrow Noul question per video and let extension code compare the returned probability with a user-controlled threshold.',
+      'Placed TypeSafe calls behind an authenticated Cloudflare Worker, keeping the API key out of browser code and limiting each request to twenty validated records.',
+      'Cached decisions locally for seven days and blocked YouTube Shorts before classification to reduce repeat calls.',
+    ],
+    outcomes: [
+      'Shipped an installable Manifest V3 extension for Chrome and Firefox with no extension build step.',
+      'Kept model output small and deterministic: one typed probability drives each reveal-or-hide decision.',
+      'Published the full implementation, local setup, privacy boundary, and classification policy as open source.',
+    ],
+    stack: ['TypeSafe Jev', 'System One', 'TypeScript', 'Cloudflare Workers', 'Manifest V3'],
+    links: [
+      { label: 'Technical article', href: '/blog/building-focustube-typesafe-jev/' },
+      { label: 'GitHub', href: 'https://github.com/piyush97/focus-tube' },
+    ],
+  },
+  {
     title: 'Enterprise AI Workflows',
     eyebrow: 'AI systems for consulting clients',
     role: 'Senior Software Consultant / Senior Software Engineer',
