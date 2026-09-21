@@ -1,0 +1,75 @@
+{
+  "buildPath": "code",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "#000",
+        "createdAt": "2026-09-21T21:28:49.107Z",
+        "reason": "CSS mask alpha only; this value does not render as a visible palette color."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "4.5rem",
+        "createdAt": "2026-09-21T21:28:49.129Z",
+        "reason": "User-confirmed homepage comp requires the documented oversized ledger headline scale."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "2.6rem",
+        "createdAt": "2026-09-21T21:28:49.150Z",
+        "reason": "Documented responsive homepage and section heading endpoint in DESIGN.md."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "2.8rem",
+        "createdAt": "2026-09-21T21:28:49.173Z",
+        "reason": "Documented editorial section heading endpoint retained from the approved homepage system."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "0.72rem",
+        "createdAt": "2026-09-21T21:28:49.194Z",
+        "reason": "Documented compact ledger metadata size retained for the homepage editorial system."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "2.1rem",
+        "createdAt": "2026-09-21T21:28:49.217Z",
+        "reason": "Documented selected-work responsive title endpoint retained below the approved hero."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "0.68rem",
+        "createdAt": "2026-09-21T21:28:49.241Z",
+        "reason": "Documented compact technical metadata size retained for source and measured artifacts."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "0.76rem",
+        "createdAt": "2026-09-21T21:28:49.263Z",
+        "reason": "Documented compact work-link control size retained in the homepage editorial system."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "1.8rem",
+        "createdAt": "2026-09-21T21:28:49.286Z",
+        "reason": "Documented notebook title endpoint retained below the approved hero."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "4rem",
+        "createdAt": "2026-09-21T21:28:49.306Z",
+        "reason": "User-confirmed homepage comp requires this tablet display endpoint."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "3.25rem",
+        "createdAt": "2026-09-21T21:28:49.327Z",
+        "reason": "User-confirmed homepage comp requires this mobile display endpoint."
+      }
+    ]
+  }
+}

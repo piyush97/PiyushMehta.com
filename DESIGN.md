@@ -95,7 +95,7 @@ The incumbent world is compact at the navigation level and spacious at section b
 - Cool ink surfaces with a rare amber signal
 - Muli for voice; Source Code Pro for code and measured data
 - Tonal layering and thin borders before heavy shadows
-- Route-scoped responsive grids: homepage at 920px/620px, writing at 860px/640px, and about/contact at 960px/640px
+- Route-scoped responsive grids: homepage at 1180px/900px/640px/480px, writing at 860px/640px, and about/contact at 960px/640px
 
 ## Colors
 
@@ -149,13 +149,13 @@ The palette is a high-contrast ink-and-signal system: deep blue-violet surfaces 
 
 ## Layout
 
-The primary content container is 784px for reading-focused surfaces and 1200px for broad portfolio layouts; the active portfolio shell uses a fluid width capped at 1120px with 1rem side padding. The homepage uses a two-column hero (1.08fr / 0.92fr) with a minimum 320px media column, a four-column metric band, and a three-column case-study grid. About and contact share the same 1120px shell and two-column hero; writing uses the same shell with a narrower two-column hero and a three-column featured grid. Spacing is route-specific rather than one universal token: homepage section blocks use clamp(4.5rem, 9vw, 7rem), about sections use clamp(3rem, 7vw, 5rem), contact sections use clamp(2.5rem, 6vw, 4.5rem), and writing sections use clamp(2.5rem, 6vw, 5rem).
+The primary content container is 784px for reading-focused surfaces and 1200px for broad portfolio layouts; the active portfolio shell uses a fluid width capped at 1120px with 1rem side padding. The homepage opening is the deliberate wide exception: its evidence-ledger composition expands to 1552px with fluid 24–60px gutters so the copy, conference portrait, and decision record can overlap without becoming cards. The first viewport is followed by a three-column metric rail, while the existing selected-work, notebook, and contact sections return to the narrower editorial shell. About and contact share the 1120px shell and two-column hero; writing uses the same shell with a narrower two-column hero and a three-column featured grid. Spacing is route-specific rather than one universal token: homepage section blocks use clamp(4.5rem, 9vw, 7rem), about sections use clamp(3rem, 7vw, 5rem), contact sections use clamp(2.5rem, 6vw, 4.5rem), and writing sections use clamp(2.5rem, 6vw, 5rem).
 
-The homepage changes at 920px: its hero becomes one column, metrics and case studies become two columns, and the notebook becomes one column; at 620px, metrics and case studies become one column and display type contracts to approximately 3rem. Writing changes at 860px, collapsing its hero and featured grid, then at 640px contracts the shell side padding, newsletter to one column, and hero type. About and contact change at 960px, collapsing their hero and secondary grids; about metrics become one column at 640px. Independently, the navigation switches to its mobile panel at 767px (the CSS hides desktop links at that width); mobile links use full-width rows, a fixed overlay, focus restoration, and a scrollable panel capped by the viewport.
+The homepage tightens its overlapping desktop ledger at 1180px, then becomes a single source-order column at 900px: headline and description, actions, portrait, constraint/decision/outcome record, then metrics. The metric rail remains three columns through tablet widths and stacks at 640px; action targets remain at least 44px and the portrait uses a stable landscape crop on small screens. At 480px the hero display and gutters contract again without changing the reading order. Writing changes at 860px, collapsing its hero and featured grid, then at 640px contracts the shell side padding, newsletter to one column, and hero type. About and contact change at 960px, collapsing their hero and secondary grids; about metrics become one column at 640px. Independently, the navigation switches to its mobile panel at 767px (the CSS hides desktop links at that width); mobile links use full-width rows, a fixed overlay, focus restoration, and a scrollable panel capped by the viewport.
 
 ## Elevation & Depth
 
-The system uses tonal layering with restrained elevation. Raised surfaces change background and border before reaching for a shadow. The core shadows are 0 2px 6px 0 rgba(0, 0, 0, 0.1) for quiet surfaces and 5px 5px 15px rgba(0, 0, 0, 0.12) for legacy card emphasis. The homepage portrait actively uses a deliberate ambient hero shadow (0 24px 80px rgba(0, 0, 0, 0.22)); that is an authored focal treatment, not a default card elevation. The homepage east accent also carries a smaller accent-colored shadow. Writing-hero guidance uses a scoped shadow, and hover states may use a larger soft shadow, but rest states should remain calm. Backdrop blur is functional on the sticky navigation and is also used by the content-specific PostReactions controls; do not generalize either treatment to every surface.
+The system uses tonal layering with restrained elevation. Raised surfaces change background and border before reaching for a shadow. The core shadows are 0 2px 6px 0 rgba(0, 0, 0, 0.1) for quiet surfaces and 5px 5px 15px rgba(0, 0, 0, 0.12) for legacy card emphasis. The homepage portrait is integrated with directional edge fades instead of a card shadow or color wash; its overlap with the metric rail supplies depth. Writing-hero guidance uses a scoped shadow, and hover states may use a larger soft shadow, but rest states should remain calm. Backdrop blur is functional on the sticky navigation and is also used by the content-specific PostReactions controls; do not generalize either treatment to every surface.
 
 ### Shadow Vocabulary
 - **Soft surface** (`0 2px 6px 0 rgba(0, 0, 0, 0.1)`): Newsletter cards and low-elevation grouped controls.
@@ -203,6 +203,8 @@ The blog index uses readable article rows with metadata, title, description, tag
 
 ### Evidence Blocks
 Metric bands, case-study panels, risk matrices, and interactive explainers are signature evidence components. They may use color to encode status or compare values, but the encoded meaning must also be present in text, labels, or state attributes.
+
+The homepage ledger is an open composition, not a card. Its desktop record presents one real case study as `Constraint`, `Decision`, and `Outcome`, paired with a three-item outcome rail. Amber is reserved for the record marker, primary action, metric values, and link emphasis. On narrow screens the same semantic blocks remain in DOM order and use rules, spacing, and typography rather than nested containers.
 
 ## Do's and Don'ts
 

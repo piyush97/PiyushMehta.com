@@ -38,9 +38,11 @@ test.describe('portfolio smoke', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
     await expect(page.getByRole('heading', { name: /holds up after the demo/i })).toBeVisible();
-    await expect(page.getByText('Evidence over adjectives.')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Enterprise AI Workflows' })
+    ).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Current notebook' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Inspect the work' }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Review 3 case studies' })).toBeVisible();
 
     const notebookSection = page.locator('section').filter({
       has: page.getByRole('heading', { name: 'Current notebook' }),
