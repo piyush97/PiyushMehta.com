@@ -75,6 +75,24 @@
         "value": "0.5rem",
         "createdAt": "2026-09-22T02:42:07.436Z",
         "reason": "Responsive mobile masthead endpoint documented in DESIGN.md."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "2.15rem",
+        "createdAt": "2026-09-22T02:49:53.481Z",
+        "reason": "Approved mobile homepage composition requires this compact hero headline endpoint."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "0.9rem",
+        "createdAt": "2026-09-22T02:49:57.665Z",
+        "reason": "Approved mobile evidence record uses this compact reading size for narrow-width legibility."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "1.65rem",
+        "createdAt": "2026-09-22T02:50:01.798Z",
+        "reason": "Approved mobile impact rail requires this compact metric scale at narrow widths."
       }
     ]
   }
