@@ -69,6 +69,12 @@
         "value": "3.25rem",
         "createdAt": "2026-09-21T21:28:49.327Z",
         "reason": "User-confirmed homepage comp requires this mobile display endpoint."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "0.5rem",
+        "createdAt": "2026-09-22T02:42:07.436Z",
+        "reason": "Responsive mobile masthead endpoint documented in DESIGN.md."
       }
     ]
   }

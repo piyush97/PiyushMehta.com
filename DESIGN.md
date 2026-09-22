@@ -139,7 +139,7 @@ The palette is a high-contrast ink-and-signal system: deep blue-violet surfaces 
 - **Headline** (800, `3.75rem`, 1.05): Major section headings and editorial entry points.
 - **Title** (800, `1.35rem`, 1.2): Case-study, notebook, card, and supporting content titles.
 - **Body** (400, `1rem`, 1.625): Reading copy, descriptions, and explanatory content. Keep prose measures comfortable rather than stretching text across the viewport.
-- **Label** (800, `0.8rem`, 1.2, `0.12em`, uppercase): Eyebrows, metadata labels, and compact navigation context.
+- **Label** (800, `0.8rem`, 1.2, `0.12em`, uppercase): Eyebrows, metadata labels, and compact navigation context. The mobile homepage masthead uses a `0.5rem` mono edition label so the full portfolio identifier remains visible between the PM mark and menu control at narrow widths.
 
 ### Named Rules
 

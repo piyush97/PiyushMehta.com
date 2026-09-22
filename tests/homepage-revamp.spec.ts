@@ -65,15 +65,27 @@ test.describe('approved homepage revamp', () => {
       expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
 
       const orderedSections = page.locator(
-        '[data-home-section="intro"], [data-home-section="portrait"], [data-home-section="evidence"], [data-home-section="metrics"]'
+        '[data-home-section="intro"], [data-home-section="portrait"], [data-home-section="evidence"], [data-home-section="actions"], [data-home-section="metrics"]'
       );
-      await expect(orderedSections).toHaveCount(4);
+      await expect(orderedSections).toHaveCount(5);
       const sectionTops = await orderedSections.evaluateAll((elements) =>
-        elements.map((element) => element.getBoundingClientRect().top + window.scrollY)
+        Object.fromEntries(
+          elements.map((element) => [
+            element.getAttribute('data-home-section'),
+            element.getBoundingClientRect().top + window.scrollY,
+          ])
+        )
       );
-      expect(sectionTops).toEqual([...sectionTops].sort((a, b) => a - b));
+      if (viewport.name === 'tablet') {
+        expect(sectionTops.intro).toBeLessThan(sectionTops.actions);
+        expect(sectionTops.actions).toBeLessThan(sectionTops.portrait);
+        expect(sectionTops.portrait).toBeLessThan(sectionTops.evidence);
+        expect(sectionTops.evidence).toBeLessThan(sectionTops.metrics);
+      } else {
+        expect(Object.values(sectionTops)).toEqual(Object.values(sectionTops).sort((a, b) => a - b));
+      }
 
-      const actions = page.locator('[data-home-section="intro"] a');
+      const actions = page.locator('[data-home-section="actions"] a');
       await expect(actions).toHaveCount(2);
       for (const action of await actions.all()) {
         const box = await action.boundingBox();
@@ -90,6 +102,18 @@ test.describe('approved homepage revamp', () => {
             (element) => element.scrollWidth <= element.clientWidth && element.scrollHeight <= element.clientHeight
           )
         ).toBeTruthy();
+      }
+
+      if (viewport.width <= 640) {
+        const mobileMetrics = await page.locator('[data-home-section="metrics"]').evaluate(
+          (element) => getComputedStyle(element).gridTemplateColumns.split(' ').length
+        );
+        expect(mobileMetrics).toBe(3);
+        const actionWidths = await actions.evaluateAll((elements) =>
+          elements.map((element) => Math.round(element.getBoundingClientRect().width))
+        );
+        expect(actionWidths[0]).toBeGreaterThanOrEqual(viewport.width - 32);
+        expect(actionWidths[1]).toBeGreaterThanOrEqual(viewport.width - 32);
       }
     });
   }
@@ -125,5 +149,15 @@ test.describe('approved homepage revamp', () => {
       .exclude('[data-axe-ignore]')
       .analyze();
     expect(results.violations.filter((violation) => violation.impact === 'critical')).toHaveLength(0);
+  });
+
+  test('keeps theme access inside the mobile panel', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    await page.getByRole('button', { name: 'Toggle menu' }).click();
+    await expect(page.getByRole('button', { name: 'Toggle theme' })).toBeVisible();
+    await page.getByRole('button', { name: 'Toggle theme' }).click();
+    await expect(page.locator('html')).toHaveClass(/professional-dark|professional-light/);
   });
 });
