@@ -45,6 +45,90 @@ const publishedPosts = allPosts
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
+type ReadingPathStepConfig = {
+  readonly slug: string;
+  readonly stepLabel: string;
+};
+
+type ReadingPathConfig = {
+  readonly id: string;
+  readonly intent: string;
+  readonly outcome: string;
+  readonly steps: readonly [
+    ReadingPathStepConfig,
+    ReadingPathStepConfig,
+    ReadingPathStepConfig,
+  ];
+};
+
+const readingPathConfigs = [
+  {
+    id: 'safe-ai-agent',
+    intent: 'I need to ship an AI agent safely',
+    outcome: 'Build the protocol, map its trust boundaries, and verify actions before release.',
+    steps: [
+      { slug: 'building-mcp-server-typescript', stepLabel: 'Start with the protocol' },
+      { slug: 'ai-agents-mcp-security-crisis', stepLabel: 'Inspect the trust boundary' },
+      { slug: 'testing-ai-agent-actions', stepLabel: 'Prove the action gate' },
+    ],
+  },
+  {
+    id: 'production-migration',
+    intent: 'I’m planning a production migration',
+    outcome: 'Move from strategy to cutover with reliability, data safety, and platform constraints in view.',
+    steps: [
+      { slug: 'cron-to-event-driven', stepLabel: 'Frame the migration' },
+      { slug: 'zero-downtime-database-migration-at-scale', stepLabel: 'Protect the data path' },
+      { slug: 'vercel-to-cloudflare-migration', stepLabel: 'Adapt to the new runtime' },
+    ],
+  },
+  {
+    id: 'coding-agent-workflow',
+    intent: 'I want a better coding-agent workflow',
+    outcome: 'Give agents durable context, persistent sessions, and a faster keyboard-first desktop loop.',
+    steps: [
+      { slug: 'agents-md-repository-context', stepLabel: 'Give agents context' },
+      { slug: 'herdr-terminal-multiplexer-coding-agents', stepLabel: 'Keep their sessions alive' },
+      { slug: 'omaswitch-alt-tab-omarchy', stepLabel: 'Tighten the desktop loop' },
+    ],
+  },
+] as const satisfies readonly ReadingPathConfig[];
+
+class ReadingPathEntryError extends Error {
+  readonly pathIntent: string;
+  readonly slug: string;
+
+  constructor(pathIntent: string, slug: string) {
+    super(`Reading path "${pathIntent}" references missing or draft post "${slug}".`);
+    this.name = 'ReadingPathEntryError';
+    this.pathIntent = pathIntent;
+    this.slug = slug;
+  }
+}
+
+const publishedPostBySlug = new Map(
+  publishedPosts.map((post) => [toPostSlug(post.id), post] as const)
+);
+
+const readingPaths = readingPathConfigs.map((path) => ({
+  ...path,
+  steps: path.steps.map((step) => {
+    const post = publishedPostBySlug.get(step.slug);
+    if (!post) {
+      throw new ReadingPathEntryError(path.intent, step.slug);
+    }
+
+    return {
+      ...step,
+      title: post.data.title,
+      description: createExcerpt(post),
+      href: `/blog/${step.slug}/`,
+      tags: post.data.tags ?? [],
+      readingTime: calculateReadingTime(post),
+    };
+  }),
+}));
+
 // Prepare posts data for the BlogFilter component
 const postsForFilter = publishedPosts.map((post) => ({
   id: toPostSlug(post.id),
@@ -132,34 +216,42 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     </div>
   </section>
 
-  <section class="writing-featured" aria-label="Reading paths">
+  <section class="reading-paths" aria-labelledby="reading-paths-heading">
     <div class="section-heading">
-      <p class="eyebrow">Follow a thread</p>
-      <h2>Guides to AI agents, backend systems, and developer tools.</h2>
-      <p>Start with a concept, inspect the tradeoffs, then try the implementation.</p>
+      <p class="eyebrow">Choose your outcome</p>
+      <h2 id="reading-paths-heading">Follow a path through the work.</h2>
+      <p>Pick the problem in front of you, then move through three published field notes in order.</p>
     </div>
-    <div class="featured-grid">
-      <article>
-        <span>Production AI</span>
-        <h3>From tool calls to trustworthy actions</h3>
-        <p><a href="/blog/building-mcp-server-typescript/">Build an MCP server</a> →
-          <a href="/blog/ai-agents-mcp-security-crisis/">Examine the trust boundaries</a> →
-          <a href="/blog/testing-ai-agent-actions/">Test the action gate</a></p>
-      </article>
-      <article>
-        <span>Reliable backend systems</span>
-        <h3>Make infrastructure decisions inspectable</h3>
-        <p><a href="/blog/cron-to-event-driven/">Explore event-driven workflows</a> →
-          <a href="/blog/vercel-to-cloudflare-migration/">Read the site migration</a> →
-          <a href="/blog/zfs-saved-my-data-seagate-warranty/">Follow a drive recovery</a></p>
-      </article>
-      <article>
-        <span>Building developer tools</span>
-        <h3>Give coding agents a workable environment</h3>
-        <p><a href="/blog/agents-md-repository-context/">Write repository instructions</a> →
-          <a href="/blog/herdr-terminal-multiplexer-coding-agents/">Explore persistent terminals</a> →
-          <a href="/projects/#case-5">Inspect the Interview Prep Portal</a></p>
-      </article>
+    <div class="reading-paths__grid" data-reading-paths-grid>
+      {readingPaths.map((path) => (
+        <article
+          class="reading-path-card"
+          data-reading-path={path.id}
+          aria-labelledby={`reading-path-${path.id}`}
+        >
+          <header>
+            <p class="reading-path-card__label">Reading path</p>
+            <h3 id={`reading-path-${path.id}`}>{path.intent}</h3>
+            <p>{path.outcome}</p>
+          </header>
+          <ol>
+            {path.steps.map((step, index) => (
+              <li data-reading-path-step={String(index + 1)}>
+                <p class="reading-path-step__label">
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  {step.stepLabel}
+                </p>
+                <h4><a href={step.href}>{step.title}</a></h4>
+                <p class="reading-path-step__description">{step.description}</p>
+                <div class="reading-path-step__meta">
+                  <span>{step.readingTime} min read</span>
+                  {step.tags.slice(0, 3).map((tag) => <span>{tag}</span>)}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </article>
+      ))}
     </div>
   </section>
 
@@ -195,6 +287,7 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
 <style>
   .writing-hero,
   .writing-featured,
+  .reading-paths,
   .writing-index {
     width: min(1120px, calc(100% - 2rem));
     margin-inline: auto;
@@ -310,6 +403,7 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
   }
 
   .writing-featured,
+  .reading-paths,
   .writing-index {
     padding-block: clamp(2.5rem, 6vw, 5rem);
   }
@@ -404,6 +498,126 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     color: var(--color-accent);
   }
 
+  .reading-paths__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .reading-path-card {
+    min-width: 0;
+    border: 1px solid var(--color-card-border);
+    border-radius: 0.75rem;
+    background: var(--color-surface-raised);
+    overflow: hidden;
+  }
+
+  .reading-path-card > header {
+    padding: 1.5rem;
+  }
+
+  .reading-path-card__label,
+  .reading-path-step__label {
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .reading-path-card__label {
+    margin: 0 0 0.75rem;
+  }
+
+  .reading-path-card h3 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .reading-path-card header > p:last-child,
+  .reading-path-step__description {
+    color: var(--color-text-secondary);
+    line-height: 1.625;
+  }
+
+  .reading-path-card header > p:last-child {
+    margin: 0.75rem 0 0;
+  }
+
+  .reading-path-card ol {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-card-border);
+    list-style: none;
+  }
+
+  .reading-path-card li {
+    min-width: 0;
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  .reading-path-card li + li {
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .reading-path-step__label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .reading-path-step__label span {
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .reading-path-card h4 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+
+  .reading-path-card h4 a {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    color: var(--color-text-primary);
+    text-decoration: none;
+  }
+
+  .reading-path-card h4 a:hover {
+    color: var(--color-accent);
+  }
+
+  .reading-path-card h4 a:focus-visible {
+    border-radius: 0.375rem;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .reading-path-step__description {
+    margin: 0.5rem 0 0.75rem;
+    font-size: 1rem;
+  }
+
+  .reading-path-step__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .reading-path-step__meta span {
+    border: 1px solid var(--color-card-border);
+    border-radius: 1rem;
+    padding: 0.25rem 0.5rem;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+
   @media (max-width: 860px) {
     .writing-hero {
       grid-template-columns: 1fr;
@@ -413,11 +627,16 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     .featured-grid {
       grid-template-columns: 1fr;
     }
+
+    .reading-paths__grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 640px) {
     .writing-hero,
     .writing-featured,
+    .reading-paths,
     .writing-index {
       width: min(100% - 1rem, 1120px);
     }

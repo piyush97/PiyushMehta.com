@@ -1,51 +1,31 @@
 ---
 // Related Posts Recommendation System
 import { getCollection } from 'astro:content';
+import { selectBlogRecommendations, toBlogPostSlug } from '../utils/blog-recommendations';
 
 export interface Props {
   currentSlug: string;
   currentTags?: string[];
   maxPosts?: number;
+  excludeSlugs?: string[];
 }
 
-const { currentSlug, currentTags = [], maxPosts = 3 } = Astro.props;
-const toPostSlug = (id: string) => id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '');
+const { currentSlug, currentTags = [], maxPosts = 3, excludeSlugs = [] } = Astro.props;
 
 // Get all blog posts
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 
-// Calculate similarity scores for each post
-function calculateSimilarity(post: { data: { tags?: string[] } }, targetTags: string[]) {
-  if (!post.data.tags || !targetTags.length) return 0;
-
-  const postTags = post.data.tags.map((tag: string) => tag.toLowerCase());
-  const normalizedTargetTags = targetTags.map((tag) => tag.toLowerCase());
-
-  // Count matching tags
-  const matchingTags = postTags.filter((tag: string) => normalizedTargetTags.includes(tag)).length;
-
-  // Calculate similarity score (Jaccard similarity)
-  const unionSize = new Set([...postTags, ...normalizedTargetTags]).size;
-  const similarity = matchingTags / unionSize;
-
-  return similarity;
-}
-
 // Get related posts
-const relatedPosts = allPosts
-  .filter((post) => toPostSlug(post.id) !== currentSlug) // Exclude current post
-  .map((post) => ({
-    ...post,
-    similarity: calculateSimilarity(post, currentTags),
-  }))
-  .sort((a, b) => {
-    // Sort by similarity first, then by date
-    if (b.similarity !== a.similarity) {
-      return b.similarity - a.similarity;
-    }
-    return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
-  })
-  .slice(0, maxPosts);
+const relatedPosts = selectBlogRecommendations(allPosts, {
+  currentSlug,
+  currentTags,
+  excludeSlugs,
+  limit: maxPosts,
+}).map(({ entry, similarity, matchingTags }) => ({
+  ...entry,
+  similarity,
+  matchingTags,
+}));
 
 // Calculate reading time for each post
 function calculateReadingTime(content: string) {
@@ -84,7 +64,7 @@ function calculateReadingTime(content: string) {
 
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {relatedPosts.map((post) => {
-        const postSlug = toPostSlug(post.id);
+        const postSlug = toBlogPostSlug(post.id);
         const readingTime = calculateReadingTime(post.body ?? '');
         const postUrl = `/blog/${postSlug}`;
         const hasMatchingTags = post.similarity > 0;

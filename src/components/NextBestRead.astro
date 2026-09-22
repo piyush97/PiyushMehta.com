@@ -1,0 +1,196 @@
+---
+export type NextBestReadViewModel = {
+  readonly slug: string;
+  readonly title: string;
+  readonly description?: string;
+  readonly date: Date;
+  readonly readingTime: number;
+  readonly matchingTags: readonly string[];
+  readonly similarity: number;
+};
+
+export interface Props {
+  nextRead: NextBestReadViewModel;
+}
+
+const { nextRead } = Astro.props;
+const href = `/blog/${nextRead.slug}/`;
+---
+
+<section
+  class="next-best-read"
+  aria-labelledby="next-best-read-title"
+  data-next-best-read
+  data-pagefind-ignore
+  data-similarity={nextRead.similarity}
+>
+  <div class="next-best-read__context">
+    <p class="next-best-read__eyebrow">Read next</p>
+    <p class="next-best-read__reason" data-next-best-reason>
+      {
+        nextRead.matchingTags.length > 0 ? (
+          <>
+            Shared topics:{' '}
+            {nextRead.matchingTags.map((tag, index) => (
+              <>
+                {index > 0 && ', '}
+                <span data-next-best-topic>{tag}</span>
+              </>
+            ))}
+          </>
+        ) : (
+          'Latest from the archive'
+        )
+      }
+    </p>
+  </div>
+
+  <div class="next-best-read__body">
+    <h2 id="next-best-read-title" data-next-best-title>
+      <a href={href}>{nextRead.title}</a>
+    </h2>
+    {nextRead.description && <p class="next-best-read__description" data-next-best-description>{nextRead.description}</p>}
+    <div class="next-best-read__meta">
+      <time datetime={nextRead.date.toISOString()}>
+        {nextRead.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+      </time>
+      <span aria-hidden="true">·</span>
+      <span data-next-best-reading-time>{nextRead.readingTime} min read</span>
+    </div>
+  </div>
+
+  <svg class="next-best-read__arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-5-5 5 5-5 5" />
+  </svg>
+</section>
+
+<style>
+  .next-best-read {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.35fr) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 74ch;
+    margin: 0 auto 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 0.75rem;
+    background: var(--color-surface-raised);
+    transition:
+      border-color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .next-best-read:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 42%, var(--color-card-border));
+    transform: translateY(-2px);
+  }
+
+  .next-best-read__context {
+    align-self: start;
+  }
+
+  .next-best-read__eyebrow {
+    margin: 0 0 0.5rem;
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .next-best-read__reason {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .next-best-read__body {
+    min-width: 0;
+  }
+
+  .next-best-read h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .next-best-read h2 a {
+    display: flex;
+    min-height: 2.75rem;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .next-best-read h2 a::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+  }
+
+  .next-best-read h2 a:focus-visible {
+    border-radius: 0.375rem;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .next-best-read__description {
+    max-width: 68ch;
+    margin: 0.5rem 0 0;
+    color: var(--color-text-secondary);
+    line-height: 1.625;
+  }
+
+  .next-best-read__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  .next-best-read__arrow {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-accent);
+    transition: transform 160ms ease;
+  }
+
+  .next-best-read:hover .next-best-read__arrow {
+    transform: translateX(2px);
+  }
+
+  @media (max-width: 640px) {
+    .next-best-read {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1rem;
+      padding: 1.25rem;
+    }
+
+    .next-best-read__context,
+    .next-best-read__body {
+      grid-column: 1;
+    }
+
+    .next-best-read__arrow {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .next-best-read,
+    .next-best-read__arrow {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>
