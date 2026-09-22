@@ -166,6 +166,10 @@ The system uses tonal layering with restrained elevation. Raised surfaces change
 
 **The Quiet Rest Rule.** A surface should be visually calm before interaction. Depth appears through tonal separation, borders, and purposeful hover/focus state.
 
+### Motion & Interaction
+
+Homepage motion follows the existing reveal and parallax mechanisms rather than introducing a new runtime: the ledger enters with opacity and short upward transforms, the portrait uses a restrained opacity/blur settle, and its `data-parallax-speed="0.06"` movement is disabled by the global reduced-motion path. Action arrows translate `0.22rem` on hover or keyboard focus to reinforce the destination. The sequence uses the homepage tokens `--home-motion-enter: 560ms`, `--home-motion-portrait: 900ms`, and `--home-motion-rule: 420ms`; no layout properties are animated.
+
 ## Shapes
 
 The shape language is compact and practical: 6px controls, 8px grouped content, 12px prominent cards, and 16px newsletter/form shells. Borders are generally 1px and token-colored. Rounded corners group related content without turning every element into a pill; pill geometry is reserved for tags, compact metadata, and status-like controls. Focus uses a visible 2px outline with a small offset. Avoid thick colored left or right rails on cards, callouts, and alerts.

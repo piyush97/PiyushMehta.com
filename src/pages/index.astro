@@ -59,7 +59,14 @@ const toPostHref = (id: string) =>
           </p>
         </div>
 
-        <figure class="ledger__portrait" data-home-section="portrait" data-reveal data-reveal-delay="120">
+        <figure
+          class="ledger__portrait"
+          data-home-section="portrait"
+          data-reveal
+          data-reveal-delay="120"
+          data-parallax
+          data-parallax-speed="0.06"
+        >
           <picture>
             <source
               type="image/avif"
@@ -229,6 +236,10 @@ const toPostHref = (id: string) =>
     --home-muted: var(--color-text-secondary);
     --home-rule: var(--color-card-border);
     --home-wine: var(--color-accent);
+    --home-motion-enter: 560ms;
+    --home-motion-portrait: 900ms;
+    --home-motion-rule: 420ms;
+    --home-motion-nudge: 0.22rem;
     color: var(--home-ink);
     background: var(--home-paper);
     font-family: var(--font-sans);
@@ -295,6 +306,7 @@ const toPostHref = (id: string) =>
     gap: 1rem;
     margin: 0 0 2.3rem;
     color: var(--home-wine);
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 80ms both;
   }
 
   .ledger__kicker span:first-child {
@@ -325,6 +337,7 @@ const toPostHref = (id: string) =>
     font-weight: 800;
     letter-spacing: -0.055em;
     line-height: 0.87;
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 140ms both;
   }
 
   .ledger h1 span {
@@ -337,6 +350,7 @@ const toPostHref = (id: string) =>
     color: var(--home-muted);
     font-size: var(--text-xl);
     line-height: 1.55;
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 220ms both;
   }
 
   .ledger__actions {
@@ -344,6 +358,7 @@ const toPostHref = (id: string) =>
     flex-wrap: wrap;
     gap: 1.8rem;
     margin-top: 2rem;
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 300ms both;
   }
 
   .ledger__actions a,
@@ -371,6 +386,12 @@ const toPostHref = (id: string) =>
     transform: translateY(-2px);
   }
 
+  .ledger__actions a:is(:hover, :focus-visible) svg,
+  .ledger__evidence a:is(:hover, :focus-visible) svg,
+  .contact__actions > a:is(:hover, :focus-visible) span[aria-hidden='true'] {
+    transform: translateX(var(--home-motion-nudge));
+  }
+
   .ledger__actions svg,
   .ledger__evidence svg {
     fill: none;
@@ -378,6 +399,12 @@ const toPostHref = (id: string) =>
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 2;
+    transition: transform var(--motion-fast) var(--motion-ease-out);
+  }
+
+  .contact__actions > a span[aria-hidden='true'] {
+    display: inline-block;
+    transition: transform var(--motion-fast) var(--motion-ease-out);
   }
 
   .ledger__primary,
@@ -451,6 +478,7 @@ const toPostHref = (id: string) =>
       transparent 88%
     );
     mask-image: radial-gradient(ellipse 63% 76% at 55% 54%, #000 42%, transparent 88%);
+    animation: home-portrait-in var(--home-motion-portrait) var(--motion-ease-out) 180ms both;
   }
 
   .ledger__evidence {
@@ -468,6 +496,8 @@ const toPostHref = (id: string) =>
     height: 0.25rem;
     margin-bottom: 0.9rem;
     background: var(--home-wine);
+    transform-origin: left center;
+    animation: home-signal-in var(--home-motion-rule) var(--motion-ease-out) 300ms both;
   }
 
   .ledger__evidence h2 {
@@ -475,11 +505,13 @@ const toPostHref = (id: string) =>
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--home-rule);
     color: var(--home-ink);
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 340ms both;
   }
 
   .ledger__evidence-body {
     padding-block: 0.9rem 0.35rem;
     border-bottom: 1px solid var(--home-rule);
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 400ms both;
   }
 
   .ledger__evidence p {
@@ -499,6 +531,7 @@ const toPostHref = (id: string) =>
     padding: 0.6rem 0;
     color: var(--home-wine);
     font-size: var(--text-base);
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 460ms both;
   }
 
   .ledger__metrics {
@@ -551,6 +584,40 @@ const toPostHref = (id: string) =>
     font-weight: 800;
     letter-spacing: -0.045em;
     line-height: 1;
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 420ms both;
+  }
+
+  @keyframes home-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(0.7rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes home-portrait-in {
+    from {
+      opacity: 0;
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  @keyframes home-signal-in {
+    from {
+      opacity: 0;
+      transform: scaleX(0.2);
+    }
+    to {
+      opacity: 1;
+      transform: scaleX(1);
+    }
   }
 
   .ledger__metrics h2 {
@@ -1100,6 +1167,27 @@ const toPostHref = (id: string) =>
 
     .ledger__kicker span:first-child::after {
       width: 2.4rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ledger__kicker,
+    .ledger h1,
+    .ledger__lede,
+    .ledger__actions,
+    .ledger__portrait img,
+    .ledger__signal,
+    .ledger__evidence h2,
+    .ledger__evidence-body,
+    .ledger__evidence a,
+    .ledger__metrics strong {
+      animation: none;
+    }
+
+    .ledger__actions svg,
+    .ledger__evidence svg,
+    .contact__actions > a span[aria-hidden='true'] {
+      transition: none;
     }
   }
 </style>
