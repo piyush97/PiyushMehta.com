@@ -84,7 +84,6 @@ export interface VideoHighlight {
 export const socialLinks = [
   { label: 'GitHub', href: 'https://github.com/piyush97' },
   { label: 'LinkedIn', href: 'https://linkedin.com/in/piyush24' },
-  { label: 'Email', href: 'mailto:contact@piyushmehta.com' },
 ];
 
 export const portfolioMetrics: PortfolioMetric[] = [
@@ -424,8 +423,8 @@ export const resumeAchievements: Achievement[] = [
 
 export const contactChannels: ContactChannel[] = [
   {
-    label: 'Email',
-    href: 'mailto:contact@piyushmehta.com',
+    label: 'Contact form',
+    href: '#contact-form',
     note: 'Best for projects, speaking requests, and thoughtful technical context.',
   },
   {

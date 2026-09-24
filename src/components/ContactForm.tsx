@@ -7,9 +7,10 @@ interface Field {
   email: string;
   subject: string;
   message: string;
+  website: string;
 }
 
-const EMPTY: Field = { name: '', email: '', subject: '', message: '' };
+const EMPTY: Field = { name: '', email: '', subject: '', message: '', website: '' };
 
 export default function ContactForm({ className = '' }: { className?: string }) {
   const [fields, setFields] = useState<Field>(EMPTY);
@@ -84,6 +85,17 @@ export default function ContactForm({ className = '' }: { className?: string }) 
 
   return (
     <form onSubmit={handleSubmit} noValidate className={`contact-form ${className}`}>
+      <label className="contact-form__honeypot" aria-hidden="true">
+        Leave this field empty
+        <input
+          type="text"
+          name="website"
+          autoComplete="off"
+          tabIndex={-1}
+          value={fields.website}
+          onChange={updateField}
+        />
+      </label>
       <div className="contact-form__row">
         <div className="contact-form__field">
           <label htmlFor="cf-name">Name</label>

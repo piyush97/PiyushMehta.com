@@ -2325,6 +2325,15 @@ html {
     gap: 1.1rem;
   }
 
+  .contact-form__honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
   .contact-form__row {
     display: grid;
     grid-template-columns: 1fr 1fr;

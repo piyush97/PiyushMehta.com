@@ -23,7 +23,7 @@ export const prerender = true;
         look like.
       </p>
       <div class="contact-actions">
-        <a class="btn-primary" href="mailto:contact@piyushmehta.com">Email Piyush</a>
+        <a class="btn-primary" href="#contact-form">Send a message</a>
         <a class="btn-secondary" href="/projects/">See work first</a>
       </div>
     </div>
@@ -52,7 +52,7 @@ export const prerender = true;
     </div>
   </section>
 
-  <section class="contact-section split-grid">
+  <section id="contact-form" class="contact-section split-grid">
     <div>
       <div class="section-heading">
         <p class="eyebrow">Good Fit</p>
@@ -72,9 +72,7 @@ export const prerender = true;
       <div class="section-heading">
         <p class="eyebrow">Form</p>
         <h2>Send a message directly.</h2>
-        <p>
-          Goes straight to my inbox. Reply hits the email you provide. Rate-limited and spam-filtered.
-        </p>
+        <p>Use the form to reach my inbox. Rate-limited and spam-filtered.</p>
       </div>
       <div class="form-shell">
         <ContactForm client:load />

@@ -43,6 +43,16 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       return json({ error: 'Forbidden.' }, 403);
     }
 
+    let requestBody: unknown;
+    try {
+      requestBody = await request.json();
+    } catch {
+      return json({ error: 'Invalid request body.' }, 400);
+    }
+
+    const { website } = (requestBody ?? {}) as Record<string, unknown>;
+    if (typeof website === 'string' && website.trim()) return json({ ok: true });
+
     // Fail closed: without a limiter this endpoint would send unbounded email.
     if (!ratelimit) {
       return json({ error: 'Contact service unavailable.' }, 503);
@@ -53,14 +63,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       return json({ error: 'Too many requests. Try again in an hour.' }, 429);
     }
 
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch {
-      return json({ error: 'Invalid request body.' }, 400);
-    }
-
-    const { name, email, subject, message } = (body ?? {}) as Record<string, unknown>;
+    const { name, email, subject, message } = (requestBody ?? {}) as Record<string, unknown>;
 
     if (
       typeof name !== 'string' ||
