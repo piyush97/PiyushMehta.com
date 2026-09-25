@@ -21,13 +21,27 @@ test.describe('portfolio smoke', () => {
       expect(response?.ok(), `${route} should return a successful response`).toBeTruthy();
       await expect(page.locator('#main-content')).toBeVisible();
       await expect(page.locator('h1').first()).toBeVisible();
-      await expect(
-        page.getByLabel('Primary navigation').getByRole('link', { name: 'Work' })
-      ).toBeVisible();
+      const workLink = page.getByLabel('Primary navigation').getByRole('link', { name: 'Work' });
+      if (await workLink.isVisible()) {
+        await expect(workLink).toBeVisible();
+      } else {
+        const menuToggle = page.getByRole('button', { name: 'Toggle menu' });
+        await expect(menuToggle).toBeVisible();
+        await menuToggle.click();
+        await expect(page.locator('#mobile-panel').getByRole('link', { name: 'Work' })).toBeVisible();
+      }
     });
   }
 
-  test('home presents evidence-led portfolio content', async ({ page, request }) => {
+  test('home presents evidence and recent writing', async ({ page, request }) => {
+    await page.route('**/api/reactions*', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ like: 0, helpful: 0, insightful: 0, bookmark: 0 }),
+      }),
+    );
+
     const consoleErrors: string[] = [];
     page.on('console', (message) => {
       if (message.type() === 'error') {
@@ -38,12 +52,14 @@ test.describe('portfolio smoke', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
     await expect(page.getByRole('heading', { name: /holds up after the demo/i })).toBeVisible();
-    await expect(page.getByText('Evidence over adjectives.')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Current notebook' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Inspect the work' }).first()).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Enterprise AI Workflows' })
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Recent writing' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Selected systems' })).toHaveCount(0);
 
     const notebookSection = page.locator('section').filter({
-      has: page.getByRole('heading', { name: 'Current notebook' }),
+      has: page.getByRole('heading', { name: 'Recent writing' }),
     });
     const articles = notebookSection.locator('article');
     const articleLinks = articles.locator('h3 a');
@@ -70,6 +86,20 @@ test.describe('portfolio smoke', () => {
     await page.goto(firstHref!, { waitUntil: 'networkidle' });
     await expect(page.locator('main h1')).toHaveText(firstTitle?.trim() ?? '');
     expect(consoleErrors).toEqual([]);
+  });
+
+  test('resume exposes direct PDF downloads', async ({ page, request }) => {
+    await page.goto('/resume/', { waitUntil: 'domcontentloaded' });
+
+    const downloadLinks = page.getByRole('link', { name: 'Download resume as PDF' });
+    await expect(downloadLinks).toHaveCount(2);
+    await expect(downloadLinks.first()).toHaveAttribute('href', '/resume.pdf');
+    await expect(downloadLinks.first()).toHaveAttribute('download', 'piyush-mehta-resume.pdf');
+
+    const response = await request.get('/resume.pdf');
+    expect(response.status()).toBe(200);
+    expect(response.headers()['content-type']).toContain('application/pdf');
+    expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-');
   });
 
   test('FocusTube appears as a project and links to its technical article', async ({ page }) => {

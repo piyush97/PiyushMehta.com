@@ -21,7 +21,6 @@ test.describe('Social cards', () => {
       '/og/default.png',
       // Previously-missing pages that used to 404 (see src/utils/social-card.ts STATIC_SOCIAL_PAGES).
       '/og/404.png',
-      '/og/newsletter.png',
       '/og/privacy-policy.png',
       '/og/terms-of-service.png',
     ]) {

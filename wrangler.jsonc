@@ -8,11 +8,11 @@
   "preview_urls": true,
   "vars": {
     "NODE_ENV": "production",
-    "RESEND_FROM": "news@piyushmehta.com",
-    "RESEND_REPLY_TO": "contact@piyushmehta.com",
     "CONTACT_FROM_EMAIL": "contact@piyushmehta.com",
     "CONTACT_TO_EMAIL": "contact@piyushmehta.com",
   },
+  // Adapter input only. Deploy the generated dist/server/wrangler.json;
+  // this root config must not be used as the production asset contract.
   "assets": {
     "binding": "ASSETS",
     "directory": "./dist",

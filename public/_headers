@@ -11,3 +11,25 @@
 /rss.xml
   Content-Type: application/xml; charset=utf-8
   Cache-Control: public, max-age=3600
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600
+
+/sitemap-index.xml
+  Cache-Control: public, max-age=3600
+
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+/search/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/pagefind/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/og/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/resume.pdf
+  Content-Type: application/pdf
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400

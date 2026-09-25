@@ -1,4 +1,6 @@
 ---
+import ArticleIndexRow from './ArticleIndexRow.astro';
+
 interface BlogPost {
   id: string;
   title: string;
@@ -17,12 +19,6 @@ interface Props {
 const { posts = [], class: className = '' } = Astro.props;
 const categories = ['all', ...Array.from(new Set(posts.flatMap((post) => post.categories))).sort()];
 
-const formatDate = (dateString: string) =>
-  new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
 ---
 
 <div class={`blog-filter ${className}`} data-blog-filter>
@@ -83,34 +79,7 @@ const formatDate = (dateString: string) =>
   </div>
 
   <div class="writing-list" data-writing-list>
-    {posts.map((post) => (
-      <article
-        data-post-card
-        data-title={post.title.toLowerCase()}
-        data-excerpt={post.excerpt.toLowerCase()}
-        data-categories={post.categories.join('|').toLowerCase()}
-        data-category-values={post.categories.join('|')}
-        data-date={new Date(post.date).getTime()}
-        data-reading-time={post.readingTime}
-      >
-        <div class="writing-list__meta">
-          <time datetime={post.date}>{formatDate(post.date)}</time>
-          <span>{post.readingTime} min read</span>
-        </div>
-        <h3>
-          <a href={`/blog/${post.slug}/`}>{post.title}</a>
-        </h3>
-        <p>{post.excerpt}</p>
-        <div class="writing-list__footer">
-          <div>
-            {post.categories.slice(0, 4).map((category) => (
-              <span>{category}</span>
-            ))}
-          </div>
-          <a href={`/blog/${post.slug}/`} aria-label={`Read “${post.title}”`}>Read</a>
-        </div>
-      </article>
-    ))}
+    {posts.map((post) => <ArticleIndexRow post={post} />)}
   </div>
 </div>
 

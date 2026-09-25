@@ -130,8 +130,10 @@ export const TechComparison: React.FC = () => {
           ⚡ Traditional Database vs Bloom Filter
         </h5>
         <div className="grid md:grid-cols-2 gap-4 text-sm">
-          <div className="bg-red-500/20 border border-red-500/30 p-3 rounded">
-            <h6 className="font-semibold text-red-600 mb-2">❌ Without Bloom Filter</h6>
+          <div className="tech-comparison-danger-surface border p-3 rounded">
+            <h6 className="tech-comparison-danger-heading font-semibold mb-2">
+              ❌ Without Bloom Filter
+            </h6>
             <ul className="text-text-secondary space-y-1">
               <li>• Every check hits database</li>
               <li>• O(log n) lookup time</li>
@@ -139,7 +141,7 @@ export const TechComparison: React.FC = () => {
               <li>• Expensive at scale</li>
             </ul>
           </div>
-          <div className="bg-accent/20 border border-accent/30 p-3 rounded">
+          <div className="tech-comparison-accent-surface border p-3 rounded">
             <h6 className="font-semibold text-accent mb-2">✅ With Bloom Filter</h6>
             <ul className="text-text-secondary space-y-1">
               <li>• Most checks avoid database</li>

@@ -21,7 +21,7 @@ GITHUB_TOKEN=your_token_here
 
 For local deployment, add the value to your Varlock environment, then run `bun run deploy`. Production deployment is owned by Cloudflare Workers Builds through the installed GitHub App.
 
-The configuration in `wrangler.jsonc` deploys `main` to production and creates preview URLs for non-production branches. Runtime integration secrets stay in the Worker's Variables and Secrets settings using the names in `.env.schema`.
+The root `wrangler.jsonc` is adapter input. Production and preview deployment use the generated `dist/server/wrangler.json` through `varlock-wrangler`, which points to `dist/server/entry.mjs`, serves only `dist/client` as public assets, and injects the Varlock runtime binding the generated Worker requires. The deploy preflight (`bun run check:production-env`) requires the Upstash and Resend binding names so a green build cannot ship with both public APIs returning 503. Runtime integration secrets stay in the Worker's Variables and Secrets settings using the names in `.env.schema`.
 
 ## Customizing the GitHub Integration
 

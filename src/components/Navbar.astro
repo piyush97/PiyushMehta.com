@@ -5,7 +5,7 @@ const navItems = [
   { href: '/', label: 'Home' },
   { href: '/projects/', label: 'Work' },
   { href: '/blog/', label: 'Writing' },
-  { href: '/newsletter/', label: 'Newsletter' },
+  { href: '/about/', label: 'About' },
   { href: '/resume/', label: 'Resume' },
   { href: '/contact-me/', label: 'Contact' },
 ];
@@ -18,6 +18,12 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
     <span>PM</span>
     <strong>Piyush Mehta</strong>
   </a>
+
+  {pathname === '/' && (
+    <span class="site-nav__edition" aria-label="Portfolio edition">
+      Piyush Mehta / Engineer’s Portfolio / 2026
+    </span>
+  )}
 
   <div class="site-nav__links" id="desktop-nav-links">
     {
@@ -52,12 +58,16 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
         <a
           href={item.href}
           class={`mobile-nav-link${isActive(item.href) ? ' active' : ''}`}
+          aria-current={isActive(item.href) ? 'page' : undefined}
           data-mobile-link
         >
           {item.label}
         </a>
       ))
     }
+    <button class="mobile-theme-button" type="button" id="mobile-theme-toggle-btn" aria-label="Toggle theme">
+      Toggle theme
+    </button>
   </div>
 </div>
 
@@ -187,14 +197,9 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
     }
 
     function syncIcons() {
-      const btn = document.getElementById('theme-toggle-btn');
-      const sun = btn?.querySelector('.theme-icon-sun');
-      const moon = btn?.querySelector('.theme-icon-moon');
       const isDark = root.classList.contains('professional-dark');
-      if (sun && moon) {
-        sun.classList.toggle('hidden', !isDark);
-        moon.classList.toggle('hidden', isDark);
-      }
+      document.querySelectorAll('.theme-icon-sun').forEach((icon) => icon.classList.toggle('hidden', !isDark));
+      document.querySelectorAll('.theme-icon-moon').forEach((icon) => icon.classList.toggle('hidden', isDark));
     }
 
     syncIcons();
@@ -202,7 +207,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
 
     document.addEventListener('click', (event) => {
       if (!(event.target instanceof Element)) return;
-      const btn = event.target.closest('#theme-toggle-btn');
+      const btn = event.target.closest('#theme-toggle-btn, #mobile-theme-toggle-btn');
       if (!btn) return;
 
       const currentlyDark = root.classList.contains('professional-dark');
@@ -241,6 +246,18 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
   }
 
   .site-nav__brand, .site-nav__links, .site-nav__actions { display: flex; align-items: center; }
+
+  .site-nav__edition {
+    display: none;
+    justify-self: center;
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
 
   .site-nav__brand {
     gap: 0.75rem;
@@ -387,15 +404,51 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
     background: rgba(var(--color-accent-rgb), 0.08);
   }
 
+  .mobile-theme-button { display: none; }
+
   @keyframes nav-slide-in {
     from { opacity: 0; transform: translateY(-14px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   @media (max-width: 767px) {
-    .site-nav { grid-template-columns: 1fr auto; }
+    .site-nav { grid-template-columns: auto 1fr auto; }
     .site-nav__links { display: none; }
     .site-nav__actions { justify-self: end; }
+    .site-nav__edition {
+      display: block;
+      max-width: 11rem;
+      overflow: visible;
+      font-size: 0.5rem;
+      line-height: 1.1;
+      letter-spacing: 0.03em;
+      text-align: center;
+      white-space: normal;
+    }
+    .site-nav__brand strong,
+    .site-nav .theme-button { display: none; }
+    .site-nav__brand span {
+      width: 2.65rem;
+      height: 2.65rem;
+      border-color: var(--color-accent);
+      font-size: 1rem;
+    }
+    .hamburger {
+      width: 2.65rem;
+      height: 2.65rem;
+      border: 0;
+      background: transparent;
+    }
+    .mobile-theme-button {
+      display: block;
+      margin-top: 0.5rem;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--color-card-border);
+      background: var(--color-surface-raised);
+      color: var(--color-text-primary);
+      font: inherit;
+      text-align: left;
+    }
     .hamburger { display: flex; }
   }
 </style>

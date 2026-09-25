@@ -8,13 +8,13 @@ Positioning: senior software engineer building reliable AI systems and web platf
 - Three reading paths on the blog index: production AI, reliable backend systems, developer tools.
 - Article: `/blog/testing-ai-agent-actions/`.
 - Downloadable evaluation script and twelve fixtures: `/examples/agent-action-evals/`.
-- Distribution drafts below. Nothing has been sent to social networks, communities, or the newsletter.
+- Distribution drafts below. Nothing has been sent to social networks, communities, or email.
 
 ## Available baseline and gaps
 
 The workspace Cloudflare Web Analytics PDF covers August 23, 2026 11:34 through August 30, 2026 11:34, UTC-04:00, with bots excluded. It reports LCP p50 2,753 ms, p75 3,300 ms, p90/p99 3,950 ms; 20% good and 80% needs improvement. INP has no data, and the export says there is not enough data for Web Analytics. These are limited performance observations, not traffic or conversion figures. Do not interpret the five URL rows as five visits or as a representative sample.
 
-Traffic, organic queries, referrals, résumé visits, newsletter signups, relevant inquiries, and interviews remain unknown. Existing optional gtag calls do not prove an analytics collector is installed. A Cloudflare-injected beacon may be configured outside the repository. No new tracker is added here.
+Traffic, organic queries, referrals, résumé visits, relevant inquiries, and interviews remain unknown. Existing optional gtag calls do not prove an analytics collector is installed. A Cloudflare-injected beacon may be configured outside the repository. No new tracker is added here.
 
 To establish acquisition performance, obtain a Search Console export by query and page for the most recent complete 28 days and the preceding 28 days, plus Web Analytics page/referrer totals for matching dates. Keep identifiable inquiries and raw exports outside public source control. Record aggregate results only.
 
@@ -22,7 +22,6 @@ To establish acquisition performance, obtain a Search Console export by query an
 | ---------------------------------------------- | -------- | -------------------------------------------------------------------------------------------- |
 | Organic clicks and impressions                 | Unknown  | Which relevant problems are earning discovery?                                               |
 | Visits to article, work, résumé, contact pages | Unknown  | Are readers exploring the professional work? Separate counts do not establish a user funnel. |
-| Newsletter subscriptions                       | Unknown  | Count confirmed successful subscriptions using the existing provider.                        |
 | Relevant hiring inquiries                      | Unknown  | Manually classify role fit and source; avoid storing personal details in this public repo.   |
 | Interviews attributable to content             | Unknown  | Ask contacts what brought them here; do not infer attribution from page views.               |
 
@@ -78,16 +77,6 @@ Share only in relevant communities that allow original work; include the explana
 3. Run unsafe mode: two writes, fixture fails.
 4. Explain that the model is outside this test and durable storage is outside the demo.
 5. Point to the article and downloadable fixtures.
-
-### Newsletter draft
-
-Subject: Testing the actions an AI agent is allowed to take
-
-This week's example is small enough to run locally: twelve fixtures for approvals, project access, and retries. The tests inspect actual mock writes, not just the return message.
-
-I included an unsafe mode that deliberately bypasses the checks, plus the limitations you would need to address before using the pattern in a distributed application.
-
-Read and run it: https://piyushmehta.com/blog/testing-ai-agent-actions/?utm_source=newsletter&utm_medium=email&utm_campaign=agent-action-evals
 
 ### Meetup proposal draft
 
