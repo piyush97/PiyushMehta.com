@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -17,6 +17,13 @@ export default function ContactForm({ className = '' }: { className?: string }) 
   const [errors, setErrors] = useState<Partial<Field>>({});
   const [status, setStatus] = useState<Status>('idle');
   const [serverError, setServerError] = useState('');
+  const formRef = useRef<HTMLFormElement>(null);
+  const successRef = useRef<HTMLDivElement>(null);
+  const submittingRef = useRef(false);
+
+  useEffect(() => {
+    if (status === 'success') successRef.current?.focus();
+  }, [status]);
 
   function validate(): boolean {
     const e: Partial<Field> = {};
@@ -32,8 +39,15 @@ export default function ContactForm({ className = '' }: { className?: string }) 
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!validate()) return;
+    if (submittingRef.current) return;
+    if (!validate()) {
+      window.requestAnimationFrame(() => {
+        formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      });
+      return;
+    }
 
+    submittingRef.current = true;
     setStatus('sending');
     setServerError('');
 
@@ -57,6 +71,8 @@ export default function ContactForm({ className = '' }: { className?: string }) 
     } catch {
       setServerError('Network error. Check your connection and try again.');
       setStatus('error');
+    } finally {
+      submittingRef.current = false;
     }
   }
 
@@ -70,7 +86,13 @@ export default function ContactForm({ className = '' }: { className?: string }) 
 
   if (status === 'success') {
     return (
-      <div className={`contact-success ${className}`}>
+      <div
+        ref={successRef}
+        className={`contact-success ${className}`}
+        role="status"
+        aria-live="polite"
+        tabIndex={-1}
+      >
         <div className="contact-success__icon" aria-hidden="true">
           ✓
         </div>
@@ -84,7 +106,13 @@ export default function ContactForm({ className = '' }: { className?: string }) 
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className={`contact-form ${className}`}>
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      noValidate
+      aria-busy={status === 'sending'}
+      className={`contact-form ${className}`}
+    >
       <label className="contact-form__honeypot" aria-hidden="true">
         Leave this field empty
         <input

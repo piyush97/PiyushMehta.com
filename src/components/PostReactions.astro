@@ -59,6 +59,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
         size === 'lg' ? 'text-lg px-5 py-3' : 'text-base px-4 py-2'
       } flex items-center space-x-2 bg-white hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/30 group`}
       data-reaction="like"
+      aria-pressed="false"
       aria-label="Like this post"
       title="Like this post"
     >
@@ -77,6 +78,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
         size === 'lg' ? 'text-lg px-5 py-3' : 'text-base px-4 py-2'
       } flex items-center space-x-2 bg-white hover:bg-green-50 border border-gray-200 hover:border-green-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/30 group`}
       data-reaction="helpful"
+      aria-pressed="false"
       aria-label="Mark as helpful"
       title="This post was helpful"
     >
@@ -95,6 +97,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
         size === 'lg' ? 'text-lg px-5 py-3' : 'text-base px-4 py-2'
       } flex items-center space-x-2 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 group`}
       data-reaction="insightful"
+      aria-pressed="false"
       aria-label="Mark as insightful"
       title="This post was insightful"
     >
@@ -113,6 +116,7 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
         size === 'lg' ? 'text-lg px-5 py-3' : 'text-base px-4 py-2'
       } flex items-center space-x-2 bg-white hover:bg-yellow-50 border border-gray-200 hover:border-yellow-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500/30 group`}
       data-reaction="bookmark"
+      aria-pressed="false"
       aria-label="Bookmark this post"
       title="Bookmark for later"
     >
@@ -140,7 +144,12 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
   </div>
 
   <!-- User Feedback -->
-  <div id={`${componentId}-feedback`} class="feedback-message mt-4 text-sm text-center hidden">
+  <div
+    id={`${componentId}-feedback`}
+    class="feedback-message mt-4 text-sm text-center hidden"
+    role="status"
+    aria-live="polite"
+  >
     <div class="inline-flex items-center space-x-2 text-green-600">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M5 13l4 4L19 7" />
@@ -545,30 +554,6 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  .reaction-btn.active.reaction-like {
-    background-color: rgb(254 242 242);
-    border-color: rgb(252 165 165);
-    color: rgb(220 38 38);
-  }
-
-  .reaction-btn.active.reaction-helpful {
-    background-color: rgb(240 253 244);
-    border-color: rgb(134 239 172);
-    color: rgb(22 163 74);
-  }
-
-  .reaction-btn.active.reaction-insightful {
-    background-color: rgb(239 246 255);
-    border-color: rgb(147 197 253);
-    color: rgb(29 78 216);
-  }
-
-  .reaction-btn.active.reaction-bookmark {
-    background-color: rgb(254 249 195);
-    border-color: rgb(253 224 71);
-    color: rgb(161 98 7);
-  }
-
   /* Icon animations */
   .reaction-icon {
     display: inline-flex;
@@ -602,12 +587,6 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
     font-weight: 600;
   }
 
-  .reaction-btn.active .reaction-count {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: inherit;
-    border: 1px solid currentColor;
-  }
-
   /* Feedback message */
   .feedback-message {
     animation: slideIn 0.3s ease-out;
@@ -636,16 +615,6 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
   }
 
   /* Theme-specific adjustments */
-  .professional-dark .post-reactions {
-    background: linear-gradient(135deg, var(--color-surface-100) 0%, rgba(26, 27, 38, 0.9) 100%);
-  }
-
-  .professional-dark .reaction-btn {
-    background-color: var(--color-surface-200);
-    border-color: var(--color-card-border);
-    color: var(--color-text-primary);
-  }
-
   .high-contrast .reaction-btn {
     border-width: 2px;
     font-weight: bold;
@@ -706,4 +675,82 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
   .post-reactions--compact .reaction-btn.active { background: transparent; border: 0; }
   .post-reactions--compact .reaction-btn.active :is(.reaction-label, .reaction-icon, .reaction-count), .post-reactions--compact .reaction-btn:hover :is(.reaction-label, .reaction-icon) { color: var(--color-accent); }
   .post-reactions--compact .reaction-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+
+  /* Evidence Ledger treatment: reactions are a register, not a set of floating cards. */
+  .post-reactions:not(.post-reactions--compact) {
+    border: 1px solid var(--color-card-border);
+    border-radius: 0;
+    background: var(--color-bg);
+    padding: 1.25rem;
+  }
+
+  .post-reactions:not(.post-reactions--compact) h3 {
+    margin-bottom: 0.9rem;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    font-weight: 800;
+  }
+
+  .post-reactions:not(.post-reactions--compact) .reaction-btn {
+    min-height: 2.75rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-text-secondary);
+    box-shadow: none;
+    backdrop-filter: none;
+    transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+  }
+
+  .post-reactions:not(.post-reactions--compact) .reaction-btn::before {
+    display: none;
+  }
+
+  .post-reactions:not(.post-reactions--compact) .reaction-btn:hover,
+  .post-reactions:not(.post-reactions--compact) .reaction-btn:focus-visible {
+    transform: none;
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 6%, transparent);
+    box-shadow: none;
+  }
+
+  .post-reactions:not(.post-reactions--compact) .reaction-btn.active {
+    border-width: 1px;
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    box-shadow: none;
+    color: var(--color-accent);
+  }
+
+  .post-reactions:not(.post-reactions--compact) .reaction-btn.active.reaction-like,
+  .post-reactions:not(.post-reactions--compact) .reaction-btn.active.reaction-helpful,
+  .post-reactions:not(.post-reactions--compact) .reaction-btn.active.reaction-insightful,
+  .post-reactions:not(.post-reactions--compact) .reaction-btn.active.reaction-bookmark {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-accent);
+  }
+
+  .post-reactions:not(.post-reactions--compact) .reaction-icon,
+  .post-reactions:not(.post-reactions--compact) .reaction-label,
+  .post-reactions:not(.post-reactions--compact) .reaction-count {
+    color: inherit;
+  }
+
+  .post-reactions:not(.post-reactions--compact) .reaction-count {
+    min-width: 1.5rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding-inline: 0.25rem;
+  }
+
+  .professional-dark .post-reactions:not(.post-reactions--compact) {
+    background: var(--color-bg);
+  }
+
+  @media (max-width: 768px) {
+    .post-reactions:not(.post-reactions--compact) {
+      margin-top: 1.5rem;
+    }
+  }
 </style>

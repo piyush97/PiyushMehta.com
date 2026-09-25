@@ -2508,4 +2508,62 @@ html {
     text-decoration: underline;
     text-underline-offset: 3px;
   }
+
+  /* Shared public-surface tokens */
+  :root {
+    --ledger-shell: 1120px;
+    --ledger-gutter: clamp(1rem, 4vw, 3rem);
+    --ledger-section-space: clamp(3.5rem, 8vw, 7rem);
+    --ledger-record-space: clamp(1.5rem, 3vw, 2.5rem);
+    --color-danger-surface: color-mix(in srgb, var(--color-danger) 10%, transparent);
+  }
+
+  section[id] {
+    scroll-margin-top: 5rem;
+  }
+
+  .contact-form__field input,
+  .contact-form__field textarea {
+    min-height: 3rem;
+    border-radius: 0;
+  }
+
+  .contact-form__field textarea {
+    min-height: 10rem;
+  }
+
+  .contact-form__field input:focus-visible,
+  .contact-form__field textarea:focus-visible,
+  .contact-form__submit:focus-visible,
+  .contact-success__reset:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .contact-form__field input[aria-invalid='true'],
+  .contact-form__field textarea[aria-invalid='true'] {
+    border-color: var(--color-danger);
+  }
+
+  .contact-form__error,
+  .contact-form__server-error {
+    color: var(--color-danger);
+  }
+
+  .contact-form__server-error {
+    border-color: color-mix(in srgb, var(--color-danger) 35%, transparent);
+    background: var(--color-danger-surface);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editorial-article-row,
+    .editorial-header__actions svg,
+    .featured-record__link svg,
+    .reading-path-record h4 a,
+    .case-record__links svg,
+    .channel-record svg,
+    .related-post-card__action svg {
+      transition: none;
+    }
+  }
 }

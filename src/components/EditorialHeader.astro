@@ -12,6 +12,7 @@ interface Props {
   actions?: HeaderAction[];
   class?: string;
   asideLabel?: string;
+  pagefindTitle?: string;
 }
 
 const {
@@ -21,13 +22,14 @@ const {
   actions = [],
   class: className = '',
   asideLabel,
+  pagefindTitle,
 } = Astro.props;
 ---
 
 <header class={`editorial-header ${className}`} data-reveal>
   <div class="editorial-header__copy">
     {eyebrow && <p class="editorial-header__eyebrow" data-hero-eyebrow>{eyebrow}</p>}
-    <h1 data-hero-title>{title}</h1>
+    <h1 data-hero-title data-pagefind-meta={pagefindTitle}>{title}</h1>
     {description && <p class="editorial-header__description">{description}</p>}
     {
       actions.length > 0 && (

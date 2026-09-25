@@ -183,12 +183,27 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
       title="Representative thinking."
       description="These pieces are useful signals for how I explain tradeoffs, document decisions, and turn ambiguous technical work into something teams can act on."
     />
-    <div class="featured-grid">
+    <div class="featured-ledger" data-featured-grid>
       {writingHighlights.map((post, index) => (
-        <article data-reveal data-reveal-stagger={String(index * 80)}>
-          <span>{post.theme}</span>
-          <h3><a href={post.href}>{post.title}</a></h3>
-          <p>{post.description}</p>
+        <article
+          class:list={['featured-record', { 'featured-record--lead': index === 0 }]}
+          data-reveal
+          data-reveal-stagger={String(index * 80)}
+        >
+          <div class="featured-record__meta">
+            <span>{post.theme}</span>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+          </div>
+          <div class="featured-record__body">
+            <h3><a href={post.href}>{post.title}</a></h3>
+            <p>{post.description}</p>
+            <a class="featured-record__link" href={post.href}>
+              Read note
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </div>
         </article>
       ))}
     </div>
@@ -201,15 +216,15 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
       id="reading-paths-heading"
       description="Pick the problem in front of you, then move through three published field notes in order."
     />
-    <div class="reading-paths__grid" data-reading-paths-grid>
+    <div class="reading-paths__grid reading-paths__ledger" data-reading-paths-grid>
       {readingPaths.map((path) => (
         <article
-          class="reading-path-card"
+          class="reading-path-record"
           data-reading-path={path.id}
           aria-labelledby={`reading-path-${path.id}`}
         >
-          <header>
-            <p class="reading-path-card__label">Reading path</p>
+          <header class="reading-path-record__header">
+            <p class="reading-path-record__label">Reading path</p>
             <h3 id={`reading-path-${path.id}`}>{path.intent}</h3>
             <p>{path.outcome}</p>
           </header>
@@ -240,6 +255,11 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
       title="Browse the full library."
       description="Evaluating engineering help? Explore consulting services, review project case studies, or read the résumé."
     />
+    <p class="archive-route-links">
+      <a href="/services/">Consulting services</a>
+      <a href="/projects/">Case studies</a>
+      <a href="/resume/">Résumé</a>
+    </p>
     <div data-reveal data-reveal-delay="90">
       <BlogFilter posts={postsForFilter} />
     </div>
@@ -248,6 +268,28 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
 </Layout>
 
 <style>
+  .archive-route-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .archive-route-links a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    border-bottom: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .archive-route-links a:hover,
+  .archive-route-links a:focus-visible {
+    color: var(--color-text-primary);
+  }
+
   .writing-featured,
   .reading-paths,
   .writing-index {
@@ -298,113 +340,173 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     font-size: 1.05rem;
   }
 
-  .featured-grid {
+  .featured-ledger {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(0, 0.825fr));
     gap: 1px;
-    border: 1px solid var(--color-card-border);
+    border-block: 1px solid var(--color-card-border);
     background: var(--color-card-border);
   }
 
-  .featured-grid article {
-    min-height: 100%;
-    background: var(--color-surface-raised);
-    padding: clamp(1.15rem, 2.4vw, 1.7rem);
+  .featured-record {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+    min-width: 0;
+    padding: clamp(1.15rem, 2.6vw, 1.8rem);
+    background: var(--color-bg);
   }
 
-  .featured-grid span {
+  .featured-record--lead {
+    grid-row: span 2;
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    background: var(--color-surface-raised);
+  }
+
+  .featured-record__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
     color: var(--color-accent);
-    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
     text-transform: uppercase;
   }
 
-  .featured-grid h3 {
-    margin: 0.8rem 0;
-    color: var(--color-text-primary);
-    font-size: 1.35rem;
-    line-height: 1.2;
+  .featured-record__meta span:last-child {
+    color: var(--color-text-muted);
   }
 
-  .featured-grid a {
+  .featured-record h3 {
+    max-width: 24ch;
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: clamp(1.4rem, 2.3vw, 2rem);
+    line-height: 1.08;
+  }
+
+  .featured-record--lead h3 {
+    max-width: 17ch;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+  }
+
+  .featured-record h3 a {
     color: inherit;
     text-decoration: none;
   }
 
-  .featured-grid a:hover {
+  .featured-record h3 a:hover,
+  .featured-record h3 a:focus-visible {
     color: var(--color-accent);
   }
 
-  .reading-paths__grid {
+  .featured-record p {
+    max-width: 48rem;
+    margin: 0.75rem 0 0;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .featured-record__link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.2rem;
+    color: var(--color-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .featured-record__link:hover,
+  .featured-record__link:focus-visible {
+    color: var(--color-text-primary);
+  }
+
+  .featured-record__link svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--motion-fast, 150ms) ease;
+  }
+
+  .featured-record__link:hover svg,
+  .featured-record__link:focus-visible svg {
+    transform: translateX(0.2rem);
+  }
+
+  .reading-paths__ledger {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
+    gap: 1px;
+    border-block: 1px solid var(--color-card-border);
+    background: var(--color-card-border);
   }
 
-  .reading-path-card {
+  .reading-path-record {
     min-width: 0;
-    border: 1px solid var(--color-card-border);
-    border-radius: 0.75rem;
-    background: var(--color-surface-raised);
-    overflow: hidden;
+    background: var(--color-bg);
   }
 
-  .reading-path-card > header {
-    padding: 1.5rem;
+  .reading-path-record__header {
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.26fr) minmax(0, 0.74fr);
+    gap: 1rem 2rem;
+    padding: 1.5rem 0;
   }
 
-  .reading-path-card__label,
+  .reading-path-record__label,
   .reading-path-step__label {
     color: var(--color-accent);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  .reading-path-card__label {
-    margin: 0 0 0.75rem;
+  .reading-path-record__label {
+    margin: 0;
   }
 
-  .reading-path-card h3 {
+  .reading-path-record h3 {
     margin: 0;
     color: var(--color-text-primary);
-    font-size: 1.35rem;
-    line-height: 1.2;
+    font-size: clamp(1.35rem, 2.5vw, 2rem);
+    line-height: 1.1;
   }
 
-  .reading-path-card header > p:last-child,
-  .reading-path-step__description {
+  .reading-path-record header > p:last-child {
+    grid-column: 2;
+    max-width: 48rem;
+    margin: 0;
     color: var(--color-text-secondary);
-    line-height: 1.625;
+    line-height: 1.65;
   }
 
-  .reading-path-card header > p:last-child {
-    margin: 0.75rem 0 0;
-  }
-
-  .reading-path-card ol {
+  .reading-path-record ol {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
     margin: 0;
     padding: 0;
     border-top: 1px solid var(--color-card-border);
+    background: var(--color-card-border);
     list-style: none;
   }
 
-  .reading-path-card li {
+  .reading-path-record li {
     min-width: 0;
-    padding: 1.25rem 1.5rem 1.5rem;
-  }
-
-  .reading-path-card li + li {
-    border-top: 1px solid var(--color-card-border);
+    padding: 1.25rem;
+    background: var(--color-bg);
   }
 
   .reading-path-step__label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.6rem;
   }
 
   .reading-path-step__label span {
@@ -412,13 +514,13 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     font-family: var(--font-mono);
   }
 
-  .reading-path-card h4 {
+  .reading-path-record h4 {
     margin: 0;
     font-size: 1rem;
     line-height: 1.35;
   }
 
-  .reading-path-card h4 a {
+  .reading-path-record h4 a {
     display: flex;
     min-height: 44px;
     align-items: center;
@@ -426,42 +528,48 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     text-decoration: none;
   }
 
-  .reading-path-card h4 a:hover {
+  .reading-path-record h4 a:hover,
+  .reading-path-record h4 a:focus-visible {
     color: var(--color-accent);
   }
 
-  .reading-path-card h4 a:focus-visible {
-    border-radius: 0.375rem;
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
   .reading-path-step__description {
-    margin: 0.5rem 0 0.75rem;
-    font-size: 1rem;
+    margin: 0.5rem 0 0.8rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.65;
   }
 
   .reading-path-step__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.4rem;
   }
 
   .reading-path-step__meta span {
     border: 1px solid var(--color-card-border);
-    border-radius: 1rem;
-    padding: 0.25rem 0.5rem;
     color: var(--color-text-muted);
-    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
     line-height: 1.2;
+    padding: 0.32rem 0.45rem;
   }
 
   @media (max-width: 860px) {
-    .featured-grid {
+    .featured-ledger {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .featured-record--lead {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+
+    .reading-paths__ledger {
       grid-template-columns: 1fr;
     }
 
-    .reading-paths__grid {
+    .reading-path-record ol {
       grid-template-columns: 1fr;
     }
   }
@@ -471,6 +579,22 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     .reading-paths,
     .writing-index {
       width: min(100% - 1rem, 1120px);
+    }
+
+    .featured-ledger {
+      grid-template-columns: 1fr;
+    }
+
+    .featured-record--lead {
+      grid-column: auto;
+    }
+
+    .reading-path-record__header {
+      grid-template-columns: 1fr;
+    }
+
+    .reading-path-record header > p:last-child {
+      grid-column: auto;
     }
   }
 </style>

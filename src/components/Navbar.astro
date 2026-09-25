@@ -5,6 +5,7 @@ const navItems = [
   { href: '/', label: 'Home' },
   { href: '/projects/', label: 'Work' },
   { href: '/blog/', label: 'Writing' },
+  { href: '/about/', label: 'About' },
   { href: '/resume/', label: 'Resume' },
   { href: '/contact-me/', label: 'Contact' },
 ];
@@ -57,6 +58,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
         <a
           href={item.href}
           class={`mobile-nav-link${isActive(item.href) ? ' active' : ''}`}
+          aria-current={isActive(item.href) ? 'page' : undefined}
           data-mobile-link
         >
           {item.label}

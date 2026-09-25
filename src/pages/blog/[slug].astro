@@ -55,6 +55,15 @@ const nextBest = nextBestRecommendation
 
 // Calculate reading time (rough estimate)
 const readingTime = Math.ceil(postBody.split(' ').length / 200);
+const displayDate = updatedDate || date;
+const dateLabel = updatedDate ? 'Updated' : 'Published';
+const formatArticleDate = (value: Date) =>
+  value.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
 
 const baseUrl = import.meta.env.DEV ? Astro.url.origin : Astro.site?.toString() || 'https://piyushmehta.com';
 const socialImage = createSocialCardMetadata({
@@ -130,30 +139,13 @@ const articleSchema = {
       </div>
 
       <article class="blog-post-article" itemscope itemtype="https://schema.org/Article" data-pagefind-body>
-        <!-- Back Link -->
-        <div class="blog-post-back">
-          <a
-            href="/blog/"
-            class="blog-post-back__link"
-          >
-            <svg
-              aria-hidden="true"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 19l-7-7 7-7"></path>
-            </svg>
-            Back to Blog
-          </a>
-        </div>
-
         <!-- Post Header -->
-        <header class="blog-post-header">
+        <header class="blog-post-header article-masthead" data-article-masthead>
+          <div class="article-masthead__folio" aria-hidden="true">
+            <span>Field note</span>
+            <span>{readingTime} min read</span>
+          </div>
+          <div class="article-masthead__content">
           <h1
             class="blog-post-title"
             itemprop="headline"
@@ -190,6 +182,7 @@ const articleSchema = {
               </div>
             </dl>
           </section>
+          </div>
         </header>
 
         <!-- Featured Image -->
@@ -243,13 +236,10 @@ const articleSchema = {
               Back to Blog
             </a>
 
-            <div>
-              <meta itemprop="dateModified" content={date.toISOString()} />
-              Last updated: {
-                date.toLocaleDateString('en-US', {
-                  timeZone: 'America/Toronto',
-                })
-              } Eastern Time
+            <div class="article-date-record">
+              <meta itemprop="dateModified" content={displayDate.toISOString()} />
+              <span>{dateLabel}</span>
+              <time datetime={displayDate.toISOString()}>{formatArticleDate(displayDate)}</time>
             </div>
           </div>
         </footer>
@@ -344,6 +334,34 @@ const articleSchema = {
     text-align: left;
   }
 
+  .article-masthead {
+    display: grid;
+    grid-template-columns: minmax(7rem, 0.2fr) minmax(0, 1fr);
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+  }
+
+  .article-masthead__folio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.45rem;
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .article-masthead__folio span:last-child {
+    color: var(--color-text-muted);
+  }
+
+  .article-masthead__content {
+    min-width: 0;
+  }
+
   .blog-post-title {
     text-align: left;
     max-width: 26ch;
@@ -358,10 +376,11 @@ const articleSchema = {
 
   .article-orientation {
     margin-top: 1.5rem;
-    padding: 1rem;
-    border: 1px solid var(--color-card-border);
-    border-radius: 0.5rem;
-    background: var(--color-surface-raised);
+    padding: 1rem 0 0;
+    border: 0;
+    border-top: 1px solid var(--color-card-border);
+    border-radius: 0;
+    background: transparent;
   }
 
   .article-orientation__title {
@@ -629,6 +648,22 @@ const articleSchema = {
     font-size: 0.94rem;
   }
 
+  .article-date-record {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .article-date-record span {
+    color: var(--color-accent);
+    font-weight: 800;
+  }
+
   .blog-post-footer > div {
     display: flex;
     flex-wrap: wrap;
@@ -643,6 +678,17 @@ const articleSchema = {
   }
 
   @media (max-width: 720px) {
+    .article-masthead {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .article-masthead__folio {
+      flex-direction: row;
+      justify-content: space-between;
+      padding-top: 0;
+    }
+
     .blog-post-page {
       padding-inline: 0.75rem;
     }
