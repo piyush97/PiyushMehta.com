@@ -21,9 +21,15 @@ test.describe('portfolio smoke', () => {
       expect(response?.ok(), `${route} should return a successful response`).toBeTruthy();
       await expect(page.locator('#main-content')).toBeVisible();
       await expect(page.locator('h1').first()).toBeVisible();
-      await expect(
-        page.getByLabel('Primary navigation').getByRole('link', { name: 'Work' })
-      ).toBeVisible();
+      const workLink = page.getByLabel('Primary navigation').getByRole('link', { name: 'Work' });
+      if (await workLink.isVisible()) {
+        await expect(workLink).toBeVisible();
+      } else {
+        const menuToggle = page.getByRole('button', { name: 'Toggle menu' });
+        await expect(menuToggle).toBeVisible();
+        await menuToggle.click();
+        await expect(page.locator('#mobile-panel').getByRole('link', { name: 'Work' })).toBeVisible();
+      }
     });
   }
 

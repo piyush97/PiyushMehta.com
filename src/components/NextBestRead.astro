@@ -75,8 +75,8 @@ const href = `/blog/${nextRead.slug}/`;
     margin: 0 auto 2rem;
     padding: 1.5rem;
     border: 1px solid var(--color-card-border);
-    border-radius: 0.75rem;
-    background: var(--color-surface-raised);
+    border-radius: 0;
+    background: transparent;
     transition:
       border-color 160ms ease,
       transform 160ms ease;
@@ -84,7 +84,7 @@ const href = `/blog/${nextRead.slug}/`;
 
   .next-best-read:hover {
     border-color: color-mix(in srgb, var(--color-accent) 42%, var(--color-card-border));
-    transform: translateY(-2px);
+    transform: none;
   }
 
   .next-best-read__context {

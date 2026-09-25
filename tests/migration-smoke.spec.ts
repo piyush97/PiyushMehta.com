@@ -56,6 +56,19 @@ test.describe('astro v6 migration smoke', () => {
     await expect(page.locator('[data-filter-sort]')).toHaveValue('title');
     await expect(page.locator('[data-filter-order]')).toHaveValue('asc');
   });
+  test('archive filter keeps a single closing rule and visible focus', async ({ page }) => {
+    await page.goto('/blog/?q=astro', { waitUntil: 'domcontentloaded' });
+
+    const visibleRows = page.locator('.writing-list article:not([hidden])');
+    await expect(visibleRows).not.toHaveCount(0);
+    await expect(page.locator('.writing-list')).toHaveCSS('border-bottom-width', '0px');
+    await expect(visibleRows.last()).toHaveCSS('border-bottom-width', '1px');
+
+    const search = page.locator('#blog-search');
+    await search.focus();
+    await expect(search).toHaveCSS('outline-style', 'solid');
+  });
+
   test('blog filter reinitializes after client-side navigation', async ({ page }) => {
     const navigateViaNav = async (href: '/' | '/blog/') => {
       const desktopLink = page.locator(`.site-nav__links a[href="${href}"]:visible`).first();

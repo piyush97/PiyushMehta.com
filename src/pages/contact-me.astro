@@ -1,5 +1,7 @@
 ---
 import ContactForm from '../components/ContactForm';
+import EditorialHeader from '../components/EditorialHeader.astro';
+import SectionHeader from '../components/SectionHeader.astro';
 import { contactChannels, contactPrompts, contactTopics } from '../data/portfolio';
 import Layout from '../layouts/Layout.astro';
 
@@ -13,230 +15,205 @@ export const prerender = true;
   ogTemplate="modern"
   ogTheme="dark"
 >
-  <section class="contact-hero">
-    <div class="contact-hero__copy">
-      <p class="eyebrow" data-hero-eyebrow>Contact</p>
-      <h1 data-hero-title>Bring hard engineering problems, not vague buzzwords.</h1>
-      <p class="lede">
-        Reach out for architecture reviews, AI workflow work, platform delivery, technical writing,
-        or speaking. Best conversations start with context, constraints, and what “good” needs to
-        look like.
-      </p>
-      <div class="contact-actions">
-        <a class="btn-primary" href="#contact-form">Send a message</a>
-        <a class="btn-secondary" href="/projects/">See work first</a>
-      </div>
-    </div>
-
-    <aside class="contact-guidance" aria-label="What to include">
-      <h2>Useful first message</h2>
+  <EditorialHeader
+    class="contact-hero"
+    eyebrow="Contact"
+    title="Bring hard engineering problems, not vague buzzwords."
+    description="Reach out for architecture reviews, AI workflow work, platform delivery, technical writing, or speaking. Best conversations start with context, constraints, and what “good” needs to look like."
+    actions={[
+      { href: '#contact-form', label: 'Send a message' },
+      { href: '/projects/', label: 'See work first', variant: 'secondary' },
+    ]}
+    asideLabel="Useful first message"
+  >
+    <div slot="aside">
+      <span>Useful first message</span>
+      <strong>Context makes the first reply useful.</strong>
       <ul>
         {contactPrompts.map((prompt) => <li>{prompt}</li>)}
       </ul>
-    </aside>
+    </div>
+  </EditorialHeader>
+
+  <section
+    id="contact-form"
+    class="contact-section contact-form-section"
+    aria-labelledby="contact-form-heading"
+    tabindex="-1"
+    data-contact-section="form"
+  >
+    <SectionHeader
+      eyebrow="Project brief"
+      title="Send a message directly."
+      id="contact-form-heading"
+      description="Use the form to reach my inbox. It is rate-limited and spam-filtered; the useful details are the problem, constraints, and what a good outcome would make possible."
+    />
+    <div class="form-shell">
+      <ContactForm client:load />
+    </div>
   </section>
 
-  <section class="contact-section">
-    <div class="section-heading">
-      <p class="eyebrow">Channels</p>
-      <h2>Pick route that fits conversation.</h2>
-    </div>
-    <div class="channel-grid">
+  <section class="contact-section" aria-labelledby="channels-heading" data-contact-section="channels">
+    <SectionHeader
+      eyebrow="Channels"
+      title="Pick route that fits conversation."
+      id="channels-heading"
+      description="Use a direct channel when the question is simple, or send the project brief above when context matters."
+    />
+    <div class="channel-register">
       {contactChannels.map((channel) => (
-        <article class="info-card">
+        <article class="channel-record">
           <h3>{channel.label}</h3>
           <p>{channel.note}</p>
-          <a href={channel.href}>Open {channel.label}</a>
+          <a href={channel.href}>
+            Open {channel.label}
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
         </article>
       ))}
     </div>
   </section>
 
-  <section id="contact-form" class="contact-section split-grid">
-    <div>
-      <div class="section-heading">
-        <p class="eyebrow">Good Fit</p>
-        <h2>Work I’m happy to discuss.</h2>
-      </div>
-      <div class="topic-list">
-        {contactTopics.map((topic) => (
-          <article class="info-card">
-            <h3>{topic.title}</h3>
-            <p>{topic.detail}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-
-    <div>
-      <div class="section-heading">
-        <p class="eyebrow">Form</p>
-        <h2>Send a message directly.</h2>
-        <p>Use the form to reach my inbox. Rate-limited and spam-filtered.</p>
-      </div>
-      <div class="form-shell">
-        <ContactForm client:load />
-      </div>
+  <section class="contact-section" aria-labelledby="topics-heading" data-contact-section="topics">
+    <SectionHeader
+      eyebrow="Good fit"
+      title="Work I’m happy to discuss."
+      id="topics-heading"
+      description="These are useful starting points, not a gate. If the problem is adjacent but important, say what is actually stuck."
+    />
+    <div class="topic-register">
+      {contactTopics.map((topic) => (
+        <article class="topic-record">
+          <h3>{topic.title}</h3>
+          <p>{topic.detail}</p>
+        </article>
+      ))}
     </div>
   </section>
 </Layout>
 
 <style>
-  .contact-hero,
   .contact-section {
     width: min(1120px, calc(100% - 2rem));
     margin-inline: auto;
+    padding-block: clamp(3.5rem, 8vw, 6.5rem) 0;
+    scroll-margin-top: 5rem;
   }
 
-  .contact-hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-    gap: clamp(1.5rem, 5vw, 4rem);
-    align-items: start;
-    padding-block: clamp(4rem, 8vw, 6rem) 3rem;
+  .contact-form-section {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
   }
 
-  .eyebrow {
-    margin: 0 0 0.9rem;
-    color: var(--color-accent);
-    font-size: 0.8rem;
-    font-weight: 900;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+  .contact-form-section :global(.section-heading) {
+    max-width: 50rem;
   }
 
-  .contact-hero h1,
-  .section-heading h2,
-  .contact-guidance h2 {
-    margin: 0;
-    color: var(--color-text-primary);
-    line-height: 1.02;
-    letter-spacing: 0;
-  }
-
-  .contact-hero h1 {
-    max-width: 11ch;
-    font-size: clamp(3rem, 7vw, 5.15rem);
-  }
-
-  .lede,
-  .section-heading p,
-  .info-card p,
-  .contact-guidance li {
-    color: var(--color-text-secondary);
-  }
-
-  .lede {
-    max-width: 44rem;
-    margin: 1.35rem 0 0;
-    font-size: 1.15rem;
-    line-height: 1.8;
-  }
-
-  .contact-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    margin-top: 2rem;
-  }
-
-  .contact-guidance,
-  .info-card,
   .form-shell {
-    border: 1px solid var(--color-card-border);
+    max-width: 52rem;
+    margin-top: 2.25rem;
+    border-block: 1px solid var(--color-card-border);
     background: var(--color-surface-raised);
+    padding: clamp(1.25rem, 3vw, 2rem);
   }
 
-  .contact-guidance {
-    padding: 1.25rem;
-  }
-
-  .contact-guidance h2 {
-    font-size: 1.3rem;
-  }
-
-  .contact-guidance ul {
-    margin: 1rem 0 0;
-    padding-left: 1.2rem;
-  }
-
-  .contact-guidance li + li {
-    margin-top: 0.8rem;
-  }
-
-  .contact-section {
-    padding-block: clamp(2.5rem, 6vw, 4.5rem) 0;
-  }
-
-  .section-heading {
-    max-width: 42rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .section-heading h2 {
-    font-size: clamp(2.1rem, 4vw, 3.25rem);
-  }
-
-  .section-heading p {
-    margin: 0.9rem 0 0;
-    line-height: 1.7;
-  }
-
-  .channel-grid,
-  .topic-list {
+  .channel-register {
     display: grid;
-    gap: 1rem;
-  }
-
-  .channel-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: 2.25rem;
+    border: 1px solid var(--color-card-border);
+    background: var(--color-card-border);
   }
 
-  .topic-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .channel-record {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    padding: 1.25rem;
+    background: var(--color-bg);
   }
 
-  .split-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 1.25rem;
-    padding-bottom: clamp(3rem, 7vw, 5rem);
-  }
-
-  .info-card,
-  .form-shell {
-    padding: 1.2rem;
-  }
-
-  .info-card h3 {
+  .channel-record h3,
+  .topic-record h3 {
     margin: 0;
     color: var(--color-text-primary);
-    font-size: 1.1rem;
+    font-size: 1.15rem;
+    line-height: 1.2;
   }
 
-  .info-card p {
+  .channel-record p,
+  .topic-record p {
     margin: 0.7rem 0 0;
+    color: var(--color-text-secondary);
     line-height: 1.7;
   }
 
-  .info-card a {
+  .channel-record a {
     display: inline-flex;
-    margin-top: 1rem;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: auto;
+    padding-top: 1rem;
     color: var(--color-accent);
     font-weight: 800;
     text-decoration: none;
   }
 
-  .info-card a:hover {
+  .channel-record a:hover,
+  .channel-record a:focus-visible {
     color: var(--color-text-primary);
   }
 
-  @media (max-width: 960px) {
-    .contact-hero,
-    .split-grid,
-    .channel-grid,
-    .topic-list {
+  .channel-record svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--motion-fast, 150ms) ease;
+  }
+
+  .channel-record a:hover svg,
+  .channel-record a:focus-visible svg {
+    transform: translateX(0.2rem);
+  }
+
+  .topic-register {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: 2.25rem;
+    border-block: 1px solid var(--color-card-border);
+    background: var(--color-card-border);
+  }
+
+  .topic-record {
+    min-width: 0;
+    padding: 1.25rem;
+    background: var(--color-bg);
+  }
+
+  @media (max-width: 900px) {
+    .channel-register,
+    .topic-register {
       grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .contact-section {
+      width: min(100% - 1rem, 1120px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .channel-record svg {
+      transition: none;
+    }
+
+    .channel-record a:hover svg,
+    .channel-record a:focus-visible svg {
+      transform: none;
     }
   }
 </style>

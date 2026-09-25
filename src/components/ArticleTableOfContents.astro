@@ -78,6 +78,71 @@ const { headings } = Astro.props;
 
   document.addEventListener('astro:page-load', initializeTableOfContentsLinks);
   initializeTableOfContentsLinks();
+
+  let activeTocController: AbortController | null = null;
+
+  const initializeActiveTocState = () => {
+    activeTocController?.abort();
+    activeTocController = new AbortController();
+    const { signal } = activeTocController;
+
+    document.querySelectorAll<HTMLElement>('.article-toc-root').forEach((root) => {
+      const links = Array.from(
+        root.querySelectorAll<HTMLAnchorElement>('[data-article-toc] a[href^="#"]')
+      );
+      const sections = links
+        .map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
+        .filter((section): section is HTMLElement => section !== null);
+
+      if (links.length === 0 || sections.length === 0) return;
+
+      const updateActiveLink = () => {
+        const activationLine = Math.min(window.innerHeight * 0.28, 220);
+        let activeSection = sections[0];
+
+        for (const section of sections) {
+          if (section.getBoundingClientRect().top <= activationLine) {
+            activeSection = section;
+          }
+        }
+
+        let activeLink: HTMLAnchorElement | undefined;
+        for (const link of links) {
+          const isActive = link.getAttribute('href') === `#${activeSection?.id ?? ''}`;
+          link.classList.toggle('is-active', isActive);
+          if (isActive) {
+            link.setAttribute('aria-current', 'location');
+            activeLink ??= link;
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        }
+
+        const desktopRail = root.querySelector<HTMLElement>('[data-article-toc="desktop"]');
+        if (!activeLink || !desktopRail || desktopRail.scrollHeight <= desktopRail.clientHeight) return;
+
+        const railBounds = desktopRail.getBoundingClientRect();
+        const linkBounds = activeLink.getBoundingClientRect();
+        if (linkBounds.top < railBounds.top) {
+          desktopRail.scrollTop -= railBounds.top - linkBounds.top;
+        } else if (linkBounds.bottom > railBounds.bottom) {
+          desktopRail.scrollTop += linkBounds.bottom - railBounds.bottom;
+        }
+      };
+
+      root.dataset.tocActiveInitialized = 'true';
+      updateActiveLink();
+      window.addEventListener('scroll', updateActiveLink, { passive: true, signal });
+      window.addEventListener('resize', updateActiveLink, { signal });
+    });
+  };
+
+  document.addEventListener('astro:before-swap', () => {
+    activeTocController?.abort();
+    activeTocController = null;
+  });
+  document.addEventListener('astro:page-load', initializeActiveTocState);
+  initializeActiveTocState();
 </script>
 
 <style>
@@ -116,7 +181,7 @@ const { headings } = Astro.props;
 
   .article-toc__count {
     flex: 0 0 auto;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     font-family: var(--font-mono);
     font-size: 0.8rem;
     font-weight: 600;
@@ -197,6 +262,12 @@ const { headings } = Astro.props;
       overscroll-behavior: contain;
       scrollbar-width: thin;
     }
+  }
+
+  .article-toc__list a.is-active {
+    background: color-mix(in srgb, var(--color-accent) 9%, transparent);
+    color: var(--color-accent);
+    box-shadow: inset 1px 0 0 var(--color-accent);
   }
 
   @media (prefers-reduced-motion: reduce) {

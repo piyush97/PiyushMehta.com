@@ -18,7 +18,7 @@ const shareLinks = [
   <div class="article-meta__line">
     <div class="article-meta__byline">
       {author && <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">{author}</span></span>}
-      {date && <time itemprop="datePublished" datetime={date.toISOString()}>{date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'America/Toronto' })}</time>}
+      {date && <time itemprop="datePublished" datetime={date.toISOString()}>{date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })}</time>}
       {readingTime && <span>{readingTime} min read</span>}
     </div>
     <details class="article-share">

@@ -150,6 +150,69 @@ test.describe('article orientation and heading-derived table of contents', () =>
     });
   }
 
+  test('marks the current section in the desktop rail', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(articlePath, { waitUntil: 'networkidle' });
+
+    const toc = page.locator('[data-article-toc="desktop"]');
+    await expect(toc.locator('a[aria-current="location"]')).toHaveCount(1);
+
+    await page.evaluate((targetId) => {
+      document.documentElement.style.scrollBehavior = 'auto';
+      const target = document.getElementById(targetId);
+      if (target) window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY - 100);
+    }, 'when-rag-is-worth-adding');
+
+    await expect
+      .poll(() => toc.locator('a[aria-current="location"]').getAttribute('href'))
+      .toBe('#when-rag-is-worth-adding');
+  });
+
+  test('keeps a late active section inside the desktop rail', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 600 });
+    await page.goto(articlePath, { waitUntil: 'networkidle' });
+
+    await page.evaluate(() => {
+      document.documentElement.style.scrollBehavior = 'auto';
+      const target = document.getElementById('start-with-a-comparison');
+      if (target) window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY - 100);
+    });
+
+    const rail = page.locator('[data-article-toc="desktop"]');
+    const active = rail.locator('a[aria-current="location"]');
+    await expect.poll(() => active.getAttribute('href')).toBe('#start-with-a-comparison');
+
+    const metrics = await rail.evaluate((element) => {
+      const link = element.querySelector('a[aria-current="location"]');
+      const railBounds = element.getBoundingClientRect();
+      const linkBounds = link?.getBoundingClientRect();
+      return {
+        scrollTop: element.scrollTop,
+        railTop: railBounds.top,
+        railBottom: railBounds.bottom,
+        linkTop: linkBounds?.top ?? Number.NaN,
+        linkBottom: linkBounds?.bottom ?? Number.NaN,
+      };
+    });
+
+    expect(metrics.scrollTop).toBeGreaterThan(0);
+    expect(metrics.linkTop).toBeGreaterThanOrEqual(metrics.railTop - 1);
+    expect(metrics.linkBottom).toBeLessThanOrEqual(metrics.railBottom + 1);
+  });
+
+  test('keeps the active TOC state singular across client-side article navigation', async ({ page }) => {
+    await page.goto(articlePath, { waitUntil: 'networkidle' });
+    const nextRead = page.locator('[data-next-best-read] a');
+    const nextHref = await nextRead.getAttribute('href');
+
+    await nextRead.click();
+    await expect(page).toHaveURL(new RegExp(`${nextHref?.replaceAll('/', '\\/')}$`));
+    await page.goBack();
+    await expect(page).toHaveURL(new RegExp(`${articlePath.replaceAll('/', '\\/')}$`));
+
+    await expect(page.locator('[data-article-toc="desktop"] a[aria-current="location"]')).toHaveCount(1);
+  });
+
   test('keeps orientation but omits empty TOC presentations for a heading-free article', async ({
     page,
   }) => {
@@ -165,4 +228,54 @@ test.describe('article orientation and heading-derived table of contents', () =>
     await expect(page.locator('[data-article-toc]')).toHaveCount(0);
     await expectReadableMeasure(page);
   });
+
+  test('keeps Bloom filter controls and bit cells usable at 320px', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 812 });
+    await page.goto('/blog/bloom-filters/', { waitUntil: 'networkidle' });
+
+    const controls = page.locator('.bloom-filter-control-row');
+    await expect(controls).toHaveCount(2);
+    await expect
+      .poll(() =>
+        controls.evaluateAll((rows) =>
+          Math.min(
+            ...rows.flatMap((row) =>
+              [...row.querySelectorAll('input,button')].map((control) => control.getBoundingClientRect().width),
+            ),
+          ),
+        ),
+      )
+      .toBeGreaterThanOrEqual(160);
+
+    const bits = page.locator('.bloom-filter-bit');
+    await expect(bits).toHaveCount(8);
+    const bitDimensions = await bits.evaluateAll((cells) =>
+      cells.map((cell) => {
+        const bounds = cell.getBoundingClientRect();
+        return { width: bounds.width, height: bounds.height };
+      }),
+    );
+    expect(
+      bitDimensions.every(({ width, height }) => width >= 44 && height >= 44 && Math.abs(width - height) <= 1),
+    ).toBe(true);
+  });
+
+  for (const articlePath of [
+    '/blog/bloom-filters/',
+    '/blog/how-to-make-your-own-blog/',
+    '/blog/macos-to-arch-linux-omarchy-developer-productivity/',
+  ]) {
+    test(`keeps interactive article content inside a narrow viewport: ${articlePath}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 320, height: 812 });
+      await page.goto(articlePath, { waitUntil: 'networkidle' });
+
+      await expect
+        .poll(() =>
+          page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth),
+        )
+        .toBe(false);
+    });
+  }
 });
