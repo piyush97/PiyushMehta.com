@@ -458,13 +458,13 @@ main {
 .btn-primary {
   border: 1px solid var(--color-accent);
   background: var(--color-accent);
-  color: #11131f;
+  color: var(--color-accent-foreground);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
   background: color-mix(in srgb, var(--color-accent) 88%, white);
-  color: #11131f;
+  color: var(--color-accent-foreground);
 }
 
 .btn-secondary {
@@ -1133,7 +1133,7 @@ html {
 /* Global Styles */
 @layer base {
   html {
-    font-family: theme('fontFamily.sans');
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     line-height: 1.4;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -2565,5 +2565,18 @@ html {
     .related-post-card__action svg {
       transition: none;
     }
+  }
+
+  :root.professional-light .btn-primary,
+  :root.light .btn-primary,
+  :root.professional-light .skip-to-main,
+  :root.light .skip-to-main {
+    color: var(--color-accent-foreground);
+  }
+
+  :root.professional-light .btn-primary:hover,
+  :root.light .btn-primary:hover {
+    background: color-mix(in srgb, var(--color-accent) 88%, var(--color-text-primary));
+    color: var(--color-accent-foreground);
   }
 }
