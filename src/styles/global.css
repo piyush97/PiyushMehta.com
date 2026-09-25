@@ -517,20 +517,25 @@ main {
   display: grid;
   gap: 0.45rem;
   align-content: end;
-  background: var(--color-surface-raised);
+  background: color-mix(in srgb, var(--color-surface-raised) 76%, var(--color-bg));
   padding: 1rem;
   color: var(--color-text-secondary);
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.blog-filter .filter-panel__search {
+  background: color-mix(in srgb, var(--color-surface-raised) 92%, var(--color-bg));
+  color: var(--color-text-primary);
 }
 
 .blog-filter .filter-panel input,
 .blog-filter .filter-panel select {
   width: 100%;
   min-height: 2.65rem;
-  border: 1px solid var(--color-card-border);
+  border: 1px solid color-mix(in srgb, var(--color-card-border) 82%, var(--color-bg));
   border-radius: 0.35rem;
   background: var(--color-bg);
   color: var(--color-text-primary);
@@ -542,23 +547,44 @@ main {
   text-transform: none;
 }
 
+.blog-filter .filter-panel input:focus,
+.blog-filter .filter-panel select:focus {
+  border-color: var(--color-accent);
+}
+
+.blog-filter .filter-panel input:focus-visible,
+.blog-filter .filter-panel select:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .blog-filter .filter-panel input::placeholder {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 .blog-filter .filter-panel button {
   min-height: 100%;
   border: 0;
-  background: var(--color-surface-raised);
-  color: var(--color-accent);
+  border-left: 1px solid var(--color-card-border);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
   cursor: pointer;
+  font-size: 0.76rem;
   font-weight: 800;
+  letter-spacing: 0.08em;
   padding: 1rem 1.15rem;
+  text-transform: uppercase;
 }
 
 .blog-filter .filter-panel button:hover,
 .blog-filter .filter-panel button:focus-visible {
-  background: rgba(var(--color-accent-rgb), 0.12);
+  background: color-mix(in srgb, var(--color-accent) 6%, var(--color-bg));
+  color: var(--color-accent);
+}
+
+.blog-filter .filter-panel button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 .blog-filter .writing-list__footer a {
   display: inline-flex;
@@ -575,14 +601,18 @@ main {
   justify-content: space-between;
   gap: 0.8rem;
   color: var(--color-text-secondary);
+  padding-block: 0.25rem 0.4rem;
+  border-bottom: 1px solid var(--color-card-border);
 }
 
 .blog-filter .results-bar p {
   margin: 0;
+  color: var(--color-text-secondary);
 }
 
 .blog-filter .results-bar strong {
   color: var(--color-text-primary);
+  font-family: var(--font-mono);
 }
 
 .blog-filter .results-bar div {
@@ -591,11 +621,22 @@ main {
   gap: 0.45rem;
 }
 
-.blog-filter .results-bar span,
+.blog-filter .results-bar span {
+  display: inline-flex;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 42%, var(--color-card-border));
+  background: color-mix(in srgb, var(--color-accent) 7%, transparent);
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0.4rem 0.55rem;
+}
+
 .blog-filter .writing-list__footer span {
   display: inline-flex;
-  border: 1px solid rgba(var(--color-accent-rgb), 0.32);
-  color: var(--color-accent);
+  border: 1px solid var(--color-card-border);
+  background: transparent;
+  color: var(--color-text-secondary);
   font-size: 0.75rem;
   font-weight: 800;
   line-height: 1;
@@ -604,29 +645,29 @@ main {
 
 .blog-filter .writing-list {
   display: grid;
-  gap: 1px;
-  border: 1px solid var(--color-card-border);
-  background: var(--color-card-border);
+  gap: 0;
+  border: 0;
+  border-top: 1px solid var(--color-card-border);
+  background: transparent;
 }
 
 .blog-filter .writing-list article,
 .blog-filter .empty-state {
-  background: var(--color-surface-raised);
+  background: color-mix(in srgb, var(--color-surface-raised) 38%, var(--color-bg));
   padding: clamp(1.15rem, 2.4vw, 1.7rem);
 }
 
 .blog-filter .writing-list article {
   display: grid;
   gap: 0.9rem;
-  transition:
-    transform 220ms ease,
-    box-shadow 220ms ease,
-    border-color 220ms ease;
+  border-bottom: 1px solid var(--color-card-border);
+  transition: background 180ms ease;
 }
 
 .blog-filter .writing-list article:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+  transform: none;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--color-accent) 4%, var(--color-bg));
 }
 
 .blog-filter .writing-list__meta,
@@ -686,14 +727,14 @@ main {
   grid-template-columns: minmax(8rem, 0.24fr) minmax(0, 1fr);
   gap: clamp(1.25rem, 4vw, 3.5rem);
   padding: clamp(1.25rem, 2.8vw, 2rem) clamp(1.15rem, 2.4vw, 1.7rem);
-  background: transparent;
+  background: color-mix(in srgb, var(--color-surface-raised) 38%, var(--color-bg));
   transition: background 180ms ease;
 }
 
 .blog-filter .writing-list .editorial-article-row:hover {
   transform: none;
   box-shadow: none;
-  background: color-mix(in srgb, var(--color-accent) 5%, var(--color-surface-raised));
+  background: color-mix(in srgb, var(--color-accent) 4%, var(--color-bg));
 }
 
 .blog-filter .writing-list .editorial-article-row__meta {
@@ -701,9 +742,9 @@ main {
   align-items: flex-start;
   justify-content: flex-start;
   gap: 0.45rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   letter-spacing: 0.04em;
   line-height: 1.4;
   text-transform: uppercase;
@@ -756,9 +797,10 @@ main {
 
 .blog-filter .writing-list .editorial-article-row__footer span {
   display: inline-flex;
-  border: 1px solid rgba(var(--color-accent-rgb), 0.32);
-  color: var(--color-accent);
-  font-size: 0.73rem;
+  border: 1px solid var(--color-card-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
   font-weight: 800;
   line-height: 1;
   padding: 0.4rem 0.55rem;
@@ -782,6 +824,7 @@ main {
 .blog-filter .writing-list .editorial-article-row__footer svg {
   width: 1rem;
   height: 1rem;
+  color: var(--color-accent);
   transition: transform var(--motion-fast, 150ms) ease;
 }
 
@@ -811,6 +854,8 @@ main {
 
   .blog-filter .filter-panel button {
     min-height: 3rem;
+    border-top: 1px solid var(--color-card-border);
+    border-left: 0;
   }
 
   .blog-filter .writing-list .editorial-article-row {
