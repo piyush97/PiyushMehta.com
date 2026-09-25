@@ -10,8 +10,11 @@ async function expectReadableMeasure(page: import('@playwright/test').Page) {
     probe.style.font = getComputedStyle(content).font;
     document.body.append(probe);
 
+    // The container is the full reading column so figures and tables can break
+    // out past the measure; the measure itself is the prose inside it.
+    const prose = content.querySelector('p');
     const result = {
-      actual: content.getBoundingClientRect().width,
+      actual: prose ? prose.getBoundingClientRect().width : 0,
       maximum: probe.getBoundingClientRect().width,
     };
     probe.remove();
