@@ -100,6 +100,7 @@ bun run test:ui      # Playwright UI mode
 bun run migrate:images    # Migrate blog images to public/
 bun run generate:posts   # Generate the published-post manifest
 bun run check:posts      # Verify the published-post manifest
+bun run generate:social-preview  # Render .github/social-preview.png (repo link preview)
 bun run test-seo          # Validate SEO meta files
 ```
 

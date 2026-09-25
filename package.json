@@ -15,6 +15,7 @@
     "resume:copy": "node scripts/copy-resume-pdf.mjs",
     "generate:posts": "node scripts/generate-post-manifest.mjs",
     "check:posts": "node scripts/generate-post-manifest.mjs --check",
+    "generate:social-preview": "node scripts/generate-repo-social-preview.mjs",
     "lint": "vp lint",
     "lint:fix": "vp lint --fix",
     "format": "vp fmt . --write",
