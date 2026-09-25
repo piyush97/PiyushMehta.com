@@ -1,8 +1,8 @@
 import type { APIRoute } from 'astro';
 import { ENV } from 'varlock/env';
-import { createRatelimit, getClientIp } from '@/utils/redis';
 import { sendContactEmail } from '@/utils/contact';
 import { isAllowedFormOrigin } from '@/utils/request-security';
+import { createRatelimit, getClientIp } from '@/utils/redis';
 
 export const prerender = false;
 
@@ -27,16 +27,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       return json({ error: 'Forbidden.' }, 403);
     }
 
-    // Fail closed: without a limiter this endpoint would send unbounded email.
-    if (!ratelimit) {
-      return json({ error: 'Contact service unavailable.' }, 503);
-    }
-
-    const { success } = await ratelimit.limit(getClientIp(request, clientAddress));
-    if (!success) {
-      return json({ error: 'Too many requests. Try again in an hour.' }, 429);
-    }
-
     const contentLength = Number(request.headers.get('content-length'));
     if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
       return json({ error: 'Request body is too large.' }, 413);
@@ -54,7 +44,18 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       return json({ error: 'Invalid request body.' }, 400);
     }
 
-    const { name, email, subject, message } = (body ?? {}) as Record<string, unknown>;
+    const { name, email, subject, message, website } = (body ?? {}) as Record<string, unknown>;
+    if (typeof website === 'string' && website.trim()) return json({ ok: true });
+
+    // Fail closed: without a limiter this endpoint would send unbounded email.
+    if (!ratelimit) {
+      return json({ error: 'Contact service unavailable.' }, 503);
+    }
+
+    const { success } = await ratelimit.limit(getClientIp(request, clientAddress));
+    if (!success) {
+      return json({ error: 'Too many requests. Try again in an hour.' }, 429);
+    }
 
     if (
       typeof name !== 'string' ||

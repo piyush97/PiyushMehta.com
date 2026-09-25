@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">FocusTube evaluation flow</title>
+  <desc id="desc">A browser extension checks Shorts and cache, sends metadata through an authenticated Cloudflare Worker to TypeSafe Jev, then reveals or hides cards based on probability.</desc>
+  <rect width="1200" height="720" fill="#f6f3ea"/>
+  <text x="76" y="74" fill="#171a2f" font-family="Arial, sans-serif" font-size="34" font-weight="800">One semantic judgment. Code owns the workflow.</text>
+  <text x="76" y="108" fill="#65635e" font-family="Georgia, serif" font-size="19">FocusTube evaluation path for each recommendation card</text>
+  <g font-family="Arial, sans-serif">
+    <rect x="76" y="174" width="244" height="164" rx="14" fill="#fffaf0" stroke="#cfc6b8" stroke-width="2"/>
+    <text x="100" y="208" fill="#8d3d1f" font-family="ui-monospace, monospace" font-size="13" font-weight="700">01 / BROWSER</text>
+    <text x="100" y="246" fill="#171a2f" font-size="23" font-weight="800">Observe card</text>
+    <text x="100" y="278" fill="#56534d" font-size="16">Hide while pending</text>
+    <text x="100" y="304" fill="#56534d" font-size="16">Block Shorts locally</text>
+    <path d="M342 256h70" stroke="#8d3d1f" stroke-width="3"/>
+    <path d="m403 247 13 9-13 9" fill="none" stroke="#8d3d1f" stroke-width="3"/>
+    <rect x="438" y="174" width="244" height="164" rx="14" fill="#fffaf0" stroke="#cfc6b8" stroke-width="2"/>
+    <text x="462" y="208" fill="#8d3d1f" font-family="ui-monospace, monospace" font-size="13" font-weight="700">02 / CACHE</text>
+    <text x="462" y="246" fill="#171a2f" font-size="23" font-weight="800">Reuse probability</text>
+    <text x="462" y="278" fill="#56534d" font-size="16">Title + channel key</text>
+    <text x="462" y="304" fill="#56534d" font-size="16">Seven-day local TTL</text>
+    <path d="M704 256h70" stroke="#8d3d1f" stroke-width="3"/>
+    <path d="m765 247 13 9-13 9" fill="none" stroke="#8d3d1f" stroke-width="3"/>
+    <rect x="800" y="174" width="324" height="164" rx="14" fill="#171a2f"/>
+    <text x="824" y="208" fill="#ffcc68" font-family="ui-monospace, monospace" font-size="13" font-weight="700">03 / CLOUDFLARE WORKER</text>
+    <text x="824" y="246" fill="#f6f7ff" font-size="23" font-weight="800">Validate and protect</text>
+    <text x="824" y="278" fill="#b4bad8" font-size="16">Authenticated request</text>
+    <text x="824" y="304" fill="#b4bad8" font-size="16">Maximum twenty records</text>
+    <path d="M962 360v66" stroke="#8d3d1f" stroke-width="3"/>
+    <path d="m953 417 9 13 9-13" fill="none" stroke="#8d3d1f" stroke-width="3"/>
+    <rect x="800" y="452" width="324" height="164" rx="14" fill="#222640"/>
+    <text x="824" y="486" fill="#ffcc68" font-family="ui-monospace, monospace" font-size="13" font-weight="700">04 / TYPESAFE JEV</text>
+    <text x="824" y="524" fill="#f6f7ff" font-size="23" font-weight="800">Evaluate Noul</text>
+    <text x="824" y="556" fill="#b4bad8" font-size="16">Typed probability of “yes”</text>
+    <text x="824" y="582" fill="#b4bad8" font-size="16">No prose to parse</text>
+    <path d="M778 534H708" stroke="#8d3d1f" stroke-width="3"/>
+    <path d="m717 525-13 9 13 9" fill="none" stroke="#8d3d1f" stroke-width="3"/>
+    <rect x="364" y="452" width="318" height="164" rx="14" fill="#b6f36b" stroke="#27633b" stroke-width="2"/>
+    <text x="388" y="486" fill="#27633b" font-family="ui-monospace, monospace" font-size="13" font-weight="700">05 / APPLICATION CODE</text>
+    <text x="388" y="524" fill="#172019" font-size="23" font-weight="800">Apply threshold</text>
+    <text x="388" y="556" fill="#172019" font-family="ui-monospace, monospace" font-size="16">probability &gt;= 0.82</text>
+    <text x="388" y="584" fill="#27633b" font-size="16" font-weight="700">Reveal or keep hidden</text>
+  </g>
+  <text x="76" y="674" fill="#65635e" font-family="ui-monospace, monospace" font-size="14">Shorts never leave browser · TypeSafe API key never enters extension</text>
+</svg>
