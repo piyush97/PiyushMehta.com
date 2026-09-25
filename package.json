@@ -1,6 +1,6 @@
 {
   "name": "piyushmehta.com",
-  "version": "3.1.0",
+  "version": "5.0.0",
   "type": "module",
   "scripts": {
     "dev": "node scripts/generate-post-manifest.mjs && node scripts/copy-resume-pdf.mjs && astro dev",
