@@ -15,6 +15,18 @@ describe('isAllowedFormOrigin', () => {
     );
   });
 
+  it('accepts a same-origin preview request', () => {
+    assert.equal(
+      isAllowedFormOrigin(
+        new Request('https://preview.example.com/api/contact', {
+          method: 'POST',
+          headers: { origin: 'https://preview.example.com' },
+        }),
+      ),
+      true,
+    );
+  });
+
   it('falls back to a valid referer origin', () => {
     assert.equal(
       isAllowedFormOrigin(

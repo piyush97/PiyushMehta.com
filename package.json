@@ -53,6 +53,7 @@
     "react-dom": "^19.3.0",
     "satori": "^0.33.4",
     "tailwindcss": "^4.3.3",
+    "unist-util-visit": "^5.1.0",
     "varlock": "^1.19.0"
   },
   "devDependencies": {

@@ -26,8 +26,11 @@ function buildManifest() {
   return readdirSync(CONTENT_DIR, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .flatMap((entry) => {
-      const mdxPath = join(CONTENT_DIR, entry.name, 'index.mdx');
-      if (!existsSync(mdxPath) || isDraft(mdxPath)) return [];
+      // Keep the runtime allowlist aligned with the content loader, which accepts both extensions.
+      const postPath = ['index.mdx', 'index.md']
+        .map((fileName) => join(CONTENT_DIR, entry.name, fileName))
+        .find((filePath) => existsSync(filePath));
+      if (!postPath || isDraft(postPath)) return [];
       return [entry.name];
     })
     .sort((left, right) => left.localeCompare(right));

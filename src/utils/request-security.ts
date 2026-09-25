@@ -18,5 +18,14 @@ function requestOrigin(request: Request): string {
 }
 
 export function isAllowedFormOrigin(request: Request): boolean {
-  return ALLOWED_FORM_ORIGINS.has(requestOrigin(request));
+  const origin = requestOrigin(request);
+  if (ALLOWED_FORM_ORIGINS.has(origin)) return true;
+
+  try {
+    // Preview and local Worker hostnames are trusted only when the browser
+    // origin matches the URL the request was actually sent to.
+    return new URL(request.url).origin === origin;
+  } catch {
+    return false;
+  }
 }
