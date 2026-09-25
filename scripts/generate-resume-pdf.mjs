@@ -1,23 +1,28 @@
 /**
- * Build-time resume PDF generation
- * Uses Playwright to render the resume page and save as PDF.
- * Run as part of the build pipeline: node scripts/generate-resume-pdf.mjs
+ * Development-time resume PDF generation
+ * Uses Playwright to render the resume page and update the versioned asset.
+ * Run explicitly with: bun run resume:generate
  *
  * Starts a temporary dev server when one is not already available.
  */
 
 import { spawn } from 'node:child_process';
-import { mkdirSync } from 'fs';
+import { copyFileSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { chromium } from 'playwright';
 
 const PORT = process.env.PORT || '4321';
 const BASE = process.env.BASE_URL || `http://localhost:${PORT}`;
+// Links are printed into the PDF as annotations, so they must point at the public
+// site even when the page is rendered from a local dev server.
+const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || 'https://piyushmehta.com';
+const SOURCE = resolve(import.meta.dirname, '..', 'src', 'assets', 'resume.pdf');
 const OUTPUT = resolve(import.meta.dirname, '..', 'public', 'resume.pdf');
+const RESUME_URL = `${BASE}/resume/`;
 
 async function isServerAvailable() {
   try {
-    const response = await fetch(BASE, { signal: AbortSignal.timeout(1_000) });
+    const response = await fetch(RESUME_URL, { signal: AbortSignal.timeout(1_000) });
     return response.ok;
   } catch {
     return false;
@@ -30,7 +35,7 @@ async function startServerIfNeeded() {
   }
 
   console.log(`[generate-resume-pdf] Starting dev server at ${BASE} ...`);
-  const server = spawn('bun', ['run', 'dev'], {
+  const server = spawn('bun', ['run', 'dev', '--', '--host', '127.0.0.1', '--port', PORT], {
     env: { ...process.env, ASTRO_DEV_BACKGROUND: '1' },
     stdio: 'inherit',
   });
@@ -51,7 +56,7 @@ async function startServerIfNeeded() {
 }
 
 async function generate() {
-  console.log(`[generate-resume-pdf] Navigating to ${BASE}/resume/ ...`);
+  console.log(`[generate-resume-pdf] Navigating to ${RESUME_URL} ...`);
 
   const server = await startServerIfNeeded();
   let browser;
@@ -64,18 +69,33 @@ async function generate() {
     });
     const page = await context.newPage();
 
-    await page.goto(`${BASE}/resume/`, {
+    await page.goto(RESUME_URL, {
       waitUntil: 'networkidle',
       timeout: 30000,
     });
+    await page.locator('.resume-hero').waitFor({ state: 'visible' });
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+    });
 
-    // Wait for hero animation to settle
-    await page.waitForTimeout(2000);
+    // Same-origin anchors are rewritten to the public origin so the shipped PDF
+    // never bakes in a developer's localhost links.
+    await page.evaluate((publicBaseUrl) => {
+      const publicUrl = new URL(publicBaseUrl);
+      for (const anchor of document.querySelectorAll('a[href]')) {
+        const url = new URL(anchor.href, window.location.href);
+        if (url.origin !== window.location.origin) continue;
+        url.protocol = publicUrl.protocol;
+        url.host = publicUrl.host;
+        url.port = publicUrl.port;
+        anchor.href = url.toString();
+      }
+    }, PUBLIC_BASE_URL);
 
     // Hide interactive elements that don't print well
     await page.addStyleTag({
       content: `
-        nav, footer, .resume-cta, #resume-download-pdf, .metrics-band,
+        nav, footer, .resume-cta, .resume-download, .metrics-band,
         [data-hero-title] .tw-cursor { display: none !important; }
         body { color: #000 !important; background: #fff !important; }
         .resume-hero h1 { font-size: 24pt !important; }
@@ -86,16 +106,19 @@ async function generate() {
       `,
     });
 
+    mkdirSync(resolve(import.meta.dirname, '..', 'src', 'assets'), { recursive: true });
     mkdirSync(resolve(import.meta.dirname, '..', 'public'), { recursive: true });
 
     await page.pdf({
-      path: OUTPUT,
+      path: SOURCE,
       format: 'Letter',
       printBackground: false,
       margin: { top: '0.5in', bottom: '0.5in', left: '0.75in', right: '0.75in' },
     });
 
-    console.log(`[generate-resume-pdf] ✓ Saved to ${OUTPUT}`);
+    copyFileSync(SOURCE, OUTPUT);
+    console.log(`[generate-resume-pdf] ✓ Saved versioned asset to ${SOURCE}`);
+    console.log(`[generate-resume-pdf] ✓ Copied development output to ${OUTPUT}`);
   } catch (err) {
     console.error(`[generate-resume-pdf] ✗ Failed:`, err);
     process.exitCode = 1;

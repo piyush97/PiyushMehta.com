@@ -56,6 +56,19 @@ test.describe('astro v6 migration smoke', () => {
     await expect(page.locator('[data-filter-sort]')).toHaveValue('title');
     await expect(page.locator('[data-filter-order]')).toHaveValue('asc');
   });
+  test('archive filter keeps a single closing rule and visible focus', async ({ page }) => {
+    await page.goto('/blog/?q=astro', { waitUntil: 'domcontentloaded' });
+
+    const visibleRows = page.locator('.writing-list article:not([hidden])');
+    await expect(visibleRows).not.toHaveCount(0);
+    await expect(page.locator('.writing-list')).toHaveCSS('border-bottom-width', '0px');
+    await expect(visibleRows.last()).toHaveCSS('border-bottom-width', '1px');
+
+    const search = page.locator('#blog-search');
+    await search.focus();
+    await expect(search).toHaveCSS('outline-style', 'solid');
+  });
+
   test('blog filter reinitializes after client-side navigation', async ({ page }) => {
     const navigateViaNav = async (href: '/' | '/blog/') => {
       const desktopLink = page.locator(`.site-nav__links a[href="${href}"]:visible`).first();
@@ -91,20 +104,19 @@ test.describe('astro v6 migration smoke', () => {
     await expect(readLink).toHaveAttribute('aria-label', /Read “.+”/);
     await expect(readLink).toHaveCSS('min-height', '44px');
   });
-  test('newsletter forms expose unique labelled email fields', async ({ page }) => {
-    await page.goto('/newsletter/', { waitUntil: 'domcontentloaded' });
-
-    const emailIds = await page.locator('input[type="email"]').evaluateAll((inputs) =>
-      inputs.map((input) => input.id),
-    );
-
-    expect(emailIds).toHaveLength(2);
-    expect(new Set(emailIds).size).toBe(emailIds.length);
-    for (const id of emailIds) {
-      expect(id).toBeTruthy();
-      await expect(page.locator(`label[for="${id}"]`)).toHaveCount(1);
-    }
+  test('reactions reject unknown post ids before Redis access', async ({ request }) => {
+    const response = await request.get('/api/reactions?postId=not-a-published-post');
+    expect(response.status()).toBe(404);
   });
+
+  test('article pages do not load disabled Giscus comments', async ({ page }) => {
+    await page.goto('/blog/zero-downtime-database-migration-at-scale/', {
+      waitUntil: 'domcontentloaded',
+    });
+    await expect(page.locator('[data-comment-id]')).toHaveCount(0);
+    await expect(page.locator('iframe[src*="giscus.app"]')).toHaveCount(0);
+  });
+
   test('rss and sitemap return xml', async ({ request }) => {
     const rss = await request.get('/rss.xml');
     expect(rss.ok()).toBeTruthy();

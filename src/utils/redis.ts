@@ -9,7 +9,7 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis/cloudflare';
 import { ENV } from 'varlock/env';
 
-export const redis = (() => {
+function createRedisClient(retries: number) {
   const url = ENV.UPSTASH_REDIS_REST_URL;
   const token = ENV.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
@@ -21,11 +21,16 @@ export const redis = (() => {
     // aborts every later request on the same isolate.
     signal: () => AbortSignal.timeout(2500),
     retry: {
-      retries: 1,
+      retries,
       backoff: (retryCount) => retryCount * 50,
     },
   });
-})();
+}
+
+// Read/rate-limit operations may retry. Non-idempotent counter writes use the
+// no-retry client below so an unknown network outcome is not duplicated.
+export const redis = createRedisClient(1);
+export const reactionRedis = createRedisClient(0);
 
 export function createRatelimit(
   prefix: string,
@@ -40,12 +45,7 @@ export function createRatelimit(
   });
 }
 
-/** Cloudflare's connecting IP is unspoofable; forwarded headers are not. */
+/** Prefer Cloudflare's connecting IP; do not trust user-supplied forwarding headers. */
 export function getClientIp(request: Request, clientAddress?: string): string {
-  return (
-    request.headers.get('cf-connecting-ip') ||
-    clientAddress ||
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    'anonymous'
-  );
+  return request.headers.get('cf-connecting-ip') || clientAddress || 'anonymous';
 }

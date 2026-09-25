@@ -18,8 +18,6 @@ image:
 draft: false
 ---
 
-import NewsletterSignup from '../../../components/NewsletterSignup.tsx';
-
 I closed the lid, drove to a coffee shop, and the agent that had been refactoring a two-hundred-file monorepo for ninety minutes was still running when I opened it back up. The terminal was sitting in the same pane, the same scrollback, the same place in the diff. The only thing that had changed was the Wi-Fi network.
 
 The thing that had been quietly killing me was not the answer the agent eventually produced. It was the ninety minutes it had been working while I was not, and the five minutes I would have spent restarting it every time the laptop slept. Coding agents are good now. They run for hours. They refactor whole trees, they run test suites, they wait on pull-request reviews. The bottleneck, again, was not the model. It was the terminal.
@@ -86,8 +84,6 @@ If you have used tmux or zellij, the verbs will feel familiar. The keyboard pref
 | Detach client        | `prefix+q`              |
 
 If you have not, the [quick start](https://herdr.dev/docs/quick-start/) is mouse-first; you do not have to learn the prefix to get going.
-
-<NewsletterSignup client:visible variant="card" source="herdr-post-mental-model" />
 
 ## Never hunt for the stuck one
 
@@ -229,9 +225,7 @@ alias hws='herdr workspace create --cwd "$(pwd)" --label'
 
 If you want one CLI that keeps your coding agents alive across the lid closes you are going to keep doing, install it before lunch. If you want to read more first, the [concepts doc](https://herdr.dev/docs/concepts/) is the right next stop — five minutes, and you will know what every verb in this post means.
 
-If this changed how you think about agent runtimes, the next post will change how you think about something else. One email when there is something worth saying.
-
-<NewsletterSignup client:visible variant="card" source="herdr-post-cta" />
+If this changed how you think about agent runtimes, the next post will change how you think about something else.
 
 And if Herdr ends up earning its place on your machine, [star the repo](https://github.com/herdrdev/herdr) so the maintainers know their bet on a one-binary runtime landed.
 

@@ -88,17 +88,22 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
   );
 
   return (
-    <div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
+    <div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card max-w-full min-w-0">
       <h3 className="text-xl font-bold mb-4 text-text-primary">🧪 Interactive Bloom Filter Demo</h3>
 
       {/* Bit Array Visualization */}
-      <div className="mb-6">
+      <div
+        className="mb-6 overflow-x-auto"
+        role="region"
+        aria-label="Bloom filter bit array"
+        tabIndex={0}
+      >
         <h4 className="font-semibold mb-2 text-text-primary">Bit Array (8 bits):</h4>
-        <div className="flex gap-2 mb-2">
+        <div className="flex min-w-0 gap-2 mb-2">
           {[...filter.bits.entries()].map(([pos, bit]) => (
             <div
               key={`bit-${pos}`}
-              className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${
+              className={`bloom-filter-bit w-12 h-12 shrink-0 rounded-full flex items-center justify-center text-white font-bold ${
                 bit ? 'bg-green-500' : 'bg-gray-400'
               }`}
             >
@@ -108,7 +113,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
         </div>
         <div className="flex gap-2 text-sm text-text-secondary">
           {positionLabels.map((position) => (
-            <div key={`position-label-${position}`} className="w-12 text-center">
+            <div key={`position-label-${position}`} className="w-12 shrink-0 text-center">
               {position}
             </div>
           ))}
@@ -118,7 +123,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
       {/* Add Item Section */}
       <div className="mb-6">
         <h4 className="font-semibold mb-2 text-text-primary">Add Item to Filter:</h4>
-        <div className="flex gap-2 mb-2">
+        <div className="bloom-filter-control-row flex min-w-0 gap-2 mb-2">
           <input
             type="text"
             value={inputValue}
@@ -126,13 +131,13 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
             onKeyDown={(e) => e.key === 'Enter' && addItem(inputValue)}
             placeholder="Enter a word (e.g., 'username123')"
             aria-label="Add item to filter"
-            className="flex-1 p-2 border border-card-border rounded bg-light-800 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+            className="flex-1 min-w-0 p-2 border border-card-border rounded bg-light-800 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
           />
           <button type="button" onClick={() => addItem(inputValue)} className="btn-primary">
             Add
           </button>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {presetItems.map((item) => (
             <button
               key={item}
@@ -149,7 +154,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
       {/* Check Item Section */}
       <div className="mb-6">
         <h4 className="font-semibold mb-2 text-text-primary">Check if Item Exists:</h4>
-        <div className="flex gap-2 mb-2">
+        <div className="bloom-filter-control-row flex min-w-0 gap-2 mb-2">
           <input
             type="text"
             value={checkValue}
@@ -157,7 +162,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
             onKeyDown={(e) => e.key === 'Enter' && checkItem(checkValue)}
             placeholder="Check if item exists"
             aria-label="Check if item exists in filter"
-            className="flex-1 p-2 border border-card-border rounded bg-light-800 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+            className="flex-1 min-w-0 p-2 border border-card-border rounded bg-light-800 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
           />
           <button type="button" onClick={() => checkItem(checkValue)} className="btn-primary">
             Check
@@ -191,7 +196,7 @@ export const BloomFilterDemo: React.FC<BloomFilterDemoProps> = () => {
       <button
         type="button"
         onClick={reset}
-        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium transition-colors duration-200"
+        className="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded font-medium transition-colors duration-200"
       >
         Reset Filter
       </button>

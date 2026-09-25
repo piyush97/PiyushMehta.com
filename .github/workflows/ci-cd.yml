@@ -70,13 +70,14 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Verify post manifest
+        run: bun run check:posts
+
       - name: Build project
         run: bun run build
 
-      - name: Verify build output
-        run: |
-          [ -d "dist/client" ] || { echo "Static asset output missing"; exit 1; }
-          [ -f "dist/server/entry.mjs" ] || { echo "Worker entrypoint missing"; exit 1; }
+      - name: Verify release artifacts
+        run: bun run check:release
 
   # test:
   #   name: End-to-End Tests

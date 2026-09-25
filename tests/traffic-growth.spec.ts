@@ -8,7 +8,7 @@ test('crawler discovery URLs agree with canonical HTML', async ({ request }) => 
   const xml = await sitemap.text();
   const links = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
   expect(links.length).toBeGreaterThan(11);
-  for (const route of ['/services', '/resume', '/react-developer', '/newsletter']) {
+  for (const route of ['/services', '/resume', '/react-developer']) {
     expect(links).toContain(`https://piyushmehta.com${route}`);
   }
   for (const link of links) {
@@ -53,12 +53,16 @@ test('important landing content stays visible without JavaScript', async ({ brow
     const heading = page.getByRole('heading', { level: 1 });
     await expect(heading).toBeVisible();
     // Playwright visibility does not treat opacity:0 as hidden; check ancestors too.
-    expect(await heading.evaluate((el) => {
-      for (let parent: Element | null = el; parent; parent = parent.parentElement) {
-        if (getComputedStyle(parent).opacity === '0') return false;
-      }
-      return true;
-    })).toBe(true);
+    await expect
+      .poll(() =>
+        heading.evaluate((el) => {
+          for (let parent: Element | null = el; parent; parent = parent.parentElement) {
+            if (getComputedStyle(parent).opacity === '0') return false;
+          }
+          return true;
+        })
+      )
+      .toBe(true);
   }
   await context.close();
 });

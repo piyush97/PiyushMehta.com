@@ -27,10 +27,10 @@ const SystemComparison: React.FC<SystemComparisonProps> = ({ macosData, archData
   const formatCurrency = (amount: number) => `$${amount.toLocaleString()}`;
 
   return (
-    <div className="not-prose bg-surface-2 border border-border rounded-xl p-6 my-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="not-prose bg-surface-2 border border-border rounded-xl p-6 my-8 max-w-full min-w-0">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <h3 className="text-xl font-semibold text-text-primary">Total Cost Comparison</h3>
-        <div className="flex bg-surface-3 rounded-lg p-1">
+        <div className="flex flex-wrap bg-surface-3 rounded-lg p-1">
           {[1, 3, 5].map((years) => (
             <button
               type="button"

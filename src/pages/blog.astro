@@ -1,7 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BlogFilter from '../components/BlogFilter.astro';
-import NewsletterSignup from '../components/NewsletterSignup.tsx';
+import EditorialHeader from '../components/EditorialHeader.astro';
+import SectionHeader from '../components/SectionHeader.astro';
 import { writingHighlights } from '../data/portfolio';
 import Layout from '../layouts/Layout.astro';
 
@@ -45,6 +46,90 @@ const publishedPosts = allPosts
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
+type ReadingPathStepConfig = {
+  readonly slug: string;
+  readonly stepLabel: string;
+};
+
+type ReadingPathConfig = {
+  readonly id: string;
+  readonly intent: string;
+  readonly outcome: string;
+  readonly steps: readonly [
+    ReadingPathStepConfig,
+    ReadingPathStepConfig,
+    ReadingPathStepConfig,
+  ];
+};
+
+const readingPathConfigs = [
+  {
+    id: 'safe-ai-agent',
+    intent: 'I need to ship an AI agent safely',
+    outcome: 'Build the protocol, map its trust boundaries, and verify actions before release.',
+    steps: [
+      { slug: 'building-mcp-server-typescript', stepLabel: 'Start with the protocol' },
+      { slug: 'ai-agents-mcp-security-crisis', stepLabel: 'Inspect the trust boundary' },
+      { slug: 'testing-ai-agent-actions', stepLabel: 'Prove the action gate' },
+    ],
+  },
+  {
+    id: 'production-migration',
+    intent: 'I’m planning a production migration',
+    outcome: 'Move from strategy to cutover with reliability, data safety, and platform constraints in view.',
+    steps: [
+      { slug: 'cron-to-event-driven', stepLabel: 'Frame the migration' },
+      { slug: 'zero-downtime-database-migration-at-scale', stepLabel: 'Protect the data path' },
+      { slug: 'vercel-to-cloudflare-migration', stepLabel: 'Adapt to the new runtime' },
+    ],
+  },
+  {
+    id: 'coding-agent-workflow',
+    intent: 'I want a better coding-agent workflow',
+    outcome: 'Give agents durable context, persistent sessions, and a faster keyboard-first desktop loop.',
+    steps: [
+      { slug: 'agents-md-repository-context', stepLabel: 'Give agents context' },
+      { slug: 'herdr-terminal-multiplexer-coding-agents', stepLabel: 'Keep their sessions alive' },
+      { slug: 'omaswitch-alt-tab-omarchy', stepLabel: 'Tighten the desktop loop' },
+    ],
+  },
+] as const satisfies readonly ReadingPathConfig[];
+
+class ReadingPathEntryError extends Error {
+  readonly pathIntent: string;
+  readonly slug: string;
+
+  constructor(pathIntent: string, slug: string) {
+    super(`Reading path "${pathIntent}" references missing or draft post "${slug}".`);
+    this.name = 'ReadingPathEntryError';
+    this.pathIntent = pathIntent;
+    this.slug = slug;
+  }
+}
+
+const publishedPostBySlug = new Map(
+  publishedPosts.map((post) => [toPostSlug(post.id), post] as const)
+);
+
+const readingPaths = readingPathConfigs.map((path) => ({
+  ...path,
+  steps: path.steps.map((step) => {
+    const post = publishedPostBySlug.get(step.slug);
+    if (!post) {
+      throw new ReadingPathEntryError(path.intent, step.slug);
+    }
+
+    return {
+      ...step,
+      title: post.data.title,
+      description: createExcerpt(post),
+      href: `/blog/${step.slug}/`,
+      tags: post.data.tags ?? [],
+      readingTime: calculateReadingTime(post),
+    };
+  }),
+}));
+
 // Prepare posts data for the BlogFilter component
 const postsForFilter = publishedPosts.map((post) => ({
   id: toPostSlug(post.id),
@@ -71,34 +156,14 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
   ogTemplate="blog"
   ogTheme="dark"
 >
-  <section class="writing-hero" data-reveal>
-    <span
-      class="writing-hero__accent writing-hero__accent--west"
-      aria-hidden="true"
-      data-parallax
-      data-parallax-speed="0.1"
-    ></span>
-    <span
-      class="writing-hero__accent writing-hero__accent--south"
-      aria-hidden="true"
-      data-parallax
-      data-parallax-speed="0.16"
-    ></span>
-    <div data-reveal data-reveal-delay="30">
-      <p class="eyebrow" data-hero-eyebrow>Technical Writing</p>
-      <h1 data-hero-title>How I think through systems in public.</h1>
-      <p>
-        Essays, implementation notes, and field reports about architecture, product engineering,
-        platform reliability, AI workflows, and the human work of making software hold together.
-      </p>
-    </div>
-    <aside
-      aria-label="Writing themes"
-      data-reveal
-      data-reveal-delay="120"
-      data-parallax
-      data-parallax-speed="0.07"
-    >
+  <EditorialHeader
+    class="writing-hero"
+    eyebrow="Technical Writing"
+    title="How I think through systems in public."
+    description="Essays, implementation notes, and field reports about architecture, product engineering, platform reliability, AI workflows, and the human work of making software hold together."
+    asideLabel="Writing themes"
+  >
+    <div slot="aside">
       <span>{publishedPosts.length} published pieces</span>
       <span>{avgReadingTime} min avg read</span>
       <span>{uniqueThemes} themes tracked</span>
@@ -109,136 +174,152 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
         <li>Frontend systems that stay fast and maintainable</li>
         <li>AI workflows that respect trust boundaries</li>
       </ul>
-    </aside>
-  </section>
+    </div>
+  </EditorialHeader>
 
   <section class="writing-featured" aria-label="Featured writing">
-    <div class="section-heading" data-reveal data-reveal-delay="20">
-      <p class="eyebrow">Start Here</p>
-      <h2>Representative thinking.</h2>
-      <p>
-        These pieces are useful signals for how I explain tradeoffs, document decisions, and turn
-        ambiguous technical work into something teams can act on.
-      </p>
-    </div>
-    <div class="featured-grid">
+    <SectionHeader
+      eyebrow="Start Here"
+      title="Representative thinking."
+      description="These pieces are useful signals for how I explain tradeoffs, document decisions, and turn ambiguous technical work into something teams can act on."
+    />
+    <div class="featured-ledger" data-featured-grid>
       {writingHighlights.map((post, index) => (
-        <article data-reveal data-reveal-stagger={String(index * 80)}>
-          <span>{post.theme}</span>
-          <h3><a href={post.href}>{post.title}</a></h3>
-          <p>{post.description}</p>
+        <article
+          class:list={['featured-record', { 'featured-record--lead': index === 0 }]}
+          data-reveal
+          data-reveal-stagger={String(index * 80)}
+        >
+          <div class="featured-record__meta">
+            <span>{post.theme}</span>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+          </div>
+          <div class="featured-record__body">
+            <h3><a href={post.href}>{post.title}</a></h3>
+            <p>{post.description}</p>
+            <a class="featured-record__link" href={post.href}>
+              Read note
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </div>
         </article>
       ))}
     </div>
   </section>
 
-  <section class="writing-featured" aria-label="Reading paths">
-    <div class="section-heading">
-      <p class="eyebrow">Follow a thread</p>
-      <h2>Guides to AI agents, backend systems, and developer tools.</h2>
-      <p>Start with a concept, inspect the tradeoffs, then try the implementation.</p>
-    </div>
-    <div class="featured-grid">
-      <article>
-        <span>Production AI</span>
-        <h3>From tool calls to trustworthy actions</h3>
-        <p><a href="/blog/building-mcp-server-typescript/">Build an MCP server</a> →
-          <a href="/blog/ai-agents-mcp-security-crisis/">Examine the trust boundaries</a> →
-          <a href="/blog/testing-ai-agent-actions/">Test the action gate</a></p>
-      </article>
-      <article>
-        <span>Reliable backend systems</span>
-        <h3>Make infrastructure decisions inspectable</h3>
-        <p><a href="/blog/cron-to-event-driven/">Explore event-driven workflows</a> →
-          <a href="/blog/vercel-to-cloudflare-migration/">Read the site migration</a> →
-          <a href="/blog/zfs-saved-my-data-seagate-warranty/">Follow a drive recovery</a></p>
-      </article>
-      <article>
-        <span>Building developer tools</span>
-        <h3>Give coding agents a workable environment</h3>
-        <p><a href="/blog/agents-md-repository-context/">Write repository instructions</a> →
-          <a href="/blog/herdr-terminal-multiplexer-coding-agents/">Explore persistent terminals</a> →
-          <a href="/projects/#case-5">Inspect the Interview Prep Portal</a></p>
-      </article>
+  <section class="reading-paths" aria-labelledby="reading-paths-heading">
+    <SectionHeader
+      eyebrow="Choose your outcome"
+      title="Follow a path through the work."
+      id="reading-paths-heading"
+      description="Pick the problem in front of you, then move through three published field notes in order."
+    />
+    <nav class="reading-paths__index" aria-label="Choose a reading path" data-reading-paths-index>
+      <ol>
+        {readingPaths.map((path, index) => (
+          <li>
+            <a href={`#path-${path.id}`} data-reading-path-index={path.id}>
+              <span class="reading-paths__index-number">{String(index + 1).padStart(2, '0')}</span>
+              <span class="reading-paths__index-copy">
+                <strong>{path.intent}</strong>
+                <span>{path.outcome}</span>
+                <small>
+                  {path.steps.length} steps · {path.steps.reduce((total, step) => total + step.readingTime, 0)} min
+                </small>
+              </span>
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="reading-paths__routes">
+      {readingPaths.map((path, pathIndex) => (
+        <article
+          class="reading-path-record"
+          id={`path-${path.id}`}
+          data-reading-path={path.id}
+          aria-labelledby={`reading-path-${path.id}`}
+        >
+          <header class="reading-path-record__header">
+            <p class="reading-path-record__label">Route {String(pathIndex + 1).padStart(2, '0')}</p>
+            <h3 id={`reading-path-${path.id}`}>{path.intent}</h3>
+            <p>{path.outcome}</p>
+          </header>
+          <ol>
+            {path.steps.map((step, index) => (
+              <li data-reading-path-step={String(index + 1)}>
+                <p class="reading-path-step__label">
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  {step.stepLabel}
+                </p>
+                <h4><a href={step.href}>{step.title}</a></h4>
+                <p class="reading-path-step__description">{step.description}</p>
+                <div class="reading-path-step__meta">
+                  <span>{step.readingTime} min read</span>
+                  {step.tags.slice(0, 3).map((tag) => <span>{tag}</span>)}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </article>
+      ))}
     </div>
   </section>
 
   <section class="writing-index" aria-label="All writing">
-    <div class="section-heading" data-reveal data-reveal-delay="20">
-      <p class="eyebrow">Archive</p>
-      <h2>Browse the full library.</h2>
-      <p>Evaluating engineering help? <a href="/services/">Explore consulting services</a>,
-        <a href="/projects/">review project case studies</a>, or <a href="/resume/">read my résumé</a>.</p>
-    </div>
+    <SectionHeader
+      eyebrow="Archive"
+      title="Browse the full library."
+      description="Evaluating engineering help? Explore consulting services, review project case studies, or read the résumé."
+    />
+    <p class="archive-route-links">
+      <a href="/services/">Consulting services</a>
+      <a href="/projects/">Case studies</a>
+      <a href="/resume/">Résumé</a>
+    </p>
     <div data-reveal data-reveal-delay="90">
       <BlogFilter posts={postsForFilter} />
     </div>
   </section>
 
-  <section class="writing-newsletter" data-reveal>
-    <div class="writing-newsletter__inner">
-      <div class="writing-newsletter__text">
-        <p class="writing-newsletter__eyebrow">Stay in the loop</p>
-        <h2 class="writing-newsletter__title">
-          Get future posts sent to your inbox.
-        </h2>
-        <p class="writing-newsletter__description">
-          One email when there's something worth saying. AI news, production lessons, 
-          and builds — no spam, no fluff.
-        </p>
-      </div>
-      <NewsletterSignup client:visible variant="inline" source="blog-listing" />
-    </div>
-  </section>
 </Layout>
 
 <style>
-  .writing-hero,
+  .archive-route-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .archive-route-links a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    border-bottom: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .archive-route-links a:hover,
+  .archive-route-links a:focus-visible {
+    color: var(--color-text-primary);
+  }
+
   .writing-featured,
+  .reading-paths,
   .writing-index {
     width: min(1120px, calc(100% - 2rem));
     margin-inline: auto;
   }
 
-  .writing-hero {
-    position: relative;
-    overflow: clip;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
-    gap: clamp(1.5rem, 4vw, 3.5rem);
-    align-items: end;
-    padding-block: clamp(4rem, 7vw, 5.5rem);
-  }
-
-  .writing-hero__accent {
-    position: absolute;
-    border-radius: 999px;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.35;
-  }
-
-  .writing-hero__accent--west {
-    left: clamp(-2.2rem, -2vw, -0.8rem);
-    top: clamp(2rem, 7vw, 5rem);
-    width: clamp(5rem, 13vw, 9rem);
-    height: clamp(5rem, 13vw, 9rem);
-    border: 1px solid rgba(var(--color-accent-rgb), 0.35);
-    background:
-      radial-gradient(circle at 30% 30%, rgba(var(--color-accent-rgb), 0.2), transparent 65%),
-      rgba(var(--color-accent-rgb), 0.05);
-  }
-
-  .writing-hero__accent--south {
-    right: clamp(0.4rem, 3vw, 2.2rem);
-    bottom: clamp(-1.4rem, 0vw, 0rem);
-    width: clamp(4.5rem, 10vw, 7rem);
-    height: clamp(4.5rem, 10vw, 7rem);
-    border: 1px solid rgba(var(--color-accent-rgb), 0.24);
-    background: rgba(var(--color-accent-rgb), 0.1);
-  }
-
-  .writing-hero h1,
   .section-heading h2 {
     margin: 0;
     color: var(--color-text-primary);
@@ -247,20 +328,10 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     letter-spacing: 0;
   }
 
-  .writing-hero h1 {
-    max-width: 13ch;
-  }
-
-  .writing-hero p,
   .section-heading p,
   .featured-grid p {
     color: var(--color-text-secondary);
     line-height: 1.75;
-  }
-
-  .writing-hero p {
-    max-width: 48rem;
-    font-size: 1.15rem;
   }
 
   .eyebrow {
@@ -272,84 +343,10 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     text-transform: uppercase;
   }
 
-  .writing-hero aside {
-    border: 1px solid var(--color-card-border);
-    background: var(--color-surface-raised);
-    padding: 1.25rem;
-    position: relative;
-    z-index: 1;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-  }
-
-  .writing-hero aside span {
-    display: block;
-    color: var(--color-accent);
-    font-size: 0.78rem;
-    font-weight: 800;
-    text-transform: uppercase;
-  }
-
-  .writing-hero aside strong {
-    display: block;
-    margin-top: 0.8rem;
-    color: var(--color-text-primary);
-    font-size: 1.25rem;
-  }
-
-  .writing-hero aside ul {
-    display: grid;
-    gap: 0.7rem;
-    margin: 1rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .writing-hero aside li {
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-  }
-
   .writing-featured,
+  .reading-paths,
   .writing-index {
     padding-block: clamp(2.5rem, 6vw, 5rem);
-  }
-
-  .writing-newsletter {
-    width: min(1120px, calc(100% - 2rem));
-    margin: 2rem auto 5rem;
-  }
-
-  .writing-newsletter__inner {
-    padding: 2.5rem 2rem;
-    border-radius: 1.25rem;
-    border: 1px solid rgb(var(--border) / 0.4);
-    background: linear-gradient(135deg, rgb(var(--surface)) 0%, color-mix(in srgb, rgb(var(--accent)) 3%, rgb(var(--surface)) 100%) 100%);
-    display: grid;
-    gap: 1.5rem;
-    grid-template-columns: 1fr minmax(280px, 400px);
-    align-items: center;
-  }
-
-  .writing-newsletter__eyebrow {
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: rgb(var(--accent) / 0.85);
-    margin: 0 0 0.5rem;
-  }
-
-  .writing-newsletter__title {
-    font-size: clamp(1.25rem, 2vw, 1.5rem);
-    font-weight: 700;
-    margin: 0 0 0.5rem;
-  }
-
-  .writing-newsletter__description {
-    font-size: 0.925rem;
-    line-height: 1.55;
-    color: rgb(var(--text) / 0.7);
-    margin: 0;
   }
 
   .section-heading {
@@ -366,68 +363,364 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     font-size: 1.05rem;
   }
 
-  .featured-grid {
+  .featured-ledger {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(0, 0.825fr));
     gap: 1px;
-    border: 1px solid var(--color-card-border);
+    border-block: 1px solid var(--color-card-border);
     background: var(--color-card-border);
   }
 
-  .featured-grid article {
-    min-height: 100%;
-    background: var(--color-surface-raised);
-    padding: clamp(1.15rem, 2.4vw, 1.7rem);
+  .featured-record {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+    min-width: 0;
+    padding: clamp(1.15rem, 2.6vw, 1.8rem);
+    background: var(--color-bg);
   }
 
-  .featured-grid span {
+  .featured-record--lead {
+    grid-row: span 2;
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    background: var(--color-surface-raised);
+  }
+
+  .featured-record__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
     color: var(--color-accent);
-    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .featured-record__meta span:last-child {
+    color: var(--color-text-secondary);
+  }
+
+  .featured-record h3 {
+    max-width: 24ch;
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: clamp(1.4rem, 2.3vw, 2rem);
+    line-height: 1.08;
+  }
+
+  .featured-record--lead h3 {
+    max-width: 17ch;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+  }
+
+  .featured-record h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .featured-record h3 a:hover,
+  .featured-record h3 a:focus-visible {
+    color: var(--color-accent);
+  }
+
+  .featured-record p {
+    max-width: 48rem;
+    margin: 0.75rem 0 0;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .featured-record__link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.2rem;
+    color: var(--color-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .featured-record__link:hover,
+  .featured-record__link:focus-visible {
+    color: var(--color-text-primary);
+  }
+
+  .featured-record__link svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--motion-fast, 150ms) ease;
+  }
+
+  .featured-record__link:hover svg,
+  .featured-record__link:focus-visible svg {
+    transform: translateX(0.2rem);
+  }
+
+  .reading-paths__index {
+    margin-top: 2.25rem;
+    border-block: 1px solid var(--color-card-border);
+  }
+
+  .reading-paths__index ol {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    background: var(--color-card-border);
+    list-style: none;
+  }
+
+  .reading-paths__index li {
+    min-width: 0;
+    background: var(--color-bg);
+  }
+
+  .reading-paths__index a {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) 1rem;
+    gap: 0.8rem;
+    align-items: start;
+    min-height: 7.25rem;
+    padding: 1.1rem;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: background 180ms ease, color 180ms ease;
+  }
+
+  .reading-paths__index a:hover,
+  .reading-paths__index a:focus-visible {
+    background: color-mix(in srgb, var(--color-accent) 6%, var(--color-bg));
+    color: var(--color-accent);
+  }
+
+  .reading-paths__index-number {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+  }
+
+  .reading-paths__index-copy {
+    display: grid;
+    min-width: 0;
+    gap: 0.45rem;
+  }
+
+  .reading-paths__index-copy strong {
+    color: var(--color-text-primary);
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  .reading-paths__index-copy > span {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .reading-paths__index-copy small {
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.4;
+  }
+
+  .reading-paths__index svg {
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.1rem;
+    transition: transform var(--motion-fast, 150ms) ease;
+  }
+
+  .reading-paths__index a:hover svg,
+  .reading-paths__index a:focus-visible svg {
+    transform: translateX(0.2rem);
+  }
+
+  .reading-paths__routes {
+    display: grid;
+    gap: 1px;
+    margin-top: 3rem;
+    border-block: 1px solid var(--color-card-border);
+    background: var(--color-card-border);
+  }
+
+  .reading-path-record {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.3fr) minmax(0, 1fr);
+    min-width: 0;
+    background: var(--color-bg);
+    scroll-margin-top: 6rem;
+  }
+
+  .reading-path-record__header {
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border-right: 1px solid var(--color-card-border);
+  }
+
+  .reading-path-record__label,
+  .reading-path-step__label {
+    color: var(--color-accent);
+    font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  .featured-grid h3 {
-    margin: 0.8rem 0;
-    color: var(--color-text-primary);
-    font-size: 1.35rem;
-    line-height: 1.2;
+  .reading-path-record__label {
+    margin: 0 0 0.8rem;
   }
 
-  .featured-grid a {
-    color: inherit;
+  .reading-path-record h3 {
+    max-width: 16ch;
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: clamp(1.35rem, 2.5vw, 2rem);
+    line-height: 1.1;
+  }
+
+  .reading-path-record__header > p:last-child {
+    max-width: 38ch;
+    margin: 0.85rem 0 0;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+
+  .reading-path-record ol {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    background: var(--color-card-border);
+    list-style: none;
+  }
+
+  .reading-path-record li {
+    min-width: 0;
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    background: var(--color-bg);
+  }
+
+  .reading-path-step__label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.6rem;
+  }
+
+  .reading-path-step__label span {
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+  }
+
+  .reading-path-record h4 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+
+  .reading-path-record h4 a {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    color: var(--color-text-primary);
     text-decoration: none;
   }
 
-  .featured-grid a:hover {
+  .reading-path-record h4 a:hover,
+  .reading-path-record h4 a:focus-visible {
     color: var(--color-accent);
   }
 
+  .reading-path-step__description {
+    margin: 0.5rem 0 0.8rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .reading-path-step__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .reading-path-step__meta span {
+    border: 1px solid var(--color-card-border);
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.2;
+    padding: 0.32rem 0.45rem;
+  }
+
   @media (max-width: 860px) {
-    .writing-hero {
-      grid-template-columns: 1fr;
-      padding-block: 3.5rem;
+    .featured-ledger {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .featured-grid {
+    .featured-record--lead {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+
+    .reading-paths__index ol {
       grid-template-columns: 1fr;
+    }
+
+    .reading-path-record {
+      grid-template-columns: 1fr;
+    }
+
+    .reading-path-record__header {
+      border-right: 0;
+      border-bottom: 1px solid var(--color-card-border);
     }
   }
 
   @media (max-width: 640px) {
-    .writing-hero,
     .writing-featured,
+    .reading-paths,
     .writing-index {
       width: min(100% - 1rem, 1120px);
     }
 
-    .writing-newsletter__inner {
+    .featured-ledger {
       grid-template-columns: 1fr;
     }
 
-    .writing-hero h1 {
-      font-size: 3rem;
+    .featured-record--lead {
+      grid-column: auto;
+    }
+
+    .reading-paths__routes {
+      margin-top: 2rem;
+    }
+
+    .reading-path-record ol {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reading-paths__index a,
+    .reading-paths__index svg,
+    .reading-path-step__label,
+    .reading-path-record h4 a {
+      transition: none;
+    }
+
+    .reading-paths__index a:hover svg,
+    .reading-paths__index a:focus-visible svg {
+      transform: none;
     }
   }
 </style>

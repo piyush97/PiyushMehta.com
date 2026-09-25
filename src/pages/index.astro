@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { caseStudies, portfolioMetrics, socialLinks } from '../data/portfolio';
+import { socialLinks } from '../data/portfolio';
 import speakerPhoto from '../images/piyush-devfest.jpg';
 import speakerPhotoAvif320 from '../images/responsive/piyush-devfest-320.avif';
 import speakerPhotoAvif640 from '../images/responsive/piyush-devfest-640.avif';
@@ -17,7 +17,6 @@ import Layout from '../layouts/Layout.astro';
 
 export const prerender = true;
 
-const featuredCaseStudies = caseStudies.slice(0, 3);
 const latestPosts = (await getCollection('blog', ({ data }) => data.draft !== true))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
@@ -26,7 +25,7 @@ const toPostHref = (id: string) =>
 ---
 
 <Layout
-  title="Piyush Mehta - Senior Software Engineer"
+  title="Piyush Mehta — Senior Software Engineer"
   description="Piyush Mehta is a senior software engineer in Canada building reliable web platforms, AI workflows, and scalable product systems with TypeScript, React, Node.js, Astro, and cloud infrastructure."
   keywords={[
     'Piyush Mehta',
@@ -43,134 +42,127 @@ const toPostHref = (id: string) =>
   ogTheme="dark"
   preloadImage={speakerPhotoAvif1280.src}
 >
-  <section class="home-hero" data-reveal>
-    <span
-      class="home-hero__accent home-hero__accent--north"
-      aria-hidden="true"
-      data-parallax
-      data-parallax-speed="0.11"
-    ></span>
-    <span
-      class="home-hero__accent home-hero__accent--east"
-      aria-hidden="true"
-      data-parallax
-      data-parallax-speed="0.18"
-    ></span>
-    <div class="home-hero__copy" data-reveal data-reveal-delay="40">
-      <p class="eyebrow" data-hero-eyebrow>Senior Software Engineer · Canada</p>
-      <h1 data-hero-title>Software that holds up after the demo.</h1>
-      <p class="lede">
-        I work across product engineering, enterprise AI workflows, platform reliability, and
-        developer education. This portfolio is for engineering leaders who want to inspect
-        judgment: what shipped, which constraints mattered, and how tradeoffs were handled.
-      </p>
-      <div class="hero-actions" aria-label="Primary actions">
-        <a class="btn-primary" href="/projects/">Inspect the work</a>
-        <a class="btn-secondary" href="/resume/">Read the resume</a>
+  <div class="home" data-home-ledger>
+    <section class="ledger" aria-labelledby="home-title">
+      <p class="ledger__edition">Piyush Mehta / Engineer’s Portfolio / 2026</p>
+
+      <div class="ledger__stage">
+        <div class="ledger__intro" data-home-section="intro" data-reveal data-reveal-delay="40">
+          <p class="ledger__kicker"><span>01</span><span>The Systems Ledger</span></p>
+          <h1 id="home-title" data-hero-title>
+            Software that holds up<br />{' '}after the demo<span aria-hidden="true">.</span>
+          </h1>
+          <p class="ledger__lede">
+            I build durable product systems at the seam between ambitious ideas and operational
+            reality — with judgment that can be inspected, challenged, and trusted.
+          </p>
+        </div>
+
+        <figure
+          class="ledger__portrait"
+          data-home-section="portrait"
+          data-reveal
+          data-reveal-delay="120"
+          data-parallax
+          data-parallax-speed="0.06"
+        >
+          <picture>
+            <source
+              type="image/avif"
+              srcset={`${speakerPhotoAvif320.src} 320w, ${speakerPhotoAvif640.src} 640w, ${speakerPhotoAvif960.src} 960w, ${speakerPhotoAvif1280.src} 1280w`}
+              sizes="(max-width: 900px) calc(100vw - 2rem), 42vw"
+            />
+            <source
+              type="image/webp"
+              srcset={`${speakerPhotoWebp320.src} 320w, ${speakerPhotoWebp640.src} 640w, ${speakerPhotoWebp960.src} 960w, ${speakerPhotoWebp1280.src} 1280w`}
+              sizes="(max-width: 900px) calc(100vw - 2rem), 42vw"
+            />
+            <source
+              type="image/jpeg"
+              srcset={`${speakerPhotoJpg320.src} 320w, ${speakerPhotoJpg640.src} 640w, ${speakerPhotoJpg960.src} 960w, ${speakerPhoto.src} 1280w`}
+              sizes="(max-width: 900px) calc(100vw - 2rem), 42vw"
+            />
+            <img
+              src={speakerPhoto.src}
+              width={speakerPhoto.width}
+              height={speakerPhoto.height}
+              alt="Piyush Mehta speaking on stage at a developer conference"
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+            />
+          </picture>
+        </figure>
+
+        <article class="ledger__evidence" data-home-section="evidence" data-reveal data-reveal-delay="160">
+          <span class="ledger__signal" aria-hidden="true"></span>
+          <h2>Enterprise AI Workflows</h2>
+          <div class="ledger__evidence-body">
+            <p><strong>Constraint</strong> — fragmented manual processes</p>
+            <p><strong>Decision</strong> — workflow-first AI with security guardrails</p>
+            <p><strong>Outcome</strong> — 30% greater workflow efficiency</p>
+          </div>
+          <a href="/projects/">
+            View case study
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
+              <path d="M5 12h14M13 6l6 6-6 6"></path>
+            </svg>
+          </a>
+        </article>
+
+        <div class="ledger__actions" data-home-section="actions" aria-label="Primary actions">
+          <a class="ledger__primary" href="/blog/">
+            Read recent writing
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+              <path d="M5 12h14M13 6l6 6-6 6"></path>
+            </svg>
+          </a>
+          <a class="ledger__secondary" href="/resume/">Read Résumé</a>
+        </div>
       </div>
-      <div class="social-row" aria-label="Professional links">
-        {socialLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+
+      <div class="ledger__metrics" data-home-section="metrics" aria-label="Selected impact" data-reveal>
+        <article data-reveal data-reveal-stagger="0">
+          <span class="ledger__metric-index">01</span>
+          <strong>30%</strong>
+          <h2>workflow efficiency</h2>
+          <p>Enterprise AI workflow delivery</p>
+        </article>
+        <article data-reveal data-reveal-stagger="60">
+          <span class="ledger__metric-index">02</span>
+          <strong>35–40%</strong>
+          <h2>fewer vulnerabilities</h2>
+          <p>Secure engineering and review programs</p>
+        </article>
+        <article data-reveal data-reveal-stagger="120">
+          <span class="ledger__metric-index">03</span>
+          <strong>1,500+</strong>
+          <h2>developers mentored</h2>
+          <p>Workshops, community, and technical education</p>
+        </article>
       </div>
-    </div>
 
-    <figure class="hero-portrait" data-reveal data-reveal-delay="120" data-parallax data-parallax-speed="0.08">
-      <picture>
-        <source
-          type="image/avif"
-          srcset={`
-            ${speakerPhotoAvif320.src} 320w,
-            ${speakerPhotoAvif640.src} 640w,
-            ${speakerPhotoAvif960.src} 960w,
-            ${speakerPhotoAvif1280.src} 1280w
-          `}
-          sizes="(max-width: 920px) 100vw, (max-width: 1120px) 50vw, 540px"
-        />
-        <source
-          type="image/webp"
-          srcset={`
-            ${speakerPhotoWebp320.src} 320w,
-            ${speakerPhotoWebp640.src} 640w,
-            ${speakerPhotoWebp960.src} 960w,
-            ${speakerPhotoWebp1280.src} 1280w
-          `}
-          sizes="(max-width: 920px) 100vw, (max-width: 1120px) 50vw, 540px"
-        />
-        <source
-          type="image/jpeg"
-          srcset={`
-            ${speakerPhotoJpg320.src} 320w,
-            ${speakerPhotoJpg640.src} 640w,
-            ${speakerPhotoJpg960.src} 960w,
-            ${speakerPhoto.src} 1280w
-          `}
-          sizes="(max-width: 920px) 100vw, (max-width: 1120px) 50vw, 540px"
-        />
-        <img
-          src={speakerPhoto.src}
-          alt="Piyush Mehta speaking at a developer event"
-          width={speakerPhoto.width}
-          height={speakerPhoto.height}
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-        />
-      </picture>
-      <figcaption>
-        Developer education, production systems, and hands-on infrastructure practice.
-      </figcaption>
-    </figure>
-  </section>
+      <div class="ledger__scroll" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path d="m5 9 7 7 7-7"></path>
+        </svg>
+        <span>Scroll to explore</span>
+      </div>
+    </section>
 
-  <section class="metrics-band" aria-label="Selected impact" data-reveal data-reveal-delay="80">
-    {portfolioMetrics.map((metric, index) => (
-      <article data-reveal data-reveal-stagger={String(index * 70)}>
-        <strong>{metric.value}</strong>
-        <span>{metric.label}</span>
-        <p>{metric.detail}</p>
-      </article>
-    ))}
-  </section>
-  <section class="section-block" data-reveal>
-    <div class="section-heading" data-reveal data-reveal-delay="40">
-      <p class="eyebrow">Writing</p>
-      <h2>Current notebook</h2>
-      <p>Notes on building reliable systems, shipping software, and the tools behind the work.</p>
-    </div>
+    <section class="notebook" aria-labelledby="notebook-title">
+      <header class="section-intro" data-reveal>
+        <p class="folio">02 / Latest writing</p>
+        <h2 id="notebook-title">Recent writing</h2>
+        <p>Practical notes on systems, software, and decisions worth making visible.</p>
+      </header>
 
-    {latestPosts.length > 0 && (
-      <div class="notebook-grid">
-        {latestPosts[0] && (
-          <article class="notebook-card notebook-card--lead" data-reveal data-reveal-stagger="0">
-            <div>
-              {latestPosts[0].data.tags[0] && <span>{latestPosts[0].data.tags[0]}</span>}
-              <h3>
-                <a href={toPostHref(latestPosts[0].id)}>{latestPosts[0].data.title}</a>
-              </h3>
-              {latestPosts[0].data.description && <p>{latestPosts[0].data.description}</p>}
-            </div>
-            <div class="notebook-card__meta">
-              <time datetime={latestPosts[0].data.date.toISOString()}>
-                {latestPosts[0].data.date.toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </time>
-              <a href={toPostHref(latestPosts[0].id)}>Read article</a>
-            </div>
-          </article>
-        )}
-
-        {latestPosts.slice(1).length > 0 && (
-          <div class="notebook-card__secondary">
-            {latestPosts.slice(1).map((post, index) => (
-              <article class="notebook-card" data-reveal data-reveal-stagger={String((index + 1) * 90)}>
-                <div>
-                  {post.data.tags[0] && <span>{post.data.tags[0]}</span>}
-                  <h3>
-                    <a href={toPostHref(post.id)}>{post.data.title}</a>
-                  </h3>
-                </div>
+      {latestPosts.length > 0 && (
+        <div class="notebook__grid">
+          {latestPosts.map((post, index) => (
+            <article class:list={["note", { "note--lead": index === 0 }]} data-reveal data-reveal-stagger={String(index * 70)}>
+              <div class="note__meta">
+                <span>{post.data.tags?.[0] ?? 'Engineering'}</span>
                 <time datetime={post.data.date.toISOString()}>
                   {post.data.date.toLocaleDateString('en-US', {
                     month: 'short',
@@ -178,412 +170,901 @@ const toPostHref = (id: string) =>
                     year: 'numeric',
                   })}
                 </time>
-              </article>
-            ))}
-          </div>
-        )}
+              </div>
+              <h3><a href={toPostHref(post.id)}>{post.data.title}</a></h3>
+              {post.data.description && <p>{post.data.description}</p>}
+              <a class="note__link" href={toPostHref(post.id)} aria-label={`Read ${post.data.title}`}>
+                Read note <span aria-hidden="true">↗</span>
+              </a>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <section class="contact" data-reveal aria-labelledby="contact-title">
+      <p class="folio">03 / Next chapter</p>
+      <div>
+        <h2 id="contact-title">Good systems begin with a precise conversation.</h2>
+        <p>
+          Open to senior software engineering and technical leadership opportunities where product
+          judgment, reliability, and clear execution matter.
+        </p>
       </div>
-    )}
-
-    <a class="notebook-archive" href="/blog">Read all writing</a>
-  </section>
-
-  <section class="section-block" data-reveal>
-    <div class="section-heading" data-reveal data-reveal-delay="40">
-      <p class="eyebrow">Case Studies</p>
-      <h2>Evidence over adjectives.</h2>
-      <p>
-        Strong engineering portfolios are not walls of technologies. They are decisions made under
-        pressure, with constraints and outcomes attached.
-      </p>
-    </div>
-
-    <div class="case-grid">
-      {featuredCaseStudies.map((study, index) => (
-        <article class="case-card" data-reveal data-reveal-stagger={String(index * 90)}>
-          <div>
-            <p class="case-card__eyebrow">{study.eyebrow}</p>
-            <h3>{study.title}</h3>
-            <p>{study.summary}</p>
-          </div>
-          <dl>
-            <div>
-              <dt>Role</dt>
-              <dd>{study.role}</dd>
-            </div>
-            <div>
-              <dt>Stack</dt>
-              <dd>{study.stack.slice(0, 4).join(' · ')}</dd>
-            </div>
-          </dl>
-          <a href="/projects/">Read the case study</a>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <section class="closing-cta">
-    <p class="eyebrow">Open to senior software engineering and applied AI opportunities</p>
-    <h2>Building reliable AI systems and web platforms. Based in Canada, open to remote teams.</h2>
-    <div class="hero-actions">
-      <a class="btn-primary" href="/contact-me/">Discuss an opportunity</a>
-      <a class="btn-secondary" href="/blog/">Read the technical writing</a>
-    </div>
-  </section>
+      <div class="contact__actions">
+        <a href="/contact-me/">Start a conversation <span aria-hidden="true">↗</span></a>
+        <div aria-label="Professional links">
+          {socialLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+        </div>
+      </div>
+    </section>
+  </div>
 </Layout>
 
 <style>
-  .closing-cta .btn-primary { color: var(--color-accent-foreground); }
-  .home-hero,
-  .section-block,
-  .metrics-band,
-  .closing-cta {
-    width: min(1120px, calc(100% - 2rem));
+  .home {
+    --home-paper: var(--color-bg);
+    --home-paper-deep: var(--color-surface-raised);
+    --home-ink: var(--color-text-primary);
+    --home-muted: var(--color-text-secondary);
+    --home-rule: var(--color-card-border);
+    --home-wine: var(--color-accent);
+    --home-motion-enter: 560ms;
+    --home-motion-portrait: 900ms;
+    --home-motion-rule: 420ms;
+    --home-motion-nudge: 0.22rem;
+    color: var(--home-ink);
+    background: var(--home-paper);
+    font-family: var(--font-sans);
+  }
+
+  .notebook,
+  .contact {
+    width: min(1240px, calc(100% - 3rem));
     margin-inline: auto;
   }
 
-  .home-hero {
+  .ledger {
+    width: min(1552px, calc(100% - clamp(3rem, 7.2vw, 7.5rem)));
+    margin-inline: auto;
+    padding-top: 1.35rem;
+  }
+
+  .ledger__edition,
+  .ledger__kicker,
+  .ledger__evidence h2,
+  .ledger__metric-index,
+  .folio,
+  .note__meta {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 800;
+  }
+
+  .ledger__edition {
+    margin: 0;
+    color: var(--home-muted);
+    text-align: right;
+  }
+
+  .ledger__stage {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
-    gap: clamp(2rem, 5vw, 5rem);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    min-height: clamp(35rem, 66vh, 40rem);
+  }
+
+  .ledger__intro {
+    z-index: 3;
+    grid-column: 1 / 9;
+    grid-row: 1;
+    align-self: center;
+    padding-block: 4.5rem 3.8rem;
+  }
+
+  .ledger__actions {
+    grid-column: 1 / 7;
+    grid-row: 2;
+    align-self: start;
+    margin-top: -1rem;
+  }
+
+  .ledger__kicker {
+    display: flex;
     align-items: center;
-    min-height: clamp(36rem, 64vh, 44rem);
-    padding-block: clamp(4rem, 7vw, 5.5rem);
+    gap: 1rem;
+    margin: 0 0 2.3rem;
+    color: var(--home-wine);
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 80ms both;
   }
 
-  .home-hero__accent {
-    position: absolute;
-    pointer-events: none;
-    border-radius: 999px;
-    opacity: 0.42;
-    filter: blur(0.4px);
-    z-index: 0;
+  .ledger__kicker span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
-  .home-hero__accent--north {
-    top: clamp(-2.2rem, -3vw, -1.2rem);
-    left: clamp(0.5rem, 10vw, 7rem);
-    width: clamp(7rem, 16vw, 12rem);
-    height: clamp(7rem, 16vw, 12rem);
-    border: 1px solid rgba(var(--color-accent-rgb), 0.35);
-    background:
-      radial-gradient(circle at 32% 35%, rgba(var(--color-accent-rgb), 0.26), transparent 62%),
-      rgba(var(--color-accent-rgb), 0.08);
+  .ledger__kicker span:first-child::after {
+    content: '';
+    width: 3.25rem;
+    height: 1px;
+    background: currentColor;
   }
 
-  .home-hero__accent--east {
-    right: clamp(-1.4rem, 2vw, 0.5rem);
-    bottom: clamp(1.2rem, 5vw, 4rem);
-    width: clamp(6rem, 14vw, 10rem);
-    height: clamp(6rem, 14vw, 10rem);
-    border: 1px solid rgba(var(--color-accent-rgb), 0.28);
-    background: rgba(var(--color-accent-rgb), 0.12);
-    box-shadow: 0 20px 48px rgba(var(--color-accent-rgb), 0.18);
+  .ledger h1,
+  .section-intro h2,
+  .contact h2,
+  .note h3 {
+    font-family: var(--font-sans);
   }
 
-  .home-hero h1 {
-    max-width: 14ch;
+  .ledger h1 {
     margin: 0;
-    color: var(--color-text-primary);
-    font-size: clamp(3.5rem, 5vw, 5rem);
-    line-height: 0.98;
-    letter-spacing: 0;
-  }
-
-  .lede {
-    max-width: 42rem;
-    margin: 1.5rem 0 0;
-    color: var(--color-text-secondary);
-    font-size: 1.25rem;
-    line-height: 1.75;
-  }
-
-  .eyebrow {
-    margin: 0 0 1rem;
-    color: var(--color-accent);
-    font-size: 0.8rem;
+    color: var(--home-ink);
+    font-size: clamp(4.5rem, 6vw, 6rem);
     font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    letter-spacing: -0.055em;
+    line-height: 0.87;
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 140ms both;
   }
 
-  .hero-actions,
-  .social-row {
+  .ledger h1 span {
+    color: var(--home-wine);
+  }
+
+  .ledger__lede {
+    max-width: 40rem;
+    margin: 2.25rem 0 0;
+    color: var(--home-muted);
+    font-size: var(--text-xl);
+    line-height: 1.55;
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 220ms both;
+  }
+
+  .ledger__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 1.8rem;
     margin-top: 2rem;
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 300ms both;
   }
 
-  .social-row {
-    margin-top: 1rem;
-  }
-
-  .social-row a {
-    color: var(--color-text-secondary);
-    font-size: 0.95rem;
-    font-weight: 700;
+  .ledger__actions a,
+  .ledger__evidence a,
+  .contact__actions > a {
+    display: inline-flex;
+    min-height: 4rem;
+    align-items: center;
+    justify-content: center;
+    gap: 1.1rem;
+    padding: 0.9rem 2rem;
+    color: var(--home-ink);
+    font-size: var(--text-lg);
+    font-weight: 800;
     text-decoration: none;
+    transition:
+      background-color var(--motion-fast) var(--motion-ease-out),
+      border-color var(--motion-fast) var(--motion-ease-out),
+      color var(--motion-fast) var(--motion-ease-out),
+      transform var(--motion-fast) var(--motion-ease-out);
   }
 
-  .social-row a:hover {
-    color: var(--color-accent);
+  .ledger__actions a:hover,
+  .contact__actions > a:hover {
+    transform: translateY(-2px);
   }
 
-  .hero-portrait {
-    margin: 0;
-    border: 1px solid var(--color-card-border);
-    background: var(--color-surface-raised);
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+  .ledger__actions a:is(:hover, :focus-visible) svg,
+  .ledger__evidence a:is(:hover, :focus-visible) svg,
+  .contact__actions > a:is(:hover, :focus-visible) span[aria-hidden='true'] {
+    transform: translateX(var(--home-motion-nudge));
+  }
+
+  .ledger__actions svg,
+  .ledger__evidence svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    transition: transform var(--motion-fast) var(--motion-ease-out);
+  }
+
+  .contact__actions > a span[aria-hidden='true'] {
+    display: inline-block;
+    transition: transform var(--motion-fast) var(--motion-ease-out);
+  }
+
+  .ledger__primary,
+  .contact__actions > a {
+    border: 1px solid var(--home-wine);
+    border-radius: var(--radius-sm);
+    background: var(--home-wine);
+    color: var(--color-accent-foreground) !important;
+  }
+
+  .ledger__secondary {
+    border: 1px solid var(--home-muted);
+    border-radius: var(--radius-sm);
+  }
+
+  .ledger__secondary:hover {
+    border-color: var(--home-ink);
+    background: var(--home-paper-deep);
+  }
+
+  .ledger__portrait {
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    grid-column: 6 / 12;
+    grid-row: 1 / 3;
+    align-self: end;
+    margin: 0;
+    margin-bottom: -4.7rem;
+    height: clamp(31rem, 62vh, 38rem);
+    pointer-events: none;
   }
 
-  .hero-portrait img {
+  .ledger__portrait::after {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        180deg,
+        var(--home-paper) 0,
+        transparent 14%,
+        transparent 52%,
+        var(--home-paper) 100%
+      ),
+      linear-gradient(
+        90deg,
+        var(--home-paper) 0,
+        transparent 38%,
+        transparent 62%,
+        var(--home-paper) 92%
+      );
+    content: '';
+  }
+
+  .ledger__portrait picture {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    height: 100%;
+  }
+
+  .ledger__portrait img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
     object-fit: cover;
+    object-position: center;
+    transform: scale(1.15);
+    -webkit-mask-image: radial-gradient(
+      ellipse 63% 76% at 55% 54%,
+      #000 42%,
+      transparent 88%
+    );
+    mask-image: radial-gradient(ellipse 63% 76% at 55% 54%, #000 42%, transparent 88%);
+    animation: home-portrait-in var(--home-motion-portrait) var(--motion-ease-out) 180ms both;
   }
 
-  .hero-portrait figcaption {
-    padding: 1rem;
-    color: var(--color-text-secondary);
-    font-size: 0.95rem;
-    line-height: 1.6;
+  .ledger__evidence {
+    z-index: 4;
+    grid-column: 11 / -1;
+    grid-row: 1 / 3;
+    align-self: start;
+    margin: 2.5rem 0 0;
+    padding: 1rem 0 0;
   }
 
-  .metrics-band {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1px;
-    overflow: hidden;
-    border: 1px solid var(--color-card-border);
-    background: var(--color-card-border);
-  }
-
-  .metrics-band article {
-    min-height: 15rem;
-    padding: 1.4rem;
-    background: var(--color-surface-raised);
-  }
-
-  .metrics-band strong {
+  .ledger__signal {
     display: block;
-    color: var(--color-accent);
-    font-size: 3.6rem;
-    line-height: 1;
+    width: 1.75rem;
+    height: 0.25rem;
+    margin-bottom: 0.9rem;
+    background: var(--home-wine);
+    transform-origin: left center;
+    animation: home-signal-in var(--home-motion-rule) var(--motion-ease-out) 300ms both;
   }
 
-  .metrics-band span {
-    display: block;
-    margin-top: 0.8rem;
-    color: var(--color-text-primary);
-    font-weight: 800;
-    line-height: 1.3;
-  }
-
-  .metrics-band p,
-  .case-card p,
-  .section-heading p,
-  .notebook-card p {
-    color: var(--color-text-secondary);
-    line-height: 1.65;
-  }
-
-  .section-block {
-    padding-block: clamp(4.5rem, 9vw, 7rem);
-  }
-
-  .section-heading {
-    max-width: 48rem;
-  }
-
-  .section-heading h2,
-  .closing-cta h2 {
+  .ledger__evidence h2 {
     margin: 0;
-    color: var(--color-text-primary);
-    font-size: 3.75rem;
-    line-height: 1.05;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--home-rule);
+    color: var(--home-ink);
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 340ms both;
   }
 
-  .case-grid {
+  .ledger__evidence-body {
+    padding-block: 0.9rem 0.35rem;
+    border-bottom: 1px solid var(--home-rule);
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 400ms both;
+  }
+
+  .ledger__evidence p {
+    margin: 0 0 0.7rem;
+    color: var(--home-muted);
+    font-size: var(--text-base);
+    line-height: 1.45;
+  }
+
+  .ledger__evidence strong {
+    color: var(--home-ink);
+  }
+
+  .ledger__evidence a {
+    min-height: 2.75rem;
+    justify-content: flex-start;
+    padding: 0.6rem 0;
+    color: var(--home-wine);
+    font-size: var(--text-base);
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 460ms both;
+  }
+
+  .ledger__metrics {
+    position: relative;
+    z-index: 3;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-    margin-top: 2.5rem;
+    border-top: 1px solid var(--home-rule);
   }
 
-  .notebook-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
-    gap: 1rem;
-    margin-top: 2.5rem;
+  .ledger__metrics article {
+    position: relative;
+    min-height: 12.4rem;
+    padding: 1.35rem 2.2rem 1.15rem 0.4rem;
   }
 
-  .case-card,
-  .notebook-card {
-    border: 1px solid var(--color-card-border);
-    background: var(--color-surface-raised);
+  .ledger__metrics article + article {
+    padding-left: 3.6rem;
   }
 
-  .case-card {
+  .ledger__metrics article + article::before {
+    position: absolute;
+    top: 1.6rem;
+    bottom: 2.4rem;
+    left: 0;
+    width: 1px;
+    background: var(--home-wine);
+    content: '';
+  }
+
+  .ledger__metric-index {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 28rem;
-    padding: 1.4rem;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--home-ink);
   }
 
-  .notebook-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 20rem;
-    padding: 1.4rem;
+  .ledger__metric-index::after {
+    width: 2.6rem;
+    height: 1px;
+    background: var(--home-muted);
+    content: '';
   }
 
-  .notebook-card--lead {
-    min-height: 30rem;
-  }
-
-  .notebook-card__secondary {
-    display: grid;
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-  }
-
-  .notebook-card__meta {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .notebook-card time {
-    color: var(--color-text-muted);
-    font-size: 0.85rem;
-  }
-
-  .notebook-archive {
-    display: inline-block;
-    margin-top: 1rem;
-    color: var(--color-accent);
+  .ledger__metrics strong {
+    display: block;
+    margin-top: 0.55rem;
+    color: var(--home-wine);
+    font-size: clamp(2.6rem, 3.6vw, 3.8rem);
     font-weight: 800;
-    text-decoration: none;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 420ms both;
   }
 
-  .case-card__eyebrow,
-  .notebook-card span {
-    color: var(--color-accent);
-    font-size: 0.78rem;
+  @keyframes home-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(0.7rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes home-portrait-in {
+    from {
+      opacity: 0;
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  @keyframes home-signal-in {
+    from {
+      opacity: 0;
+      transform: scaleX(0.2);
+    }
+    to {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+  }
+
+  .ledger__metrics h2 {
+    margin: 0.25rem 0 0;
+    color: var(--home-ink);
+    font-size: var(--text-lg);
     font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .case-card h3,
-  .notebook-card h3 {
-    margin: 0.7rem 0 0;
-    color: var(--color-text-primary);
-    font-size: 1.35rem;
     line-height: 1.2;
   }
 
-  .case-card dl {
-    display: grid;
-    gap: 0.85rem;
-    margin: 1.5rem 0;
+  .ledger__metrics p {
+    margin: 0.35rem 0 0;
+    color: var(--home-muted);
+    font-size: var(--text-base);
+    line-height: 1.35;
   }
 
-  .case-card dt {
-    color: var(--color-text-muted);
-    font-size: 0.75rem;
+  .ledger__scroll {
+    display: none;
+  }
+
+  .notebook,
+  .contact {
+    padding-block: clamp(5rem, 9vw, 8rem);
+    border-top: 1px solid var(--home-rule);
+  }
+
+  .section-intro {
+    display: grid;
+    grid-template-columns: 0.65fr 1.5fr 1fr;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: start;
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .folio {
+    margin: 0;
+    color: var(--home-wine);
+  }
+
+  .section-intro h2,
+  .contact h2 {
+    margin: 0;
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .section-intro > p:last-child,
+  .contact > div > p {
+    max-width: 34rem;
+    margin: 0;
+    color: var(--home-muted);
+    line-height: 1.7;
+  }
+
+  .note > p {
+    color: var(--home-muted);
+    line-height: 1.65;
+  }
+
+  .notebook__grid {
+    display: grid;
+    grid-template-columns: 1.35fr 0.825fr 0.825fr;
+    border-top: 1px solid var(--home-ink);
+    border-bottom: 1px solid var(--home-ink);
+  }
+
+  .note {
+    display: flex;
+    min-height: 25rem;
+    flex-direction: column;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border-right: 1px solid var(--home-rule);
+  }
+
+  .note:last-child {
+    border-right: 0;
+  }
+
+  .note__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--home-muted);
+    letter-spacing: 0.06em;
+  }
+
+  .note h3 {
+    margin: 3rem 0 0;
+    font-size: clamp(1.8rem, 2.8vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+  }
+
+  .note h3 a,
+  .note__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .note > p {
+    margin: 1.25rem 0 0;
+  }
+
+  .note__link {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 2rem;
+    font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  .case-card dd {
-    margin: 0.2rem 0 0;
-    color: var(--color-text-primary);
+  .contact {
+    display: grid;
+    grid-template-columns: 0.5fr 1.6fr 0.8fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+    border-bottom: 1px solid var(--home-rule);
   }
 
-  .case-card a,
-  .notebook-card a {
-    color: var(--color-accent);
+  .contact h2 {
+    font-size: clamp(2.8rem, 5vw, 4.8rem);
+  }
+
+  .contact > div > p {
+    margin-top: 1.5rem;
+  }
+
+  .contact__actions > a {
+    width: 100%;
+  }
+
+  .contact__actions > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 1.2rem;
+  }
+
+  .contact__actions > div a {
+    color: var(--home-muted);
+    font-size: 0.72rem;
     font-weight: 800;
-    text-decoration: none;
+    text-underline-offset: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
-
-  .closing-cta {
-    padding-block: clamp(5rem, 10vw, 8rem);
-    border-top: 1px solid var(--color-card-border);
+  .home :is(a, button):focus-visible {
+    outline: 2px solid var(--home-wine);
+    outline-offset: 4px;
   }
 
-  @media (max-width: 920px) {
-    .home-hero {
-      grid-template-columns: 1fr;
+  @media (max-width: 1180px) {
+    .ledger {
+      width: min(100% - 3rem, 1240px);
+    }
+
+    .ledger h1 {
+      font-size: clamp(4rem, 7vw, 5.35rem);
+    }
+
+    .ledger__intro {
+      grid-column: 1 / 9;
+    }
+
+    .ledger__portrait {
+      grid-column: 7 / 11;
+    }
+
+    .ledger__evidence {
+      grid-column: 10 / -1;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .section-intro,
+    .contact {
+      grid-template-columns: 0.5fr 1.5fr;
+    }
+
+    .section-intro > p:last-child,
+    .contact__actions {
+      grid-column: 2;
+    }
+
+    .notebook__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .note--lead {
+      grid-column: 1 / -1;
+      min-height: 20rem;
+      border-right: 0;
+      border-bottom: 1px solid var(--home-rule);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .ledger {
+      width: min(100% - 2rem, 760px);
+      padding-top: 1rem;
+    }
+
+    .ledger__edition {
+      text-align: left;
+    }
+
+    .ledger__stage {
+      display: flex;
       min-height: auto;
+      flex-direction: column;
     }
 
-    .home-hero h1 {
-      font-size: 4.2rem;
+    .ledger__intro {
+      padding-block: 4.5rem 3rem;
     }
 
-    .lede {
-      font-size: 1.15rem;
+    .ledger h1 {
+      font-size: clamp(4rem, 10vw, 5.25rem);
+      line-height: 0.92;
     }
 
-    .metrics-band strong {
-      font-size: 2.8rem;
+    .ledger__lede {
+      max-width: 38rem;
     }
 
-    .section-heading h2,
-    .closing-cta h2 {
-      font-size: 2.9rem;
+    .ledger__portrait {
+      order: 3;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 10;
+      margin: 0 0 2.5rem;
+      overflow: hidden;
     }
 
-    .metrics-band,
-    .case-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .ledger__portrait::after {
+      background: linear-gradient(180deg, transparent 72%, var(--home-paper) 100%);
     }
 
-    .notebook-grid {
-      grid-template-columns: 1fr;
+    .ledger__portrait img {
+      object-position: center 36%;
+      transform: none;
+      -webkit-mask-image: linear-gradient(180deg, #000 0, #000 82%, transparent 100%);
+      mask-image: linear-gradient(180deg, #000 0, #000 82%, transparent 100%);
+    }
+
+    .ledger__evidence {
+      order: 4;
+      width: min(100%, 34rem);
+      margin: 0 0 3rem;
+      padding-top: 0;
+    }
+
+    .ledger__evidence p {
+      font-size: var(--text-lg);
+    }
+
+    .ledger__actions { order: 2; }
+
+    .ledger__metrics {
+      order: 4;
+    }
+
+    .ledger__metrics article {
+      min-height: 13rem;
+      padding-right: 1.2rem;
+    }
+
+    .ledger__metrics article + article {
+      padding-left: 1.4rem;
     }
   }
-  @media (max-width: 620px) {
-    .home-hero h1 {
-      max-width: 10ch;
-      font-size: 3rem;
+
+  @media (max-width: 640px) {
+    .notebook,
+    .contact {
+      width: min(100% - 2rem, 1240px);
     }
 
-    .lede {
-      font-size: 1.05rem;
+    .ledger__edition { display: none; }
+
+    .ledger__stage {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+      grid-template-rows: auto auto auto;
+      gap: 0;
     }
 
-    .metrics-band strong {
-      font-size: 2.2rem;
+    .ledger__intro {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      padding-block: 1.5rem 1rem;
     }
 
-    .section-heading h2,
-    .closing-cta h2 {
-      font-size: 2.1rem;
+    .ledger h1 {
+      font-size: clamp(2.15rem, 9.2vw, 2.55rem);
+      line-height: 0.98;
     }
 
-    .metrics-band,
-    .case-grid {
+    .ledger__lede {
+      max-width: 24rem;
+      margin-top: 1rem;
+      font-size: var(--text-base);
+      line-height: 1.45;
+    }
+
+    .ledger__portrait {
+      grid-column: 2;
+      grid-row: 2;
+      order: initial;
+      align-self: start;
+      width: 155%;
+      height: 15rem;
+      margin: 2rem 0 0 -48%;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .ledger__portrait::after {
+      background: linear-gradient(180deg, transparent 72%, var(--home-paper) 100%);
+    }
+
+    .ledger__portrait img {
+      object-position: 62% 36%;
+      transform: scale(1.2);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent 42%, #000 58%, #000 100%);
+      mask-image: linear-gradient(90deg, transparent 0, transparent 42%, #000 58%, #000 100%);
+    }
+
+    .ledger__evidence {
+      grid-column: 1;
+      grid-row: 2;
+      order: initial;
+      position: relative;
+      align-self: start;
+      width: 100%;
+      margin: 2.6rem 0 0;
+      padding: 0 0.65rem 0 0;
+      background: linear-gradient(90deg, var(--home-paper) 0%, var(--home-paper) 78%, transparent 100%);
+      z-index: 3;
+    }
+
+    .ledger__evidence p {
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+
+    .ledger__actions {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      order: initial;
+      align-self: stretch;
+      margin: 1.25rem 0 0;
+      z-index: 4;
+    }
+
+    .ledger__metrics {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 1.5rem;
+    }
+
+    .ledger__metrics article,
+    .ledger__metrics article + article {
+      min-height: 0;
+      padding: 0.9rem 0.45rem 0.9rem 0;
+    }
+
+    .ledger__metrics article + article {
+      padding-left: 0.8rem;
+    }
+
+    .ledger__metrics article + article::before { top: 0.9rem; bottom: 0.8rem; }
+    .ledger__metrics strong { font-size: clamp(1.65rem, 7.5vw, 2.25rem); }
+    .ledger__metrics h2 { font-size: 0.82rem; }
+    .ledger__metrics p { font-size: 0.72rem; line-height: 1.3; }
+    .ledger__metrics h2,
+    .ledger__metrics p { overflow-wrap: anywhere; }
+
+    .ledger__scroll {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1.25rem 0 1rem;
+      color: var(--home-muted);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .ledger__scroll svg {
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.5;
+    }
+
+    .section-intro,
+    .contact {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    .section-intro > p:last-child,
+    .contact__actions {
+      grid-column: auto;
+    }
+
+    .section-intro h2,
+    .contact h2 {
+      font-size: clamp(2.6rem, 12vw, 4.4rem);
+    }
+
+    .notebook__grid {
       grid-template-columns: 1fr;
     }
 
-    .metrics-band article,
-    .case-card,
-    .notebook-card {
-      min-height: 0;
+    .note,
+    .note--lead {
+      grid-column: auto;
+      min-height: 21rem;
+      border-right: 0;
+      border-bottom: 1px solid var(--home-rule);
+    }
+
+    .note:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .ledger__actions {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .ledger__actions a {
+      width: 100%;
+      min-height: 3.5rem;
+      padding-inline: 1.25rem;
+    }
+
+    .ledger__kicker { gap: 0.75rem; }
+
+    .ledger__kicker span:first-child::after {
+      width: 2.4rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ledger__kicker,
+    .ledger h1,
+    .ledger__lede,
+    .ledger__actions,
+    .ledger__portrait img,
+    .ledger__signal,
+    .ledger__evidence h2,
+    .ledger__evidence-body,
+    .ledger__evidence a,
+    .ledger__metrics strong {
+      animation: none;
+    }
+
+    .ledger__actions svg,
+    .ledger__evidence svg,
+    .contact__actions > a span[aria-hidden='true'] {
+      transition: none;
     }
   }
 </style>

@@ -25,7 +25,11 @@ const toMarkdownDocument = (html: string) => {
   return toMarkdown(toMdast(source)).trim();
 };
 
-export const onRequest: MiddlewareHandler = async ({ request }, next) => {
+export const onRequest: MiddlewareHandler = async ({ request, isPrerendered }, next) => {
+  // Prerendered routes have no request headers at build time. Markdown
+  // negotiation is an SSR-only response transform.
+  if (isPrerendered) return next();
+
   const response = await next();
   const accept = request.headers.get('accept') ?? '';
   const acceptsMarkdown = /(?:^|,)\s*text\/markdown(?:\s*;[^,]*)?(?:,|$)/i.test(accept);

@@ -251,7 +251,12 @@ pacman -S bluez bluez-utils`,
 
         {/* Code Content */}
         <div className="overflow-x-auto">
-          <pre className="p-4 text-sm text-text-primary bg-surface-1">
+          <pre
+            className="p-4 text-sm text-text-primary bg-surface-1"
+            role="region"
+            aria-label={`${selectedFile.name} code`}
+            tabIndex={0}
+          >
             <code className={`language-${selectedFile.language}`}>{selectedFile.content}</code>
           </pre>
         </div>

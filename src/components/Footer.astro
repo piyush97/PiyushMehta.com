@@ -1,21 +1,18 @@
 ---
+import { socialLinks } from '../data/portfolio';
+
 const year = new Date().getFullYear();
 
 const links = [
   { href: '/projects/', label: 'Work' },
   { href: '/blog/', label: 'Writing' },
-  { href: '/newsletter/', label: 'Newsletter' },
+  { href: '/about/', label: 'About' },
   { href: '/resume/', label: 'Resume' },
   { href: '/uses/', label: 'Uses' },
   { href: '/contact-me/', label: 'Contact' },
 ];
 
-const social = [
-  { href: 'https://github.com/piyush97', label: 'GitHub' },
-  { href: 'https://linkedin.com/in/piyush24', label: 'LinkedIn' },
-  { href: '/contact-me/', label: 'Contact' },
-  { href: '/rss.xml', label: 'RSS' },
-];
+const social = [...socialLinks, { href: '/rss.xml', label: 'RSS' }];
 ---
 
 <footer class="site-footer" data-reveal>

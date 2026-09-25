@@ -1,0 +1,269 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+export const prerender = true;
+---
+
+<Layout
+  title="Search | Piyush Mehta"
+  description="Search every post and page on piyushmehta.com."
+  type="website"
+  ogTemplate="minimal"
+  ogTheme="light"
+>
+  <section class="page-hero" data-pagefind-ignore>
+    <div class="page-hero__copy">
+      <p class="eyebrow">Search</p>
+      <h1>Find the thing you half-remember.</h1>
+      <p class="lede">
+        Everything published on this site, indexed. Type a few words — a title, an error
+        string, a half-broken memory of a diagram — and it will surface.
+      </p>
+    </div>
+
+    <aside class="hint-panel">
+      <p class="eyebrow">Shortcut</p>
+      <h2>Press <kbd>/</kbd> to focus search.</h2>
+      <p>
+        Results link straight to the source. The index is built at deploy time by
+        <code>bun run build</code>.
+      </p>
+    </aside>
+  </section>
+
+  <section class="page-section" data-pagefind-ignore>
+    <div class="search-shell">
+      <div id="search"></div>
+
+      <p id="search-state" class="search-state" role="status">
+        Loading the search index…
+      </p>
+
+      <noscript>
+        <p class="search-state search-state--warn">
+          Search needs JavaScript. Browse <a href="/blog/">writing</a> instead.
+        </p>
+      </noscript>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  (function () {
+    var state = document.getElementById('search-state');
+    var target = document.getElementById('search');
+    var CSS = '/pagefind/pagefind-ui.css';
+    var JS = '/pagefind/pagefind-ui.js';
+
+    function say(text, warn) {
+      if (!state) return;
+      state.textContent = text;
+      state.hidden = false;
+      if (warn) state.classList.add('search-state--warn');
+    }
+
+    function fail(detail) {
+      if (target) target.hidden = true;
+      var dev = location.port === '4321' || location.hostname === 'localhost';
+      say(
+        dev
+          ? 'No index in dev. Run `bun run build`, then `bun run preview`.'
+          : 'Search is unavailable right now.' + (detail ? ' (' + detail + ')' : ''),
+        true
+      );
+    }
+
+    // Styles first so the widget never flashes unstyled.
+    if (!document.querySelector('link[href="' + CSS + '"]')) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = CSS;
+      link.onerror = function () { fail('stylesheet'); };
+      document.head.appendChild(link);
+    }
+
+    var script = document.createElement('script');
+    script.src = JS;
+    script.onload = function () {
+      if (!window.PagefindUI) return fail('bundle');
+      try {
+        new window.PagefindUI({
+          element: '#search',
+          showSubResults: true,
+          showImages: false,
+          translations: {
+            placeholder: 'Search posts, notes, and pages…',
+            zero_results: 'Nothing matched [SEARCH_TERM]. Try a broader word.',
+          },
+        });
+      } catch (error) {
+        return fail('init');
+      }
+      if (state) state.hidden = true;
+
+      // '/', when not already typing, jumps to the field.
+      document.addEventListener('keydown', function (event) {
+        if (event.key !== '/') return;
+        if (event.metaKey || event.ctrlKey || event.altKey) return;
+        var el = document.activeElement;
+        var tag = el && el.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || (el && el.isContentEditable)) return;
+        var input = document.querySelector('.pagefind-ui__search-input');
+        if (!input) return;
+        event.preventDefault();
+        input.focus();
+      });
+    };
+    script.onerror = function () { fail('bundle missing'); };
+    document.head.appendChild(script);
+  })();
+</script>
+
+<style>
+  .page-hero,
+  .page-section {
+    width: min(1120px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .page-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: start;
+    padding-block: clamp(4rem, 8vw, 6rem) 3rem;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.9rem;
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .page-hero h1 {
+    margin: 0;
+    max-width: 14ch;
+    color: var(--color-text-primary);
+    font-size: clamp(2.6rem, 6vw, 4.4rem);
+    line-height: 1.05;
+  }
+
+  .lede {
+    margin: 1.35rem 0 0;
+    max-width: 44rem;
+    color: var(--color-text-secondary);
+    font-size: 1.15rem;
+    line-height: 1.75;
+  }
+
+  .hint-panel {
+    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
+    padding: 1.25rem;
+  }
+
+  .hint-panel h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+
+  .hint-panel p:last-child {
+    margin: 0.75rem 0 0;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .hint-panel kbd {
+    border: 1px solid var(--color-card-border);
+    border-radius: 6px;
+    padding: 0.1rem 0.4rem;
+    background: var(--color-bg);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  .page-section {
+    padding-block: 0 clamp(3rem, 7vw, 5rem);
+  }
+
+  /* Map Pagefind's widget onto the site's tokens so it follows both themes. */
+  .search-shell {
+    --pagefind-ui-scale: 0.9;
+    --pagefind-ui-primary: var(--color-text-primary);
+    --pagefind-ui-text: var(--color-text-primary);
+    --pagefind-ui-background: var(--color-surface-raised);
+    --pagefind-ui-border: var(--color-card-border);
+    --pagefind-ui-tag: var(--color-bg);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 10px;
+    --pagefind-ui-font: var(--font-sans);
+    max-width: 52rem;
+  }
+
+  .search-shell :global(.pagefind-ui__search-input) {
+    color: var(--color-text-primary);
+    background: var(--color-surface-raised);
+  }
+
+  .search-shell :global(.pagefind-ui__search-input:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .search-shell :global(.pagefind-ui__result) {
+    border-top: 1px solid var(--color-card-border);
+    padding-block: 1rem;
+  }
+
+  .search-shell :global(.pagefind-ui__result-link) {
+    color: var(--color-text-primary);
+    text-decoration-color: var(--color-accent);
+  }
+
+  .search-shell :global(.pagefind-ui__result-excerpt) {
+    color: var(--color-text-secondary);
+  }
+
+  .search-shell :global(.pagefind-ui__result-excerpt mark) {
+    background: color-mix(in srgb, var(--color-accent) 28%, transparent);
+    color: var(--color-text-primary);
+  }
+
+  .search-shell :global(.pagefind-ui__message) {
+    color: var(--color-text-muted);
+  }
+
+  .search-state {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+
+  .search-state--warn {
+    border: 1px solid var(--color-card-border);
+    border-left: 3px solid var(--color-accent);
+    background: var(--color-surface-raised);
+    padding: 0.9rem 1rem;
+    color: var(--color-text-secondary);
+  }
+
+  .search-state--warn a {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 860px) {
+    .page-hero {
+      grid-template-columns: minmax(0, 1fr);
+      padding-block: clamp(2.5rem, 8vw, 4rem) 2rem;
+    }
+
+    .page-hero h1 {
+      max-width: 18ch;
+      font-size: clamp(2.2rem, 9vw, 3.2rem);
+    }
+  }
+</style>

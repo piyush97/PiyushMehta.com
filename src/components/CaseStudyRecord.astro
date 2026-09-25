@@ -1,0 +1,339 @@
+---
+import type { CaseStudy } from '../data/portfolio';
+
+interface Props {
+  study: CaseStudy;
+  index: number;
+}
+
+const { study, index } = Astro.props;
+const caseNumber = String(index + 1).padStart(2, '0');
+---
+
+<article class="case-record" id={`case-${index + 1}`} data-case-record>
+  <header class="case-record__masthead">
+    <div class="case-record__folio" aria-label={`Case study ${index + 1}`}>
+      <span>CASE {caseNumber}</span>
+      <span>{study.timeframe}</span>
+    </div>
+
+    <div class="case-record__identity">
+      <p class="case-record__eyebrow">{study.eyebrow}</p>
+      <h2>{study.title}</h2>
+      <p class="case-record__summary">{study.summary}</p>
+    </div>
+
+    <dl class="case-record__meta">
+      <div>
+        <dt>Role</dt>
+        <dd>{study.role}</dd>
+      </div>
+      <div>
+        <dt>Timeframe</dt>
+        <dd>{study.timeframe}</dd>
+      </div>
+    </dl>
+  </header>
+
+  <div class="case-record__body">
+    <section class="case-record__statement" aria-labelledby={`case-${index + 1}-problem`}>
+      <h3 id={`case-${index + 1}-problem`}>Problem</h3>
+      <p>{study.problem}</p>
+    </section>
+
+    <div class="case-record__columns">
+      <section aria-labelledby={`case-${index + 1}-approach`}>
+        <h3 id={`case-${index + 1}-approach`}>Approach</h3>
+        <ul>
+          {study.approach.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+
+      <section aria-labelledby={`case-${index + 1}-outcomes`}>
+        <h3 id={`case-${index + 1}-outcomes`}>Outcomes</h3>
+        <ul>
+          {study.outcomes.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+    </div>
+
+    <footer class="case-record__footer">
+      <section aria-labelledby={`case-${index + 1}-stack`}>
+        <h3 id={`case-${index + 1}-stack`}>Stack</h3>
+        <div class="case-record__tags">
+          {study.stack.map((item) => <span>{item}</span>)}
+        </div>
+      </section>
+      {
+        study.links && (
+          <section aria-labelledby={`case-${index + 1}-links`}>
+            <h3 id={`case-${index + 1}-links`}>Links</h3>
+            <div class="case-record__links">
+              {study.links.map((link) => (
+                <a href={link.href}>
+                  {link.label}
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      }
+    </footer>
+  </div>
+</article>
+
+<style>
+  .case-record {
+    position: relative;
+    border-block: 1px solid var(--color-card-border);
+    scroll-margin-top: 6rem;
+  }
+
+  .case-record:target {
+    background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+  }
+
+  .case-record__masthead {
+    display: grid;
+    grid-template-columns: minmax(7rem, 0.2fr) minmax(0, 1fr) minmax(11rem, 0.28fr);
+    gap: clamp(1.25rem, 3.5vw, 3rem);
+    padding-block: clamp(2.4rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem);
+  }
+
+  .case-record__folio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .case-record__folio span:last-child {
+    color: var(--color-text-secondary);
+  }
+
+  .case-record__eyebrow {
+    margin: 0 0 0.8rem;
+    color: var(--color-text-secondary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .case-record h2 {
+    max-width: 14ch;
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: clamp(2.5rem, 5vw, 4.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .case-record__summary {
+    max-width: 48rem;
+    margin: 1.1rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 1.08rem;
+    line-height: 1.72;
+  }
+
+  .case-record__meta {
+    display: grid;
+    align-content: end;
+    gap: 1.15rem;
+    margin: 0;
+  }
+
+  .case-record__meta div {
+    border-top: 1px solid var(--color-card-border);
+    padding-top: 0.65rem;
+  }
+
+  .case-record__meta dt,
+  .case-record h3 {
+    color: var(--color-text-secondary);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .case-record__meta dd {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-primary);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .case-record__body {
+    display: grid;
+    gap: clamp(1.8rem, 3vw, 2.6rem);
+    padding: 0 0 clamp(2.5rem, 5vw, 4rem) clamp(8.2rem, 17.5vw, 16.5rem);
+  }
+
+  .case-record__statement {
+    max-width: 58rem;
+    border-top: 1px solid var(--color-card-border);
+    padding-top: 1rem;
+  }
+
+  .case-record h3 {
+    margin: 0 0 0.7rem;
+  }
+
+  .case-record p,
+  .case-record li {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.72;
+  }
+
+  .case-record__statement p {
+    max-width: 62ch;
+    margin: 0;
+    font-size: clamp(1.08rem, 1.3vw, 1.22rem);
+    line-height: 1.68;
+  }
+
+  .case-record__columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+  }
+
+  .case-record__columns section {
+    border-top: 1px solid var(--color-card-border);
+    padding-top: 1rem;
+  }
+
+  .case-record__columns ul {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  .case-record__footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.5rem;
+    align-items: end;
+    border-top: 1px solid var(--color-card-border);
+    padding-top: 1rem;
+  }
+
+  .case-record__footer section {
+    min-width: 0;
+  }
+
+  .case-record__tags,
+  .case-record__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+  }
+
+  .case-record__tags span {
+    border: 1px solid var(--color-card-border);
+    color: var(--color-text-primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1.2;
+    padding: 0.42rem 0.58rem;
+  }
+
+  .case-record__links {
+    margin-top: 0;
+  }
+
+  .case-record__links a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .case-record__links a:hover,
+  .case-record__links a:focus-visible {
+    color: var(--color-text-primary);
+  }
+
+  .case-record__links svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--motion-fast, 150ms) ease;
+  }
+
+  .case-record__links a:hover svg,
+  .case-record__links a:focus-visible svg {
+    transform: translateX(0.2rem);
+  }
+
+  @media (max-width: 920px) {
+    .case-record__masthead {
+      grid-template-columns: minmax(6rem, 0.2fr) minmax(0, 1fr);
+    }
+
+    .case-record__meta {
+      grid-column: 2;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-content: start;
+    }
+
+    .case-record__body {
+      padding-left: clamp(0rem, 8vw, 5rem);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .case-record__masthead {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+
+    .case-record h2 {
+      font-size: clamp(2.35rem, 12vw, 3.4rem);
+    }
+
+    .case-record__meta {
+      grid-column: auto;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .case-record__body {
+      padding-left: 0;
+    }
+
+    .case-record__columns,
+    .case-record__footer {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case-record__links svg {
+      transition: none;
+    }
+
+    .case-record__links a:hover svg,
+    .case-record__links a:focus-visible svg {
+      transform: none;
+    }
+  }
+</style>

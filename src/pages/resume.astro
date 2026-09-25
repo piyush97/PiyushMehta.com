@@ -30,10 +30,15 @@ export const prerender = true;
       <div class="resume-actions">
         <a class="btn-primary" href="/projects/">Review case studies</a>
         <a class="btn-secondary" href="/contact-me/">Start a conversation</a>
-        <button class="btn-ghost" id="resume-download-pdf" aria-label="Download resume as PDF">
+        <a
+          class="btn-ghost resume-download"
+          href="/resume.pdf"
+          download="piyush-mehta-resume.pdf"
+          aria-label="Download resume as PDF"
+        >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download PDF
-        </button>
+        </a>
       </div>
     </div>
 
@@ -140,19 +145,18 @@ export const prerender = true;
     <div class="resume-actions">
       <a class="btn-primary" href="/contact-me/">Contact Piyush</a>
       <a class="btn-secondary" href="/blog/">Read technical writing</a>
-      <button class="btn-ghost" onclick="window.print()" aria-label="Download resume as PDF">
+      <a
+        class="btn-ghost resume-download"
+        href="/resume.pdf"
+        download="piyush-mehta-resume.pdf"
+        aria-label="Download resume as PDF"
+      >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download PDF
-      </button>
+      </a>
     </div>
   </section>
 </Layout>
-
-<script is:inline>
-  document.getElementById('resume-download-pdf')?.addEventListener('click', () => {
-    window.print();
-  });
-</script>
 
 <style>
   .resume-hero,
@@ -437,12 +441,15 @@ export const prerender = true;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    min-height: 2.75rem;
+    justify-content: center;
     padding: 0.65rem 1.35rem;
     border: 1px solid var(--color-card-border);
     background: var(--color-surface-raised);
     color: var(--color-text-primary);
     font-size: 0.95rem;
     font-weight: 800;
+    text-decoration: none;
     cursor: pointer;
     border-radius: 0.35rem;
     transition: color var(--motion-fast, 150ms) ease, border-color var(--motion-fast, 150ms) ease;
@@ -457,7 +464,6 @@ export const prerender = true;
     nav,
     footer,
     .resume-cta,
-    #resume-download-pdf,
     .metrics-band {
       display: none !important;
     }
