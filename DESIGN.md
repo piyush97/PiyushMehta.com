@@ -205,6 +205,8 @@ The shape language is compact and practical: 6px controls, 8px grouped content, 
 
 The blog index uses readable article rows with metadata, title, description, tags, and a clear read action. Its featured writing cards and BlogFilter writing list are reading surfaces first: use open spacing, strong heading contrast, compact tag/chip labels, and a small hover lift rather than a dense dashboard grid.
 
+Public routes share `EditorialHeader`, `SectionHeader`, `ArticleIndexRow`, and `EvidenceMetricRail` primitives. They establish a route thesis, an evidence rhythm, and a clear next action without forcing every page into the same card grid. The primitives inherit the Evidence Ledger tokens and may vary their composition by visitor task.
+
 ### Evidence Blocks
 Metric bands, case-study panels, risk matrices, and interactive explainers are signature evidence components. They may use color to encode status or compare values, but the encoded meaning must also be present in text, labels, or state attributes.
 

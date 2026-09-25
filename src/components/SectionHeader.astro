@@ -1,0 +1,49 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  id?: string;
+  class?: string;
+  as?: 'h2' | 'h3';
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  id,
+  class: className = '',
+  as: headingLevel = 'h2',
+} = Astro.props;
+const Heading = headingLevel;
+---
+
+<header class={`section-heading editorial-section-header ${className}`} data-reveal>
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <Heading id={id}>{title}</Heading>
+  {description && <p>{description}</p>}
+</header>
+
+<style>
+  .editorial-section-header {
+    max-width: 44rem;
+  }
+
+  .editorial-section-header > :global(h2),
+  .editorial-section-header > :global(h3) {
+    max-width: 15ch;
+    margin: 0;
+    color: var(--color-text-primary);
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  .editorial-section-header > :global(p:last-child) {
+    max-width: 44rem;
+    margin: 0.9rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+</style>

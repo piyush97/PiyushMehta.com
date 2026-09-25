@@ -1,0 +1,199 @@
+---
+interface HeaderAction {
+  href: string;
+  label: string;
+  variant?: 'primary' | 'secondary';
+}
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  actions?: HeaderAction[];
+  class?: string;
+  asideLabel?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  actions = [],
+  class: className = '',
+  asideLabel,
+} = Astro.props;
+---
+
+<header class={`editorial-header ${className}`} data-reveal>
+  <div class="editorial-header__copy">
+    {eyebrow && <p class="editorial-header__eyebrow" data-hero-eyebrow>{eyebrow}</p>}
+    <h1 data-hero-title>{title}</h1>
+    {description && <p class="editorial-header__description">{description}</p>}
+    {
+      actions.length > 0 && (
+        <div class="editorial-header__actions">
+          {actions.map((action) => (
+            <a class={`btn-${action.variant ?? 'primary'}`} href={action.href}>
+              {action.label}
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+  <aside class="editorial-header__aside" aria-label={asideLabel}>
+    <slot name="aside" />
+  </aside>
+</header>
+
+<style>
+  .editorial-header {
+    position: relative;
+    display: grid;
+    width: min(1120px, calc(100% - 2rem));
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 0.42fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: end;
+    margin-inline: auto;
+    padding-block: clamp(4rem, 7vw, 5.5rem) clamp(3rem, 6vw, 4.5rem);
+    overflow: clip;
+  }
+
+  .editorial-header::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: min(9rem, 24vw);
+    height: 1px;
+    background: var(--color-accent);
+    content: '';
+  }
+
+  .editorial-header__copy {
+    position: relative;
+    z-index: 1;
+  }
+
+  .editorial-header__eyebrow {
+    margin: 0 0 1rem;
+    color: var(--color-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .editorial-header h1 {
+    max-width: 13ch;
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: clamp(3.2rem, 6vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .editorial-header__description {
+    max-width: 48rem;
+    margin: 1.35rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 1.12rem;
+    line-height: 1.75;
+  }
+
+  .editorial-header__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .editorial-header__actions a {
+    min-height: 2.75rem;
+  }
+
+  .editorial-header__actions svg {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    transition: transform var(--motion-fast, 150ms) ease;
+  }
+
+  .editorial-header__actions a:hover svg,
+  .editorial-header__actions a:focus-visible svg {
+    transform: translateX(0.2rem);
+  }
+
+  .editorial-header__aside {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--color-card-border);
+    border-bottom: 1px solid var(--color-card-border);
+    background: color-mix(in srgb, var(--color-surface-raised) 86%, transparent);
+    padding: 1.25rem;
+  }
+
+  .editorial-header__aside :global(span),
+  .editorial-header__aside :global(strong) {
+    display: block;
+  }
+
+  .editorial-header__aside :global(span) {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .editorial-header__aside :global(strong) {
+    margin-top: 0.9rem;
+    color: var(--color-text-primary);
+    font-size: 1.2rem;
+    line-height: 1.25;
+  }
+
+  .editorial-header__aside :global(ul) {
+    display: grid;
+    gap: 0.65rem;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .editorial-header__aside :global(li) {
+    color: var(--color-text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 860px) {
+    .editorial-header {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .editorial-header__aside {
+      max-width: 34rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .editorial-header {
+      width: min(100% - 1rem, 1120px);
+      padding-block: 3.5rem 3rem;
+    }
+
+    .editorial-header h1 {
+      font-size: clamp(2.8rem, 13vw, 4.2rem);
+    }
+
+    .editorial-header__description {
+      font-size: 1rem;
+    }
+  }
+</style>
