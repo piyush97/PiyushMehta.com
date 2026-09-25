@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" style="background:#1a1a1a; color:#e0e0e0; font-family:system-ui; overflow:visible">
+  <defs>
+    <linearGradient id="headerGradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#667eea"/>
+      <stop offset="100%" stop-color="#764ba2"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="180" fill="url(#headerGradient)" rx="12"/>
+  <text x="600" y="105" text-anchor="middle" class="title" font-size="48" fill="white">Why AI Coding Agents Fail at Long Tasks</text>
+  <text x="600" y="145" text-anchor="middle" class="subtitle" font-size="24" fill="#e0e0e0">Context window entropy, state drift, and unconstrained decision loops</text>
+  
+  <!-- Main visualization -->
+  <g filter="url(#glow)" transform="translate(0,180)">
+    <!-- Left: Agent state before drift -->
+    <rect x="0" y="0" width="300" height="450" fill="#3a3a3a" rx="12"/>
+    <text x="150" y="200" text-anchor="middle" class="label" font-size="28">Agent State</text>
+    <text x="150" y="240" text-anchor="middle" class="label" font-size="20" fill="#e0e0e0">Task: Build login system</text>
+    <text x="150" y="280" text-anchor="middle" class="label" font-size="18" fill="#a0a0a0">Context: 50% filled</text>
+    
+    <!-- Right: Agent state after drift -->
+    <rect x="900" y="0" width="300" height="450" fill="#3a3a3a" rx="12" transform="translate(600,0)"/>
+    <text x="750" y="200" text-anchor="middle" class="label" font-size="28">Degraded State</text>
+    <text x="750" y="240" text-anchor="middle" class="label" font-size="20" fill="#e0e0e0">Context: 95% filled</text>
+    <text x="750" y="280" text-anchor="middle" class="label" font-size="18" fill="#a0a0a0">State drift detected</text>
+    
+    <!-- Middle: Context window -->
+    <rect x="300" y="150" width="600" height="150" fill="#2d2d2d" rx="12" transform="translate(0,30)"/>
+    <text x="600" y="180" text-anchor="middle" class="label" font-size="24" fill="#e0e0e0">Context Window Entropy</text>
+    <text x="600" y="210" text-anchor="middle" class="label" font-size="18" fill="#a0a0a0">Accumulated chatter degrades reasoning quality</text>
+    
+    <!-- Arrows showing state transition -->
+    <path d="M300 300 L900 300" stroke="#e0e0e0" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+    <text x="600" y="320" text-anchor="middle" class="label" font-size="20" fill="#e0e0e0">State drift →</text>
+  </g>
+  
+  <!-- Footer -->
+  <rect x="0" y="580" width="1200" height="50" fill="#1a1a1a" rx="12"/>
+  <text x="600" y="615" text-anchor="middle" class="footer" font-size="18" fill="#e0e0e0">The research is clear: treat context as a tool, not a container. Your agent's coherence depends on it.</text>
+  
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#e0e0e0"/>
+    </marker>
+  </defs>
+</svg>
