@@ -2,7 +2,7 @@
 
 Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, deployed on Cloudflare Workers.
 
-![](.github/demo.gif)
+![A screen tour of piyushmehta.com: the systems-ledger homepage, the writing index, the redesigned article reading experience, the project index, and the light theme.](.github/demo.gif)
 
 ## Built with
 
@@ -113,7 +113,7 @@ bun run test-seo          # Validate SEO meta files
 ├── public/                  # Static assets
 ├── scripts/                 # Build and maintenance scripts
 └── src/
-    ├── components/          # 42 UI components (Astro + React)
+    ├── components/          # 36 UI components (Astro + React)
     ├── content/
     │   └── blog/            # MDX blog posts
     ├── layouts/
@@ -154,8 +154,9 @@ image:
 
 ## Features
 
-- **⌘K Command palette** — global search and navigation
 - **Full-text search** — Pagefind static index, required when the search route ships
+- **Three themes** — `professional-dark` (default), `professional-light`, and `retro`, applied before first paint
+- **Article reactions** — Redis-backed per-post reactions with optimistic updates
 - **Build-time OG images** — per-post generated via Satori + `@resvg/resvg-js`
 - **Résumé PDF** — a versioned source asset copied into the static release before Astro builds
 - **Contact form** — Resend with origin validation and Upstash rate limiting
