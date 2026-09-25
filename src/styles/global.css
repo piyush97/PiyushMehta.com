@@ -2625,3 +2625,70 @@ html {
     color: var(--color-accent-foreground);
   }
 }
+
+/* Keep legacy interactive article evidence readable in both themes. */
+.tech-comparison-danger-surface {
+  background: #3a202b;
+  border-color: #75404a;
+}
+
+.tech-comparison-danger-heading {
+  color: #fecaca;
+}
+
+.tech-comparison-danger-surface li,
+.tech-comparison-accent-surface li {
+  color: #d4d8e7;
+}
+
+.tech-comparison-accent-surface {
+  background: #343044;
+  border-color: #66543a;
+}
+
+:root.professional-light .tech-comparison-danger-surface,
+:root.light .tech-comparison-danger-surface {
+  background: #fbe8e8;
+  border-color: #efb5b5;
+}
+
+:root.professional-light .tech-comparison-danger-heading,
+:root.light .tech-comparison-danger-heading {
+  color: #991b1b;
+}
+
+:root.professional-light .tech-comparison-danger-surface li,
+:root.light .tech-comparison-danger-surface li,
+:root.professional-light .tech-comparison-accent-surface li,
+:root.light .tech-comparison-accent-surface li {
+  color: #4b5871;
+}
+
+:root.professional-light .tech-comparison-accent-surface,
+:root.light .tech-comparison-accent-surface {
+  background: #f3eee4;
+  border-color: #ddd3c2;
+}
+
+.bloom-filter-control-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bloom-filter-control-row input {
+  min-height: 2.75rem;
+}
+
+@media (max-width: 480px) {
+  .bloom-filter-control-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .bloom-filter-control-row input,
+  .bloom-filter-control-row button {
+    width: 100%;
+  }
+}

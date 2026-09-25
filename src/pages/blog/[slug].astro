@@ -143,25 +143,26 @@ const articleSchema = {
         <header class="blog-post-header article-masthead" data-article-masthead>
           <div class="article-masthead__folio" aria-hidden="true" data-pagefind-ignore>
             <span>Field note</span>
-            <span>{readingTime} min read</span>
+            <span>{formatArticleDate(displayDate)}</span>
           </div>
           <div class="article-masthead__content">
-          <h1
-            class="blog-post-title"
-            itemprop="headline"
-            data-pagefind-meta="title"
-          >
-            {title}
-          </h1>
-          
-          <!-- Hidden metadata for Pagefind -->
-          <div data-pagefind-meta="description" class="hidden">{description}</div>
-          <div data-pagefind-meta="author" class="hidden">{author || 'Piyush Mehta'}</div>
-          <div data-pagefind-meta="date" class="hidden">{date.toISOString()}</div>
-          <div data-pagefind-meta="type" class="hidden">blog</div>
-          {typedTags.map((tag) => <div data-pagefind-meta="tag" class="hidden">{tag}</div>)}
+            <h1
+              class="blog-post-title"
+              itemprop="headline"
+              data-pagefind-meta="title"
+            >
+              {title}
+            </h1>
 
-          <ArticleMeta title={title} author={author} readingTime={readingTime} date={date} tags={typedTags} url={canonicalUrl} />
+            <!-- Hidden metadata for Pagefind -->
+            <div data-pagefind-meta="description" class="hidden">{description}</div>
+            <div data-pagefind-meta="author" class="hidden">{author || 'Piyush Mehta'}</div>
+            <div data-pagefind-meta="date" class="hidden">{date.toISOString()}</div>
+            <div data-pagefind-meta="type" class="hidden">blog</div>
+            {typedTags.map((tag) => <div data-pagefind-meta="tag" class="hidden">{tag}</div>)}
+
+            <ArticleMeta title={title} author={author} readingTime={readingTime} date={date} tags={typedTags} url={canonicalUrl} />
+          </div>
 
           <section
             class="article-orientation"
@@ -169,8 +170,10 @@ const articleSchema = {
             data-article-orientation
             data-pagefind-ignore
           >
-            <p class="article-orientation__title" id="article-orientation-title">Before you read</p>
-            {description && <p class="article-orientation__description" data-orientation-description>{description}</p>}
+            <div class="article-orientation__summary">
+              <p class="article-orientation__title" id="article-orientation-title">In this note</p>
+              {description && <p class="article-orientation__description" data-orientation-description>{description}</p>}
+            </div>
             <dl class="article-orientation__facts">
               <div>
                 <dt>Reading time</dt>
@@ -182,7 +185,6 @@ const articleSchema = {
               </div>
             </dl>
           </section>
-          </div>
         </header>
 
         <!-- Featured Image -->
@@ -245,7 +247,17 @@ const articleSchema = {
         </footer>
       </article>
 
-      <div class="blog-post-after">
+      <div class="blog-post-after" aria-labelledby="article-continuation-title">
+        <header class="article-continuation__header" data-pagefind-ignore>
+          <h2 id="article-continuation-title">After this note</h2>
+          <a href="/blog/" class="article-continuation__all">
+            Browse all writing
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        </header>
+
         {nextBest && <NextBestRead nextRead={nextBest} />}
 
         <!-- Post Reactions -->
@@ -596,9 +608,13 @@ const articleSchema = {
 
   .blog-post-content :global(pre code) {
     background: transparent;
-    color: var(--color-text-primary);
+    color: inherit;
     padding: 0;
     white-space: pre;
+  }
+
+  .blog-post-content :global(pre code span[style*='#768390']) {
+    color: #a8b2c0 !important;
   }
 
   .blog-post-content :global(table) {
@@ -723,6 +739,353 @@ const articleSchema = {
     .blog-post-footer > div {
       align-items: flex-start;
       flex-direction: column;
+    }
+  }
+  /* Rendered article: margin-ruled ledger */
+  .blog-post-page {
+    padding: clamp(2.25rem, 5vw, 4.5rem) clamp(1rem, 4vw, 3rem) clamp(4rem, 8vw, 7rem);
+  }
+
+  .blog-post-shell {
+    width: min(100%, 1200px);
+  }
+
+  .blog-post-breadcrumbs {
+    width: 100%;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .blog-post-breadcrumbs :global(nav) {
+    margin-bottom: 0;
+  }
+
+  .blog-post-breadcrumbs :global(ol) {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.01em;
+  }
+
+  .blog-post-breadcrumbs :global(a) {
+    color: var(--color-text-secondary);
+  }
+
+  .blog-post-breadcrumbs :global([aria-current='page']) {
+    color: var(--color-text-primary);
+  }
+
+  .blog-post-header {
+    width: 100%;
+    display: grid;
+    grid-template-areas:
+      'folio content'
+      'orientation orientation';
+    grid-template-columns: minmax(9rem, 0.24fr) minmax(0, 1fr);
+    column-gap: clamp(1.5rem, 4vw, 4rem);
+    row-gap: clamp(1.75rem, 4vw, 3rem);
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .article-masthead__folio {
+    grid-area: folio;
+    align-self: start;
+    gap: 0.65rem;
+    padding-top: 0.85rem;
+    border-top: 2px solid var(--color-accent);
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+  }
+
+  .article-masthead__folio span:last-child {
+    color: var(--color-text-secondary);
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+
+  .article-masthead__content {
+    grid-area: content;
+  }
+
+  .blog-post-title {
+    max-width: 24ch;
+    margin-bottom: 1.35rem;
+    font-size: clamp(2.6rem, 5.4vw, 4.8rem);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  .blog-post-header :global(.article-meta) {
+    margin-top: 1.35rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .blog-post-header :global(.article-meta__line) {
+    align-items: center;
+  }
+
+  .blog-post-header :global(.article-meta__byline) {
+    gap: 0.45rem 1rem;
+    padding-block: 0;
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+
+  .blog-post-header :global(.article-meta__byline > :first-child) {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+  }
+
+  .blog-post-header :global(.article-meta__topics) {
+    gap: 0.35rem 0.85rem;
+    margin-top: 0.7rem;
+  }
+
+  .blog-post-header :global(.article-meta__topics a) {
+    min-height: 2.25rem;
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-card-border);
+  }
+
+  .blog-post-header :global(.article-meta__topics a:hover),
+  .blog-post-header :global(.article-meta__topics a:focus-visible) {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+  }
+
+  .article-orientation {
+    grid-area: orientation;
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(12rem, 0.65fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    margin: 0;
+    padding: 1.35rem 0 0;
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .article-orientation__summary {
+    min-width: 0;
+  }
+
+  .article-orientation__title {
+    margin-bottom: 0.65rem;
+  }
+
+  .article-orientation__description {
+    max-width: 62ch;
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .article-orientation__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 1rem;
+    margin: 0;
+  }
+
+  .article-orientation__facts div {
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .blog-post-hero-image {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .blog-post-hero-image :global(img) {
+    border-radius: 0;
+    background: var(--color-surface-raised);
+    box-shadow: none;
+  }
+
+  .blog-post-hero-image figcaption {
+    max-width: 74ch;
+    margin: 0.7rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  @media (min-width: 1024px) {
+    .article-reading-layout--with-toc {
+      grid-template-columns: minmax(10rem, 13rem) minmax(0, 74ch);
+      justify-content: center;
+      gap: clamp(1.5rem, 3vw, 3rem);
+    }
+
+    .article-reading-layout--with-toc :global(.article-toc-root) {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .article-reading-layout--with-toc .blog-post-content {
+      grid-column: 2;
+      grid-row: 1;
+      padding-left: clamp(1.25rem, 2.5vw, 2.25rem);
+      border-left: 1px solid var(--color-card-border);
+    }
+  }
+
+  .blog-post-content {
+    width: min(100%, 74ch);
+    font-size: clamp(1.08rem, 0.3vw + 1rem, 1.2rem);
+    line-height: 1.82;
+  }
+
+  .blog-post-content :global(h2) {
+    margin-top: clamp(3.25rem, 7vw, 5rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-card-border);
+    font-size: clamp(1.8rem, 2.6vw, 2.6rem);
+    letter-spacing: -0.02em;
+  }
+
+  .blog-post-content :global(h3) {
+    font-size: clamp(1.35rem, 1.8vw, 1.8rem);
+  }
+
+  .blog-post-content :global(blockquote) {
+    margin: 2.25rem 0;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 28%, var(--color-card-border));
+    border-radius: 0;
+    background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+  }
+
+  .blog-post-content :global(pre) {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .blog-post-content :global(table) {
+    border-radius: 0;
+  }
+
+  .blog-post-content :global(li),
+  .blog-post-content :global(a),
+  .blog-post-content :global(p code),
+  .blog-post-content :global(li code) {
+    overflow-wrap: anywhere;
+  }
+
+  .blog-post-content :global(p code),
+  .blog-post-content :global(li code) {
+    word-break: break-word;
+  }
+
+  .blog-post-footer {
+    width: min(100%, 74ch);
+    margin: clamp(3rem, 6vw, 4.5rem) auto 0;
+  }
+
+  .blog-post-after {
+    width: 100%;
+    max-width: 1200px;
+    margin-top: clamp(3.5rem, 7vw, 5.5rem);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .article-continuation__header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    width: min(100%, 74ch);
+    margin: 0 auto clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  .article-continuation__header h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .article-continuation__all {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--color-accent);
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .article-continuation__all svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--motion-fast, 150ms) ease;
+  }
+
+  .article-continuation__all:hover,
+  .article-continuation__all:focus-visible {
+    color: var(--color-text-primary);
+  }
+
+  .article-continuation__all:hover svg,
+  .article-continuation__all:focus-visible svg {
+    transform: translateX(0.2rem);
+  }
+
+  .blog-post-after :global(.next-best-read),
+  .blog-post-after :global(.post-reactions),
+  .blog-post-after :global(.article-career),
+  .blog-post-after :global(.related-posts-section) {
+    width: min(100%, 74ch);
+    margin-inline: auto;
+  }
+
+  @media (max-width: 760px) {
+    .blog-post-header {
+      grid-template-areas:
+        'folio'
+        'content'
+        'orientation';
+      grid-template-columns: 1fr;
+      row-gap: 1.25rem;
+    }
+
+    .article-masthead__folio {
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .article-orientation {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    .blog-post-title {
+      max-width: 100%;
+      font-size: clamp(2.4rem, 11vw, 3.6rem);
+    }
+
+    .blog-post-content {
+      font-size: 1.06rem;
+      line-height: 1.78;
+    }
+
+    .article-continuation__header {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.75rem;
     }
   }
 </style>
