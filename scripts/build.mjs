@@ -39,26 +39,26 @@ step('Published post manifest', 'node scripts/generate-post-manifest.mjs');
 // 3. Migrate blog images to public/
 step('Image migration', 'node scripts/migrate-images-to-public.mjs');
 
-// 4. Main Astro build
+// 4. Copy the versioned resume asset before Astro copies public/ into dist/client.
+step('Resume PDF asset', 'node scripts/copy-resume-pdf.mjs');
+
+// 5. Main Astro build
 step('Astro build', 'astro build', {
   env: { ...process.env, FORCE_COLOR: '1' },
 });
 
-// 5. Rescue legacy mixed-case blog URLs (must run after the Astro build copies public/_redirects
+// 6. Rescue legacy mixed-case blog URLs (must run after the Astro build copies public/_redirects
 //    into dist/client/, and before deploy — see scripts/generate-legacy-redirects.mjs)
 step('Legacy blog redirects', 'node scripts/generate-legacy-redirects.mjs');
 
-// 6. Fail the build if any og:image/twitter:image/JSON-LD image reference is missing, wrong
+// 7. Fail the build if any og:image/twitter:image/JSON-LD image reference is missing, wrong
 //    size, or looks like the blank-fallback card — see scripts/verify-og.mjs
 step('OG image coverage check', 'node scripts/verify-og.mjs');
 
 step('Search discovery check', 'node scripts/verify-discovery.mjs');
 
-// 7. Required post-build scripts
+// 8. Required post-build scripts
 step('Pagefind search index', 'pagefind --site dist/client');
 step('Release artifact checks', 'node scripts/verify-release.mjs');
-
-// 8. Optional: generate resume PDF
-step('Resume PDF', 'node scripts/generate-resume-pdf.mjs', { optional: true });
 
 console.log(`\n🎉 Build complete`);

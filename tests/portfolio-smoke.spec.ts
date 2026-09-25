@@ -27,7 +27,7 @@ test.describe('portfolio smoke', () => {
     });
   }
 
-  test('home presents evidence-led portfolio content', async ({ page, request }) => {
+  test('home presents evidence and recent writing', async ({ page, request }) => {
     await page.route('**/api/reactions*', (route) =>
       route.fulfill({
         status: 200,
@@ -49,11 +49,11 @@ test.describe('portfolio smoke', () => {
     await expect(
       page.getByRole('heading', { level: 2, name: 'Enterprise AI Workflows' })
     ).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Current notebook' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Review 3 case studies' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Recent writing' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Selected systems' })).toHaveCount(0);
 
     const notebookSection = page.locator('section').filter({
-      has: page.getByRole('heading', { name: 'Current notebook' }),
+      has: page.getByRole('heading', { name: 'Recent writing' }),
     });
     const articles = notebookSection.locator('article');
     const articleLinks = articles.locator('h3 a');
@@ -80,6 +80,20 @@ test.describe('portfolio smoke', () => {
     await page.goto(firstHref!, { waitUntil: 'networkidle' });
     await expect(page.locator('main h1')).toHaveText(firstTitle?.trim() ?? '');
     expect(consoleErrors).toEqual([]);
+  });
+
+  test('resume exposes direct PDF downloads', async ({ page, request }) => {
+    await page.goto('/resume/', { waitUntil: 'domcontentloaded' });
+
+    const downloadLinks = page.getByRole('link', { name: 'Download resume as PDF' });
+    await expect(downloadLinks).toHaveCount(2);
+    await expect(downloadLinks.first()).toHaveAttribute('href', '/resume.pdf');
+    await expect(downloadLinks.first()).toHaveAttribute('download', 'piyush-mehta-resume.pdf');
+
+    const response = await request.get('/resume.pdf');
+    expect(response.status()).toBe(200);
+    expect(response.headers()['content-type']).toContain('application/pdf');
+    expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-');
   });
 
   test('FocusTube appears as a project and links to its technical article', async ({ page }) => {

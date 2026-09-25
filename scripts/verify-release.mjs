@@ -14,6 +14,7 @@ const REQUIRED_CLIENT_FILES = [
   'pagefind/pagefind-entry.json',
   'pagefind/pagefind-ui.js',
   'pagefind/pagefind-ui.css',
+  'resume.pdf',
   '_headers',
   '_redirects',
   'og/default.png',
@@ -64,6 +65,7 @@ function verifyHeaders(clientDir, errors) {
     '/search/*',
     '/pagefind/*',
     '/og/*',
+    '/resume.pdf',
   ]) {
     if (!headers.includes(path)) {
       addError(errors, `Static asset headers are missing the ${path} policy`);
@@ -122,6 +124,22 @@ export function verifyRelease(root = process.cwd()) {
     }
   }
 
+  for (const retiredPath of ['newsletter/index.html', 'og/newsletter.png']) {
+    if (existsSync(join(clientDir, retiredPath))) {
+      addError(errors, `Retired newsletter artifact is still shipped: dist/client/${retiredPath}`);
+    }
+  }
+
+  const sitemapPath = join(clientDir, 'sitemap.xml');
+  if (existsSync(sitemapPath) && /\/newsletter(?:\/|<)/.test(readFileSync(sitemapPath, 'utf8'))) {
+    addError(errors, 'Retired newsletter route is still present in sitemap.xml');
+  }
+
+  const resumePath = join(clientDir, 'resume.pdf');
+  if (existsSync(resumePath) && readFileSync(resumePath).subarray(0, 5).toString() !== '%PDF-') {
+    addError(errors, 'Resume artifact is not a PDF: dist/client/resume.pdf');
+  }
+
   for (const path of SERVER_ONLY_CLIENT_PATHS) {
     if (existsSync(join(clientDir, path))) {
       addError(errors, `Server-only output leaked into dist/client: ${path}`);
@@ -134,6 +152,16 @@ export function verifyRelease(root = process.cwd()) {
   }
 
   verifyHeaders(clientDir, errors);
+
+  const redirectsPath = join(clientDir, '_redirects');
+  if (existsSync(redirectsPath)) {
+    const redirects = readFileSync(redirectsPath, 'utf8');
+    for (const retiredPath of ['/newsletter', '/newsletter/', '/og/newsletter.png']) {
+      if (!redirects.includes(retiredPath)) {
+        addError(errors, `Retired newsletter URL is missing a redirect: ${retiredPath}`);
+      }
+    }
+  }
 
   return { ok: errors.length === 0, errors };
 }

@@ -8,8 +8,6 @@
   "preview_urls": true,
   "vars": {
     "NODE_ENV": "production",
-    "RESEND_FROM": "news@piyushmehta.com",
-    "RESEND_REPLY_TO": "contact@piyushmehta.com",
     "CONTACT_FROM_EMAIL": "contact@piyushmehta.com",
     "CONTACT_TO_EMAIL": "contact@piyushmehta.com",
   },

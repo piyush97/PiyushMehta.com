@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import BlogFilter from '../components/BlogFilter.astro';
-import NewsletterSignup from '../components/NewsletterSignup.tsx';
 import { writingHighlights } from '../data/portfolio';
 import Layout from '../layouts/Layout.astro';
 
@@ -267,21 +266,6 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     </div>
   </section>
 
-  <section class="writing-newsletter" data-reveal>
-    <div class="writing-newsletter__inner">
-      <div class="writing-newsletter__text">
-        <p class="writing-newsletter__eyebrow">Stay in the loop</p>
-        <h2 class="writing-newsletter__title">
-          Get future posts sent to your inbox.
-        </h2>
-        <p class="writing-newsletter__description">
-          One email when there's something worth saying. AI news, production lessons, 
-          and builds — no spam, no fluff.
-        </p>
-      </div>
-      <NewsletterSignup client:visible variant="inline" source="blog-listing" />
-    </div>
-  </section>
 </Layout>
 
 <style>
@@ -406,44 +390,6 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
   .reading-paths,
   .writing-index {
     padding-block: clamp(2.5rem, 6vw, 5rem);
-  }
-
-  .writing-newsletter {
-    width: min(1120px, calc(100% - 2rem));
-    margin: 2rem auto 5rem;
-  }
-
-  .writing-newsletter__inner {
-    padding: 2.5rem 2rem;
-    border-radius: 1.25rem;
-    border: 1px solid rgb(var(--border) / 0.4);
-    background: linear-gradient(135deg, rgb(var(--surface)) 0%, color-mix(in srgb, rgb(var(--accent)) 3%, rgb(var(--surface)) 100%) 100%);
-    display: grid;
-    gap: 1.5rem;
-    grid-template-columns: 1fr minmax(280px, 400px);
-    align-items: center;
-  }
-
-  .writing-newsletter__eyebrow {
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: rgb(var(--accent) / 0.85);
-    margin: 0 0 0.5rem;
-  }
-
-  .writing-newsletter__title {
-    font-size: clamp(1.25rem, 2vw, 1.5rem);
-    font-weight: 700;
-    margin: 0 0 0.5rem;
-  }
-
-  .writing-newsletter__description {
-    font-size: 0.925rem;
-    line-height: 1.55;
-    color: rgb(var(--text) / 0.7);
-    margin: 0;
   }
 
   .section-heading {
@@ -639,10 +585,6 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     .reading-paths,
     .writing-index {
       width: min(100% - 1rem, 1120px);
-    }
-
-    .writing-newsletter__inner {
-      grid-template-columns: 1fr;
     }
 
     .writing-hero h1 {

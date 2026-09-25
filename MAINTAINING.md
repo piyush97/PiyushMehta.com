@@ -28,8 +28,11 @@ bun run lint         # Oxlint only
 bun run format       # Oxfmt only
 ```
 
-The full build is orchestrated by `scripts/build.mjs` (typegen, image migration,
-Astro build, Pagefind index, enhanced sitemap, static RSS, resume PDF).
+The full build is orchestrated by `scripts/build.mjs` (typegen, post manifest, image
+migration, required résumé asset copy, Astro build, legacy redirects, OG/discovery
+checks, Pagefind index, and release artifact validation). The canonical PDF source is
+`src/assets/resume.pdf`; run `bun run resume:generate` locally only when the résumé
+content changes.
 
 ### Tests (Playwright)
 
@@ -37,7 +40,6 @@ Astro build, Pagefind index, enhanced sitemap, static RSS, resume PDF).
 bun run test             # full Playwright suite (3 browsers + 2 mobile)
 bun run test:smoke       # smoke tests only
 bun run test -- --project=chromium   # single browser
-node tests/newsletter.test.ts        # newsletter unit tests (node:test)
 bun run test:report      # HTML report
 ```
 

@@ -5,3 +5,6 @@
 /sitemap_index.xml /sitemap.xml 301
 /writing /blog 301
 /writing/* /blog/:splat 301
+/newsletter /blog 301
+/newsletter/ /blog/ 301
+/og/newsletter.png /og/blog.png 301

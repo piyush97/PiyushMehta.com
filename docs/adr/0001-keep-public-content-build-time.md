@@ -7,7 +7,7 @@
 
 ## Context
 
-PiyushMehta.com publishes technical articles from versioned MDX through Astro and is deployed on Cloudflare Workers. The site must absorb viral article traffic while retaining small operational APIs for reactions, contact, and newsletter delivery; social cards are generated as build-time assets.
+PiyushMehta.com publishes technical articles from versioned MDX through Astro and is deployed on Cloudflare Workers. The site must absorb viral article traffic while retaining small operational APIs for reactions and contact delivery; social cards are generated as build-time assets.
 
 A database and application cache for the latest-article list were considered. That design would make every latest-article request depend on a runtime data store even though article publication already requires a successful build and deployment. It would also duplicate content that is already present in the deployment artifact.
 
@@ -23,7 +23,7 @@ This decision assumes the deployment pipeline will use one verified Wrangler con
 4. A latest-article request will not query Redis or a database.
 5. Cache optimization will focus on static asset delivery, ETag revalidation, fingerprinted immutable assets, and measured page performance.
 6. Upstash Redis remains limited to explicitly ephemeral or operational state such as rate limits and reaction counters.
-7. Resend remains the authority for email delivery and audience management.
+7. Resend remains the authority for contact email delivery.
 8. No application database will be added until a named feature requires durable, relational application state.
 
 ## Consequences

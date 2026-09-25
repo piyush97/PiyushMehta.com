@@ -50,9 +50,7 @@ test.describe('article continuation', () => {
         '[data-next-best-read]',
         '.post-reactions',
         '.article-career',
-        '.newsletter-cta-card',
         '.related-posts-section',
-        '.giscus-comments-section',
       ];
       return selectors.map((selector) => {
         const element = container.querySelector(selector);

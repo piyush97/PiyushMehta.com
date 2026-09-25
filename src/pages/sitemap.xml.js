@@ -17,7 +17,6 @@ export async function GET(context) {
     '/services',
     '/react-developer',
     '/resume',
-    '/newsletter',
     '/videos',
     '/uses',
   ];

@@ -13,18 +13,17 @@ The accepted target is not a database-backed blog. It is a build-time content sy
 - Cloudflare Workers Static Assets serves public content from the edge.
 - Workers execute only routes that require runtime behavior.
 - Upstash Redis holds explicitly owned operational state, including rate limits and reaction counters.
-- Resend owns email delivery and its audience data.
+- Resend owns contact delivery; no newsletter audience is retained.
 - No application database is introduced until a named feature requires durable, queryable state.
 - The target release uses the Astro-generated `dist/server/wrangler.json` as the canonical deployment configuration, with `dist/client/` as the public asset directory.
 - The target release treats shipped generated artifacts as requirements; missing search, feed, OG, redirect, or discovery output fails the build.
 - The target release disables Giscus comments until real identifiers and matching CSP origins are approved.
-- The target newsletter contract means the Resend contact was created and a welcome email was attempted; it does not claim double-opt-in confirmation.
-- The target newsletter form includes an explicit consent control before submission.
+- The newsletter product surface is retired; readers are directed to the writing archive and RSS.
 - The target reaction model is anonymous, eventually consistent counters bounded to published post slugs.
 
 This is recorded in [ADR-0001](../adr/0001-keep-public-content-build-time.md) and [ADR-0002](../adr/0002-canonical-deployment-and-build-gates.md).
 
-**Implementation status:** The source-side release/build and runtime hardening work is implemented and locally verified. Remaining work is external production verification: confirm Cloudflare Workers Builds settings, inspect deployed cache/security headers, and validate provider-backed behavior with real secrets.
+**Implementation status:** The source-side release/build and runtime hardening work is implemented and locally verified. The newsletter product surface has been retired; readers are directed to the writing archive and RSS instead. Remaining work is external production verification: confirm Cloudflare Workers Builds settings, inspect deployed cache/security headers, and validate provider-backed behavior with real secrets.
 
 ## 2. Goals
 
@@ -56,7 +55,7 @@ The baseline does not include:
 | Traffic is bursty rather than steadily growing                 | Edge capacity matters more than application-server throughput.                                                        |
 | Reaction and form traffic is much lower than page reads        | Runtime APIs remain small and can scale independently.                                                                |
 | Reaction counts are anonymous and may be eventually consistent | Redis does not need to become a relational system of record.                                                          |
-| Contact and newsletter delivery is externally owned            | Resend remains the delivery boundary; a welcome email is not double opt-in.                                           |
+| Contact delivery is externally owned                           | Resend remains the delivery boundary; no newsletter audience is part of the product.                                  |
 | No application-owned durable PII store is required             | There is no current reason for a local database; transient rate-limit and provider-processing boundaries still apply. |
 
 These are design assumptions, not measured traffic claims. Baseline traffic and latency data should be collected before assigning capacity thresholds.
@@ -69,10 +68,10 @@ These are design assumptions, not measured traffic claims. Baseline traffic and 
 flowchart LR
   A[Git repository] --> B[Build orchestrator]
   B --> C[Image migration]
-  B --> D[Astro production build]
-  C --> D
+  C --> R[Résumé asset copy]
+  R --> D[Astro production build]
   D --> E[dist/client: HTML, assets, feeds, and OG cards]
-  B --> F[Optional Pagefind post-build index]
+  B --> F[Required Pagefind post-build index]
   F --> E
   D --> G[dist/server: Worker entry and generated config]
   H[Browser] --> I[Cloudflare edge]
@@ -90,7 +89,7 @@ flowchart LR
   B --> C[Validation and security middleware]
   C --> D[Upstash rate limit]
   C --> E[Upstash reaction data]
-  C --> F[Resend contact or newsletter delivery]
+  C --> F[Resend contact delivery]
   B --> G[Sentry and Cloudflare observability]
 ```
 
@@ -98,29 +97,27 @@ The runtime dependency graph is intentionally narrow. A Redis or Resend outage c
 
 ### 5.3 Current boundaries
 
-| Concern                           | Current owner                                                                | Runtime dependency                               |
-| --------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------ |
-| Article content                   | Git and MDX                                                                  | None after deployment                            |
-| Portfolio content                 | Typed source data                                                            | None after deployment                            |
-| Blog listing and article routes   | Astro build                                                                  | None after deployment                            |
-| Search                            | Pagefind static index; currently an optional build step                      | None after deployment when the index is present  |
-| Reactions                         | API route and Upstash Redis                                                  | Redis                                            |
-| Contact and newsletter submission | API route and Resend                                                         | Resend; Redis for limits                         |
-| Social-card rendering             | Prerendered Astro route using Satori and Resvg                               | Build-time only                                  |
-| Comments                          | Giscus is present and rendered in the current source; the target disables it | Browser and GitHub until the target change ships |
-| Monitoring                        | Sentry, Workers logs, traces, and optional Web Analytics                     | Monitoring providers                             |
-| Secrets                           | Worker secrets and environment bindings                                      | Runtime configuration                            |
+| Concern                         | Current owner                                            | Runtime dependency       |
+| ------------------------------- | -------------------------------------------------------- | ------------------------ |
+| Article content                 | Git and MDX                                              | None after deployment    |
+| Portfolio content               | Typed source data                                        | None after deployment    |
+| Blog listing and article routes | Astro build                                              | None after deployment    |
+| Search                          | Required Pagefind static index                           | None after deployment    |
+| Reactions                       | API route and Upstash Redis                              | Redis                    |
+| Contact submission              | API route and Resend                                     | Resend; Redis for limits |
+| Social-card rendering           | Prerendered Astro route using Satori and Resvg           | Build-time only          |
+| Comments                        | Disabled; no comment provider is shipped                 | None                     |
+| Monitoring                      | Sentry, Workers logs, traces, and optional Web Analytics | Monitoring providers     |
+| Secrets                         | Worker secrets and environment bindings                  | Runtime configuration    |
 
 The environment schema still contains legacy database, mail, and CMS variables. Those declarations are not evidence of an active dependency. They should be removed only after a callsite and deployment audit confirms that no current build or Worker path reads them.
 
 ### 5.4 Runtime route inventory
 
-| Route                     | Current behavior                                                      | Current external dependency |
-| ------------------------- | --------------------------------------------------------------------- | --------------------------- |
-| `/api/reactions`          | Public cached reads and rate-limited counter writes                   | Upstash Redis               |
-| `/api/newsletter`         | Rate-limited contact creation followed by a best-effort welcome email | Upstash Redis and Resend    |
-| `/api/contact`            | Origin-checked, rate-limited email submission                         | Upstash Redis and Resend    |
-| `/api/newsletter-metrics` | Public no-op compatibility response                                   | None                        |
+| Route            | Current behavior                                    | Current external dependency |
+| ---------------- | --------------------------------------------------- | --------------------------- |
+| `/api/reactions` | Public cached reads and rate-limited counter writes | Upstash Redis               |
+| `/api/contact`   | Origin-checked, rate-limited email submission       | Upstash Redis and Resend    |
 
 All other current public routes, including the parameterized OG route, are prerendered.
 
@@ -128,31 +125,25 @@ All other current public routes, including the parameterized OG route, are prere
 
 The items below are retained as the audit record that drove the implementation. Most source-side mitigations are now present; the progress table in Section 5.6 identifies the remaining external verification work.
 
-1. **The deployment artifact boundary is not fully verified.** The root Wrangler file still points at `./dist`, while the Astro adapter's generated `dist/server/wrangler.json` points its entrypoint at `dist/server/entry.mjs` and assets at `dist/client`. The package deploy command and README now target the generated config, but CI and the actual Cloudflare Workers Builds settings must be verified so no path can upload `dist/server` as public content.
-2. **A green build can still ship an incomplete release.** Pagefind is optional even though the search page requires its files. A candidate `scripts/check-dist.mjs` exists in the working tree but is not invoked by the build. Image migration can modify MDX and can report an error without setting a failing exit status.
-3. **Runtime form paths are not fully bounded.** Contact and newsletter request bodies have no explicit application-level size or field limits, and their Resend calls do not have explicit timeouts. Their responses do not consistently set `Cache-Control: no-store`.
-4. **Reaction state is bounded in the UI but not on the server.** The route accepts arbitrary post IDs, creates permanent Redis hashes, has no per-user or operation idempotency, and can retry a non-idempotent increment after an ambiguous network failure. Missing Redis currently returns successful zero counts, while the optimistic browser state is not reconciled after every failed write.
-5. **Newsletter copy currently exceeds the implemented confirmation contract.** The API creates a Resend contact and sends a welcome email, but there is no signed double-opt-in confirmation flow. The target copy must say that the address was added and a welcome email was attempted, not that it is confirmed.
-6. **Comments are enabled in the current source but disabled in the target.** The Giscus repository/category identifiers appear to be placeholders, and the active CSP does not allow `giscus.app`. The implementation phase must remove the component from the shipped article route or otherwise disable it; re-enable comments only in a separate decision with real identifiers, matching CSP origins, and browser verification.
-7. **The configured memory cache is not part of the current scaling path.** No `Astro.cache` callsite was found, so its 500-entry process-local cache should not be described as a shared article cache.
-8. **The current E2E job is disabled.** Existing CI checks types and runs a build, but it does not exercise the built Worker deployment or runtime API contracts.
-9. **Legacy operational documentation still describes a database and multiple newsletter providers.** `.env.example`, `.env.schema`, `README.md`, `NEWSLETTER_SETUP.md`, and `src/env.d.ts` contained PostgreSQL, Substack, Mailchimp, or ConvertKit contracts even though no active source callsite was found. The main setup surfaces are now marked historical, but the remaining type declarations and migration instructions still need a final cleanup pass.
-10. **The direct contact-to-Resend request does not explicitly send `User-Agent`.** The newsletter adapter does, but the contact route's provider contract should do the same and should have a regression test for Resend error 1010.
-11. **The current PII boundary needs to be stated precisely.** The application does not need a local durable user database, but client IPs may be used transiently for rate limiting, Workers logs may persist request data, Sentry currently receives a raw IP tag, and Resend receives contact/newsletter data. Privacy documentation and telemetry configuration must describe those provider boundaries.
-12. **Static cache headers are not yet a complete deployed contract.** `public/_headers` explicitly covers `/_astro/*` and `/rss.xml`; OG, sitemap, robots, and other static responses need clean-build and production header verification. Astro route rules alone are not proof that headers reach a static asset response.
-13. **Newsletter consent is a target contract, not yet the current UI.** The privacy policy says updates are sent with explicit consent, while the current form has no consent control. The target adds a clear opt-in control and requires it before submission; the policy wording and retention details still need qualified review.
+1. **The deployment artifact boundary still needs external verification.** The package and README target the generated `dist/server/wrangler.json` and `dist/client`; confirm the Cloudflare Workers Builds dashboard uses the same commands and that no path uploads `dist/server` as public content.
+2. **The release gate is now fail-closed locally.** Fresh output, Pagefind, OG/discovery checks, redirect validation, the résumé asset, and server/client boundaries are validated; verify the deployed artifact and rollback behavior in Cloudflare.
+3. **Contact and reaction provider behavior needs production exercise.** Local tests cover bounded requests, `User-Agent`, `no-store`, published-slug allowlisting, and no-retry writes; real Resend/Upstash failure modes remain external verification.
+4. **The configured memory cache is not part of the current scaling path.** No `Astro.cache` callsite was found, so its process-local cache is not described as a shared article cache.
+5. **The current E2E job is disabled.** CI validates checks and a build, but does not exercise a deployed Worker or real provider integrations.
+6. **Legacy Sanity variables remain in the environment schema for migration compatibility.** They have no active callsite and should be removed only after the deployment and migration audit is complete.
+7. **Static cache headers need production comparison.** `public/_headers` covers the release policy, but clean-build checks cannot prove the deployed CDN response.
 
 ### 5.6 Implementation progress
 
-| Area                          | Source status                                                                                                      | Remaining verification                                                               |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| Generated deployment config   | Package, README, CI, and release validator use `dist/server/wrangler.json`                                         | Confirm Cloudflare Workers Builds dashboard commands and production version contents |
-| Build outputs                 | Fresh `dist/`, required Pagefind, release validator, and fail-closed migration                                     | Verify deployed assets and rollback in Cloudflare                                    |
-| Contact/newsletter boundaries | Origin, consent, body/field limits, timeouts, `User-Agent`, and `no-store` implemented                             | Exercise real Resend/Upstash failures without exposing secrets                       |
-| Reactions                     | Build-generated published-slug manifest, namespaced keys, no fake zeroes, no-retry write client, UI reconciliation | Verify Redis cardinality and provider behavior in production                         |
-| Giscus                        | Removed from article routes                                                                                        | Re-enable only through a separate decision                                           |
-| Privacy/setup docs            | Legacy providers marked inactive; privacy copy updated                                                             | Obtain legal/product review for final policy wording                                 |
-| Static headers                | Explicit rules and clean-build validation added                                                                    | Compare production response headers with the source policy                           |
+| Area                        | Source status                                                                                                      | Remaining verification                                                               |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| Generated deployment config | Package, README, CI, and release validator use `dist/server/wrangler.json`                                         | Confirm Cloudflare Workers Builds dashboard commands and production version contents |
+| Build outputs               | Fresh `dist/`, required Pagefind, release validator, and fail-closed migration                                     | Verify deployed assets and rollback in Cloudflare                                    |
+| Contact boundaries          | Origin, body/field limits, timeouts, `User-Agent`, and `no-store` implemented                                      | Exercise real Resend/Upstash failures without exposing secrets                       |
+| Reactions                   | Build-generated published-slug manifest, namespaced keys, no fake zeroes, no-retry write client, UI reconciliation | Verify Redis cardinality and provider behavior in production                         |
+| Giscus                      | Removed from article routes                                                                                        | Re-enable only through a separate decision                                           |
+| Privacy/setup docs          | Legacy providers marked inactive; privacy copy updated                                                             | Obtain legal/product review for final policy wording                                 |
+| Static headers              | Explicit rules and clean-build validation added                                                                    | Compare production response headers with the source policy                           |
 
 ## 6. Target architecture
 
@@ -163,8 +154,9 @@ The build plane changes slowly and produces an immutable deployment version.
 ```mermaid
 flowchart TB
   A[Article or configuration change] --> B[Git review]
-  B --> C[Type, lint, and build validation]
-  C --> D[Astro production build]
+  B --> C[Type, lint, and image validation]
+  C --> R[Résumé asset copy]
+  R --> D[Astro production build]
   D --> E[Static pages, assets, feeds, and OG cards]
   D --> F[Required Pagefind search index]
   D --> G[Required artifact and discovery checks]
@@ -200,7 +192,7 @@ flowchart TB
 
   I -->|Rate-limit decision| J[Upstash Redis]
   I -->|Reaction read or write| J
-  I -->|Contact or newsletter send| K[Resend]
+  I -->|Contact send| K[Resend]
 
   E --> L[Sentry and Cloudflare observability]
   J --> L
@@ -233,8 +225,7 @@ The control plane is kept separate from the visitor request path. A monitoring-p
 | Search documents             | Generated from published content                                          | Pagefind assets          | Same content release                |
 | Rate-limit windows           | Upstash Redis                                                             | Upstash Redis            | Short-lived and operational         |
 | Reaction totals              | Upstash Redis while this feature remains ephemeral                        | Upstash Redis            | Eventual is acceptable              |
-| Newsletter audience          | Resend                                                                    | Resend segment/audience  | Provider-managed                    |
-| Email delivery status        | Resend                                                                    | Resend                   | Provider-managed                    |
+| Contact delivery status      | Resend                                                                    | Resend                   | Provider-managed                    |
 | Contact messages             | Resend delivery path                                                      | No local copy            | No application database requirement |
 | Comments                     | Disabled in the baseline; Giscus remains an unapproved future integration | None                     | Not applicable                      |
 | Secrets                      | Cloudflare deployment configuration                                       | Worker bindings          | Never public                        |
@@ -250,7 +241,7 @@ Do not duplicate a value in Redis or a future database unless a documented featu
 - Cloudflare Workers logs and traces may persist request metadata; sampling, retention, access, and redaction must be reviewed before production.
 - Sentry should receive safe structured tags, not raw IP addresses or message bodies.
 - Resend receives the email address and, for contact submissions, the name, subject, message, and reply address; provider retention and deletion behavior must be documented.
-- The application does not create a local durable subscriber, lead, or contact database in the baseline.
+- The application does not create a local durable lead or contact database in the baseline.
 
 The privacy policy and telemetry configuration must describe these boundaries accurately; they must not imply that the site collects no IP or form data.
 
@@ -266,7 +257,7 @@ Caching is a set of policies tied to data ownership, not one global TTL.
 | RSS and sitemap                          | Build                                 | Current route policy, initially one hour                         | Edge caching where configured                           | TTL or next deployment                        |
 | Pagefind index                           | Build, required when `/search/` ships | Static client asset                                              | Automatic global static-asset cache                     | New index on deploy                           |
 | Reaction responses                       | Runtime, only for known post slugs    | Short public freshness with stale reads is acceptable            | Current target: `s-maxage=10` with bounded stale window | TTL; version URL is not required for counters |
-| Contact and newsletter `POST` responses  | Runtime                               | `no-store`                                                       | Never cache                                             | Not applicable                                |
+| Contact `POST` responses                 | Runtime                               | `no-store`                                                       | Never cache                                             | Not applicable                                |
 | Social cards                             | Build; currently prerendered          | One-year immutable is intended; emitted headers must be verified | Automatic global static-asset cache                     | Content-derived version URL                   |
 
 RSS currently has overlapping `Cache-Control` declarations in Astro route rules and `public/_headers`; sitemap and robots rely on Astro rules. The target has one documented policy per emitted asset, verified from a clean build and from production response headers.
@@ -295,7 +286,7 @@ Only cache an API response when all of the following are true:
 - The origin can tolerate stale data.
 - Invalidation and stampede behavior are documented and tested.
 
-Do not generically cache rate-limit decisions, contact submissions, newsletter submissions, or personalized data.
+Do not generically cache rate-limit decisions, contact submissions, or personalized data.
 
 ### 8.3 Static header verification
 
@@ -369,7 +360,7 @@ Use focused repository functions at the API callsite. Do not add a generic ORM, 
 
 ### 10.1 Rate limiting
 
-Contact and newsletter protection should fail closed when the rate-limit store is unavailable if opening the path could exhaust an email quota or enable abuse. Return a bounded `503` or configured fallback response; do not silently remove protection. This policy is endpoint-specific: it does not block public article delivery or reaction reads, and Cloudflare's network protection remains the first layer against volumetric abuse.
+Contact protection should fail closed when the rate-limit store is unavailable if opening the path could exhaust an email quota or enable abuse. Return a bounded `503` or configured fallback response; do not silently remove protection. This policy is endpoint-specific: it does not block public article delivery or reaction reads, and Cloudflare's network protection remains the first layer against volumetric abuse.
 
 ### 10.2 Reactions
 
@@ -430,7 +421,7 @@ Measure these before adding replicas, queues, or additional services.
 
 ### 11.3 Build scalability
 
-A build currently compiles content, creates routes, migrates post images, and may build Pagefind and resume assets. Slow build or image steps should be optimized before introducing runtime work that pushes the same work to every request.
+A build compiles content, creates routes, migrates post images, copies the versioned résumé asset, and builds the required Pagefind index and release artifacts. Slow build or image steps should be optimized before introducing runtime work that pushes the same work to every request.
 
 ### 11.4 When to add a queue
 
@@ -448,15 +439,15 @@ A queue improves decoupling and retry semantics; it does not automatically impro
 
 Do not size the system from hypothetical global-user totals. Derive capacity from measured peak windows and provider-specific consumption:
 
-| Capacity input                 | Calculation or source                                                                          |
-| ------------------------------ | ---------------------------------------------------------------------------------------------- |
-| Static page and asset requests | Cloudflare request and cache data, segmented by content type                                   |
-| Worker invocations             | Requests that do not match a static asset and enter runtime routing                            |
-| Upstash command usage          | Runtime requests multiplied by commands issued per request and burst duration                  |
-| Resend usage                   | Contact sends, newsletter subscriptions, broadcasts, retries, and provider acceptance outcomes |
-| Worker saturation              | Peak CPU, subrequest, duration, and error distributions by route                               |
-| Build capacity                 | Content count, image migration, Pagefind, social-card work, and total build duration           |
-| Recovery capacity              | Time to detect, select, deploy, and verify the previous known-good version                     |
+| Capacity input                 | Calculation or source                                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Static page and asset requests | Cloudflare request and cache data, segmented by content type                                            |
+| Worker invocations             | Requests that do not match a static asset and enter runtime routing                                     |
+| Upstash command usage          | Runtime requests multiplied by commands issued per request and burst duration                           |
+| Resend usage                   | Contact sends, retries, and provider acceptance outcomes                                                |
+| Worker saturation              | Peak CPU, subrequest, duration, and error distributions by route                                        |
+| Build capacity                 | Content count, image migration, résumé asset copy, Pagefind, social-card work, and total build duration |
+| Recovery capacity              | Time to detect, select, deploy, and verify the previous known-good version                              |
 
 Alert before a provider quota or runtime limit becomes the capacity boundary. If a measured limit is approached, identify the specific consumer before changing architecture.
 
@@ -467,11 +458,10 @@ Alert before a provider quota or runtime limit becomes the capacity boundary. If
 - Validate and bound all request bodies and fields before provider calls.
 - Use semantic roles, labels, and server-side validation consistently.
 - Keep rate limits on abuse-sensitive endpoints.
-- Apply the same exact-origin policy to newsletter and contact submissions; explicitly decide whether preview hosts may submit forms.
-- Add a visible, accessible newsletter consent control and require it before the request is sent; do not rely on the submit action alone.
+- Apply the same exact-origin policy to contact submissions; explicitly decide whether preview hosts may submit forms.
 - Add Turnstile when bot or abuse evidence justifies it rather than by default; a client-only honeypot is not a server security control.
 - Apply Cloudflare edge protection and sensible security headers without duplicating identical checks in every route; add a parity test for static `_headers` and Worker middleware.
-- Do not log contact bodies, newsletter addresses, tokens, or raw secrets. Avoid sending raw client IP addresses to third-party error reporting unless there is a documented need.
+- Do not log contact bodies, email addresses, tokens, or raw secrets. Avoid sending raw client IP addresses to third-party error reporting unless there is a documented need.
 - Redact personal data and provider payloads in error reporting.
 - Keep static pages free of runtime authorization dependencies.
 - Review third-party scripts separately from first-party application security. Giscus is disabled in this baseline; re-enable it only with real IDs and matching CSP origins.
@@ -518,7 +508,7 @@ These targets are proposals and should be finalized after a baseline measurement
 - Public static content: 99.9% monthly availability.
 - Runtime APIs: 99.5% successful monthly requests, excluding valid client rejections.
 - Reaction reads: p95 below 500 ms at the edge, excluding client network time.
-- Contact and newsletter requests: p95 acknowledgement below 1.5 seconds, excluding upstream provider constraints.
+- Contact requests: p95 acknowledgement below 1.5 seconds, excluding upstream provider constraints.
 - Publishing: a successful build is deployable without manual artifact assembly.
 
 ## 14. Deployment and recovery
@@ -600,11 +590,12 @@ Synthetic load testing should focus on runtime APIs and provider boundaries. Sta
 ### Phase 2: Make builds complete and deterministic
 
 - Make Pagefind mandatory when the search route is shipped.
+- Keep the résumé PDF as a versioned source asset and require its copied release artifact.
 - Integrate the post-build artifact and bundle checks into the release pipeline.
 - Make image migration fail closed and remove unintended source mutation where practical.
 - Verify generated redirect and OG checks from a clean checkout.
 - Mark or remove stale PostgreSQL, Substack, Mailchimp, and ConvertKit setup contracts; regenerate environment types through the supported Varlock workflow.
-- Reconcile privacy copy with transient IP processing, persisted Worker telemetry, Resend delivery, and the new newsletter consent control.
+- Reconcile privacy copy with transient IP processing, persisted Worker telemetry, and contact delivery.
 - Disable Giscus in the shipped article route until its separate approval is complete.
 - Profile recommendation and image work before optimizing; the current small collection is not yet a reason to add runtime computation.
 
@@ -626,7 +617,7 @@ Synthetic load testing should focus on runtime APIs and provider boundaries. Sta
 
 ### Phase 5: Prove burst behavior
 
-- Run scoped load tests against reaction, newsletter, and contact paths.
+- Run scoped load tests against reaction and contact paths.
 - Measure Worker, Upstash, and Resend limits under burst traffic.
 - Tune rate limits and abuse controls from observed demand.
 - Document the trigger for adding a queue.
@@ -643,15 +634,15 @@ Synthetic load testing should focus on runtime APIs and provider boundaries. Sta
 The target is considered implemented when:
 
 - One documented deployment configuration is used by CI, preview, production, and rollback, and server artifacts cannot be exposed as public files.
-- Legacy database and newsletter-provider setup contracts are removed or clearly marked inactive, and the privacy policy matches actual telemetry, consent, and provider processing.
+- Legacy database and email-provider setup contracts are removed or clearly marked inactive, and the privacy policy matches actual telemetry and provider processing.
 - A clean build fails when search, generated feeds, OG assets, redirect rules, or other shipped release artifacts are missing.
 - Public article pages and latest-article content are available without Redis or Resend.
 - A latest-article page does not issue a runtime database or Redis request.
 - Fingerprinted assets use immutable caching and mutable HTML has a deliberate cache policy.
 - Static headers for HTML, feeds, OG files, robots, and Pagefind are verified from a clean build and production response.
-- Contact and newsletter requests have body, field, origin, timeout, `User-Agent`, and `no-store` contracts.
+- Contact requests have body, field, origin, timeout, `User-Agent`, and `no-store` contracts.
 - Reaction IDs are bounded, unavailable counts are not represented as valid zeroes, and write retries are not ambiguous.
-- Newsletter copy accurately distinguishes audience creation, welcome email, and double-opt-in confirmation, and the form requires explicit consent before submission.
+- The retired newsletter route is absent from navigation, discovery, static cards, and runtime APIs; old URLs redirect to the writing archive.
 - Giscus is either disabled or validated with real IDs and matching CSP.
 - Build, deploy, API, Redis, Resend, and configuration signals are observable.
 - Rollback to the previous Worker/static version is documented and tested.
@@ -672,7 +663,7 @@ The following should be measured rather than inferred:
 - Production binding presence and provider behavior when a required secret is absent.
 - Which legacy environment and setup documents are still consumed by operators or tooling.
 - The retention, access, and redaction settings for Workers logs, Sentry, Upstash rate-limit keys, and Resend.
-- The privacy-policy wording and retention details after the explicit newsletter consent control is implemented.
+- The privacy-policy wording and retention details for contact delivery and transient telemetry.
 - Whether Giscus remains absent from the shipped route after the baseline-disable change.
 - Which existing observability signals are available in the Cloudflare dashboard.
 - Whether a future feature requires local retention of contact or subscriber data.

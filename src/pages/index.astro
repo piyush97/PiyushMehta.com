@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { caseStudies, socialLinks } from '../data/portfolio';
+import { socialLinks } from '../data/portfolio';
 import speakerPhoto from '../images/piyush-devfest.jpg';
 import speakerPhotoAvif320 from '../images/responsive/piyush-devfest-320.avif';
 import speakerPhotoAvif640 from '../images/responsive/piyush-devfest-640.avif';
@@ -17,7 +17,6 @@ import Layout from '../layouts/Layout.astro';
 
 export const prerender = true;
 
-const featuredCaseStudies = caseStudies.slice(0, 3);
 const latestPosts = (await getCollection('blog', ({ data }) => data.draft !== true))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
@@ -151,36 +150,10 @@ const toPostHref = (id: string) =>
       </div>
     </section>
 
-    <section class="work" aria-labelledby="work-title">
-      <header class="section-intro section-intro--compact" data-reveal>
-        <p class="folio">02 / Work</p>
-        <h2 id="work-title">Selected systems</h2>
-      </header>
-
-      <div class="work__list">
-        {featuredCaseStudies.map((study, index) => (
-          <article class="work-item" data-reveal data-reveal-stagger={String(index * 70)}>
-            <div class="work-item__number">0{index + 1}</div>
-            <div class="work-item__body">
-              <p class="work-item__meta">{study.eyebrow} · {study.timeframe}</p>
-              <h3>{study.title}</h3>
-              <p>{study.summary}</p>
-              <ul aria-label={`${study.title} technologies`}>
-                {study.stack.slice(0, 5).map((item) => <li>{item}</li>)}
-              </ul>
-            </div>
-            <a href="/projects/" aria-label={`Read ${study.title} case study`}>
-              <span>Case study</span><span aria-hidden="true">↗</span>
-            </a>
-          </article>
-        ))}
-      </div>
-    </section>
-
     <section class="notebook" aria-labelledby="notebook-title">
       <header class="section-intro" data-reveal>
-        <p class="folio">03 / Field notes</p>
-        <h2 id="notebook-title">Current notebook</h2>
+        <p class="folio">02 / Latest writing</p>
+        <h2 id="notebook-title">Recent writing</h2>
         <p>Practical notes on systems, software, and decisions worth making visible.</p>
       </header>
 
@@ -210,7 +183,7 @@ const toPostHref = (id: string) =>
     </section>
 
     <section class="contact" data-reveal aria-labelledby="contact-title">
-      <p class="folio">04 / Next chapter</p>
+      <p class="folio">03 / Next chapter</p>
       <div>
         <h2 id="contact-title">Good systems begin with a precise conversation.</h2>
         <p>
@@ -245,7 +218,6 @@ const toPostHref = (id: string) =>
     font-family: var(--font-sans);
   }
 
-  .work,
   .notebook,
   .contact {
     width: min(1240px, calc(100% - 3rem));
@@ -263,7 +235,6 @@ const toPostHref = (id: string) =>
   .ledger__evidence h2,
   .ledger__metric-index,
   .folio,
-  .work-item__meta,
   .note__meta {
     text-transform: uppercase;
     letter-spacing: 0.16em;
@@ -325,7 +296,6 @@ const toPostHref = (id: string) =>
   .ledger h1,
   .section-intro h2,
   .contact h2,
-  .work-item h3,
   .note h3 {
     font-family: var(--font-sans);
   }
@@ -639,7 +609,6 @@ const toPostHref = (id: string) =>
     display: none;
   }
 
-  .work,
   .notebook,
   .contact {
     padding-block: clamp(5rem, 9vw, 8rem);
@@ -652,10 +621,6 @@ const toPostHref = (id: string) =>
     gap: clamp(1.5rem, 4vw, 4rem);
     align-items: start;
     margin-bottom: clamp(3rem, 6vw, 5rem);
-  }
-
-  .section-intro--compact {
-    grid-template-columns: 0.65fr 2.5fr;
   }
 
   .folio {
@@ -680,85 +645,9 @@ const toPostHref = (id: string) =>
     line-height: 1.7;
   }
 
-  .work-item__body > p,
   .note > p {
     color: var(--home-muted);
     line-height: 1.65;
-  }
-
-  .work-item__body {
-    min-width: 0;
-  }
-
-  .work__list {
-    border-top: 1px solid var(--home-ink);
-  }
-
-  .work-item {
-    display: grid;
-    grid-template-columns: 0.35fr 2fr 0.65fr;
-    gap: clamp(1.5rem, 4vw, 4rem);
-    padding-block: clamp(2rem, 4vw, 3.5rem);
-    border-bottom: 1px solid var(--home-rule);
-  }
-
-  .work-item__number {
-    padding-top: 0.35rem;
-    color: var(--home-wine);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-  }
-
-  .work-item__meta {
-    margin: 0 0 0.85rem;
-    color: var(--home-muted);
-  }
-
-  .work-item h3 {
-    margin: 0;
-    font-size: clamp(2.1rem, 3.5vw, 3.8rem);
-    line-height: 1;
-    letter-spacing: -0.025em;
-    overflow-wrap: anywhere;
-  }
-
-  .work-item__body > p {
-    max-width: 50rem;
-    margin: 1.1rem 0 0;
-  }
-
-  .work-item ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.1rem;
-    margin: 1.4rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .work-item li {
-    color: var(--home-muted);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-  }
-
-  .work-item > a {
-    display: flex;
-    justify-content: space-between;
-    align-self: start;
-    gap: 1rem;
-    padding-top: 0.35rem;
-    color: var(--home-ink);
-    font-size: 0.76rem;
-    font-weight: 800;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .work-item > a span:first-child {
-    border-bottom: 1px solid currentColor;
-    padding-bottom: 0.3rem;
   }
 
   .notebook__grid {
@@ -980,7 +869,6 @@ const toPostHref = (id: string) =>
   }
 
   @media (max-width: 640px) {
-    .work,
     .notebook,
     .contact {
       width: min(100% - 2rem, 1240px);
@@ -1107,7 +995,6 @@ const toPostHref = (id: string) =>
     }
 
     .section-intro,
-    .section-intro--compact,
     .contact {
       grid-template-columns: 1fr;
       gap: 1.25rem;
@@ -1121,16 +1008,6 @@ const toPostHref = (id: string) =>
     .section-intro h2,
     .contact h2 {
       font-size: clamp(2.6rem, 12vw, 4.4rem);
-    }
-
-    .work-item {
-      grid-template-columns: 2.5rem 1fr;
-      gap: 1rem;
-    }
-
-    .work-item > a {
-      grid-column: 2;
-      max-width: 9rem;
     }
 
     .notebook__grid {

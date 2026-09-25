@@ -25,7 +25,7 @@ assert(
 );
 assert(!robots.includes(`${origin}//`), 'Malformed discovery URL in robots.txt');
 
-for (const route of ['/services', '/resume', '/react-developer', '/newsletter']) {
+for (const route of ['/services', '/resume', '/react-developer']) {
   assert(urls.includes(`${origin}${route}`), `${route} must be discoverable in the sitemap`);
 }
 

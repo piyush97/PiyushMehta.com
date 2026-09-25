@@ -6,7 +6,7 @@ describe('isAllowedFormOrigin', () => {
   it('accepts the production origin', () => {
     assert.equal(
       isAllowedFormOrigin(
-        new Request('https://piyushmehta.com/api/newsletter', {
+        new Request('https://piyushmehta.com/api/contact', {
           method: 'POST',
           headers: { origin: 'https://piyushmehta.com' },
         }),

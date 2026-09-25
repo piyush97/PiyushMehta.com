@@ -9,7 +9,7 @@
 
 The Astro Cloudflare adapter produces a Worker entrypoint and a generated Wrangler configuration under `dist/server/`. The generated configuration points to `dist/server/entry.mjs` and serves `dist/client/` as static assets. The repository also contains a root `wrangler.jsonc` whose asset directory is `./dist`; the package and README now target the generated config, while CI and the external Workers Builds settings still need verification.
 
-Those paths describe different artifact boundaries. A root-config deployment could expose server implementation files as public assets or fail to find the intended static output. The build also marks Pagefind optional even though the site ships a search page, and a candidate post-build checker is not currently part of the release pipeline.
+Those paths describe different artifact boundaries. A root-config deployment could expose server implementation files as public assets or fail to find the intended static output. The build now requires Pagefind and the copied résumé asset when those shipped routes are present, and runs the artifact checker as part of the release pipeline.
 
 ## Decision
 
@@ -38,7 +38,7 @@ This ADR records the accepted contract. The package deploy command, README, CI a
 - The deployment command must explicitly use the generated configuration.
 - Root Wrangler settings remain shared input to adapter generation and must be kept compatible with it.
 - Adding a new generated route requires adding or updating its artifact check.
-- Builds take slightly longer because optional generated outputs become release requirements.
+- Builds take slightly longer because generated and copied release outputs are required.
 
 ## Rejected alternatives
 
@@ -58,6 +58,6 @@ Rejected because implementation modules, generated configuration, and source map
 
 - Public article content remains build-time MDX under [ADR-0001](0001-keep-public-content-build-time.md).
 - Giscus comments remain disabled until real identifiers and matching CSP origins are separately approved.
-- Newsletter success means the Resend contact was created and a welcome email was attempted; it does not claim double-opt-in confirmation until that flow exists.
-- The target newsletter form requires an explicit consent control before submission.
+- The newsletter surface is retired; the writing archive and RSS are the reader distribution paths.
+- Old newsletter URLs redirect to the writing archive, and no newsletter API or social-card entry ships.
 - Reactions remain anonymous, eventually consistent counters bounded to a build-generated published-post manifest.

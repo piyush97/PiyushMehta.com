@@ -138,15 +138,6 @@ export const STATIC_SOCIAL_PAGES: Record<string, SocialCardData> = {
     tags: ['Open Graph', 'Preview', 'Metadata'],
     path: '/og-showcase',
   },
-  newsletter: {
-    title: 'Newsletter - Piyush Mehta',
-    description:
-      'Subscribe for occasional notes on software architecture, AI workflows, and web platforms.',
-    type: 'website',
-    template: 'minimal',
-    tags: ['Newsletter', 'Writing', 'Updates'],
-    path: '/newsletter',
-  },
   'privacy-policy': {
     title: 'Privacy Policy - Piyush Mehta',
     description: 'How piyushmehta.com collects, uses, and protects your information.',

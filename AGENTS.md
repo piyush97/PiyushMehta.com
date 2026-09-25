@@ -2,12 +2,12 @@
 
 ## Project Overview
 
-`piyushmehta.com` is Piyush Mehta's personal site: portfolio, technical blog, newsletter, contact/consulting pages, resume, and generated social cards. It uses Astro server output on Cloudflare Workers, strict TypeScript, React islands, MDX content, and Tailwind CSS v4.
+`piyushmehta.com` is Piyush Mehta's personal site: portfolio, technical blog, contact/consulting pages, resume, and generated social cards. It uses Astro server output on Cloudflare Workers, strict TypeScript, React islands, MDX content, and Tailwind CSS v4.
 
 Core integrations:
 
-- Resend for contact and newsletter delivery
-- Upstash Redis for newsletter limits and post reactions
+- Resend for contact delivery
+- Upstash Redis for rate limits and post reactions
 - Satori + Resvg for social-card PNG rendering
 - Sentry for conditional client/server monitoring
 - Pagefind for the post-build search index
@@ -32,7 +32,7 @@ Browser -> Astro routes -> Layout.astro -> server-rendered HTML
 - Portfolio pages read typed constants from `src/data/portfolio.ts`; the GitHub utility is not part of the active projects flow.
 - Active middleware is `src/middleware/security.ts`, composed by `src/middleware/index.ts`. `src/middleware/og-cache.ts` is currently dormant.
 - There is no global state store or dependency-injection container. State stays in component hooks, DOM/data attributes, `localStorage`, or server module singletons.
-- `scripts/build.mjs` runs Varlock code generation, image migration, Astro build, then optional Pagefind and resume-PDF steps. The build can rewrite MDX image paths and copy images into `public/blog/`; inspect source changes after image-related builds.
+- `scripts/build.mjs` runs Varlock code generation, post-manifest generation, image migration, copies the versioned résumé asset, then runs Astro build, Pagefind, and release checks. The build can rewrite MDX image paths and copy images into `public/blog/`; inspect source changes after image-related builds.
 
 Important content caveat: `draft: true` hides posts from listings, tags, RSS, and sitemap, but does not currently prevent direct post generation or related-post exposure.
 
@@ -45,15 +45,15 @@ Important content caveat: `draft: true` hides posts from listings, tags, RSS, an
 | `src/layouts/` | Shared page shell |
 | `src/content/blog/` | MDX posts and post-local images |
 | `src/data/` | Typed static portfolio/project content |
-| `src/utils/` | Newsletter, SEO/schema, and social-card logic |
+| `src/utils/` | SEO/schema, contact delivery, and social-card logic |
 | `src/middleware/` | Request security middleware |
 | `src/scripts/` | Browser-side behavior such as site motion |
 | `src/styles/` | Tailwind v4 entry point, themes, tokens, and shared CSS |
 | `scripts/` | Build, image migration, PDF, and operational scripts |
-| `tests/` | Playwright E2E plus the newsletter unit test |
+| `tests/` | Playwright E2E plus focused unit tests |
 | `public/` | Static assets and maintained blog-image mirrors |
 
-Do not edit generated or ignored output under `dist/`, `.wrangler/`, `.astro/`, Playwright report/result directories, or `public/resume.pdf`.
+Do not edit generated or ignored output under `dist/`, `.wrangler/`, `.astro/`, Playwright report/result directories, or `public/resume.pdf`. The versioned résumé source is `src/assets/resume.pdf`; regenerate it explicitly with `bun run resume:generate` when the résumé changes.
 
 ## Development Commands
 
@@ -82,7 +82,6 @@ Focused validation:
 ```bash
 bunx playwright test tests/<name>.spec.ts --project=chromium
 bunx playwright test tests/<name>.spec.ts --project=chromium -g '<case>'
-bun test tests/newsletter.test.ts
 ```
 
 Install browser binaries when needed with `bunx playwright install --with-deps`.
@@ -110,9 +109,9 @@ Install browser binaries when needed with `bunx playwright install --with-deps`.
 
 - API files export `prerender = false` where required and method-named `APIRoute` handlers such as `GET` or `POST`.
 - Validate early and return explicit `Response` objects with meaningful HTTP status codes and JSON bodies.
-- Preserve route-specific failure behavior: contact/newsletter report server failures, reactions degrade GET reads but reject unavailable writes, and social-card rendering returns its fallback PNG.
+- Preserve route-specific failure behavior: contact reports server failures, reactions degrade GET reads but reject unavailable writes, and social-card rendering returns its fallback PNG.
 - Keep external work asynchronous and handle non-OK responses before consuming success data.
-- Prefer narrow dependency injection for testability, following `_fetch: typeof fetch = fetch` in `src/utils/newsletter.ts`; do not add a container or global abstraction.
+- Prefer narrow dependency injection for testability, following `_fetch: typeof fetch = fetch` in `src/utils/contact.ts`; do not add a container or global abstraction.
 - React forms use controlled local state with `idle | sending | success | error` transitions. Reactions use optimistic updates, pending guards, and abort controllers. Preserve these state invariants.
 
 ### Content and environment
@@ -138,7 +137,6 @@ Install browser binaries when needed with `bunx playwright install --with-deps`.
 | `src/pages/blog/[slug].astro` | Post route generation and MDX rendering |
 | `src/data/portfolio.ts` | Active portfolio/project data source |
 | `src/pages/api/contact.ts` | Contact validation, rate limit, and Resend flow |
-| `src/pages/api/newsletter.ts` | Newsletter rate limit and subscription flow |
 | `src/pages/api/reactions.ts` | Redis-backed reaction API |
 | `src/utils/social-card-renderer.ts` | Satori/Resvg rendering and fallback behavior |
 | `src/middleware/security.ts` | Active response security headers |
@@ -154,12 +152,11 @@ Install browser binaries when needed with `bunx playwright install --with-deps`.
 - Toolchain: Vite+ (`vp`) with Oxlint/Oxfmt. Do not add ESLint, Prettier, or Biome alongside it.
 - Environment typing: Varlock. Run code generation before type-sensitive checks/builds.
 - Deployment: Cloudflare Workers Static Assets on the Free plan through Workers Builds GitHub integration. Pages and social cards are prerendered; only API routes execute Worker code. GitHub Actions validates checks/builds but does not deploy.
-- `scripts/send-newsletter.mjs` creates and sends a real Resend broadcast. Never run it as validation or without explicit authorization.
 
 ## Testing & QA
 
 - Playwright is the E2E framework. Projects: Chromium, Firefox, WebKit, mobile Chrome, and mobile Safari. The configured web server is the Astro dev server at `http://localhost:4321`.
-- `tests/newsletter.test.ts` is a separate `node:test`-style unit suite; run it with Bun as shown above.
+- Unit tests are separate `node:test`-style suites; run them with Bun as shown above.
 - Start with the narrowest relevant spec on Chromium. Expand to all desktop/mobile projects only for compatibility-sensitive behavior, then run `bun run check`.
 - Prefer role/label locators, web-first assertions, deterministic local routes, Playwright's `request` fixture for HTTP contracts, and injected `fetch` for utility tests.
 - Do not copy fixed sleeps or `if (locator.count() > 0)` guards; both can hide failures.

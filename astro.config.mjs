@@ -131,11 +131,7 @@ export default defineConfig({
           if (id.includes('/src/components/blog/')) {
             return 'components-blog';
           }
-          if (
-            id.includes('CommentSystem') ||
-            id.includes('AuthModal') ||
-            id.includes('NewsletterForm')
-          ) {
+          if (id.includes('CommentSystem') || id.includes('AuthModal')) {
             return 'components-interactive';
           }
           if (id.includes('/src/utils/')) {

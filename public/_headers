@@ -29,3 +29,7 @@
 
 /og/*
   Cache-Control: public, max-age=31536000, immutable
+
+/resume.pdf
+  Content-Type: application/pdf
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400

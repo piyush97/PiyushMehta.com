@@ -125,7 +125,7 @@
       {
         "name": "soft-surface",
         "value": "0 2px 6px 0 rgba(0, 0, 0, 0.1)",
-        "purpose": "Quiet separation for newsletter and grouped controls."
+        "purpose": "Quiet separation for grouped controls."
       },
       {
         "name": "card-emphasis",
@@ -180,7 +180,7 @@
       "name": "Text Field",
       "kind": "input",
       "refersTo": "input",
-      "description": "Compact labeled field for newsletter and contact flows.",
+      "description": "Compact labeled field for contact flows.",
       "html": "<label class=\"ds-field\"><span>Email address</span><input type=\"email\" placeholder=\"you@domain.com\"></label>",
       "css": ".ds-field { display: grid; gap: 6px; color: var(--color-text-secondary); font: 700 .875rem/1.2 Muli, sans-serif; } .ds-field input { min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-card-border); border-radius: 6px; background: var(--color-bg); color: var(--color-text-primary); font: inherit; } .ds-field input:focus-visible { border-color: var(--color-accent); outline: 2px solid color-mix(in srgb, var(--color-accent) 28%, transparent); outline-offset: 1px; }"
     },
@@ -219,7 +219,7 @@
   ],
   "narrative": {
     "northStar": "The Evidence Ledger",
-    "overview": "PiyushMehta.com is a public engineering record, not a generic personal brand template. The visual system treats every page as a legible ledger of decisions: cool ink surfaces hold the work, warm amber marks the signal, and typography carries the authority. The result is technical and editorial without pretending to be a dashboard. It should feel useful to an engineering leader evaluating judgment, a reader staying with a difficult idea, or a collaborator looking for proof.\n\nThe incumbent world is compact at the navigation level and spacious at section boundaries. It uses a dark-first palette with a warm paper/light theme, semantic tokens shared across both, and small tonal shifts rather than decorative noise. Motion is brief and state-oriented: opacity and transforms reveal content, controls respond with restrained translation, and reduced motion preserves hierarchy without blocking access. The authored direction generally avoids gradient text, emoji-led visual language, thick colored side rails, and bounce-heavy feedback, but the incumbent still has scoped exceptions: ArticleMeta and blog explainers retain Unicode/emoji glyphs, PostReactions uses a 1.28× reaction-pop overshoot, TechComparison uses a 1.05× selected-control scale, and body/legacy card/newsletter surfaces retain background gradients. Treat these as content- or component-specific legacy treatments, not defaults for new UI.",
+    "overview": "PiyushMehta.com is a public engineering record, not a generic personal brand template. The visual system treats every page as a legible ledger of decisions: cool ink surfaces hold the work, warm amber marks the signal, and typography carries the authority. The result is technical and editorial without pretending to be a dashboard. It should feel useful to an engineering leader evaluating judgment, a reader staying with a difficult idea, or a collaborator looking for proof.\n\nThe incumbent world is compact at the navigation level and spacious at section boundaries. It uses a dark-first palette with a warm paper/light theme, semantic tokens shared across both, and small tonal shifts rather than decorative noise. Motion is brief and state-oriented: opacity and transforms reveal content, controls respond with restrained translation, and reduced motion preserves hierarchy without blocking access. The authored direction generally avoids gradient text, emoji-led visual language, thick colored side rails, and bounce-heavy feedback, but the incumbent still has scoped exceptions: ArticleMeta and blog explainers retain Unicode/emoji glyphs, PostReactions uses a 1.28× reaction-pop overshoot, TechComparison uses a 1.05× selected-control scale, and body/legacy card surfaces retain background gradients. Treat these as content- or component-specific legacy treatments, not defaults for new UI.",
     "keyCharacteristics": [
       "Evidence-first editorial hierarchy",
       "Cool ink surfaces with a rare amber signal",
@@ -265,7 +265,7 @@
     ],
     "donts": [
       "Don't invent testimonials, clients, metrics, credentials, or outcomes to fill visual space.",
-      "Don't use gradient text as decoration. Background gradients remain in the body wash, legacy cards, newsletter shell, reaction sheen, and some content surfaces; they are scoped exceptions, not a general component recipe.",
+      "Don't use gradient text as decoration. Background gradients remain in the body wash, legacy cards, form shells, reaction sheen, and some content surfaces; they are scoped exceptions, not a general component recipe.",
       "Don't make emoji or Unicode glyphs the default icon system. ArticleMeta share actions and blog explainers retain legacy/content-specific glyphs (including quiz feedback and TechComparison logos); new interface icons should use authored SVG.",
       "Don't use interaction overshoot as a general feedback pattern. PostReactions' 1.28× icon pop and TechComparison's 1.05× selected scale are incumbent exceptions; ordinary controls should use restrained translation or color change.",
       "Don't animate width, height, or other layout properties when a transform can express the same state.",

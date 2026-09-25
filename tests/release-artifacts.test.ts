@@ -28,9 +28,14 @@ function makeFixture(): string {
     'pagefind/pagefind-entry.json',
     'pagefind/pagefind-ui.js',
     'pagefind/pagefind-ui.css',
+    'resume.pdf',
   ]) {
-    writeFileSync(join(client, file), 'fixture');
+    writeFileSync(join(client, file), file === 'resume.pdf' ? '%PDF-fixture' : 'fixture');
   }
+  writeFileSync(
+    join(client, '_redirects'),
+    ['/newsletter /blog 301', '/newsletter/ /blog/ 301', '/og/newsletter.png /og/blog.png 301'].join('\n'),
+  );
   writeFileSync(join(client, '_headers'), [
     '/*',
     '  Content-Security-Policy: default-src \'self\';',
@@ -54,6 +59,9 @@ function makeFixture(): string {
     '  Cache-Control: public, max-age=3600, stale-while-revalidate=86400',
     '/og/*',
     '  Cache-Control: public, max-age=31536000, immutable',
+    '/resume.pdf',
+    '  Content-Type: application/pdf',
+    '  Cache-Control: public, max-age=3600, stale-while-revalidate=86400',
   ].join('\n'));
   writeFileSync(join(client, 'search', 'index.html'), '<html></html>');
   writeFileSync(join(server, 'entry.mjs'), 'export default {};');
@@ -105,11 +113,25 @@ describe('verifyRelease', () => {
   it('rejects missing search output and server files in the client directory', () => {
     const root = makeFixture();
     rmSync(join(root, 'dist', 'client', 'pagefind', 'pagefind-entry.json'));
+    rmSync(join(root, 'dist', 'client', 'resume.pdf'));
     writeFileSync(join(root, 'dist', 'client', 'entry.mjs'), 'leak');
 
     const result = verifyRelease(root);
     assert.equal(result.ok, false);
     assert.ok(result.errors.some((error) => error.includes('pagefind-entry.json')));
+    assert.ok(result.errors.some((error) => error.includes('resume.pdf')));
     assert.ok(result.errors.some((error) => error.includes('Server-only output leaked')));
+  });
+
+  it('rejects retired newsletter artifacts and sitemap entries', () => {
+    const root = makeFixture();
+    mkdirSync(join(root, 'dist', 'client', 'newsletter'), { recursive: true });
+    writeFileSync(join(root, 'dist', 'client', 'newsletter', 'index.html'), 'retired');
+    writeFileSync(join(root, 'dist', 'client', 'sitemap.xml'), '<urlset><loc>/newsletter</loc></urlset>');
+
+    const result = verifyRelease(root);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((error) => error.includes('newsletter/index.html')));
+    assert.ok(result.errors.some((error) => error.includes('sitemap.xml')));
   });
 });

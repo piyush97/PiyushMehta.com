@@ -91,54 +91,6 @@ test.describe('astro v6 migration smoke', () => {
     await expect(readLink).toHaveAttribute('aria-label', /Read “.+”/);
     await expect(readLink).toHaveCSS('min-height', '44px');
   });
-  test('newsletter forms expose unique labelled email fields', async ({ page }) => {
-    await page.goto('/newsletter/', { waitUntil: 'domcontentloaded' });
-
-    const emailIds = await page.locator('input[type="email"]').evaluateAll((inputs) =>
-      inputs.map((input) => input.id),
-    );
-
-    expect(emailIds).toHaveLength(2);
-    expect(new Set(emailIds).size).toBe(emailIds.length);
-    for (const id of emailIds) {
-      expect(id).toBeTruthy();
-      await expect(page.locator(`label[for="${id}"]`)).toHaveCount(1);
-    }
-
-    const consentIds = await page.locator('input[name="consent"]').evaluateAll((inputs) =>
-      inputs.map((input) => input.id),
-    );
-    expect(consentIds).toHaveLength(2);
-    expect(new Set(consentIds).size).toBe(consentIds.length);
-    for (const id of consentIds) {
-      expect(id).toBeTruthy();
-      await expect(page.locator(`label[for="${id}"]`)).toHaveCount(1);
-    }
-  });
-  test('newsletter requires explicit consent before sending', async ({ page }) => {
-    let payload: Record<string, unknown> | undefined;
-    await page.route('**/api/newsletter', async (route) => {
-      payload = route.request().postDataJSON() as Record<string, unknown>;
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ success: true, message: 'Your subscription is recorded.' }),
-      });
-    });
-
-    await page.goto('/newsletter/', { waitUntil: 'networkidle' });
-    const form = page.locator('form').first();
-    await form.locator('input[type="email"]').fill('reader@example.com');
-    await form.getByRole('button', { name: 'Subscribe' }).click();
-    await expect(page.getByRole('alert').first()).toContainText('confirm');
-    expect(payload).toBeUndefined();
-
-    await form.locator('input[name="consent"]').check();
-    await form.getByRole('button', { name: 'Subscribe' }).click();
-    await expect.poll(() => payload?.consent).toBe(true);
-    await expect(page.getByText("You're in. Your subscription is recorded.")).toBeVisible();
-  });
-
   test('reactions reject unknown post ids before Redis access', async ({ request }) => {
     const response = await request.get('/api/reactions?postId=not-a-published-post');
     expect(response.status()).toBe(404);

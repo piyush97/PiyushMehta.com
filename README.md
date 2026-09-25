@@ -25,7 +25,7 @@ Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, depl
 | Language | TypeScript 7 |
 | Content | MDX — blog posts with component support |
 | Search | [Pagefind](https://pagefind.app/) — static full-text search |
-| Email | [Resend](https://resend.com/) — contact form + newsletter (audience + welcome email) |
+| Email | [Resend](https://resend.com/) — contact form delivery |
 | Rate limiting | [Upstash Redis](https://upstash.com/) — serverless Redis |
 | Monitoring | [Sentry](https://sentry.io/) — errors + performance |
 | Analytics | Cloudflare Workers Observability |
@@ -67,8 +67,7 @@ Key variables:
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `RESEND_API_KEY` | Production | Contact form + newsletter delivery |
-| `RESEND_SEGMENT_ID` | Production | Resend newsletter audience |
+| `RESEND_API_KEY` | Production | Contact form delivery |
 | `UPSTASH_REDIS_REST_URL` | Production for forms/reactions | Rate limiting and reaction counters |
 | `UPSTASH_REDIS_REST_TOKEN` | Production for forms/reactions | Rate limiting and reaction counters |
 | `PUBLIC_SENTRY_DSN` | Optional | Client error tracking |
@@ -121,7 +120,7 @@ bun run test-seo          # Validate SEO meta files
     │   └── Layout.astro     # Root layout with SEO, skip link
     ├── middleware/          # Request middleware
     ├── pages/
-    │   ├── api/             # Runtime API routes (contact, newsletter, reactions)
+    │   ├── api/             # Runtime API routes (contact, reactions)
     │   ├── blog/            # Blog listing + post pages
     │   ├── index.astro      # Homepage
     │   ├── about.astro
@@ -158,8 +157,8 @@ image:
 - **⌘K Command palette** — global search and navigation
 - **Full-text search** — Pagefind static index, required when the search route ships
 - **Build-time OG images** — per-post generated via Satori + `@resvg/resvg-js`
+- **Résumé PDF** — a versioned source asset copied into the static release before Astro builds
 - **Contact form** — Resend with origin validation and Upstash rate limiting
-- **Newsletter** — Resend audience and welcome email with Upstash rate limiting
 - **Skip link** — keyboard accessibility, WCAG 2 AA
 - **Structured data** — JSON-LD Person, Article, WebSite, BreadcrumbList schemas
 - **Sitemap + RSS** — native `@astrojs/rss` and `@astrojs/sitemap` endpoints
@@ -173,7 +172,7 @@ Build command: `bun run build`
 
 Output: `dist/client` static assets plus `dist/server` Worker modules
 
-**Release contract:** the target deployment uses the generated `dist/server/wrangler.json` and serves only `dist/client` as public assets. The package deploy command and README target that contract; CI and Cloudflare Workers Builds settings still need verification. Do not deploy the root `./dist` directory as a public asset root.
+**Release contract:** the target deployment uses the generated `dist/server/wrangler.json` and serves only `dist/client` as public assets. The versioned résumé asset is copied before Astro builds, so `dist/client/resume.pdf` is present without requiring Chromium in Workers Builds. The package deploy command and README target that contract; CI and Cloudflare Workers Builds settings still need verification. Do not deploy the root `./dist` directory as a public asset root.
 
 The production configuration uses only Workers Free products: Static Assets, lightweight API routes, custom domains, and included observability. Social cards and images are generated at build time rather than using Cloudflare Images or runtime rasterization.
 

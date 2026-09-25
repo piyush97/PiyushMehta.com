@@ -18,8 +18,6 @@ image:
 draft: false
 ---
 
-import NewsletterSignup from '../../../components/NewsletterSignup.tsx';
-
 This site ran on Vercel for years without much drama. Then I moved it to Cloudflare Workers, and for about a day, every link I shared to a new post rendered as a blank blue rectangle. Not broken in an obvious way: the request came back `200 OK`, the content type was `image/png`, the dimensions were exactly right. There was just nothing on it. No title, no text, nothing.
 
 That single bug turned into the best possible tour of what actually changes when you move a site off a Node.js serverless platform and onto a V8 isolate. This is the record of what moved, what broke, and why.
@@ -120,8 +118,6 @@ Second, I'd write the build-time coverage check first, not as a response to a pr
 
 If you're mid-migration on something similar, this is the pattern I'd watch for: it's rarely the framework config that bites you. It's the dependency you forgot was doing something clever behind a "just works" abstraction.
 
-<NewsletterSignup client:visible variant="card" source="cloudflare-migration-mid" />
-
 ## Sources
 
 - [Astro's Cloudflare adapter docs](https://docs.astro.build/en/guides/integrations-guide/cloudflare/): adapter options, `imageService`, `prerenderEnvironment`
@@ -129,5 +125,3 @@ If you're mid-migration on something similar, this is the pattern I'd watch for:
 - [Upstash Redis for Cloudflare Workers](https://upstash.com/docs/redis/sdks/ts/cloudflare): the `@upstash/redis/cloudflare` entrypoint
 - [`resvg-js` on GitHub](https://github.com/thx/resvg-js): native binding architecture
 - This repo's own history: [#267](https://github.com/piyush97/PiyushMehta.com/pull/267) (the migration), [#266](https://github.com/piyush97/PiyushMehta.com/pull/266) (the font-path fix), [#268](https://github.com/piyush97/PiyushMehta.com/pull/268) (the manifest, cache-busting, and build gate)
-
-<NewsletterSignup client:visible variant="card" source="cloudflare-migration-cta" />
