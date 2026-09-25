@@ -16,8 +16,13 @@ tags:
 image:
   url: '/blog/context-management-agents/hero.svg'
   alt: 'AI coding agent context window visualization showing entropy and state drift'
+featuredImage: false
 draft: false
 ---
+
+import ContextDecay from '../../../components/blog/ContextDecay.astro';
+import ComparisonRecord from '../../../components/ComparisonRecord.astro';
+import RecordStack from '../../../components/RecordStack.astro';
 
 **84% of multi-step agent tasks fail when they exceed 15 consecutive loops.** That number should worry anyone who has watched a coding agent "work" for an hour before hallucinating an invalid state transition.
 
@@ -29,25 +34,83 @@ This is the research I wish I had read before shipping my last agent pipeline.
 
 LLMs are probabilistic text predictors, not state machines. When a multi-step task exceeds context limits, agents experience **context window entropy** — the model's attention becomes diluted across accumulated intermediate chatter, and **state drift** — the agent's internal representation of the task diverges from reality.
 
+<ContextDecay />
+
 A September 2026 ACL findings paper (StateComp) formalizes this: agents continuously accumulate interaction history during long-horizon tasks, but existing context management relies on fixed windows or passive compression heuristics. The result is context explosion, semantic drift, and degraded reasoning precisely when you need it most.
 
 The practical symptom is familiar: an agent debugging a failure can't remember the original error trace because it got compressed too early, or it carries irrelevant history that masks the real failure signal.
+
+## Two Answers, Two Different Questions
+
+The 2026 work converges from two directions, and they are easier to apply when you keep them apart. CAT asks _what the context should contain_. StateComp asks _when it is safe to drop something_. Both train an imbalance-aware router, and both treat context maintenance as an explicit step rather than a background process.
+
+<ComparisonRecord
+  columns={[
+    { label: 'CAT', detail: 'Context as a Tool' },
+    { label: 'StateComp', detail: 'arXiv 2609.27298' },
+  ]}
+  rows={[
+    {
+      axis: 'Question it answers',
+      values: [
+        'What should the context workspace contain?',
+        'When is a past interaction safe to replace?',
+      ],
+    },
+    {
+      axis: 'Mechanism',
+      values: [
+        'A structured three-layer workspace maintained as a callable tool',
+        'KEEP and READY supervision built in two annotation stages',
+      ],
+    },
+    {
+      axis: 'Failure it prevents',
+      values: [
+        'Context explosion from unbounded accumulation',
+        'Premature compression that deletes still-needed information',
+      ],
+    },
+    {
+      axis: 'Reported result',
+      kind: 'metric',
+      values: ['57.6% on SWE-Bench Verified', '52.27% fewer tokens · 12.67× faster extraction'],
+    },
+  ]}
+  caption="The two are complementary: CAT fixes the shape of the context, StateComp fixes the timing of the edits. The figures come from different benchmarks and are not directly comparable."
+/>
 
 ## The CAT Framework
 
 Researchers at ACL 2026 proposed **CAT (Context as a Tool)** — a paradigm that elevates context maintenance to a callable tool integrated into the agent's decision-making process. Instead of background compression, CAT formalizes a structured context workspace with three layers:
 
-- **Stable task semantics** — the immutable goal and constraints
-- **Condensed long-term memory** — compressed summaries of completed work
-- **High-fidelity short-term interactions** — recent, detailed context for active reasoning
+<RecordStack
+  label="The three CAT context layers"
+  items={[
+    {
+      tag: 'immutable',
+      name: 'Stable task semantics',
+      detail: 'The immutable goal and constraints that hold for the entire run.',
+    },
+    {
+      tag: 'compressed',
+      name: 'Condensed long-term memory',
+      detail: 'Compressed summaries of completed work.',
+    },
+    {
+      tag: 'verbatim',
+      name: 'High-fidelity short-term interactions',
+      detail: 'Recent, detailed context for active reasoning.',
+    },
+  ]}
+  caption="Context management is not a background process — it is a first-class tool the agent calls when appropriate."
+/>
 
 The framework trains an **imbalance-aware router** on hidden representations from a frozen language model. Adjacent READY interactions are grouped into continuous spans and replaced with compact summaries during execution. On SWE-Bench Verified, the resulting SWE-Compressor reached **57.6% solved rate**, significantly outperforming ReAct-based agents and static compression baselines while maintaining stable long-horizon reasoning under a bounded context budget.
 
-The key insight: context management is not a background process — it is a first-class tool the agent calls when appropriate.
-
 ## StateComp: Compression with State Awareness
 
-Complementing CAT, **StateComp** (arxiv 2609.27298, September 2026) takes a different angle: _when_ is a past interaction safe to replace? Premature compression removes information still needed for future actions; overly conservative retention creates massive context overhead.
+StateComp takes a different angle: _when_ is a past interaction safe to replace? Premature compression removes information still needed for future actions; overly conservative retention creates massive context overhead.
 
 StateComp constructs KEEP and READY supervision through a two-stage annotation procedure and trains an imbalance-aware router. Experiments show it reduces total agent and summarization tokens by **52.27%** while maintaining task performance, and achieves a **12.67× speedup** in representation extraction.
 
@@ -55,11 +118,26 @@ StateComp constructs KEEP and READY supervision through a two-stage annotation p
 
 The 2026 Anthropic Agentic Coding Trends Report identifies multi-agent coordination and human-AI collaboration patterns as the top foundation trends for the year. But the engineering reality is simpler: before you orchestrate agent teams, you need each individual agent to maintain coherence over long tasks.
 
-**Three patterns that work now:**
-
-1. **Bounded context budgets** — Set hard token limits per agent session. When you hit the budget, compress and checkpoint, don't continue blindly.
-2. **Milestone-based compression** — Trigger compression at logical boundaries (completed sub-task, passing test suite, merged PR), not on a timer.
-3. **Deterministic harnesses** — Wrap LLM outputs in execution harnesses with machine-readable schemas. Agents hallucinate state transitions; deterministic wrappers catch them before they propagate.
+<RecordStack
+  label="Three patterns that work now"
+  items={[
+    {
+      name: 'Bounded context budgets',
+      detail:
+        'Set hard token limits per agent session. When you hit the budget, compress and checkpoint instead of continuing blindly.',
+    },
+    {
+      name: 'Milestone-based compression',
+      detail:
+        'Trigger compression at logical boundaries — a completed sub-task, a passing test suite, a merged PR — not on a timer.',
+    },
+    {
+      name: 'Deterministic harnesses',
+      detail:
+        'Wrap LLM output in execution harnesses with machine-readable schemas. Agents hallucinate state transitions; deterministic wrappers catch them before they propagate.',
+    },
+  ]}
+/>
 
 ## The Uncomfortable Tradeoff
 

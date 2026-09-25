@@ -32,8 +32,10 @@ const postBody = post.body ?? '';
 const { Content, headings } = await render(post);
 const tableOfContentsHeadings = headings.filter(({ depth }) => depth === 2 || depth === 3);
 
-const { title, description, date, updatedDate, author, tags, image, ogTemplate, ogTheme } = post.data;
+const { title, description, date, updatedDate, author, tags, image, ogTemplate, ogTheme, featuredImage } =
+  post.data;
 const typedTags: string[] = tags ?? [];
+const showHeroImage = featuredImage !== false;
 
 const publishedPosts = await getCollection('blog', ({ data }) => !data.draft);
 const [nextBestRecommendation] = selectBlogRecommendations(publishedPosts, {
@@ -189,8 +191,10 @@ const articleSchema = {
 
         <!-- Featured Image -->
         {
-          image && image.url && (
-            <figure class="blog-post-hero-image">
+          showHeroImage &&
+            image &&
+            image.url && (
+              <figure class="blog-post-hero-image">
               <OptimizedImage
                 src={image.url}
                 alt={image.alt || title}

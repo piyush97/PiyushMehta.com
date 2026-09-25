@@ -22,6 +22,10 @@ const blog = defineCollection({
       })
       .optional(),
     banner: z.string().optional(),
+    // `image` is the social/OG asset and always ships. `featuredImage` controls
+    // whether that asset is also rendered as a hero card above the prose; some
+    // notes carry their evidence as inline figures instead.
+    featuredImage: z.boolean().default(true),
     ogTemplate: z
       .enum(['default', 'minimal', 'tech', 'blog', 'modern', 'professional'])
       .default('default')

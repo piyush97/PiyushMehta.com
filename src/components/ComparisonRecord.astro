@@ -1,0 +1,244 @@
+---
+/**
+ * A comparison record for technical writing: a small set of named studies or
+ * approaches set against shared axes.
+ *
+ * Rendered as a real table so it stays legible to assistive tech and to readers
+ * who scan by row. Cells marked `kind: 'metric'` are measurements and take the
+ * monospace treatment reserved for measured artifacts.
+ */
+
+interface Column {
+  label: string;
+  detail?: string;
+}
+
+interface Row {
+  axis: string;
+  values: readonly string[];
+  kind?: 'text' | 'metric';
+}
+
+interface Props {
+  columns: readonly Column[];
+  rows: readonly Row[];
+  caption?: string;
+  class?: string;
+}
+
+const { columns, rows, caption, class: className = '' } = Astro.props;
+---
+
+<figure class:list={['comparison-record', className]}>
+  <div class="comparison-record__scroll" tabindex="0" role="region" aria-label={caption ?? 'Comparison'}>
+    <table role="table">
+      <thead role="rowgroup">
+        <tr role="row">
+          <th role="columnheader" scope="col" class="comparison-record__corner">
+            <span class="comparison-record__vh">Axis</span>
+          </th>
+          {
+            columns.map((column) => (
+              <th role="columnheader" scope="col">
+                <span class="comparison-record__col-label">{column.label}</span>
+                {column.detail && <span class="comparison-record__col-detail">{column.detail}</span>}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody role="rowgroup">
+        {
+          rows.map((row) => (
+            <tr role="row">
+              <th role="rowheader" scope="row">
+                {row.axis}
+              </th>
+              {row.values.map((value, index) => (
+                <td
+                  role="cell"
+                  data-column={columns[index]?.label}
+                  class:list={{ 'is-metric': row.kind === 'metric' }}
+                >
+                  {value}
+                </td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .comparison-record {
+    margin: 2.5rem 0;
+  }
+
+  .comparison-record__vh {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .comparison-record__scroll {
+    border: 1px solid var(--color-card-border);
+    border-radius: 12px;
+    background: var(--color-surface-raised);
+    overflow-x: auto;
+  }
+
+  .comparison-record__scroll:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Nested under the root so these resets outrank the article page's
+     `table { display: block }` and `th { accent wash }` prose rules. */
+  .comparison-record table {
+    display: table;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    border-collapse: collapse;
+    border-radius: 0;
+    border-spacing: 0;
+    overflow: visible;
+    background: none;
+    font-size: 0.94rem;
+  }
+
+  .comparison-record table th,
+  .comparison-record table td {
+    min-width: 0;
+    padding: 0.85rem 1rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-card-border);
+  }
+
+  .comparison-record table thead th {
+    background: none;
+    font-weight: inherit;
+  }
+
+  .comparison-record table tbody tr:last-child th,
+  .comparison-record table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .comparison-record__col-label {
+    display: block;
+    font-weight: 800;
+    font-size: 0.98rem;
+    color: var(--color-text-primary);
+  }
+
+  .comparison-record__col-detail {
+    display: block;
+    margin-top: 0.15rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .comparison-record table tbody th {
+    width: 26%;
+    background: none;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .comparison-record table td {
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  .comparison-record table td.is-metric {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--color-accent);
+    overflow-wrap: break-word;
+  }
+
+  figcaption {
+    margin-top: 0.75rem;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 640px) {
+    .comparison-record__scroll {
+      border: 0;
+      background: none;
+      overflow-x: visible;
+    }
+
+    .comparison-record table,
+    .comparison-record table tbody,
+    .comparison-record table tr,
+    .comparison-record table th,
+    .comparison-record table td {
+      display: block;
+      width: 100%;
+    }
+
+    .comparison-record table thead {
+      display: none;
+    }
+
+    .comparison-record table tbody tr {
+      border: 1px solid var(--color-card-border);
+      border-radius: 8px;
+      background: var(--color-surface-raised);
+      padding: 0.35rem 0.9rem 0.9rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .comparison-record table tbody tr:last-child {
+      margin-bottom: 0;
+    }
+
+    .comparison-record table tbody th {
+      width: auto;
+      padding: 0.75rem 0 0.35rem;
+      border-bottom: 0;
+    }
+
+    .comparison-record table td {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--color-card-border);
+    }
+
+    .comparison-record table td:last-child {
+      border-bottom: 0;
+    }
+
+    .comparison-record table td::before {
+      content: attr(data-column);
+      display: block;
+      margin-bottom: 0.1rem;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+  }
+</style>
