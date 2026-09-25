@@ -32,8 +32,10 @@ const postBody = post.body ?? '';
 const { Content, headings } = await render(post);
 const tableOfContentsHeadings = headings.filter(({ depth }) => depth === 2 || depth === 3);
 
-const { title, description, date, updatedDate, author, tags, image, ogTemplate, ogTheme } = post.data;
+const { title, description, date, updatedDate, author, tags, image, ogTemplate, ogTheme, featuredImage } =
+  post.data;
 const typedTags: string[] = tags ?? [];
+const showHeroImage = featuredImage !== false;
 
 const publishedPosts = await getCollection('blog', ({ data }) => !data.draft);
 const [nextBestRecommendation] = selectBlogRecommendations(publishedPosts, {
@@ -189,8 +191,10 @@ const articleSchema = {
 
         <!-- Featured Image -->
         {
-          image && image.url && (
-            <figure class="blog-post-hero-image">
+          showHeroImage &&
+            image &&
+            image.url && (
+              <figure class="blog-post-hero-image">
               <OptimizedImage
                 src={image.url}
                 alt={image.alt || title}
@@ -470,23 +474,57 @@ const articleSchema = {
   }
 
   @media (min-width: 1024px) {
+    /* Shared reading-field metrics. Defined on the shell so the prose column and
+       the closing field below it resolve the same left edge and measure.
+       Deliberately in rem: `ch` in a grid track resolves against the container's
+       font, not the prose font, which silently pinned the column ~130px narrow. */
+    .blog-post-shell {
+      --article-rail: 13rem;
+      --article-gap: clamp(1.5rem, 3vw, 3rem);
+      --article-pad: clamp(1.25rem, 2.5vw, 2.25rem);
+      --article-measure: 49rem;
+      --article-evidence: 56rem;
+      --article-offset: 0rem;
+    }
+
+    /* Only notes that actually render a rail get the indented reading field.
+       A note with no headings keeps the centred, full-width treatment. */
+    .blog-post-shell:has(.article-reading-layout--with-toc) {
+      --article-offset: calc(var(--article-rail) + var(--article-gap) + var(--article-pad));
+    }
+
     .article-reading-layout--with-toc {
       display: grid;
-      grid-template-columns: minmax(0, 74ch) minmax(13rem, 16rem);
-      justify-content: center;
+      grid-template-columns: var(--article-rail) minmax(0, 1fr);
+      justify-content: start;
       align-items: start;
-      gap: 2.5rem;
+      gap: var(--article-gap);
     }
 
     .article-reading-layout--with-toc :global(.article-toc-root) {
-      grid-column: 2;
+      grid-column: 1;
       grid-row: 1;
       align-self: stretch;
     }
 
     .article-reading-layout--with-toc .blog-post-content {
-      grid-column: 1;
+      grid-column: 2;
       grid-row: 1;
+      width: 100%;
+      max-width: none;
+      padding-left: var(--article-pad);
+      border-left: 1px solid var(--color-card-border);
+    }
+
+    /* Prose holds a readable measure; evidence is allowed to break out past it
+       and use the width the narrow column was leaving unused.
+       `:global()` is required — MDX elements carry no page scope attribute. */
+    .blog-post-content :global(:is(p, ul, ol, h2, h3, h4, blockquote, hr)) {
+      max-width: var(--article-measure);
+    }
+
+    .blog-post-content :global(:is(figure, pre, table)) {
+      max-width: var(--article-evidence);
     }
   }
 
@@ -919,26 +957,6 @@ const articleSchema = {
     text-align: left;
   }
 
-  @media (min-width: 1024px) {
-    .article-reading-layout--with-toc {
-      grid-template-columns: minmax(10rem, 13rem) minmax(0, 74ch);
-      justify-content: center;
-      gap: clamp(1.5rem, 3vw, 3rem);
-    }
-
-    .article-reading-layout--with-toc :global(.article-toc-root) {
-      grid-column: 1;
-      grid-row: 1;
-    }
-
-    .article-reading-layout--with-toc .blog-post-content {
-      grid-column: 2;
-      grid-row: 1;
-      padding-left: clamp(1.25rem, 2.5vw, 2.25rem);
-      border-left: 1px solid var(--color-card-border);
-    }
-  }
-
   .blog-post-content {
     width: min(100%, 74ch);
     font-size: clamp(1.08rem, 0.3vw + 1rem, 1.2rem);
@@ -1048,6 +1066,32 @@ const articleSchema = {
   .blog-post-after :global(.related-posts-section) {
     width: min(100%, 74ch);
     margin-inline: auto;
+  }
+
+  @media (min-width: 1024px) {
+    /* Align the closing field with the prose column rather than re-centring it
+       in the shell, which left it ~120px left of the article body. Placed after
+       the rules above so it wins on source order, and scoped with :has() so
+       notes without a rail keep the centred treatment. */
+    .blog-post-shell:has(.article-reading-layout--with-toc) .blog-post-footer,
+    .blog-post-shell:has(.article-reading-layout--with-toc)
+      .blog-post-after
+      :global(.next-best-read),
+    .blog-post-shell:has(.article-reading-layout--with-toc)
+      .blog-post-after
+      :global(.post-reactions),
+    .blog-post-shell:has(.article-reading-layout--with-toc)
+      .blog-post-after
+      :global(.article-career),
+    .blog-post-shell:has(.article-reading-layout--with-toc)
+      .blog-post-after
+      :global(.related-posts-section),
+    .blog-post-shell:has(.article-reading-layout--with-toc) .article-continuation__header {
+      width: auto;
+      max-width: var(--article-evidence);
+      margin-inline: 0;
+      margin-left: var(--article-offset);
+    }
   }
 
   @media (max-width: 760px) {

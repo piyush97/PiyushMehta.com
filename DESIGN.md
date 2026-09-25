@@ -207,6 +207,8 @@ The blog index uses readable article rows with metadata, title, description, tag
 
 Public routes share `EditorialHeader`, `SectionHeader`, `ArticleIndexRow`, and `EvidenceMetricRail` primitives. They establish a route thesis, an evidence rhythm, and a clear next action without forcing every page into the same card grid. The primitives inherit the Evidence Ledger tokens and may vary their composition by visitor task.
 
+MDX articles can import evidence primitives directly: `RecordStack` for a short set of named items that prose would otherwise reduce to bold text, and `ComparisonRecord` for two or more approaches set against shared axes. Both are self-defending widgets — they reset the article page's prose list and table styling under their own root so the ledger grammar survives inside article prose. Article-specific diagrams live in `src/components/blog/` and are built from theme tokens rather than standalone SVG assets, so a figure reads correctly in both themes. A schematic figure must label itself as schematic; reserve plotted numbers for claims the source actually reports.
+
 ### Evidence Blocks
 Metric bands, case-study panels, risk matrices, and interactive explainers are signature evidence components. They may use color to encode status or compare values, but the encoded meaning must also be present in text, labels, or state attributes.
 

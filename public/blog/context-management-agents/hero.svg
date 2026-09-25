@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Why AI Coding Agents Fail at Long Tasks — 84% of multi-step agent tasks fail past 15 consecutive loops">
+  <rect width="1200" height="630" fill="#171a2f"/>
+
+  <g stroke="#343a5f" stroke-opacity="0.22">
+    <path d="M0 90H1200M0 180H1200M0 270H1200M0 360H1200M0 450H1200M0 540H1200"/>
+    <path d="M100 0V630M200 0V630M300 0V630M400 0V630M500 0V630M600 0V630M700 0V630M800 0V630M900 0V630M1000 0V630M1100 0V630"/>
+  </g>
+
+  <g font-family="Muli, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <text x="88" y="206" fill="#f6f7ff" font-size="58" font-weight="800">Why AI Coding Agents</text>
+    <text x="88" y="274" fill="#f6f7ff" font-size="58" font-weight="800">Fail at Long Tasks</text>
+    <text x="88" y="322" fill="#b4bad8" font-size="29" font-weight="600">(And How to Fix It)</text>
+  </g>
+
+  <path d="M88 366H636" stroke="#343a5f" stroke-width="1"/>
+
+  <text x="88" y="470" fill="#ffcc68" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="82" font-weight="700">84%</text>
+  <g font-family="Muli, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <text x="286" y="440" fill="#c8cbe8" font-size="25" font-weight="600">of multi-step agent tasks fail</text>
+    <text x="286" y="476" fill="#8f96ba" font-size="25" font-weight="600">past 15 consecutive loops</text>
+  </g>
+
+  <g>
+    <g stroke="#343a5f" stroke-opacity="0.5">
+      <path d="M760 190H1100M760 265H1100M760 340H1100M760 415H1100"/>
+    </g>
+    <path d="M760 460H1100" stroke="#343a5f" stroke-width="1"/>
+    <path d="M760 440C850 436 900 414 960 380S1040 320 1100 282" fill="none" stroke="#ffcc68" stroke-width="3" stroke-linecap="round"/>
+    <path d="M760 206C850 214 900 242 960 278S1040 352 1100 408" fill="none" stroke="#8f96ba" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>
+    <path d="M1018 172V468" stroke="#ffcc68" stroke-width="1.5" stroke-dasharray="4 5" stroke-opacity="0.8"/>
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15">
+      <text x="1100" y="268" fill="#ffcc68" text-anchor="end">context pressure</text>
+      <text x="1100" y="432" fill="#8f96ba" text-anchor="end">task coherence</text>
+      <text x="1018" y="492" fill="#8f96ba" text-anchor="middle">loop 15</text>
+    </g>
+  </g>
+
+  <text x="88" y="566" fill="#8f96ba" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19" letter-spacing="1.5">PIYUSH MEHTA · FIELD NOTE</text>
+</svg>
