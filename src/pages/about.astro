@@ -38,6 +38,10 @@ const featuredStudies = caseStudies.slice(0, 3);
       <div slot="aside">
         <span>Working thesis</span>
         <strong>Good engineering makes future decisions easier.</strong>
+        <p>
+          That shows up in code, docs, tests, migration plans, and how clearly a team can talk about
+          tradeoffs under pressure.
+        </p>
         <ul>
           <li>Clear constraints</li>
           <li>Visible tradeoffs</li>
@@ -46,11 +50,13 @@ const featuredStudies = caseStudies.slice(0, 3);
       </div>
     </EditorialHeader>
 
-    <EvidenceMetricRail
-      class="metric-band"
-      metrics={portfolioMetrics}
-      label="Selected impact"
-    />
+    <div class="metric-band-frame">
+      <EvidenceMetricRail
+        class="metric-band"
+        metrics={portfolioMetrics}
+        label="Selected impact"
+      />
+    </div>
 
     <section class="page-section about-focus" data-about-section="focus">
       <SectionHeader
@@ -125,13 +131,13 @@ const featuredStudies = caseStudies.slice(0, 3);
 
 <style>
   .page-section,
-  .metric-band,
+  .metric-band-frame,
   .accent-cta {
     width: min(1120px, calc(100% - 2rem));
     margin-inline: auto;
   }
 
-  .metric-band {
+  .metric-band-frame {
     margin-top: 0.5rem;
   }
 
@@ -215,7 +221,7 @@ const featuredStudies = caseStudies.slice(0, 3);
   }
 
   .proof-record__meta span:last-child {
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     font-family: var(--font-mono);
     font-size: 0.68rem;
     font-weight: 600;
@@ -267,6 +273,7 @@ const featuredStudies = caseStudies.slice(0, 3);
   .accent-cta h2 {
     max-width: 12ch;
     margin: 0;
+    color: var(--color-darker);
     font-size: clamp(2.2rem, 4.5vw, 3.6rem);
     line-height: 1;
   }
@@ -330,7 +337,7 @@ const featuredStudies = caseStudies.slice(0, 3);
   }
 
   @media (max-width: 640px) {
-    .metric-band,
+    .metric-band-frame,
     .page-section,
     .accent-cta {
       width: min(100% - 1rem, 1120px);
@@ -344,6 +351,20 @@ const featuredStudies = caseStudies.slice(0, 3);
 
     .proof-record > a {
       grid-column: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .proof-record svg,
+    .writing-list svg {
+      transition: none;
+    }
+
+    .proof-record > a:hover svg,
+    .proof-record > a:focus-visible svg,
+    .writing-list a:hover svg,
+    .writing-list a:focus-visible svg {
+      transform: none;
     }
   }
 </style>

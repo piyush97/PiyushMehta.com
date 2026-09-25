@@ -68,8 +68,19 @@ const calculateReadingTime = (content: string) => {
               <div class="related-post-card__meta">
                 <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
                 <span>{readingTime} min read</span>
+                <span>by {post.data.author || 'Piyush Mehta'}</span>
               </div>
               <div class="related-post-card__body">
+                {post.data.image && (
+                  <div class="related-post-card__media">
+                    <img
+                      src={post.data.image.url}
+                      alt={post.data.image.alt || post.data.title}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                )}
                 <h3>
                   <a
                     href={postUrl}
@@ -84,7 +95,25 @@ const calculateReadingTime = (content: string) => {
                 )}
                 {tags.length > 0 && (
                   <div class="related-post-card__tags" aria-label="Article topics">
-                    {tags.slice(0, 3).map((tag: string) => <span>{tag}</span>)}
+                    {tags.slice(0, 3).map((tag: string) => {
+                      const isMatching = post.matchingTags.some(
+                        (matchingTag) => matchingTag.toLowerCase() === tag.toLowerCase()
+                      );
+                      return (
+                        <span
+                          class:list={[
+                            'related-post-card__tag',
+                            { 'related-post-card__tag--matching': isMatching },
+                          ]}
+                          aria-label={isMatching ? `${tag}, matching topic` : tag}
+                        >
+                          {tag}
+                        </span>
+                      );
+                    })}
+                    {tags.length > 3 && (
+                      <span class="related-post-card__more">+{tags.length - 3} more</span>
+                    )}
                   </div>
                 )}
               </div>
@@ -269,7 +298,7 @@ const calculateReadingTime = (content: string) => {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     font-family: var(--font-mono);
     font-size: 0.7rem;
     letter-spacing: 0.04em;
@@ -279,6 +308,19 @@ const calculateReadingTime = (content: string) => {
 
   .related-post-card__body {
     min-width: 0;
+  }
+
+  .related-post-card__media {
+    max-width: 24rem;
+    margin-bottom: 1rem;
+  }
+
+  .related-post-card__media img {
+    display: block;
+    width: 100%;
+    max-height: 12rem;
+    border: 1px solid var(--color-card-border);
+    object-fit: cover;
   }
 
   .related-post-card h3 {
@@ -315,11 +357,20 @@ const calculateReadingTime = (content: string) => {
 
   .related-post-card__tags span {
     border: 1px solid var(--color-card-border);
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     font-family: var(--font-mono);
     font-size: 0.66rem;
     line-height: 1.2;
     padding: 0.3rem 0.4rem;
+  }
+
+  .related-post-card__tag--matching {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .related-post-card__more {
+    border-color: transparent;
   }
 
   .related-post-card__action {
@@ -349,6 +400,20 @@ const calculateReadingTime = (content: string) => {
 
     .related-post-card__action {
       justify-self: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .related-posts-section__all svg,
+    .related-post-card__action svg {
+      transition: none;
+    }
+
+    .related-posts-section__all:hover svg,
+    .related-posts-section__all:focus-visible svg,
+    .related-post-card__action:hover svg,
+    .related-post-card__action:focus-visible svg {
+      transform: none;
     }
   }
 </style>

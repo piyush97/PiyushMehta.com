@@ -108,15 +108,33 @@ test.describe('blog intent reading paths', () => {
       await page.goto('/blog/', { waitUntil: 'networkidle' });
 
       // When: the reading paths are laid out.
-      const grid = page.locator('[data-reading-paths-grid]');
-      const links = grid.getByRole('link');
+      const index = page.locator('[data-reading-paths-index]');
+      const indexGrid = index.locator('ol');
+      const routes = page.locator('[data-reading-path]');
+      const links = index.getByRole('link');
 
-      // Then: the grid, targets, and page remain readable without horizontal overflow.
-      await expect(grid.locator('[data-reading-path]')).toHaveCount(3);
-      const templateColumns = await grid.evaluate(
+      // Then: the route index, targets, and page remain readable without horizontal overflow.
+      await expect(index.locator('[data-reading-path-index]')).toHaveCount(3);
+      await expect(routes).toHaveCount(3);
+      const templateColumns = await indexGrid.evaluate(
         (element) => getComputedStyle(element).gridTemplateColumns.split(' ').length
       );
       expect(templateColumns).toBe(viewport.columns);
+
+      const firstRoute = routes.first();
+      const routeColumns = await firstRoute.evaluate(
+        (element) => getComputedStyle(element).gridTemplateColumns.split(' ').length
+      );
+      const stepColumns = await firstRoute.locator('ol').evaluate(
+        (element) => getComputedStyle(element).gridTemplateColumns.split(' ').length
+      );
+      if (viewport.width === 1280) {
+        expect(routeColumns).toBe(2);
+        expect(stepColumns).toBe(3);
+      } else {
+        expect(routeColumns).toBe(1);
+        expect(stepColumns).toBe(viewport.width === 768 ? 3 : 1);
+      }
 
       for (const link of await links.all()) {
         const box = await link.boundingBox();
@@ -137,11 +155,11 @@ test.describe('blog intent reading paths', () => {
       );
       expect(hasHorizontalOverflow).toBe(false);
 
-      await grid.evaluate((element) => {
+      await index.evaluate((element) => {
         window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 80 });
       });
       await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-      await expect.poll(() => grid.evaluate((element) => element.getBoundingClientRect().top)).toBeLessThanOrEqual(81);
+      await expect.poll(() => index.evaluate((element) => element.getBoundingClientRect().top)).toBeLessThanOrEqual(81);
       await page.screenshot({ path: `.omo/evidence/task-1-${viewport.width}.png` });
     });
   }

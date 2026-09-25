@@ -117,7 +117,7 @@ const caseNumber = String(index + 1).padStart(2, '0');
   }
 
   .case-record__folio span:last-child {
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
   }
 
   .case-record__eyebrow {
@@ -162,7 +162,7 @@ const caseNumber = String(index + 1).padStart(2, '0');
 
   .case-record__meta dt,
   .case-record h3 {
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.1em;
@@ -323,6 +323,17 @@ const caseNumber = String(index + 1).padStart(2, '0');
     .case-record__columns,
     .case-record__footer {
       grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case-record__links svg {
+      transition: none;
+    }
+
+    .case-record__links a:hover svg,
+    .case-record__links a:focus-visible svg {
+      transform: none;
     }
   }
 </style>

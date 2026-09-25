@@ -28,6 +28,7 @@ const Heading = headingLevel;
 <style>
   .editorial-section-header {
     max-width: 44rem;
+    margin-bottom: 2rem;
   }
 
   .editorial-section-header > :global(h2),
@@ -35,6 +36,7 @@ const Heading = headingLevel;
     max-width: 15ch;
     margin: 0;
     color: var(--color-text-primary);
+    font-size: clamp(2.25rem, 4.5vw, 3.35rem);
     line-height: 1.05;
     text-wrap: balance;
   }
@@ -54,5 +56,16 @@ const Heading = headingLevel;
     color: var(--color-text-secondary);
     font-size: 1.05rem;
     line-height: 1.7;
+  }
+
+  @media (max-width: 640px) {
+    .editorial-section-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .editorial-section-header > :global(h2),
+    .editorial-section-header > :global(h3) {
+      font-size: clamp(2rem, 9vw, 2.8rem);
+    }
   }
 </style>

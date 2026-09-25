@@ -216,15 +216,38 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
       id="reading-paths-heading"
       description="Pick the problem in front of you, then move through three published field notes in order."
     />
-    <div class="reading-paths__grid reading-paths__ledger" data-reading-paths-grid>
-      {readingPaths.map((path) => (
+    <nav class="reading-paths__index" aria-label="Choose a reading path" data-reading-paths-index>
+      <ol>
+        {readingPaths.map((path, index) => (
+          <li>
+            <a href={`#path-${path.id}`} data-reading-path-index={path.id}>
+              <span class="reading-paths__index-number">{String(index + 1).padStart(2, '0')}</span>
+              <span class="reading-paths__index-copy">
+                <strong>{path.intent}</strong>
+                <span>{path.outcome}</span>
+                <small>
+                  {path.steps.length} steps · {path.steps.reduce((total, step) => total + step.readingTime, 0)} min
+                </small>
+              </span>
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="reading-paths__routes">
+      {readingPaths.map((path, pathIndex) => (
         <article
           class="reading-path-record"
+          id={`path-${path.id}`}
           data-reading-path={path.id}
           aria-labelledby={`reading-path-${path.id}`}
         >
           <header class="reading-path-record__header">
-            <p class="reading-path-record__label">Reading path</p>
+            <p class="reading-path-record__label">Route {String(pathIndex + 1).padStart(2, '0')}</p>
             <h3 id={`reading-path-${path.id}`}>{path.intent}</h3>
             <p>{path.outcome}</p>
           </header>
@@ -377,7 +400,7 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
   }
 
   .featured-record__meta span:last-child {
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
   }
 
   .featured-record h3 {
@@ -437,24 +460,109 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     transform: translateX(0.2rem);
   }
 
-  .reading-paths__ledger {
+  .reading-paths__index {
+    margin-top: 2.25rem;
+    border-block: 1px solid var(--color-card-border);
+  }
+
+  .reading-paths__index ol {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1px;
+    margin: 0;
+    padding: 0;
+    background: var(--color-card-border);
+    list-style: none;
+  }
+
+  .reading-paths__index li {
+    min-width: 0;
+    background: var(--color-bg);
+  }
+
+  .reading-paths__index a {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) 1rem;
+    gap: 0.8rem;
+    align-items: start;
+    min-height: 7.25rem;
+    padding: 1.1rem;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: background 180ms ease, color 180ms ease;
+  }
+
+  .reading-paths__index a:hover,
+  .reading-paths__index a:focus-visible {
+    background: color-mix(in srgb, var(--color-accent) 6%, var(--color-bg));
+    color: var(--color-accent);
+  }
+
+  .reading-paths__index-number {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+  }
+
+  .reading-paths__index-copy {
+    display: grid;
+    min-width: 0;
+    gap: 0.45rem;
+  }
+
+  .reading-paths__index-copy strong {
+    color: var(--color-text-primary);
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  .reading-paths__index-copy > span {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .reading-paths__index-copy small {
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.4;
+  }
+
+  .reading-paths__index svg {
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.1rem;
+    transition: transform var(--motion-fast, 150ms) ease;
+  }
+
+  .reading-paths__index a:hover svg,
+  .reading-paths__index a:focus-visible svg {
+    transform: translateX(0.2rem);
+  }
+
+  .reading-paths__routes {
+    display: grid;
+    gap: 1px;
+    margin-top: 3rem;
     border-block: 1px solid var(--color-card-border);
     background: var(--color-card-border);
   }
 
   .reading-path-record {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.3fr) minmax(0, 1fr);
     min-width: 0;
     background: var(--color-bg);
+    scroll-margin-top: 6rem;
   }
 
   .reading-path-record__header {
-    display: grid;
-    grid-template-columns: minmax(9rem, 0.26fr) minmax(0, 0.74fr);
-    gap: 1rem 2rem;
-    padding: 1.5rem 0;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border-right: 1px solid var(--color-card-border);
   }
 
   .reading-path-record__label,
@@ -467,20 +575,20 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
   }
 
   .reading-path-record__label {
-    margin: 0;
+    margin: 0 0 0.8rem;
   }
 
   .reading-path-record h3 {
+    max-width: 16ch;
     margin: 0;
     color: var(--color-text-primary);
     font-size: clamp(1.35rem, 2.5vw, 2rem);
     line-height: 1.1;
   }
 
-  .reading-path-record header > p:last-child {
-    grid-column: 2;
-    max-width: 48rem;
-    margin: 0;
+  .reading-path-record__header > p:last-child {
+    max-width: 38ch;
+    margin: 0.85rem 0 0;
     color: var(--color-text-secondary);
     line-height: 1.65;
   }
@@ -491,14 +599,13 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     gap: 1px;
     margin: 0;
     padding: 0;
-    border-top: 1px solid var(--color-card-border);
     background: var(--color-card-border);
     list-style: none;
   }
 
   .reading-path-record li {
     min-width: 0;
-    padding: 1.25rem;
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
     background: var(--color-bg);
   }
 
@@ -510,7 +617,7 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
   }
 
   .reading-path-step__label span {
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     font-family: var(--font-mono);
   }
 
@@ -548,7 +655,7 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
 
   .reading-path-step__meta span {
     border: 1px solid var(--color-card-border);
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     font-family: var(--font-mono);
     font-size: 0.68rem;
     line-height: 1.2;
@@ -565,12 +672,17 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
       grid-row: auto;
     }
 
-    .reading-paths__ledger {
+    .reading-paths__index ol {
       grid-template-columns: 1fr;
     }
 
-    .reading-path-record ol {
+    .reading-path-record {
       grid-template-columns: 1fr;
+    }
+
+    .reading-path-record__header {
+      border-right: 0;
+      border-bottom: 1px solid var(--color-card-border);
     }
   }
 
@@ -589,12 +701,26 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
       grid-column: auto;
     }
 
-    .reading-path-record__header {
-      grid-template-columns: 1fr;
+    .reading-paths__routes {
+      margin-top: 2rem;
     }
 
-    .reading-path-record header > p:last-child {
-      grid-column: auto;
+    .reading-path-record ol {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reading-paths__index a,
+    .reading-paths__index svg,
+    .reading-path-step__label,
+    .reading-path-record h4 a {
+      transition: none;
+    }
+
+    .reading-paths__index a:hover svg,
+    .reading-paths__index a:focus-visible svg {
+      transform: none;
     }
   }
 </style>

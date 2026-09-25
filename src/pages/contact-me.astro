@@ -205,4 +205,15 @@ export const prerender = true;
       width: min(100% - 1rem, 1120px);
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .channel-record svg {
+      transition: none;
+    }
+
+    .channel-record a:hover svg,
+    .channel-record a:focus-visible svg {
+      transform: none;
+    }
+  }
 </style>

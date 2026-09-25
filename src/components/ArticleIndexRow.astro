@@ -76,7 +76,7 @@ const formatDate = (dateString: string) =>
     align-items: flex-start;
     justify-content: flex-start;
     gap: 0.45rem;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     font-family: var(--font-mono);
     font-size: 0.72rem;
     letter-spacing: 0.04em;
@@ -175,6 +175,18 @@ const formatDate = (dateString: string) =>
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editorial-article-row,
+    .editorial-article-row__footer svg {
+      transition: none;
+    }
+
+    .editorial-article-row__footer > a:hover svg,
+    .editorial-article-row__footer > a:focus-visible svg {
+      transform: none;
     }
   }
 </style>

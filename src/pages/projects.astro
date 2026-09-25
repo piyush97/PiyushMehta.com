@@ -28,8 +28,8 @@ export const prerender = true;
   >
     <div slot="aside">
       <span>{caseStudies.length} case records</span>
-      <span>Problem → decision → evidence</span>
-      <strong>Read the work in the order it happened.</strong>
+      <span>Problem → approach → outcomes</span>
+      <strong>Read the work as a sequence of decisions.</strong>
     </div>
   </EditorialHeader>
 
@@ -127,7 +127,7 @@ export const prerender = true;
 
   .case-index__number,
   .case-index__timeframe {
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     font-family: var(--font-mono);
     font-size: 0.72rem;
     letter-spacing: 0.06em;
@@ -214,6 +214,18 @@ export const prerender = true;
     .case-study-list,
     .work-footer-cta {
       width: min(100% - 1rem, 1120px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case-index__nav a,
+    .case-index__nav svg {
+      transition: none;
+    }
+
+    .case-index__nav a:hover svg,
+    .case-index__nav a:focus-visible svg {
+      transform: none;
     }
   }
 </style>
