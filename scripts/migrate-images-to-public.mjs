@@ -112,5 +112,8 @@ async function migrateImages() {
   console.log('\n💡 Images are now served from the public directory and should load correctly!');
 }
 
-// Run the migration
-migrateImages().catch(console.error);
+// Run the migration. A migration failure must fail the release build.
+migrateImages().catch((error) => {
+  console.error('Image migration failed:', error);
+  process.exitCode = 1;
+});

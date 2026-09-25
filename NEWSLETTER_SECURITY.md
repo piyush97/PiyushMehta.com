@@ -1,6 +1,12 @@
 # Newsletter API Security Documentation
 
-This document describes the comprehensive security measures implemented in the newsletter subscription API.
+> **Historical design document — verify against current source before applying it.**
+> The active newsletter path uses Resend, Upstash Redis, explicit origin/consent checks,
+> bounded request parsing, and provider timeouts. It does not use the database, ioredis,
+> CAPTCHA, or blocking features described below. See `docs/architecture/system-architecture.md`
+> and `src/pages/api/newsletter.ts` for the current contract.
+
+The remainder of this file records an earlier security design and is retained for migration history.
 
 ## 🔐 Security Features Overview
 

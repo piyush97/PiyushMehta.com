@@ -225,7 +225,10 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
     private async fetchGlobalCounts() {
       try {
         const res = await fetch(`/api/reactions?postId=${encodeURIComponent(this.postId)}`);
-        if (!res.ok) return;
+        if (!res.ok) {
+          await res.arrayBuffer();
+          return;
+        }
         const data: Record<string, number> = await res.json();
         for (const [reaction, count] of Object.entries(data)) {
           // Don't overwrite reactions the user has already clicked — their
@@ -255,13 +258,21 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
           body: JSON.stringify({ postId: this.postId, reaction, action }),
           signal: controller.signal,
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          await res.arrayBuffer();
+          this.pendingReactions.delete(reaction);
+          await this.fetchGlobalCounts();
+          this.showFeedback('Reaction could not be saved. Counts were refreshed.');
+          return;
+        }
         const { count }: { count: number } = await res.json();
         this.reactionCounts.set(reaction, count);
         this.updateUI();
       } catch (e) {
         if ((e as Error)?.name !== 'AbortError') {
-          // optimistic update already applied, ignore other network errors
+          this.pendingReactions.delete(reaction);
+          await this.fetchGlobalCounts();
+          this.showFeedback('Reaction could not be synced. Counts were refreshed.');
         }
       } finally {
         this.pendingReactions.delete(reaction);

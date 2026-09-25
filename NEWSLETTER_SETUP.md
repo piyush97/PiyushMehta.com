@@ -1,6 +1,12 @@
 # Newsletter Integration Setup
 
-This project includes a robust newsletter subscription system with Substack integration and database fallback.
+> **Historical document — do not provision these services for the current site.**
+> The active implementation uses Resend for the newsletter audience and delivery,
+> with Upstash Redis for rate limiting. It does not use Substack or PostgreSQL.
+> See `docs/architecture/system-architecture.md` and ADR-0001 for the current contract.
+
+The remainder of this file describes an older integration design and is retained
+only for migration history.
 
 ## Features
 
@@ -121,15 +127,9 @@ Substack subscription failed, storing in database: [error details]
 Subscriber stored in database: user@example.com
 ```
 
-## Alternative Integrations
+## Historical integration notes
 
-The codebase also includes commented examples for:
-
-- **Mailchimp**: Popular email marketing service
-- **ConvertKit**: Creator-focused email platform
-- **Resend**: Developer-friendly email API
-
-Uncomment and configure the relevant section in `/src/pages/api/newsletter.ts` if you prefer these services.
+The current source does not contain switchable Mailchimp, ConvertKit, or Substack integrations. Those providers belong to the retired design described in this document; do not add or uncomment them in the current newsletter route. The active integration is Resend plus Upstash Redis.
 
 ## Production Considerations
 

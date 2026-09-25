@@ -4,7 +4,6 @@ import ArticleCareerCard from '../../components/ArticleCareerCard.astro';
 import ArticleMeta from '../../components/ArticleMeta.astro';
 import ArticleTableOfContents from '../../components/ArticleTableOfContents.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import GiscusComments from '../../components/GiscusComments.astro';
 import NewsletterSignup from '../../components/NewsletterSignup.tsx';
 import NextBestRead from '../../components/NextBestRead.astro';
 import OptimizedImage from '../../components/OptimizedImage.astro';
@@ -297,19 +296,7 @@ const articleSchema = {
           excludeSlugs={nextBest ? [nextBest.slug] : []}
         />
 
-        <!-- Comments Section -->
-        <GiscusComments
-          repo="piyushmehta/piyushmehta.com"
-          repoId="R_kgDOL1234567890"
-          category="Blog Comments"
-          categoryId="DIC_kwDOL1234567890"
-          mapping="pathname"
-          reactionsEnabled={true}
-          inputPosition="bottom"
-          theme="preferred_color_scheme"
-          lang="en"
-          loading="lazy"
-        />
+
       </div>
     </div>
   </div>

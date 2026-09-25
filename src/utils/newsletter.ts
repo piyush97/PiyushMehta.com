@@ -34,6 +34,7 @@ export async function sendConfirmationEmail(
   apiKey: string,
   fromAddress: string,
   _fetch: typeof fetch = fetch,
+  replyTo?: string,
 ): Promise<void> {
   const html = `<!DOCTYPE html>
 <html>
@@ -70,6 +71,7 @@ export async function sendConfirmationEmail(
       to: [email],
       subject: "You're subscribed — welcome aboard",
       html,
+      ...(replyTo ? { reply_to: replyTo } : {}),
     }),
   });
 

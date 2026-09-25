@@ -28,6 +28,14 @@ test.describe('portfolio smoke', () => {
   }
 
   test('home presents evidence-led portfolio content', async ({ page, request }) => {
+    await page.route('**/api/reactions*', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ like: 0, helpful: 0, insightful: 0, bookmark: 0 }),
+      }),
+    );
+
     const consoleErrors: string[] = [];
     page.on('console', (message) => {
       if (message.type() === 'error') {

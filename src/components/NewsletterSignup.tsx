@@ -14,11 +14,13 @@ export default function NewsletterSignup({
   className = '',
 }: Props) {
   const [email, setEmail] = useState('');
+  const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState('');
   // Honeypot — bots fill all fields, humans don't see this
   const [website, setWebsite] = useState('');
   const emailId = `newsletter-email-${useId().replace(/:/g, '')}`;
+  const consentId = `newsletter-consent-${useId().replace(/:/g, '')}`;
   const isSubmittingRef = useRef(false);
 
   function validate(): boolean {
@@ -28,6 +30,10 @@ export default function NewsletterSignup({
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError('That email looks off. Try again?');
+      return false;
+    }
+    if (!consent) {
+      setError('Please confirm that you want to receive occasional email updates.');
       return false;
     }
     setError('');
@@ -48,7 +54,7 @@ export default function NewsletterSignup({
       const res = await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source, website }),
+        body: JSON.stringify({ email, source, website, consent }),
       });
 
       const data = (await res.json()) as { success?: boolean; message?: string };
@@ -72,9 +78,11 @@ export default function NewsletterSignup({
   if (status === 'success') {
     return (
       <div className={`newsletter-signup__success ${className}`} role="status">
-        <p className="newsletter-signup__success-title">You're in. Check your inbox to confirm.</p>
+        <p className="newsletter-signup__success-title">
+          You're in. Your subscription is recorded.
+        </p>
         <p className="newsletter-signup__success-description">
-          Didn't see it? Peek at spam, then promote it. Next issue ships soon.
+          A welcome email is on its way when available. The next issue will land in your inbox.
         </p>
       </div>
     );
@@ -100,6 +108,21 @@ export default function NewsletterSignup({
           disabled={status === 'sending'}
           className="newsletter-signup__input"
         />
+        <div className="mt-3 flex items-start gap-2 text-left text-sm text-text-secondary">
+          <input
+            id={consentId}
+            type="checkbox"
+            name="consent"
+            required
+            checked={consent}
+            onChange={(e) => setConsent(e.target.checked)}
+            disabled={status === 'sending'}
+            className="mt-1 h-4 w-4 shrink-0 accent-emerald-500"
+          />
+          <label htmlFor={consentId}>
+            I agree to receive occasional email updates. Unsubscribe anytime.
+          </label>
+        </div>
         {/* Honeypot — hidden from humans, visible to dumb bots */}
         <input
           type="text"

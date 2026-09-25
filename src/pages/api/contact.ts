@@ -1,45 +1,29 @@
 import type { APIRoute } from 'astro';
 import { ENV } from 'varlock/env';
 import { createRatelimit, getClientIp } from '@/utils/redis';
+import { sendContactEmail } from '@/utils/contact';
+import { isAllowedFormOrigin } from '@/utils/request-security';
 
 export const prerender = false;
 
 const ratelimit = createRatelimit('ratelimit:contact', 5, '1 h');
+const MAX_BODY_BYTES = 16 * 1024;
+const MAX_NAME_LENGTH = 100;
+const MAX_EMAIL_LENGTH = 254;
+const MAX_SUBJECT_LENGTH = 150;
+const MAX_MESSAGE_LENGTH = 5_000;
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
   });
-}
-
-function escapeHtml(s: string) {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 }
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   try {
-    // CSRF: only accept requests from our own origin (exact match to prevent startsWith bypass)
-    const rawOrigin = request.headers.get('origin');
-    const rawReferer = request.headers.get('referer');
-    let requestOrigin = rawOrigin ?? '';
-    if (!requestOrigin && rawReferer) {
-      try {
-        requestOrigin = new URL(rawReferer).origin;
-      } catch {
-        requestOrigin = '';
-      }
-    }
-    const allowed = new Set([
-      'https://piyushmehta.com',
-      'http://localhost:4321',
-      'http://localhost:3000',
-    ]);
-    if (!allowed.has(requestOrigin)) {
+    // CSRF: only accept requests from an explicitly allowed site origin.
+    if (!isAllowedFormOrigin(request)) {
       return json({ error: 'Forbidden.' }, 403);
     }
 
@@ -53,9 +37,19 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       return json({ error: 'Too many requests. Try again in an hour.' }, 429);
     }
 
+    const contentLength = Number(request.headers.get('content-length'));
+    if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
+      return json({ error: 'Request body is too large.' }, 413);
+    }
+
+    const bodyText = await request.text();
+    if (new TextEncoder().encode(bodyText).byteLength > MAX_BODY_BYTES) {
+      return json({ error: 'Request body is too large.' }, 413);
+    }
+
     let body: unknown;
     try {
-      body = await request.json();
+      body = JSON.parse(bodyText);
     } catch {
       return json({ error: 'Invalid request body.' }, 400);
     }
@@ -65,12 +59,16 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     if (
       typeof name !== 'string' ||
       !name.trim() ||
+      name.trim().length > MAX_NAME_LENGTH ||
       typeof email !== 'string' ||
+      email.length > MAX_EMAIL_LENGTH ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
       typeof subject !== 'string' ||
       !subject.trim() ||
+      subject.trim().length > MAX_SUBJECT_LENGTH ||
       typeof message !== 'string' ||
-      message.trim().length < 10
+      message.trim().length < 10 ||
+      message.trim().length > MAX_MESSAGE_LENGTH
     ) {
       return json({ error: 'All fields are required and must be valid.' }, 422);
     }
@@ -89,41 +87,18 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     const cleanSubject = subject.trim();
     const cleanMessage = message.trim();
 
-    let response: Response;
     try {
-      response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: `Contact Form <${fromAddress}>`,
-          to: [toAddress],
-          reply_to: cleanEmail,
-          subject: `[Portfolio] ${cleanSubject}`,
-          text: [
-            `From: ${cleanName} <${cleanEmail}>`,
-            `Subject: ${cleanSubject}`,
-            '',
-            cleanMessage,
-          ].join('\n'),
-          html: `
-            <p><strong>From:</strong> ${escapeHtml(cleanName)} &lt;${escapeHtml(cleanEmail)}&gt;</p>
-            <p><strong>Subject:</strong> ${escapeHtml(cleanSubject)}</p>
-            <hr />
-            <p style="white-space:pre-wrap">${escapeHtml(cleanMessage)}</p>
-          `,
-        }),
+      await sendContactEmail({
+        apiKey,
+        fromAddress,
+        toAddress,
+        name: cleanName,
+        email: cleanEmail,
+        subject: cleanSubject,
+        message: cleanMessage,
       });
     } catch (err) {
       console.error('[contact] Resend request failed:', err);
-      return json({ error: 'Failed to send. Try again or email directly.' }, 502);
-    }
-
-    if (!response.ok) {
-      const body = await response.text();
-      console.error('[contact] Resend error:', response.status, body.slice(0, 200));
       return json({ error: 'Failed to send. Try again or email directly.' }, 502);
     }
 

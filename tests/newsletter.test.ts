@@ -126,6 +126,12 @@ describe('sendConfirmationEmail', () => {
     );
   });
 
+  it('includes an optional reply-to address when provided', async () => {
+    const { fetch: mock, getBody } = captureFetch();
+    await sendConfirmationEmail('a@b.com', API_KEY, FROM_ADDR, mock, 'contact@piyushmehta.com');
+    assert.equal(getBody().reply_to, 'contact@piyushmehta.com');
+  });
+
   it('includes a subject line', async () => {
     const { fetch: mock, getBody } = captureFetch();
     await sendConfirmationEmail('a@b.com', API_KEY, FROM_ADDR, mock);

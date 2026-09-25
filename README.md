@@ -25,7 +25,7 @@ Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, depl
 | Language | TypeScript 7 |
 | Content | MDX — blog posts with component support |
 | Search | [Pagefind](https://pagefind.app/) — static full-text search |
-| Email | [Resend](https://resend.com/) — contact form + newsletter (audience + confirmation) |
+| Email | [Resend](https://resend.com/) — contact form + newsletter (audience + welcome email) |
 | Rate limiting | [Upstash Redis](https://upstash.com/) — serverless Redis |
 | Monitoring | [Sentry](https://sentry.io/) — errors + performance |
 | Analytics | Cloudflare Workers Observability |
@@ -37,7 +37,7 @@ Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, depl
 
 ## Local dev
 
-**Requirements:** Node.js 26.8.1+, Bun
+**Requirements:** Node.js 26.8.1, Bun 1.4.0
 
 ```bash
 git clone https://github.com/piyush97/PiyushMehta.com.git
@@ -54,7 +54,7 @@ cp .env.example .env
 Start dev server:
 
 ```bash
-bun dev
+bun run dev
 ```
 
 → `http://localhost:4321`
@@ -67,37 +67,40 @@ Key variables:
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `POSTGRES_URL` | Production | Newsletter DB |
-| `RESEND_API_KEY` | Production | Contact form + email |
-| `UPSTASH_REDIS_REST_URL` | Optional | Rate limiting |
-| `UPSTASH_REDIS_REST_TOKEN` | Optional | Rate limiting |
+| `RESEND_API_KEY` | Production | Contact form + newsletter delivery |
+| `RESEND_SEGMENT_ID` | Production | Resend newsletter audience |
+| `UPSTASH_REDIS_REST_URL` | Production for forms/reactions | Rate limiting and reaction counters |
+| `UPSTASH_REDIS_REST_TOKEN` | Production for forms/reactions | Rate limiting and reaction counters |
 | `PUBLIC_SENTRY_DSN` | Optional | Client error tracking |
 | `SENTRY_DSN` | Optional | Server error tracking |
 | `SENTRY_AUTH_TOKEN` | Build-time | Sourcemap upload |
 | `GITHUB_TOKEN` | Optional | GitHub project showcase |
 
-See `.env.schema` for the full list.
+Legacy PostgreSQL, Substack, Mailchimp, and ConvertKit variables may remain in historical documentation but are not used by the current runtime. See `.env.schema` for the supported contract.
 
 ## Scripts
 
 ```bash
-bun dev              # Dev server
-bun build            # Production build (typegen → image migration → Astro build → Pagefind → resume PDF)
-bun preview          # Run the production build in the local Workers runtime
-bun run deploy       # Build and deploy with varlock-managed Cloudflare secrets
+bun run dev              # Dev server
+bun run build            # Production build pipeline (see scripts/build.mjs)
+bun run preview          # Run the production build in the local Workers runtime
+bun run deploy           # Build and deploy with varlock-managed Cloudflare secrets
 
 bun run lint         # Oxlint via Vite+
 bun run lint:fix     # Oxlint auto-fix via Vite+
 bun run format       # Oxfmt via Vite+
 bun run check        # Vite+ format, lint, and type checks
+bun run check:release # Verify generated Worker/static release artifacts
 bun run ci           # Read-only Vite+ check for CI
 
-bun test             # Playwright E2E tests
+bun run test         # Playwright E2E tests
 bun run test:smoke   # Smoke tests only
 bun run test:headed  # Tests in headed mode
 bun run test:ui      # Playwright UI mode
 
 bun run migrate:images    # Migrate blog images to public/
+bun run generate:posts   # Generate the published-post manifest
+bun run check:posts      # Verify the published-post manifest
 bun run test-seo          # Validate SEO meta files
 ```
 
@@ -118,7 +121,7 @@ bun run test-seo          # Validate SEO meta files
     │   └── Layout.astro     # Root layout with SEO, skip link
     ├── middleware/          # Request middleware
     ├── pages/
-    │   ├── api/             # API routes (contact, newsletter, OG images)
+    │   ├── api/             # Runtime API routes (contact, newsletter, reactions)
     │   ├── blog/            # Blog listing + post pages
     │   ├── index.astro      # Homepage
     │   ├── about.astro
@@ -153,10 +156,10 @@ image:
 ## Features
 
 - **⌘K Command palette** — global search and navigation
-- **Full-text search** — Pagefind, client-side, instant results
-- **Dynamic OG images** — per-post generated via Satori + `@resvg/resvg-js`
-- **Contact form** — Resend, CSRF protection, in-memory + Redis rate limiting
-- **Newsletter** — multi-provider (Resend, Mailchimp, ConvertKit, Substack) with bot protection
+- **Full-text search** — Pagefind static index, required when the search route ships
+- **Build-time OG images** — per-post generated via Satori + `@resvg/resvg-js`
+- **Contact form** — Resend with origin validation and Upstash rate limiting
+- **Newsletter** — Resend audience and welcome email with Upstash rate limiting
 - **Skip link** — keyboard accessibility, WCAG 2 AA
 - **Structured data** — JSON-LD Person, Article, WebSite, BreadcrumbList schemas
 - **Sitemap + RSS** — native `@astrojs/rss` and `@astrojs/sitemap` endpoints
@@ -170,6 +173,8 @@ Build command: `bun run build`
 
 Output: `dist/client` static assets plus `dist/server` Worker modules
 
+**Release contract:** the target deployment uses the generated `dist/server/wrangler.json` and serves only `dist/client` as public assets. The package deploy command and README target that contract; CI and Cloudflare Workers Builds settings still need verification. Do not deploy the root `./dist` directory as a public asset root.
+
 The production configuration uses only Workers Free products: Static Assets, lightweight API routes, custom domains, and included observability. Social cards and images are generated at build time rather than using Cloudflare Images or runtime rasterization.
 
 ### Cloudflare Workers Builds
@@ -180,8 +185,8 @@ Recommended Cloudflare build settings:
 
 - Production branch: `main`
 - Build command: `bun run check && bun run build`
-- Deploy command: `bunx wrangler deploy`
-- Version command: `bunx wrangler versions upload`
+- Deploy command: `bunx wrangler deploy --config dist/server/wrangler.json`
+- Version command: `bunx wrangler versions upload --config dist/server/wrangler.json`
 - Root directory: `/`
 - Non-production branch builds: enabled
 - Build cache: enabled
@@ -192,11 +197,11 @@ Runtime credentials remain in the Worker's Variables and Secrets settings; they 
 
 Contributions are welcome! PRs are reviewed and validated by CI.
 
-- **Install with Bun** — this repo uses [Bun](https://bun.sh/) exclusively (`bun@1.3.13`): `bun install`
-- **Run the dev server** — `bun dev` → `http://localhost:4321`
-- **Build locally** — `bun build` runs the full pipeline (typegen → image migration → Astro build → Pagefind → resume PDF)
+- **Install with Bun** — this repo uses [Bun](https://bun.sh/) exclusively (`bun@1.4.0`): `bun install`
+- **Run the dev server** — `bun run dev` → `http://localhost:4321`
+- **Build locally** — `bun run build` runs the repository build pipeline; inspect `scripts/build.mjs` for required release outputs
 - **Follow the existing style** — Vite+ (Oxfmt + Oxlint) format and lint are enforced via pre-commit hooks; run `bun run check` before pushing
-- **PRs welcome** — keep changes scoped, update the README if behavior changes, and make sure tests pass (`bun test`)
+- **PRs welcome** — keep changes scoped, update the README if behavior changes, and make sure tests pass (`bun run test`)
 
 ```bash
 git checkout -b feature/your-feature
