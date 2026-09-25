@@ -172,7 +172,7 @@ Build command: `bun run build`
 
 Output: `dist/client` static assets plus `dist/server` Worker modules
 
-**Release contract:** the target deployment uses the generated `dist/server/wrangler.json` and serves only `dist/client` as public assets. The versioned résumé asset is copied before Astro builds, so `dist/client/resume.pdf` is present without requiring Chromium in Workers Builds. The package deploy command and README target that contract; CI and Cloudflare Workers Builds settings still need verification. Do not deploy the root `./dist` directory as a public asset root.
+**Release contract:** the target deployment uses the generated `dist/server/wrangler.json` and serves only `dist/client` as public assets. Deploy and version uploads must go through `varlock-wrangler`, which injects the Varlock environment binding the generated Worker requires at startup; raw `wrangler` commands are not the production path. The versioned résumé asset is copied before Astro builds, so `dist/client/resume.pdf` is present without requiring Chromium in Workers Builds. Do not deploy the root `./dist` directory as a public asset root.
 
 The production configuration uses only Workers Free products: Static Assets, lightweight API routes, custom domains, and included observability. Social cards and images are generated at build time rather than using Cloudflare Images or runtime rasterization.
 
@@ -184,8 +184,8 @@ Recommended Cloudflare build settings:
 
 - Production branch: `main`
 - Build command: `bun run check && bun run build`
-- Deploy command: `bunx wrangler deploy --config dist/server/wrangler.json`
-- Version command: `bunx wrangler versions upload --config dist/server/wrangler.json`
+- Deploy command: `bun run check:production-env && bunx varlock-wrangler deploy --config dist/server/wrangler.json`
+- Version command: `bun run check:production-env && bunx varlock-wrangler versions upload --config dist/server/wrangler.json`
 - Root directory: `/`
 - Non-production branch builds: enabled
 - Build cache: enabled

@@ -51,8 +51,9 @@ export default defineConfig({
         enabled: isProductionBuild && hasSentryAuth,
         telemetry: false,
         ...(isProductionBuild && {
-          assets: ['dist/_astro/**/*.js', 'dist/_astro/**/*.mjs'],
-          filesToDeleteAfterUpload: ['dist/_astro/**/*.map'],
+          // Astro's Cloudflare adapter emits client assets under dist/client.
+          assets: ['dist/client/_astro/**/*.js', 'dist/client/_astro/**/*.mjs'],
+          filesToDeleteAfterUpload: ['dist/client/_astro/**/*.map'],
         }),
       },
     }),
@@ -68,7 +69,9 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     build: {
-      sourcemap: isProductionBuild ? 'hidden' : false,
+      // Only emit maps when a Sentry upload is configured; otherwise they would
+      // ship publicly and the release gate would reject the build.
+      sourcemap: isProductionBuild && hasSentryAuth ? 'hidden' : false,
     },
     assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp'],
     resolve: {

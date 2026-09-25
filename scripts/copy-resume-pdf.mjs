@@ -16,9 +16,15 @@ if (!existsSync(source)) {
   throw new Error(`Missing versioned resume asset: ${source}`);
 }
 
-const header = readFileSync(source).subarray(0, 5).toString();
+const contents = readFileSync(source);
+const header = contents.subarray(0, 5).toString();
 if (header !== '%PDF-') {
   throw new Error(`Invalid resume PDF header: ${header}`);
+}
+if (/localhost|127\.0\.0\.1|0\.0\.0\.0/i.test(contents.toString('latin1'))) {
+  throw new Error(
+    'Resume PDF contains a non-production link annotation. Regenerate with PUBLIC_BASE_URL set.',
+  );
 }
 
 mkdirSync(resolve(import.meta.dirname, '..', 'public'), { recursive: true });

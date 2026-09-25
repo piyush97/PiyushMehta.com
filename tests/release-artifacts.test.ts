@@ -123,6 +123,27 @@ describe('verifyRelease', () => {
     assert.ok(result.errors.some((error) => error.includes('Server-only output leaked')));
   });
 
+  it('rejects client source maps in the public output', () => {
+    const root = makeFixture();
+    writeFileSync(join(root, 'dist', 'client', 'app.js.map'), '{}');
+
+    const result = verifyRelease(root);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((error) => error.includes('source map')));
+  });
+
+  it('rejects resume PDFs with non-production link annotations', () => {
+    const root = makeFixture();
+    writeFileSync(
+      join(root, 'dist', 'client', 'resume.pdf'),
+      '%PDF-1.4 /URI (http://localhost:4321/projects/)',
+    );
+
+    const result = verifyRelease(root);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((error) => error.includes('non-production link annotation')));
+  });
+
   it('rejects retired newsletter artifacts and sitemap entries', () => {
     const root = makeFixture();
     mkdirSync(join(root, 'dist', 'client', 'newsletter'), { recursive: true });

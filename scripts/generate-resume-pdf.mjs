@@ -13,6 +13,9 @@ import { chromium } from 'playwright';
 
 const PORT = process.env.PORT || '4321';
 const BASE = process.env.BASE_URL || `http://localhost:${PORT}`;
+// Links are printed into the PDF as annotations, so they must point at the public
+// site even when the page is rendered from a local dev server.
+const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || 'https://piyushmehta.com';
 const SOURCE = resolve(import.meta.dirname, '..', 'src', 'assets', 'resume.pdf');
 const OUTPUT = resolve(import.meta.dirname, '..', 'public', 'resume.pdf');
 const RESUME_URL = `${BASE}/resume/`;
@@ -74,6 +77,20 @@ async function generate() {
     await page.evaluate(async () => {
       await document.fonts.ready;
     });
+
+    // Same-origin anchors are rewritten to the public origin so the shipped PDF
+    // never bakes in a developer's localhost links.
+    await page.evaluate((publicBaseUrl) => {
+      const publicUrl = new URL(publicBaseUrl);
+      for (const anchor of document.querySelectorAll('a[href]')) {
+        const url = new URL(anchor.href, window.location.href);
+        if (url.origin !== window.location.origin) continue;
+        url.protocol = publicUrl.protocol;
+        url.host = publicUrl.host;
+        url.port = publicUrl.port;
+        anchor.href = url.toString();
+      }
+    }, PUBLIC_BASE_URL);
 
     // Hide interactive elements that don't print well
     await page.addStyleTag({

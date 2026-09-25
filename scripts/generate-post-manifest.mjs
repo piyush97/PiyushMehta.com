@@ -11,6 +11,7 @@ import {
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { slug as githubSlug } from 'github-slugger';
 
 const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CONTENT_DIR = join(PROJECT_ROOT, 'src', 'content', 'blog');
@@ -31,7 +32,9 @@ function buildManifest() {
         .map((fileName) => join(CONTENT_DIR, entry.name, fileName))
         .find((filePath) => existsSync(filePath));
       if (!postPath || isDraft(postPath)) return [];
-      return [entry.name];
+      // Astro's glob loader derives collection slugs with github-slugger, so the
+      // allowlist must use the same canonical (case-folded) slug space.
+      return [githubSlug(entry.name)];
     })
     .sort((left, right) => left.localeCompare(right));
 }

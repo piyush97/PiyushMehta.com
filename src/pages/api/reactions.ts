@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { isPublishedPostSlug } from '@/utils/published-posts';
+import { isPublishedPostSlug, toPublishedPostSlug } from '@/utils/published-posts';
 import { toBlogPostSlug } from '@/utils/blog-recommendations';
 import { createRatelimit, getClientIp, reactionRedis, redis } from '@/utils/redis';
 
@@ -28,8 +28,8 @@ function json(
 
 function normalizePostId(value: unknown): string | null {
   if (typeof value !== 'string') return null;
-  const normalized = toBlogPostSlug(value.trim());
-  if (!/^[a-z0-9][a-z0-9-]{0,199}$/i.test(normalized)) return null;
+  const normalized = toPublishedPostSlug(toBlogPostSlug(value.trim()));
+  if (!/^[a-z0-9][a-z0-9-]{0,199}$/.test(normalized)) return null;
   return normalized;
 }
 

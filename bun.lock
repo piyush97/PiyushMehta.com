@@ -20,6 +20,7 @@
         "@varlock/astro-integration": "^1.4.2",
         "@varlock/cloudflare-integration": "1.5.0",
         "astro": "^7.3.2",
+        "github-slugger": "^2.0.0",
         "hast-util-from-html": "^2.0.3",
         "hast-util-to-mdast": "^10.1.2",
         "mdast-util-to-markdown": "^2.1.2",

@@ -26,6 +26,19 @@ function addError(errors, message) {
   errors.push(message);
 }
 
+function collectSourceMaps(directory, root = directory) {
+  const maps = [];
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const entryPath = join(directory, entry.name);
+    if (entry.isDirectory()) {
+      maps.push(...collectSourceMaps(entryPath, root));
+    } else if (entry.name.endsWith('.map')) {
+      maps.push(relative(root, entryPath));
+    }
+  }
+  return maps;
+}
+
 function isDirectory(path) {
   try {
     return readdirSync(path).length >= 0;
@@ -136,13 +149,33 @@ export function verifyRelease(root = process.cwd()) {
   }
 
   const resumePath = join(clientDir, 'resume.pdf');
-  if (existsSync(resumePath) && readFileSync(resumePath).subarray(0, 5).toString() !== '%PDF-') {
-    addError(errors, 'Resume artifact is not a PDF: dist/client/resume.pdf');
+  if (existsSync(resumePath)) {
+    const resume = readFileSync(resumePath);
+    if (resume.subarray(0, 5).toString() !== '%PDF-') {
+      addError(errors, 'Resume artifact is not a PDF: dist/client/resume.pdf');
+    }
+    if (/localhost|127\.0\.0\.1|0\.0\.0\.0/i.test(resume.toString('latin1'))) {
+      addError(errors, 'Resume PDF contains a non-production link annotation');
+    }
   }
 
   for (const path of SERVER_ONLY_CLIENT_PATHS) {
     if (existsSync(join(clientDir, path))) {
       addError(errors, `Server-only output leaked into dist/client: ${path}`);
+    }
+  }
+
+  // Client source maps contain original sources and are publicly cacheable, so
+  // they must only exist transiently while Sentry uploads them.
+  if (isDirectory(clientDir)) {
+    const sourceMaps = collectSourceMaps(clientDir);
+    if (sourceMaps.length > 0) {
+      addError(
+        errors,
+        `Client output contains ${sourceMaps.length} source map(s): ${sourceMaps
+          .slice(0, 3)
+          .join(', ')}${sourceMaps.length > 3 ? ', …' : ''}`,
+      );
     }
   }
 
