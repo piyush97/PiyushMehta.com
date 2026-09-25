@@ -19,9 +19,9 @@ test.describe('approved homepage revamp', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(
       'Software that holds up after the demo.'
     );
-    await expect(page.getByRole('link', { name: 'Review 3 case studies' })).toHaveAttribute(
+    await expect(page.getByRole('link', { name: 'Read recent writing' })).toHaveAttribute(
       'href',
-      '/projects/'
+      '/blog/'
     );
     await expect(page.getByRole('link', { name: 'Read Résumé' })).toHaveAttribute(
       'href',
@@ -124,7 +124,7 @@ test.describe('approved homepage revamp', () => {
 
     // When a visitor uses its actions and theme control
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-    const primaryAction = page.getByRole('link', { name: 'Review 3 case studies' });
+    const primaryAction = page.getByRole('link', { name: 'Read recent writing' });
     await primaryAction.focus();
 
     // Then actions have visible focus, media is described, and the theme remains operational
