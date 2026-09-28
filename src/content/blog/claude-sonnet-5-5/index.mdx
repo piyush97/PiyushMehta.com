@@ -1,0 +1,132 @@
+---
+title: 'Claude Sonnet 5.5 Beats Opus 5.5 on Terminal-Bench at Half the Price'
+description: 'Sonnet 5.5 beats Opus 5.5 by 4.2 points on Terminal-Bench at half the token price. The benchmark caveat, real cost trade-off, and migration traps.'
+date: 2026-09-28
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'anthropic'
+  - 'claude'
+  - 'sonnet 5.5'
+  - 'ai'
+  - 'llm'
+  - 'ai coding'
+  - 'benchmarks'
+featuredImage: false
+draft: false
+---
+
+Anthropic launched Claude Sonnet 5.5 today, and one number stands out: **70.6% on Terminal-Bench 4.0, versus 66.4% for Opus 5.5 at twice the price per token.** Sonnet 5 scored 10.3%.
+
+That's a 4.2-point lead on one agentic terminal benchmark, **not** proof that Sonnet is better at every task or cheaper per successful task. Anthropic ran the Opus result at Xhigh effort; the models' settings and task costs matter. Still, a mid-tier model ahead of the flagship on terminal work is worth a closer look.
+
+Everything below comes from Anthropic's [announcement](https://www.anthropic.com/claude-sonnet-5-5) and the [model docs](https://platform.claude.com/docs/en/models/sonnet-5-5/overview). These are Anthropic's own benchmark numbers. I haven't run independent tests yet.
+
+**The practical call:** Try Sonnet 5.5 at Medium effort on repeatable coding tasks; keep Opus 5.5 for work that needs sustained judgment. If you're upgrading an API integration, read the migration section first: some settings now error, and between-tool text can disappear without one.
+
+## The specs
+
+|                  | Sonnet 5.5          |
+| ---------------- | ------------------- |
+| Model ID         | `claude-sonnet-5-5` |
+| Context window   | 1M tokens           |
+| Max output       | 128K tokens         |
+| Input            | $2 / MTok           |
+| Output           | $10 / MTok          |
+| Cache read       | $0.20 / MTok        |
+| Knowledge cutoff | Jun 2026            |
+
+Pricing is the same as Sonnet 5. The savings come from token use. Sonnet 5.5 needs fewer tokens per task, so Anthropic says cost per task is up to 30% lower. Output is also 30%+ faster.
+
+It's on the Claude API, Amazon Bedrock, Google Cloud, Microsoft Foundry and Claude Platform on AWS. Zero data retention is supported.
+
+## The benchmarks
+
+Scores below are Sonnet 5.5 / Sonnet 5 / Opus 5.5:
+
+| Benchmark                    | Sonnet 5.5 | Sonnet 5 | Opus 5.5 |
+| ---------------------------- | ---------- | -------- | -------- |
+| Terminal-Bench 4.0           | 70.6%      | 10.3%    | 66.4%    |
+| CursorBench 4.0              | 55.5%      | 34.1%    | 57.8%    |
+| OSWorld 2.1                  | 80.1%      | 57.0%    | 81.8%    |
+| Humanity's Last Exam (tools) | 64.5%      | 54.9%    | 67.7%    |
+| Chartography (no tools)      | 61.6%      | 15.6%    | 64.4%    |
+| GDPval-AA v2.1 (Elo)         | 1844       | 1449     | 1846     |
+
+Opus 5.5 still wins most rows, usually by a small margin. On GDPval-AA the gap is two Elo points. Anthropic says Opus 5.5 remains clearly better at complex, open-ended work, so it's not a straight replacement.
+
+Sonnet 5.5 also beats GPT-6 Sol on the comparisons Anthropic published: 1844 vs 1487 on GDPval-AA, and 61.6% vs 53.6% on Chartography.
+
+Two caveats from Anthropic's footnotes:
+
+- Artificial Analysis tested a pre-release build with a structured-outputs bug, since fixed. That may slightly understate its scores.
+- GPT-6 Sol scores may not reflect OpenAI's recent image-understanding fix. Terminal-Bench and CursorBench have no public GPT-6 Sol results, so those charts use GPT-5.6 Sol.
+
+## The cost story
+
+The API token price is half of Opus 5.5's, but token price isn't task price. A model that takes more tokens or tool calls can erase that saving. Anthropic's cost-versus-score charts give a more useful comparison:
+
+- On several benchmarks at Low or Medium effort, it beats Sonnet 5's best score for about one tenth of the cost per task. On Terminal-Bench, Anthropic reports less than a tenth at Medium effort.
+- On FrontierCode at High effort, it scores 10 points above Sonnet 5 at about one fifteenth of the cost per task.
+- At higher effort settings, Anthropic says Sonnet 5.5 can perform comparably to Opus 5.5 **at a similar cost per task**.
+
+Those are benchmark-specific comparisons, not a promise of 10x savings on your workload. Measure cost per completed task, not just the token rate.
+
+Effort levels are now Low, Medium, High, Xhigh and Max. The default is Medium in Claude Code and the apps, and High on the Claude Platform.
+
+## What customers reported
+
+These are Anthropic's paraphrased customer quotes, so treat them as vendor-curated.
+
+- **Base44:** across 118 app builds it matched Opus 5 quality in 3.6 iterations, versus 7.7 for Opus 5.
+- **Balyasny:** about 121k tokens per answer versus 497k for Sonnet 5.
+- **Box:** 2.4x faster with 12% fewer tokens.
+- **Zendesk:** tickets processed 20% faster.
+- **Lovable:** a third fewer tool calls and about half the shell runs.
+- **CodeRabbit:** better judgment with far fewer output tokens. It plans to move simple and moderate reviews over first.
+
+Anthropic also says it's the first Sonnet to beat Pokémon Red from screenshots alone. It's a fun detail. It also tells you something about long-horizon visual tasks.
+
+## What breaks when you upgrade
+
+If you're on Sonnet 5, read this before you swap the model ID. The docs list five breaking changes:
+
+1. **Turning off up-front thinking now uses `between_tools`.** It works at High effort or below.
+2. **Forced tool use returns an error.**
+3. **Thinking blocks are tied to the model and the conversation.** Preserved thinking is also tied to the account that created it, so switching accounts mid-session matters.
+4. **`computer_20251124` isn't accepted** on the Claude API and Google Cloud.
+5. **The advisor tool rejects Opus 4.8, Opus 4.7 and Sonnet 5** as advisors.
+
+There's also a quieter change. Text between tool calls now comes back in `thinking` blocks. If your app streams that text to users, it will go silent between tool calls until you set a `display` value that returns it, or turn off up-front thinking with `between_tools`. Nothing fails, so you won't get an error to warn you.
+
+Also, setting `temperature`, `top_p` or `top_k` to a non-default value returns a 400 error.
+
+Anthropic has a [migration guide](https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide) with the details.
+
+## Safety notes
+
+Anthropic ran an automated audit of roughly 1,850 scenarios. Sonnet 5.5 matches or improves on Sonnet 5 on most alignment, misuse-resistance and honesty measures. On containment tests it comes close to Opus 5.5 at avoiding sandbox escape, and it is the least likely of any model to probe container limits.
+
+Two policy changes to know about:
+
+- **Cyber:** it's the first Sonnet with Opus-style cyber safeguards. Higher-risk cyber tasks visibly fall back to Sonnet 5. Defenders can apply to an expanded Cyber Verification Program.
+- **Distillation:** it's the first Sonnet with classifiers that block reasoning extraction.
+
+Anthropic found no evidence of goals that conflict with user intent. It also says its evaluations can't catch every failure.
+
+## Which model should you use?
+
+My read, based on the published numbers:
+
+- **Sonnet 5.5** is the default for agentic coding, terminal work, code review and high-volume workloads. It's fast, and it's half the price of Opus.
+- **Opus 5.5** is for complex, open-ended work where the last few points matter.
+- **Haiku 5.5** is coming in a few weeks. Anthropic hasn't said more.
+
+Start on Sonnet 5.5 at Medium effort, measure success rate, latency and total cost on your own tasks, and move up where it fails. The half-price token rate alone doesn't settle the choice.
+
+## The takeaway
+
+**Shareable version:** Sonnet 5.5 beats Opus 5.5 on Anthropic's Terminal-Bench 4.0 (70.6% vs 66.4%) at half the API token price. It doesn't beat Opus everywhere, and at high effort it might not cost less per task. Test it on your own work before switching.
+
+I'll run it on real tasks from this site's repo and follow up with results.
