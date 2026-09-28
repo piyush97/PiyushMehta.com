@@ -1,0 +1,77 @@
+---
+title: 'Copilot Local Sandboxing: A Rollout Plan That Tests the Boundary'
+description: 'GitHub added per-project local sandboxing to the Copilot app. Here is a small, testable rollout for filesystem, network, and credential boundaries—and the sessions it does not cover.'
+date: 2026-09-28T12:00:00-04:00
+author: 'Piyush Mehta'
+tags: ['AI Agents', 'Security', 'GitHub Copilot', 'Developer Tools']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+draft: false
+---
+
+Your coding agent needs to run a test. The test reads a fixture outside the repository. Do you give the agent access to your entire home directory, or move that fixture into a deliberately shared location?
+
+This is the sort of mundane decision behind GitHub's September 23 announcement: **local sandboxing for the GitHub Copilot app is in public preview**. It restricts the files, network resources, and credentials available to commands in local repository and working-tree sessions. The setting is **off by default**. Those details matter more than the word “sandbox.” [GitHub's announcement](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/)
+
+I have not tested the app's enforcement on a machine here. What follows is a rollout and verification plan based on GitHub's published behavior, not a claim that a particular operating system blocks every possible escape.
+
+## What the switch actually changes
+
+A project's policy has three relevant surfaces:
+
+| Surface     | Configure deliberately                                                     | Typical question                                                          |
+| ----------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Filesystem  | Additional read/write folders, read-only folders, denied folders           | Can the agent read a fixture without writing to it?                       |
+| Network     | Outbound internet and local-network settings                               | Can an install reach a registry? Can a command reach an internal service? |
+| Credentials | Git credentials for authenticated HTTPS operations; GitHub CLI credentials | Does this task actually need authenticated Git or `gh`?                   |
+
+Those are **requested settings**, not a promise that every host has the same effective policy: enterprise-managed settings can make it stricter. If the operating system cannot enforce the requested policy, GitHub says the sandboxed shell **fails rather than silently running unsandboxed**. [GitHub's announcement](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/)
+
+The scope is just as important. The app's local sandbox setting does **not** apply to cloud sandbox sessions or sessions on a remote host. Copilot app and Copilot CLI settings are separate. Do not treat a green toggle in one surface as fleet-wide coverage. [GitHub's announcement](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/) GitHub describes its [cloud and local sandboxes](https://docs.github.com/en/copilot/concepts/about-cloud-and-local-sandboxes) as distinct execution environments.
+
+## Try the policy decision
+
+This is a thought experiment, not a live sandbox test. Choose an answer before opening each result.
+
+**Scenario A:** A test needs a static fixture stored outside the project. The agent must read it; it must never edit it.
+
+<details>
+<summary>What access would you grant?</summary>
+
+Grant the specific fixture directory **additional read-only** access, or copy a non-sensitive fixture into the repository if that fits the workflow. Do not grant the home directory read/write just to make one test pass. Then attempt an allowed read and a denied write in an actual sandboxed session; a policy design is not evidence of enforcement.
+
+</details>
+
+**Scenario B:** The agent needs to install dependencies from a public package registry but has no reason to contact devices on your LAN.
+
+<details>
+<summary>Which network boundary would you test?</summary>
+
+Configure outbound access to support the required workflow while withholding local-network access. Test a permitted registry operation and an attempted connection to a harmless, controlled LAN endpoint. If the install works only with broader access, investigate the dependency path rather than turning on every network capability permanently. Whether a given destination is reachable depends on the effective policy and host; verify it on your setup.
+
+</details>
+
+**Scenario C:** The agent runs tests and edits code. You will review and push the branch yourself.
+
+<details>
+<summary>Should it receive GitHub CLI credentials?</summary>
+
+Start without them. Local tests and file edits do not inherently require an authenticated `gh` session. If a later task genuinely needs authenticated Git or GitHub CLI operations, enable only the credential path required for that session and review what it can do. A filesystem rule does not revoke permissions from a credential you have already exposed.
+
+</details>
+
+## Roll out one repository at a time
+
+1. **Record the initial state.** In the Copilot app, open the project's Sandbox settings. Inventory the paths, network access, and credentials the task needs. Keep a human-controlled way to compare behavior outside the agent session; do not ask an agent to assess its own confinement as the only check.
+2. **Enable new sessions.** Select **Sandbox new sessions** for that project. Existing sessions are not covered by this default change; for an active local session GitHub documents `/sandbox on`. Changes to file, network, or credential settings take effect for new sessions or after an existing session restarts. [GitHub's announcement](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/)
+3. **Exercise both sides of each boundary.** Read and edit an allowed scratch file; try to read a deliberately denied, non-secret scratch path; reach an allowed test endpoint and attempt a disallowed one; test an authenticated operation only if you opted into credentials. Use harmless probes you own—not production services or real secrets. Log expected versus observed results and the session type.
+4. **If enforcement fails, stop.** An error indicating the host cannot enforce the policy is not a prompt to run without the sandbox. Fix the environment or choose a different execution venue. If a denied operation succeeds, treat that as a failed rollout and investigate the actual session and effective policy before allowing unattended work.
+
+A sandbox limits what a process can reach; it does not decide whether a code change is correct or whether an authorized GitHub action is wise. Keep review and approval around privileged actions. For the application-level side of that boundary, see my [runnable agent action-gate harness](/blog/testing-ai-agent-actions/). The two controls solve different problems: OS-level access versus application authorization and retry behavior.
+
+The win is not “turn on a security feature.” It is being able to answer, with a recorded negative test: _which repository session was constrained, which resource was denied, and what still needed access?_
+
+### Sources
+
+- [GitHub Changelog: Local sandboxing in the GitHub Copilot app (September 23, 2026)](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/)
+- [GitHub Docs: About cloud and local sandboxes](https://docs.github.com/en/copilot/concepts/about-cloud-and-local-sandboxes)
