@@ -1,9 +1,9 @@
 ---
-title: 'Copilot Local Sandboxing: A Rollout Plan That Tests the Boundary'
-description: 'GitHub added per-project local sandboxing to the Copilot app. Here is a small, testable rollout for filesystem, network, and credential boundaries—and the sessions it does not cover.'
+title: 'GitHub Copilot Local Sandboxing: A Testable Rollout Plan'
+description: 'GitHub shipped per-project local sandboxing for the Copilot app on September 23. Here is a testable rollout for filesystem, network, and credential boundaries—and the sessions it does not cover.'
 date: 2026-09-28T12:00:00-04:00
 author: 'Piyush Mehta'
-tags: ['AI Agents', 'Security', 'GitHub Copilot', 'Developer Tools']
+tags: ['AI Agents', 'Security', 'GitHub Copilot', 'Developer Tools', 'Sandboxing']
 ogTemplate: 'tech'
 ogTheme: 'dark'
 draft: false
@@ -11,7 +11,7 @@ draft: false
 
 Your coding agent needs to run a test. The test reads a fixture outside the repository. Do you give the agent access to your entire home directory, or move that fixture into a deliberately shared location?
 
-This is the sort of mundane decision behind GitHub's September 23 announcement: **local sandboxing for the GitHub Copilot app is in public preview**. It restricts the files, network resources, and credentials available to commands in local repository and working-tree sessions. The setting is **off by default**. Those details matter more than the word “sandbox.” [GitHub's announcement](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/)
+That mundane decision is exactly what GitHub's September 23 announcement addresses: **local sandboxing for the GitHub Copilot app is now in public preview**. It restricts the files, network resources, and credentials available to commands in local repository and working-tree sessions. The setting is **off by default**. That detail matters more than the word "sandbox." [GitHub's announcement](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/)
 
 I have not tested the app's enforcement on a machine here. What follows is a rollout and verification plan based on GitHub's published behavior, not a claim that a particular operating system blocks every possible escape.
 
@@ -38,7 +38,7 @@ This is a thought experiment, not a live sandbox test. Choose an answer before o
 <details>
 <summary>What access would you grant?</summary>
 
-Grant the specific fixture directory **additional read-only** access, or copy a non-sensitive fixture into the repository if that fits the workflow. Do not grant the home directory read/write just to make one test pass. Then attempt an allowed read and a denied write in an actual sandboxed session; a policy design is not evidence of enforcement.
+Grant the specific fixture directory **additional read-only** access, or copy a non-sensitive fixture into the repository if that fits the workflow. Do not grant the home directory read/write just to make one test pass. Then attempt an allowed read and a disallowed write against that same path to confirm the boundary holds in both directions.
 
 </details>
 
@@ -67,9 +67,9 @@ Start without them. Local tests and file edits do not inherently require an auth
 3. **Exercise both sides of each boundary.** Read and edit an allowed scratch file; try to read a deliberately denied, non-secret scratch path; reach an allowed test endpoint and attempt a disallowed one; test an authenticated operation only if you opted into credentials. Use harmless probes you own—not production services or real secrets. Log expected versus observed results and the session type.
 4. **If enforcement fails, stop.** An error indicating the host cannot enforce the policy is not a prompt to run without the sandbox. Fix the environment or choose a different execution venue. If a denied operation succeeds, treat that as a failed rollout and investigate the actual session and effective policy before allowing unattended work.
 
-A sandbox limits what a process can reach; it does not decide whether a code change is correct or whether an authorized GitHub action is wise. Keep review and approval around privileged actions. For the application-level side of that boundary, see my [runnable agent action-gate harness](/blog/testing-ai-agent-actions/). The two controls solve different problems: OS-level access versus application authorization and retry behavior.
+A sandbox limits what a process can reach; it does not decide whether a code change is correct or whether an authorized GitHub action is wise. Keep review and approval around privileged actions. For the application-level side of that boundary, see my [runnable agent action-gate harness](/blog/testing-ai-agent-actions/). The two controls solve different problems: OS-level access versus application-level authorization, and both belong in an agent workflow that touches your repository unattended.
 
-The win is not “turn on a security feature.” It is being able to answer, with a recorded negative test: _which repository session was constrained, which resource was denied, and what still needed access?_
+The win is not "turn on a security feature." It is being able to answer, with a recorded negative test: _which repository session was constrained, which resource was denied, and what still needed access?_
 
 ### Sources
 
