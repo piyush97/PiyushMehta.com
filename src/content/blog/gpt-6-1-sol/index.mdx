@@ -1,13 +1,18 @@
 ---
-title: 'GPT-6.1 Sol: Near-Astra Ambition at One-Fifth the Token Price'
-description: 'OpenAI positions GPT-6.1 Sol as a lower-cost option for coding and agentic work. Here are its prices, limits, API constraints, and the tradeoff worth testing.'
+title: 'GPT-6.1 Sol vs Astra: 5× Cheaper, But Is It Good Enough?'
+description: 'GPT-6.1 Sol vs Astra: compare token pricing, context limits, tool support, and the real-world tests that decide whether the fivefold discount is worth it.'
 date: 2026-09-29
 author: 'Piyush Mehta'
 tags: ['AI', 'Large Language Models', 'Developer Tools', 'OpenAI']
 ogTemplate: 'tech'
 ogTheme: 'dark'
+image:
+  url: '/blog/gpt-6-1-sol/images/cover.svg'
+  alt: 'GPT-6.1 Sol and Astra compared by standard input token price, with a reminder to test quality on real tasks'
 draft: false
 ---
+
+Your spreadsheet wants GPT-6.1 Sol. Your production incident wants proof.
 
 OpenAI's [GPT-6.1 Sol announcement](https://openai.com/index/introducing-gpt-6-1-sol/) makes a compelling pitch: near-Astra intelligence for coding, computer use, and professional work at one-fifth of Astra's standard API input and output token prices. The important word is **near**. That is OpenAI's positioning, not a guarantee that Sol will match Astra on your repository or your agent's tasks.
 
@@ -25,6 +30,20 @@ The one-fifth comparison applies to **uncached input and output**, not every lin
 
 For a request with 100,000 uncached input tokens and 20,000 output tokens, those rates imply about **$0.40 on Sol versus $2 on Astra**, before any tool fees. That is a pricing illustration, not a measured workload or a prediction of how many tokens either model will need to finish the same job. Both model pages say prompts above 272,000 input tokens incur higher rates for the **full request**: twice the input and cache rates, and 1.5 times the output rate. A million-token context window does not mean a million tokens at the base price.
 
+<figure>
+  <img
+    src="https://media.giphy.com/media/26gR0YFZxWbnUPtMA/200w.gif"
+    alt="A man thinks while math equations float around his head"
+    width="200"
+    height="112"
+    loading="lazy"
+  />
+  <figcaption>
+    Me calculating the savings before asking whether the tests still pass.{' '}
+    <a href="https://media.giphy.com/media/26gR0YFZxWbnUPtMA/giphy.gif">GIF via Giphy</a>.
+  </figcaption>
+</figure>
+
 ## A large context window, with practical limits
 
 Sol's documented context window is **1,050,000 tokens**, with a maximum of **922,000 input tokens** and **128,000 output tokens**. It accepts text and images and produces text; audio and video are not supported input or output modalities. Its documented knowledge cutoff is April 30, 2026.
@@ -41,6 +60,17 @@ Sol supports US and EU data residency, but the docs say Fast mode is unavailable
 
 ## Should you switch?
 
+![Original two-panel meme: the spreadsheet says “Ship it. Cheaper!” while the test suite asks to see the evals](/blog/gpt-6-1-sol/images/eval-meme.svg)
+
 Treat Sol as a candidate for workloads where Astra's quality is valuable but its price limits how often you can use it: coding tasks, computer-use flows, and document-heavy professional work. Do not treat “near-Astra” as an independent benchmark result. Run the same representative tasks through both models, at the reasoning effort you plan to ship, and compare successful outcomes, human corrections, latency, and **total** cost including retries and tools.
+
+<details className="border border-card-border rounded-lg p-6 my-8">
+  <summary>Quick gut check before switching models</summary>
+  <ol>
+    <li>Pick ten real tasks, including failures and long prompts.</li>
+    <li>Run both models with the same tools and reasoning effort.</li>
+    <li>Compare completed tasks and human corrections before comparing the bill.</li>
+  </ol>
+</details>
 
 If Sol clears your quality bar, the listed token prices leave meaningful room to scale. If a small failure rate creates expensive rework, Astra may still be the cheaper choice for that particular workflow. The launch headline gets Sol onto the shortlist; your evaluation should decide where it belongs.

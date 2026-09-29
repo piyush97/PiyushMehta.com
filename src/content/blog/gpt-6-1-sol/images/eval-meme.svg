@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="450" viewBox="0 0 1000 450" role="img" aria-labelledby="title desc">
+  <title id="title">The model selection meeting</title>
+  <desc id="desc">A playful two-panel cartoon: a calculator celebrates cheaper token prices, while a test runner asks to see task evaluations before switching models.</desc>
+  <rect width="1000" height="450" rx="16" fill="#171A2F"/>
+  <rect x="24" y="24" width="464" height="350" rx="12" fill="#222640" stroke="#343A5F" stroke-width="2"/>
+  <rect x="512" y="24" width="464" height="350" rx="12" fill="#222640" stroke="#343A5F" stroke-width="2"/>
+  <text x="54" y="70" fill="#FFCC68" font-family="monospace" font-size="18" font-weight="700" letter-spacing="2">THE SPREADSHEET</text>
+  <text x="542" y="70" fill="#A8E6B8" font-family="monospace" font-size="18" font-weight="700" letter-spacing="2">THE TEST SUITE</text>
+  <rect x="139" y="106" width="230" height="156" rx="14" fill="#0F1221" stroke="#FFCC68" stroke-width="3"/>
+  <rect x="163" y="130" width="182" height="63" rx="6" fill="#343A5F"/>
+  <text x="254" y="174" text-anchor="middle" fill="#F6F7FF" font-family="monospace" font-size="36" font-weight="700">5× ↓</text>
+  <circle cx="197" cy="220" r="9" fill="#FFCC68"/>
+  <circle cx="254" cy="220" r="9" fill="#FFCC68"/>
+  <circle cx="311" cy="220" r="9" fill="#FFCC68"/>
+  <rect x="627" y="106" width="234" height="156" rx="14" fill="#0F1221" stroke="#A8E6B8" stroke-width="3"/>
+  <rect x="647" y="127" width="194" height="98" rx="6" fill="#171A2F"/>
+  <text x="663" y="158" fill="#A8E6B8" font-family="monospace" font-size="19">✓ cost check</text>
+  <text x="663" y="191" fill="#B4BAD8" font-family="monospace" font-size="19">? quality</text>
+  <rect x="647" y="233" width="194" height="8" rx="4" fill="#343A5F"/>
+  <text x="254" y="326" text-anchor="middle" fill="#F6F7FF" font-family="Arial,sans-serif" font-size="29" font-weight="700">“Ship it. Cheaper!”</text>
+  <text x="744" y="326" text-anchor="middle" fill="#F6F7FF" font-family="Arial,sans-serif" font-size="29" font-weight="700">“Show me the evals.”</text>
+  <text x="500" y="414" text-anchor="middle" fill="#B4BAD8" font-family="monospace" font-size="16">A price comparison is not a quality benchmark.</text>
+</svg>
