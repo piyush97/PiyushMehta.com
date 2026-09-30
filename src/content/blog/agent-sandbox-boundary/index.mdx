@@ -1,0 +1,93 @@
+---
+title: 'An AI Agent Sandbox Is Not Your Authorization Boundary'
+description: 'An AI agent sandbox limits where code runs, not what it can change. Set security boundaries for network access, credentials, approvals, and writes.'
+date: 2026-09-30T10:00:00-04:00
+author: 'Piyush Mehta'
+tags: ['AI Agents', 'OpenAI Agents API', 'Security', 'System Design', 'Software Engineering']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+draft: false
+---
+
+Your agent needs to inspect a repository, run tests, and suggest a patch. It does **not** need permission to merge a PR. Those two requirements are easy to blur when a managed agent comes with its own sandbox.
+
+OpenAI's [Agents API launched in public beta on September 10, 2026](https://openai.com/index/introducing-the-agents-api/). It supplies the agent harness and lets developers choose an OpenAI-hosted environment or their own infrastructure. The [quickstart](https://developers.openai.com/api/docs/guides/agents-api/quickstart) creates a session in an `openai_hosted` environment and streams progress. This removes a lot of orchestration work. It does not transfer your application's authorization policy into the sandbox.
+
+> **A sandbox limits where code runs. Your application decides what the agent may change.**
+
+This is a design recommendation, not a claim that a particular sandbox has been breached.
+
+## Five separate questions hiding behind “is it sandboxed?”
+
+| Boundary      | Question to answer before launch                          | Default for a patch-review agent                 |
+| ------------- | --------------------------------------------------------- | ------------------------------------------------ |
+| Execution     | Where can generated code run?                             | Disposable, task-scoped workspace                |
+| Network       | Which destinations can it reach?                          | No outbound access unless the task needs it      |
+| Credentials   | What secret material can agent-generated code read?       | No production credentials in the workspace       |
+| Authorization | Who decides whether a proposed action is permitted?       | Application-side policy, not agent prose         |
+| Durable state | Who applies changes to the real repository or deployment? | Human-reviewed PR; no merge or deploy permission |
+
+The first two rows are environment configuration. The last two are product behavior. Don't treat a green check on the first row as an answer to all five.
+
+OpenAI's [hosted-sandbox documentation](https://developers.openai.com/api/docs/guides/agents-api/environments/openai-hosted) says outbound network access is **enabled by default** unless a template policy changes it. It offers `disabled` and `restricted` modes; restricted mode uses exact hostnames rather than wildcard domains. The same documentation says ordinary `env` variables are readable by agent-generated code and directs developers to use vault credentials for secrets instead. These are useful controls, but you must choose them explicitly for your workload. A domain allowlist controls a destination, not which operation the agent may perform at that destination.
+
+## Try the design review before reading mine
+
+**Scenario:** A coding agent checks a dependency upgrade in an unfamiliar repository. It needs package installation, tests, and a patch for review. Pick the smallest permission set you would grant.
+
+<details>
+<summary>Decision A: does an isolated workspace make generated code trustworthy?</summary>
+
+A sandbox limits the process environment; it doesn't establish that the patch is correct or safe. Keep each run disposable and task-scoped, then review the returned diff and rerun checks in a trusted CI environment against the exact revision.
+
+</details>
+
+<details>
+<summary>Decision B: allow outbound internet for package installation?</summary>
+
+First ask whether a prebuilt dependency cache or a setup step can satisfy the task. If the agent must fetch packages, restrict destinations as tightly as the build allows and pin dependency versions; don't assume an allowlisted package host makes package contents trustworthy. The hosted-sandbox docs warn that redirects and subdomains need separate allowlist entries. Re-run the install in a clean workspace before trusting the result.
+
+</details>
+
+<details>
+<summary>Decision C: put a GitHub token in the sandbox so it can open a PR?</summary>
+
+Keep a repo-scoped write token out of agent-generated code. Let the agent return a patch or artifact, validate it outside the workspace, and let a separate application service open the PR with the smallest necessary credential. OpenAI documents `/workspace/outputs` as the location for published, immutable artifacts when a turn completes; an artifact is output to inspect, not an authorization grant. If your workflow genuinely needs agent-accessible credentials, review the provider's vault-credential mechanism and its scope instead of putting a secret in `env`.
+
+</details>
+
+<details>
+<summary>Decision D: should the agent decide which actions are authorized?</summary>
+
+No. Treat model output, generated code, and tool requests as untrusted proposals. Enforce authorization in application-side policy at every tool boundary; the agent's explanation, a successful run, or a hostname allowlist is not that policy.
+
+</details>
+
+<details>
+<summary>Decision E: should a passing test run let the agent merge or deploy?</summary>
+
+No. An agent's summary is not a test attestation. Run the repository's checks in a separate trusted CI context against the exact proposed commit; review the diff and source of any downloaded dependencies. A merge is a different capability from preparing a patch. Make the human or a separately specified deployment policy authorize it.
+
+</details>
+
+These aren't model-quality questions. They are questions about where untrusted inputs become durable effects.
+
+## A narrow handoff you can implement
+
+A safe first version of this workflow has three stages:
+
+1. **Run:** give the agent a repository snapshot and a task, with no production secrets. Set an explicit network policy. Record the input revision and environment configuration alongside the run.
+2. **Inspect:** collect its patch, explanation, and command output. Treat all three as untrusted. Check that the diff touches only allowed paths; run format, type, and test checks yourself against the exact patch. A passing check means _those checks_ passed, not that the change is secure.
+3. **Propose:** a separate service, holding a scoped GitHub credential, opens a review-only PR. Require another authorization step for merge or deploy. Never use the agent's self-reported success as the condition for production writes.
+
+The last two stages are an application-side architecture proposal, not features automatically supplied by the Agents API. OpenAI's [quickstart](https://developers.openai.com/api/docs/guides/agents-api/quickstart) also says to keep the application API key outside the sandbox and lists separate permissions for agent sessions and model inference. That is a helpful reminder: even the API used to _start_ a run has a different trust boundary from the code running _inside_ one.
+
+There is a tradeoff. A no-network environment cannot install new dependencies from a registry; a review-only agent cannot autonomously ship a fix. Start there if the job is “prepare a patch.” Widen one capability at a time, with a concrete task that needs it and a check you can run independently. “It ran in a sandbox” is the beginning of that review, not the end.
+
+For a runnable companion, see [testing AI agent actions with an approval gate](/blog/testing-ai-agent-actions/).
+
+### Sources
+
+- [OpenAI, “Introducing the Agents API” (September 10, 2026)](https://openai.com/index/introducing-the-agents-api/) — public-beta launch and environment choices.
+- [OpenAI, “Agents API quickstart”](https://developers.openai.com/api/docs/guides/agents-api/quickstart) — session setup, key placement, and permissions.
+- [OpenAI, “OpenAI-hosted sandboxes”](https://developers.openai.com/api/docs/guides/agents-api/environments/openai-hosted) — network modes, environment variables, and output artifacts.
