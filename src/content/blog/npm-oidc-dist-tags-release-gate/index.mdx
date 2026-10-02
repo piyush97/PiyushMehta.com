@@ -1,0 +1,68 @@
+---
+title: 'Your npm Release Token May Only Exist for dist-tags. It No Longer Has To.'
+description: 'npm trusted publishers can now move dist-tags with OIDC. A practical release-gate design for promoting next to latest without handing every publish workflow the same authority.'
+date: 2026-10-02T12:00:00-04:00
+author: 'Piyush Mehta'
+tags: ['npm', 'Supply Chain Security', 'GitHub Actions', 'OIDC', 'Release Engineering']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+draft: false
+---
+
+You have removed `NPM_TOKEN` from the publish job. A release lands under `next`; tests pass; now someone needs to point `latest` at that version. The promotion job still has a token in GitHub Secrets. You fixed the publish credential but left the release switch behind.
+
+As of [September 30, 2026](https://github.blog/changelog/2026-09-30-opt-in-dist-tag-permissions-for-npm-trusted-publishing/), npm trusted publisher configurations can opt into **Allow npm dist-tag**. The permission is off by default and independent of direct publishing. A workflow can use its short-lived OIDC identity to move a tag rather than keep a long-lived token for that last step. Existing token-based flows continue to work; nothing migrates automatically.
+
+The interesting engineering decision is not whether to tick the box. It is **which workflow gets to move `latest`**.
+
+## A dist-tag is a release pointer
+
+A package version is a published artifact; `latest` and `next` are mutable labels pointing at versions. An install using a tag resolves that label at install time. `npm publish` defaults to `latest`, while `npm publish --tag next` publishes under a different tag. `npm dist-tag add example-package@2.1.0 latest` changes the pointer, not the already-published tarball. See [npm's dist-tag guide](https://docs.npmjs.com/adding-dist-tags-to-packages/) and [CLI reference](https://docs.npmjs.com/cli/v12/commands/npm-dist-tag/).
+
+That makes tag movement a production-impacting operation. A bad promotion may not create a new package version, but it can change what a future `npm install example-package` resolves to. A rollback by moving `latest` to a previously published version is likewise a pointer change; it does not undo consumers' existing lockfiles or installations.
+
+## Choose the authority boundary
+
+Consider a package with two jobs:
+
+| Identity           | Allowed operation                             | Gate                                        |
+| ------------------ | --------------------------------------------- | ------------------------------------------- |
+| Release workflow   | Publish a candidate to `next`                 | Release tag and package tests               |
+| Promotion workflow | Move `latest` to an already-published version | Protected environment and maintainer review |
+
+This is an **architecture sketch**, not a claim that npm imposes these gates. The release workflow could be configured to publish directly while the promotion workflow is granted dist-tag permission. Or a staging-only trusted publisher can receive dist-tag permission without receiving direct-publish permission; npm says those permissions are independent. Configure separate trusted publisher identities that match the actual workflow filenames and, if used, environment names. Then give dist-tag permission only to the identity meant to promote. npm authorizes a tag operation if the OIDC identity matches **any** configuration with that permission, so audit all configurations for the package, not only the one you just edited. [GitHub's announcement](https://github.blog/changelog/2026-09-30-opt-in-dist-tag-permissions-for-npm-trusted-publishing/) and [npm's trusted publisher documentation](https://docs.npmjs.com/trusted-publishers/) spell out these rules.
+
+A separate workflow file is not by itself an approval boundary. If contributors can change the promotion workflow or trigger it with arbitrary versions, they may be able to move the pointer. Restrict who can edit and run it, use a protected GitHub environment where appropriate, and validate that the requested version is the one you intended to promote. Those are design recommendations, not protections automatically supplied by OIDC.
+
+### Which workflow would you trust?
+
+**Scenario:** A publish job runs on every release tag. A second job runs only after approval in a protected environment. You want candidates on `next` and reviewed versions on `latest`. Which job should receive **Allow npm dist-tag**?
+
+<details>
+  <summary>Reveal the release-gate decision</summary>
+
+Grant dist-tag permission to the approved promotion identity, not automatically to both jobs. The publish identity needs only its chosen publish or staging permission. Check every trusted publisher configuration: npm accepts a matching identity if **any** configuration allows the tag operation. Then ensure the approval protects both the workflow code and the target version; an OIDC match is not a release review.
+
+</details>
+
+## The promotion sequence
+
+For a GitHub Actions promotion job on a GitHub-hosted runner, [npm requires](https://docs.npmjs.com/trusted-publishers/) `id-token: write` so the CLI can exchange the job identity for a short-lived credential. The trusted publisher must match the GitHub repository and workflow filename (and configured environment, if any). Install a supported npm CLI: the [dist-tag documentation](https://docs.npmjs.com/adding-dist-tags-to-packages/) specifies **11.21.0+ or 12.2.0+** for OIDC tag operations. Do not assume an arbitrary runner image has a sufficiently recent version; check `npm --version` in the job.
+
+Once your review gate has approved a **specific, already published** version, the operative commands look like this (replace the illustrative package and version):
+
+```sh
+npm dist-tag ls example-package
+npm dist-tag add example-package@2.1.0 latest
+npm dist-tag ls example-package
+```
+
+The second listing is a read-back, not a guarantee that the intended artifact was tested. Pin and verify the version in the preceding release checks; treat the tag operation as the final mutation. For a rollback, review the target version and use the same `dist-tag add` command with that version, then read the tag again. Avoid turning an unvalidated manual string into a privileged write. The [npm docs](https://docs.npmjs.com/trusted-publishers/) show this exact list/add/list pattern for OIDC tag operations.
+
+**Before removing the old token:** configure the trusted publisher, enable its dist-tag permission, exercise a safe promotion on a real package with the correct runner and npm version, and confirm the tag moved. Then remove the token from the workflow and revoke it if it has no other purpose. npm [recommends verifying the replacement before restricting token access](https://docs.npmjs.com/trusted-publishers/). Do not use this article as a command to move any real package's `latest` tag without its owner's release approval.
+
+## What OIDC does—and does not—buy you
+
+OIDC removes a reusable release secret from this operation and binds the request to a configured CI identity. It does not prove that the version is safe, that the workflow code is trustworthy, or that a promotion was authorized by a human. Those checks belong in your release process. It also does not make all npm commands token-free: npm's documentation limits the supported OIDC operations and notes that other staged-publishing review commands require interactive authentication. [Trusted publishers](https://docs.npmjs.com/trusted-publishers/) cover the exact support boundary.
+
+The useful question for a maintainer is now quite concrete: **which identity can repoint the package's default install path, and what must happen before that identity runs?** Make that answer explicit, and the leftover `NPM_TOKEN` can finally retire.
