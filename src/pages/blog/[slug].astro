@@ -198,6 +198,8 @@ const articleSchema = {
               <OptimizedImage
                 src={image.url}
                 alt={image.alt || title}
+                width={image.width}
+                height={image.height}
                 class="w-full h-auto"
                 priority={true}
                 quality={90}

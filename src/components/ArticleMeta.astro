@@ -11,6 +11,9 @@ const { title, author, readingTime, date, tags = [], url = Astro.url.toString() 
 const shareLinks = [
   { name: 'LinkedIn', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}` },
   { name: 'X / Twitter', url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}` },
+  { name: 'Hacker News', url: `https://news.ycombinator.com/submitlink?u=${encodeURIComponent(url)}&t=${encodeURIComponent(title)}` },
+  { name: 'Reddit', url: `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}` },
+  { name: 'Bluesky', url: `https://bsky.app/intent/compose?text=${encodeURIComponent(`${title} ${url}`)}` },
   { name: 'Facebook', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },
 ];
 ---
@@ -25,6 +28,7 @@ const shareLinks = [
       <summary>Share <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V3m-5 5 5-5 5 5M5 14v6h14v-6" /></svg></summary>
       <div class="article-share__options">
         {shareLinks.map((link) => <a href={link.url} target="_blank" rel="noopener noreferrer">{link.name}</a>)}
+        <button type="button" data-native-share data-url={url} data-title={title} hidden>Share via…</button>
         <button type="button" data-copy-article data-url={url}>Copy link</button>
         <span class="article-share__status" role="status" aria-live="polite"></span>
       </div>
@@ -34,6 +38,15 @@ const shareLinks = [
 </div>
 <script>
   function initializeArticleSharing() {
+    // Native share sheet (mobile, Safari): progressive enhancement, stays hidden where unsupported.
+    document.querySelectorAll<HTMLButtonElement>('[data-native-share]').forEach((button) => {
+      if (button.dataset.initialized || typeof navigator.share !== 'function') return;
+      button.dataset.initialized = 'true';
+      button.hidden = false;
+      button.addEventListener('click', () => {
+        navigator.share({ title: button.dataset.title, url: button.dataset.url || window.location.href }).catch(() => {});
+      });
+    });
     document.querySelectorAll<HTMLButtonElement>('[data-copy-article]').forEach((button) => {
       if (button.dataset.initialized) return;
       button.dataset.initialized = 'true';
