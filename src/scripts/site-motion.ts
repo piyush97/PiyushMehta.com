@@ -136,7 +136,9 @@ const initReveal = (reducedMotion: boolean, state: MotionState): void => {
         state.revealObserver?.unobserve(entry.target);
       }
     },
-    { threshold: 0.05, rootMargin: '0px 0px 0px 0px' },
+    // ponytail: threshold 0 (any pixel). A ratio never fires for elements taller than
+    // viewport/ratio, e.g. the 19k-px blog list on a phone stayed at opacity 0.
+    { threshold: 0 },
   );
 
   revealElements.forEach((element, index) => {
