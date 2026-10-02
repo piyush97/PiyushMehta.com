@@ -99,6 +99,16 @@ const {
       applyTheme();
       document.addEventListener('astro:after-swap', applyTheme);
     </script>
+    {
+      import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN && (
+        <script
+          is:inline
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN })}
+        />
+      )
+    }
   </head>
   <body>
     <a href="#main-content" class="skip-to-main">Skip to main content</a>
