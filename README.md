@@ -2,6 +2,13 @@
 
 Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, deployed on Cloudflare Workers.
 
+[![CI/CD](https://github.com/piyush97/PiyushMehta.com/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/piyush97/PiyushMehta.com/actions/workflows/ci-cd.yml)
+[![CodeQL](https://github.com/piyush97/PiyushMehta.com/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/piyush97/PiyushMehta.com/actions/workflows/codeql-analysis.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/piyush97/PiyushMehta.com)](https://github.com/piyush97/PiyushMehta.com/releases)
+
+**Live:** [piyushmehta.com](https://piyushmehta.com) · **Write-up:** [I moved this site from Vercel to Cloudflare. Here is what broke.](https://piyushmehta.com/blog/vercel-to-cloudflare-migration)
+
 ![A screen tour of piyushmehta.com: the systems-ledger homepage, the writing index, the redesigned article reading experience, the project index, and the light theme.](.github/demo.gif)
 
 ## Built with
