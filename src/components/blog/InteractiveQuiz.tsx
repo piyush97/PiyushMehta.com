@@ -8,7 +8,7 @@ interface Question {
   explanation: string;
 }
 
-const questions: Question[] = [
+const defaultQuestions: Question[] = [
   {
     id: 1,
     question: "A Bloom filter says an item 'definitely exists'. What can you conclude?",
@@ -122,7 +122,9 @@ function quizReducer(state: QuizState, action: QuizAction): QuizState {
   }
 }
 
-export const InteractiveQuiz: React.FC = () => {
+export const InteractiveQuiz: React.FC<{ readonly questions?: readonly Question[] }> = ({
+  questions = defaultQuestions,
+}) => {
   const [state, dispatch] = useReducer(quizReducer, initialState);
   const { currentQuestion, selectedAnswer, showExplanation, score, quizCompleted } = state;
 
@@ -145,11 +147,11 @@ export const InteractiveQuiz: React.FC = () => {
 
   const getScoreMessage = () => {
     const percentage = (score / questions.length) * 100;
-    if (percentage === 100) return "🎉 Perfect! You're a Bloom Filter expert!";
-    if (percentage >= 80) return '🚀 Excellent! You understand Bloom Filters well!';
+    if (percentage === 100) return '🎉 Perfect! Every answer is correct!';
+    if (percentage >= 80) return '🚀 Excellent! You understand the topic well!';
     if (percentage >= 60) return "👍 Good job! You've got the basics down!";
     if (percentage >= 40) return '📚 Not bad! Review the article for better understanding.';
-    return '🤔 Give the article another read - Bloom Filters are tricky!';
+    return '🤔 Give the article another read, then try again!';
   };
 
   if (quizCompleted) {
@@ -244,7 +246,7 @@ export const InteractiveQuiz: React.FC = () => {
       </div>
 
       {showExplanation && (
-        <div className="mb-6 p-4 bg-light-700 border border-card-border rounded-lg">
+        <div role="status" className="mb-6 p-4 bg-light-700 border border-card-border rounded-lg">
           <h5 className="font-semibold text-accent mb-2">💡 Explanation:</h5>
           <p className="text-text-secondary">{question.explanation}</p>
         </div>
