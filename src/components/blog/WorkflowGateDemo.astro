@@ -1,0 +1,84 @@
+---
+const checks = ['Tests', 'Dependency policy'];
+---
+
+<section class="workflow-gate not-prose" data-workflow-gate aria-label="Review gate playground">
+  <h3>Can this review move forward?</h3>
+  <p>Illustrative states only. No agent or CI connection.</p>
+  <div class="workflow-gate__inputs">
+    {checks.map((check) => (
+      <label>
+        {check}
+        <select data-check>
+          <option value="passed">Passed</option>
+          <option value="failed">Failed</option>
+          <option value="missing">Missing / timed out</option>
+        </select>
+      </label>
+    ))}
+    <label>
+      Agent analysis
+      <select data-agent>
+        <option value="clean">No finding</option>
+        <option value="risk">Risk flagged</option>
+        <option value="unavailable">Unavailable</option>
+      </select>
+    </label>
+    <label>
+      PR head
+      <select data-head>
+        <option value="same">Unchanged</option>
+        <option value="changed">Changed since checks</option>
+      </select>
+    </label>
+  </div>
+  <p class="workflow-gate__result" role="status" aria-live="polite" data-result>Ready for human review. Checks passed; agent reported no finding.</p>
+  <p class="workflow-gate__note">“Ready” never means auto-merge. Required checks and SHA comparison belong in application code.</p>
+</section>
+
+<script>
+  function initWorkflowGates() {
+    document.querySelectorAll<HTMLElement>('[data-workflow-gate]').forEach((root) => {
+      if (root.dataset.initialized) return;
+      root.dataset.initialized = 'true';
+      const result = root.querySelector<HTMLElement>('[data-result]');
+      const update = () => {
+        const states = [...root.querySelectorAll<HTMLSelectElement>('[data-check]')].map((input) => input.value);
+        const agent = root.querySelector<HTMLSelectElement>('[data-agent]')?.value;
+        const head = root.querySelector<HTMLSelectElement>('[data-head]')?.value;
+        if (!result) return;
+        result.textContent = head === 'changed'
+          ? 'Rerun required: PR head changed. Old check results cannot approve new code.'
+          : states.some((state) => state !== 'passed')
+            ? 'Blocked: a required check failed or has no result. Agent opinion cannot override it.'
+            : agent === 'risk'
+              ? 'Ready for human review, with an agent risk finding to inspect. Do not auto-merge.'
+              : agent === 'unavailable'
+                ? 'Ready for human review; agent analysis unavailable. Do not treat this as no findings.'
+                : 'Ready for human review. Checks passed; agent reported no finding.';
+      };
+      root.addEventListener('change', update);
+      update();
+    });
+  }
+  initWorkflowGates();
+  document.addEventListener('astro:page-load', initWorkflowGates);
+</script>
+
+<style>
+  .workflow-gate {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border: 1px solid var(--color-border, #64748b);
+    border-radius: 1rem;
+    background: var(--color-surface, #172036);
+    color: var(--color-text, #f8fafc);
+  }
+  .workflow-gate h3 { margin: 0 0 .5rem; font-size: 1.3rem; }
+  .workflow-gate p { margin: .5rem 0 1rem; }
+  .workflow-gate__inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem; }
+  .workflow-gate label { display: grid; gap: .4rem; font-weight: 600; }
+  .workflow-gate select { width: 100%; padding: .5rem; color: #111827; background: #fff; border-radius: .4rem; }
+  .workflow-gate__result { padding: 1rem; margin-top: 1.2rem !important; border-radius: .5rem; background: #1e3a5f; color: #fff; font-weight: 700; }
+  .workflow-gate__note { font-size: .875rem; }
+</style>

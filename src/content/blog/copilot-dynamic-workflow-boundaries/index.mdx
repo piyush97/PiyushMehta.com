@@ -1,0 +1,88 @@
+---
+title: 'Copilot Dynamic Workflows: Put the Gate Outside the Agent'
+description: 'GitHub’s new dynamic workflows make agent orchestration programmable. Here is a concrete change-review pipeline, a failure policy, and a gate you can test without trusting an agent’s verdict.'
+date: 2026-10-07
+tags: ['AI', 'Software Engineering', 'GitHub Copilot', 'Developer Tools']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+---
+
+import WorkflowGateDemo from '../../../components/blog/WorkflowGateDemo.astro';
+
+Imagine a code-review agent finds a suspicious dependency update. Another agent says the change is harmless. Which answer should your release pipeline use? Neither, on its own. The first useful question is whether the pipeline can prove _what was checked_ and _which checks are mandatory_ before it asks an agent for an opinion.
+
+GitHub [announced dynamic workflows on October 1, 2026](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/). They are available in Copilot CLI, the Copilot app, and the Copilot SDK. Unlike a free-form request to a team of agents, a dynamic workflow is a program inside a Copilot extension: it defines the steps, their ordering, and where agents are involved. GitHub distinguishes this from `/fleet`, which delegates and coordinates parallel subagents. The feature is in [public preview](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows); treat its interface as subject to change.
+
+The useful design shift is not “more agents.” It is deciding which parts of a review must never depend on one.
+
+## A review pipeline with a hard edge
+
+Consider a pull request that changes both application code and a lockfile. I would divide the work this way:
+
+1. **Freeze the input.** Record the PR head commit SHA and the exact changed-file list. If the head moves, start a new run; do not attach a stale verdict to a newer commit.
+2. **Run deterministic checks.** Test, lint, dependency policy, and whatever security scanner is required for this repository. Capture the exit status and log/artifact location for each. A timed-out check is not a pass.
+3. **Ask agents for bounded analysis.** One examines the source diff for behavioral risk; another reviews dependency changes. Supply the frozen diff and ask for findings with file references, severity, and uncertainty. Run these independent investigations in parallel if the workflow supports it.
+4. **Reconcile without laundering uncertainty.** A summarizer can group duplicate findings, but a disagreement remains visible. Reject malformed findings rather than coercing them into “no issues.”
+5. **Gate the result in code.** A failed or missing required check blocks. Agent findings become review notes, not a green build. A human reviews the diff and decides whether to merge.
+
+GitHub's [workflow overview](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows) explicitly supports ordered and parallel steps, passing results between stages, agent cross-checks, and checkpoints where a person can review and resume if the client supports them. Those capabilities let you implement this design; they do **not** imply that Copilot automatically enforces the particular gate above. The gate is _your_ policy.
+
+<WorkflowGateDemo />
+
+The playground uses invented review states, not live Copilot output. Try changing a required check from pass to missing: the verdict changes even if the agent says “clean.” Then restore the check and set the agent finding to “risk”: the checks may pass, but the reviewer still gets a warning. This asymmetry is deliberate.
+
+## The contract between a check and a finding
+
+Keep the two kinds of evidence separate. A minimal application-owned record might look like this (illustrative TypeScript, **not** a Copilot SDK API):
+
+```ts
+type Check = {
+  name: string;
+  status: 'passed' | 'failed' | 'missing';
+  artifactUrl?: string;
+};
+
+type Finding = {
+  file: string;
+  severity: 'low' | 'medium' | 'high';
+  explanation: string;
+  confidence: 'low' | 'medium' | 'high';
+};
+
+type ReviewRun = {
+  headSha: string;
+  requiredChecks: Check[];
+  findings: Finding[];
+};
+
+function gate(run: ReviewRun, currentHeadSha: string) {
+  if (run.headSha !== currentHeadSha) return 'rerun';
+  if (run.requiredChecks.length === 0) return 'blocked';
+  if (run.requiredChecks.some((check) => check.status !== 'passed')) return 'blocked';
+  return 'ready-for-human-review'; // never 'merge'
+}
+```
+
+The code is intentionally boring. It does not let an agent decide that a failed test was irrelevant, and it never maps “ready for human review” to “safe to deploy.” In a real system, validate the expected check names against a repository-owned list before evaluating the gate: an empty array is blocked here, but an incomplete nonempty array could still pass. Persist the run SHA with every check result, and make artifact links auditable. Those are implementation requirements for this proposed design, not guarantees from GitHub's preview.
+
+### The cases that expose a bad workflow
+
+- **Check timed out:** represent it as missing or failed, not passed. Retrying is fine; silently skipping is not.
+- **Agent returns no parseable findings:** show “analysis unavailable.” Do not translate a parser error into “no findings.”
+- **PR head changes during analysis:** discard the old run's approval state and re-evaluate the new SHA.
+- **Agents disagree:** preserve both cited observations for the reviewer; a third agent's vote is not a substitute for inspecting the diff.
+- **A prompt or tool asks for credentials:** do not put secrets in the agent's review context. Limit tool permissions and redact logs before analysis.
+
+None of these conditions requires a cleverer prompt. They require explicit state transitions and a human ownership boundary.
+
+## When to reach for a dynamic workflow
+
+Use one when the _sequence_ is itself part of the requirement: incident triage, release readiness, or repeated code review with auditable inputs and failure behavior. A one-off exploratory question probably does not need an extension and a state machine. If you need to try the preview, GitHub's [usage guide](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows) says Copilot CLI requires `--experimental` or `/experimental on`; existing workflows can be run with `copilot workflow run WORKFLOW-NAME [OPTIONS]`, with JSON inputs supplied via `--args`. Follow the current documentation before implementing against preview APIs.
+
+The rule of thumb: let agents investigate; let code enforce prerequisites; let a person authorize consequences. A programmable workflow is valuable precisely when those responsibilities stay distinct.
+
+### Sources
+
+- [GitHub Changelog: Dynamic workflows in Copilot CLI and the Copilot app (October 1, 2026)](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/)
+- [GitHub Docs: Dynamic workflows (public-preview overview)](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows)
+- [GitHub Docs: Using dynamic workflows](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows)
