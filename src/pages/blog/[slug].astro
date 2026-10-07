@@ -484,7 +484,6 @@ const articleSchema = {
       --article-rail: 13rem;
       --article-gap: clamp(1.5rem, 3vw, 3rem);
       --article-pad: clamp(1.25rem, 2.5vw, 2.25rem);
-      --article-measure: 49rem;
       --article-evidence: 56rem;
       --article-offset: 0rem;
     }
@@ -517,17 +516,6 @@ const articleSchema = {
       padding-left: var(--article-pad);
       border-left: 1px solid var(--color-card-border);
     }
-
-    /* Prose holds a readable measure; evidence is allowed to break out past it
-       and use the width the narrow column was leaving unused.
-       `:global()` is required — MDX elements carry no page scope attribute. */
-    .blog-post-content :global(:is(p, ul, ol, h2, h3, h4, blockquote, hr)) {
-      max-width: var(--article-measure);
-    }
-
-    .blog-post-content :global(:is(figure, pre, table)) {
-      max-width: var(--article-evidence);
-    }
   }
 
   .blog-post-content {
@@ -548,6 +536,8 @@ const articleSchema = {
     margin: 0 0 1.35rem;
     color: var(--color-text);
     line-height: inherit;
+    text-align: justify;
+    hyphens: auto;
     text-wrap: pretty;
   }
 
