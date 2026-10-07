@@ -3,6 +3,41 @@ import { expect, test } from '@playwright/test';
 const articlePath = '/blog/rag-vs-long-context/';
 const headingLinkText = 'When RAG is worth adding';
 
+test('Luna decision walkthrough routes fixtures at the exact probability threshold', async ({ page }) => {
+  await page.goto('/blog/gpt-6-luna-decisions/', { waitUntil: 'domcontentloaded' });
+  const demo = page.locator('[data-luna-demo]');
+  await expect(demo).toHaveAttribute('data-initialized', 'true');
+  const ticket = demo.getByLabel('Support ticket');
+  const threshold = demo.getByRole('slider', { name: 'Auto-route threshold' });
+  await expect(demo).toHaveAttribute('data-review', 'false');
+  await expect(demo.getByRole('meter', { name: 'Billing probability' })).toHaveAttribute('value', '0.94');
+
+  await threshold.focus();
+  await threshold.press('End');
+  await expect(demo).toHaveAttribute('data-review', 'true');
+  for (let step = 0; step < 5; step++) await threshold.press('ArrowLeft');
+  await expect(threshold).toHaveValue('94');
+  await expect(demo).toHaveAttribute('data-review', 'false');
+  await threshold.press('ArrowRight');
+  await expect(demo).toHaveAttribute('data-review', 'true');
+
+  await ticket.selectOption({ label: 'Likely technical issue' });
+  await expect(demo.getByRole('meter', { name: 'Technical probability' })).toHaveAttribute('value', '0.82');
+  await expect(demo).toHaveAttribute('data-review', 'true');
+  await threshold.press('Home');
+  await expect(demo).toHaveAttribute('data-review', 'false');
+
+  await ticket.selectOption({ label: 'Ambiguous account request' });
+  await expect(demo.getByRole('meter', { name: 'Account probability' })).toHaveAttribute('value', '0.52');
+  await expect(demo).toHaveAttribute('data-review', 'false');
+  await threshold.press('ArrowRight');
+  await threshold.press('ArrowRight');
+  await expect(threshold).toHaveValue('52');
+  await expect(demo).toHaveAttribute('data-review', 'false');
+  await threshold.press('ArrowRight');
+  await expect(demo).toHaveAttribute('data-review', 'true');
+});
+
 async function expectReadableMeasure(page: import('@playwright/test').Page) {
   const measure = await page.locator('.blog-post-content').evaluate((content) => {
     const probe = document.createElement('div');
