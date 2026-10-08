@@ -59,8 +59,8 @@ LSP workspace queries were unavailable during guide generation; no reference cou
 ## ANTI-PATTERNS (THIS PROJECT)
 - Do not edit generated/ignored output in `dist/`, `.wrangler/`, `.astro/`, Playwright report/result directories, or `public/resume.pdf`.
 - Do not treat `src/middleware/og-cache.ts` as active; `src/middleware/security.ts` is active.
-- Do not use `bun build` or `bun test` for project scripts; they invoke Bun built-ins.
-- Do not assume full E2E is a green gate: legacy OG, command-palette, reading-progress, and production-targeted specs are stale; E2E CI is commented out.
+- Do not use `bun build` for project scripts; it invokes Bun's bundler. `bun run test:unit` deliberately uses Bun's test runner for the `node:test` files in `tests/*.test.ts`.
+- `bun run test` runs unit tests, then Playwright (`*.spec.ts` only). Chromium is green locally; E2E CI is still commented out.
 
 ## UNIQUE STYLES
 - Vite+ (`vp`) provides Oxlint/Oxfmt; no ESLint, Prettier, or Biome.
@@ -77,7 +77,8 @@ bun run lint
 bun run format
 bun run build
 bun run preview
-bun run test
+bun run test        # unit tests, then all Playwright specs
+bun run test:unit
 bun run test:smoke
 bunx playwright test tests/<name>.spec.ts --project=chromium
 bun run resume:generate  # after résumé source changes

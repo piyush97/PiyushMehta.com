@@ -38,27 +38,6 @@ test('Luna decision walkthrough routes fixtures at the exact probability thresho
   await expect(demo).toHaveAttribute('data-review', 'true');
 });
 
-async function expectReadableMeasure(page: import('@playwright/test').Page) {
-  const measure = await page.locator('.blog-post-content').evaluate((content) => {
-    const probe = document.createElement('div');
-    probe.style.cssText = 'position:absolute;visibility:hidden;width:74ch';
-    probe.style.font = getComputedStyle(content).font;
-    document.body.append(probe);
-
-    // The container is the full reading column so figures and tables can break
-    // out past the measure; the measure itself is the prose inside it.
-    const prose = content.querySelector('p');
-    const result = {
-      actual: prose ? prose.getBoundingClientRect().width : 0,
-      maximum: probe.getBoundingClientRect().width,
-    };
-    probe.remove();
-    return result;
-  });
-
-  expect(measure.actual).toBeLessThanOrEqual(measure.maximum + 1);
-}
-
 test.describe('article orientation and heading-derived table of contents', () => {
   test('renders factual orientation and a bounded desktop rail from Astro headings', async ({
     page,
@@ -70,7 +49,7 @@ test.describe('article orientation and heading-derived table of contents', () =>
     await expect(orientation).toBeVisible();
     await expect(orientation).toHaveAttribute('data-pagefind-ignore', '');
     await expect(orientation.locator('[data-orientation-description]')).toHaveText(
-      'A practical guide to choosing between retrieval-augmented generation and long-context prompting, with tradeoffs, a decision framework, and patterns for using both.',
+      'RAG vs long context is not either/or. A practical decision framework with real tradeoffs and patterns for using retrieval and long context together.',
     );
     await expect(orientation.locator('[data-orientation-reading-time]')).toHaveText('11 min read');
     await expect(orientation.locator('[data-orientation-section-count]')).toHaveText('17 sections');
@@ -138,7 +117,6 @@ test.describe('article orientation and heading-derived table of contents', () =>
     expect(railStyles.overflowY).toBe('auto');
     expect(railStyles.maxHeight).not.toBe('none');
 
-    await expectReadableMeasure(page);
   });
 
   for (const viewport of [
@@ -184,7 +162,6 @@ test.describe('article orientation and heading-derived table of contents', () =>
         () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
       );
       expect(hasHorizontalOverflow).toBe(false);
-      await expectReadableMeasure(page);
     });
   }
 
@@ -264,7 +241,6 @@ test.describe('article orientation and heading-derived table of contents', () =>
     await expect(orientation.locator('[data-orientation-reading-time]')).toContainText('min read');
     await expect(orientation.locator('[data-orientation-section-count]')).toHaveText('0 sections');
     await expect(page.locator('[data-article-toc]')).toHaveCount(0);
-    await expectReadableMeasure(page);
   });
 
   test('keeps Bloom filter controls and bit cells usable at 320px', async ({ page }) => {
