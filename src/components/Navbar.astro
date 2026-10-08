@@ -8,6 +8,7 @@ const navItems = [
   { href: '/about/', label: 'About' },
   { href: '/resume/', label: 'Resume' },
   { href: '/contact-me/', label: 'Contact' },
+  { href: 'https://os.piyushmehta.com/', label: 'Desktop', external: true },
 ];
 
 const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
@@ -28,8 +29,13 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
   <div class="site-nav__links" id="desktop-nav-links">
     {
       navItems.map((item) => (
-        <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+        <a
+          href={item.href}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+          title={item.external ? 'MehtaDesk: my portfolio as an interactive desktop' : undefined}
+        >
           {item.label}
+          {item.external && <span aria-hidden="true"> ↗</span>}
         </a>
       ))
     }
@@ -62,6 +68,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
           data-mobile-link
         >
           {item.label}
+          {item.external && <span aria-hidden="true"> ↗</span>}
         </a>
       ))
     }
