@@ -29,6 +29,6 @@
       "@/scripts/*": ["./scripts/*"]
     }
   },
-  "include": ["src/**/*", "**/*.astro", "sentry.*.config.ts"],
+  "include": ["src/**/*", "**/*.astro", "sentry.*.config.ts", "playwright.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

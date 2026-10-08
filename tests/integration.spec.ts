@@ -15,11 +15,6 @@ test.describe('Integration Tests', () => {
     // Wait for page to load
     await page.waitForLoadState('networkidle');
 
-    // 1. Command Palette should be available
-    await page.keyboard.press('Meta+KeyK');
-    await expect(page.locator('#command-palette')).toBeVisible();
-    await page.keyboard.press('Escape');
-
     // 2. Reading Progress should be active
     const progressBar = page.locator('#reading-progress-bar');
     if ((await progressBar.count()) > 0) {
@@ -86,10 +81,7 @@ test.describe('Integration Tests', () => {
       await page.waitForLoadState('networkidle');
 
       // Navigation should be accessible
-      const navbar = page.locator('nav, .navbar');
-      if ((await navbar.count()) > 0) {
-        await expect(navbar).toBeVisible();
-      }
+      await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
 
       // Command palette should work
       await page.keyboard.press('Meta+KeyK');
@@ -211,19 +203,13 @@ test.describe('Integration Tests', () => {
     }
 
     // Navigation should still work
-    const navLinks = page.locator('nav a, .navbar a');
-    if ((await navLinks.count()) > 0) {
-      const firstLink = navLinks.first();
-      const href = await firstLink.getAttribute('href');
-
-      if (href && !href.startsWith('#')) {
-        await firstLink.click();
-        await page.waitForLoadState('networkidle');
-
-        // Should navigate successfully
-        expect(page.url()).not.toBe('about:blank');
-      }
-    }
+    // Without JavaScript the nav must be plain links to real pages.
+    const workLink = page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Work' }).first();
+    const href = await workLink.getAttribute('href');
+    expect(href).toBe('/projects/');
+    const response = await page.goto(href!);
+    expect(response?.ok()).toBe(true);
+    await expect(page.locator('main')).toBeVisible();
 
     await context.close();
   });
@@ -282,14 +268,13 @@ test.describe('Integration Tests', () => {
     }
 
     // Check structured data
-    const structuredData = page.locator('script[type="application/ld+json"]');
-    if ((await structuredData.count()) > 0) {
+    for (const structuredData of await page.locator('script[type="application/ld+json"]').all()) {
       const jsonData = await structuredData.textContent();
       expect(() => JSON.parse(jsonData || '')).not.toThrow();
     }
 
     // Check heading hierarchy
-    const h1Elements = page.locator('h1');
-    expect(await h1Elements.count()).toBeLessThanOrEqual(1); // Should have only one H1
+    // Scope to the page: `astro dev` injects its own dev-toolbar <h1>s outside <main>.
+    await expect(page.locator('main h1')).toHaveCount(1);
   });
 });

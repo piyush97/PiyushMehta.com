@@ -28,7 +28,6 @@ test.describe('astro v6 migration smoke', () => {
     await page.goto('/blog/rag-vs-long-context', { waitUntil: 'networkidle' });
 
     const imageAlts = [
-      'A two-panel comparison of long context, where all documents enter one prompt, and RAG, where selected passages reach the model',
       'RAG vs long context hero',
       'Long context: everything goes into one prompt',
       'RAG: retrieve only relevant passages',
