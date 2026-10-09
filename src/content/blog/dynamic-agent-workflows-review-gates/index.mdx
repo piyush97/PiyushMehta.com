@@ -1,0 +1,102 @@
+---
+title: 'Agent Workflows Need a Stop Button, Not Just More Agents'
+description: 'GitHub Copilot dynamic workflows put agent orchestration in code. Use an incident triage exercise to decide what to automate, verify, and pause.'
+date: 2026-10-09T12:00:00-04:00
+author: 'Piyush Mehta'
+tags: ['AI Agents', 'GitHub Copilot', 'System Design', 'Reliability']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+draft: false
+---
+
+A production alert fires. Your assistant reads dashboards, asks two agents to investigate different services, and writes a plausible incident timeline. Then it restarts a service based on that timeline. The dangerous step wasn't the parallel investigation; it was treating an interpretation as permission to act.
+
+GitHub [introduced dynamic workflows on October 1, 2026](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/). They are in public preview in Copilot CLI, the Copilot app, and the SDK. A workflow defines the steps, conditions, and handoffs in code; agents do the analysis inside that structure. GitHub's [concept guide](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows) distinguishes this from `/fleet`, where Copilot decides how to distribute work on each run. That is a useful shift for repeatable engineering tasks, but a repeatable _sequence_ is not the same as a safe _decision_.
+
+Consider incident triage. The goal is **a reviewable hypothesis**, not an automated fix. The workflow should gather bounded evidence, request independent interpretations, validate their output, and stop before any mutation.
+
+## Put code around the uncertain part
+
+Here is a design sketch, not a Copilot extension or an API example. The exact extension API is preview software; the boundary is the point.
+
+```text
+input: incident_id, read_only_scope, time_window
+
+assert incident_id exists and time_window <= configured maximum
+telemetry = collect_read_only_metrics_and_logs(read_only_scope, time_window)
+if telemetry is incomplete: return "insufficient evidence"
+
+[service_hypothesis, dependency_hypothesis] = parallel(
+  agent(telemetry.service_slice),
+  agent(telemetry.dependency_slice)
+)
+
+for each hypothesis:
+  require incident_id, claim, evidence_refs, uncertainty, proposed_next_check
+  reject unknown evidence_refs or out-of-scope resources
+
+report = combine_with_disagreements_visible(hypotheses)
+pause_for_human_review(report)
+# No deploy, restart, ticket close, or external message in this workflow.
+```
+
+The collector is deterministic and read-only. An agent can tell you _what a graph might mean_; it should not invent graph IDs or decide that a restart is authorized. Validate each evidence reference against the collected set, not just against a JSON schema. Two agents repeating the same bad assumption are not independent evidence. If both consume the same misleading log line, agreement is a weak signal.
+
+GitHub documents [structured agent results, checkpoints, parallel steps, and resource limits](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows). Those are primitives, not built-in guarantees that the sketch above has been implemented. A workflow author still has to encode these checks and test the failure paths.
+
+## Choose the boundary: an incident exercise
+
+Suppose an agent reports: “Latency rose after deploy `abc123`; roll back now.” You have a deployment timestamp and a latency chart, but no error-rate data. Pick your next workflow step before opening the answer.
+
+<details>
+  <summary>
+    <strong>A.</strong> Roll back automatically because the timestamps line up.
+  </summary>
+  <p>
+    Too strong. Correlation is a lead, not authorization. A rollback changes production state and
+    can itself cause an outage. A workflow should preserve the evidence and stop at a review gate.
+  </p>
+</details>
+
+<details>
+  <summary>
+    <strong>B.</strong> Ask a second agent if it agrees, then roll back if both agree.
+  </summary>
+  <p>
+    Still too strong. Both agents may share the same incomplete evidence. Ask what independent
+    signal would distinguish deployment failure from a downstream dependency instead.
+  </p>
+</details>
+
+<details>
+  <summary>
+    <strong>C.</strong> Fetch bounded error-rate and dependency signals, record gaps, then hand a
+    proposed check to the on-call engineer.
+  </summary>
+  <p>
+    Best of these choices. You have turned a confident-sounding conclusion into a falsifiable next
+    step. The human can inspect the evidence before approving any production action.
+  </p>
+</details>
+
+The same exercise works for code review: gather a diff deterministically, let agents inspect independent slices, verify that cited line ranges actually exist, and leave merge authority outside the analysis workflow. For a quick one-file change, a normal prompt may be cheaper and clearer than building orchestration; GitHub's [guidance says so explicitly](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows).
+
+## Set limits before the first broad run
+
+Start with a tiny scope: one incident, a short time window, and a small number of agents. The [Copilot documentation](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows) describes limits for concurrent and total workflow-owned agents, active runtime, and approximate AI credits. Credit accounting can lag actual usage, so the limit is **not** a hard spending cap. Record the measured cost of the small run before widening the scope.
+
+If you run a saved workflow directly from the CLI, GitHub documents `copilot workflow run WORKFLOW-NAME` and JSON inputs via `--args`. The [CLI how-to](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows) says experimental features must be enabled, and direct runs do **not** display interactive permission prompts: required grants must be provided before launch or requests are denied. Subagents inherit session permission grants; extension code can also run outside those prompts. Treat a shared extension as executable code to review, not as a harmless prompt template.
+
+Before calling an incident workflow ready, run three dry cases against non-production fixtures:
+
+1. Missing telemetry: it returns “insufficient evidence,” not a fabricated timeline.
+2. A hypothesis cites a graph outside the collected evidence: validation rejects it.
+3. Both agents recommend a restart: the workflow still stops before any write.
+
+Dynamic workflows make the _route through the work_ explicit. The engineering win is not that agents can work in parallel. It is that you can specify where their judgment ends, where evidence is checked, and where a person must take over. Preview APIs may change; that boundary should not.
+
+### Sources
+
+- [GitHub Changelog: Dynamic workflows in Copilot CLI and the Copilot app (October 1, 2026)](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/)
+- [GitHub Docs: Dynamic workflows — concepts, permissions, limits, and availability](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows)
+- [GitHub Docs: Using dynamic workflows — CLI prerequisites and noninteractive permissions](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows)
