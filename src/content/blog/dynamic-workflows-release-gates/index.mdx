@@ -1,0 +1,121 @@
+---
+title: 'An AI Workflow Is a State Machine, Not a Longer Prompt'
+description: 'GitHub Copilot dynamic workflows make orchestration explicit. Design a release gate with deterministic checks, narrow agent judgment, and a human-controlled write boundary.'
+date: 2026-10-12T12:00:00-04:00
+author: 'Piyush Mehta'
+tags: ['AI Agents', 'GitHub Copilot', 'Release Engineering', 'System Design']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+draft: false
+---
+
+The release candidate is green. An agent reads the changelog, decides the rollout looks safe, and promotes the release. An hour later, you discover that the green build belonged to a different commit.
+
+That is not a prompt-writing problem. It is a missing transition guard.
+
+GitHub [announced dynamic workflows for Copilot CLI, the Copilot app, and the SDK on October 1, 2026](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/). A workflow is code inside a Copilot extension: ordinary operations and agent steps can run sequentially or in parallel, with structured results passed between stages. The useful shift is not “more agents.” It is deciding which steps **must happen** before an agent's recommendation can become an action. GitHub's [concept documentation](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows) calls the feature a public preview, so treat the API and availability as moving targets.
+
+Consider one concrete job: promote a package from `next` to `latest` after a release candidate passes. The agent may summarize risk, but it should not decide whether the candidate digest matches the tested artifact or whether approval exists. Those are facts the program can check.
+
+## Sketch the transitions first
+
+```text
+candidate selected
+  → verify immutable version + artifact digest
+  → verify tests refer to that exact candidate
+  → collect independent security and compatibility assessments
+  → require a human to approve the exact version + digest
+  → re-check the tag target and candidate before writing
+  → move the tag once, record the result
+```
+
+This is **design pseudocode**, not a copy-paste Copilot extension. GitHub's workflows can run tools, coordinate agents, pass structured results, and pause for user input where the application supports it; those capabilities do not automatically implement a safe release gate. You still own the checks and the write permissions ([concepts](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows)).
+
+The digest matters because `latest` is mutable. If the thing reviewed and the thing promoted are identified only by a human-readable label, you have a time-of-check/time-of-use gap. Capture the candidate's immutable identity before review, then compare it again immediately before promotion. If either identity changes, stop and start a new review. This is an engineering recommendation, not a claim that Copilot supplies those checks for you.
+
+## Put judgment in the middle, not at the boundary
+
+Two independent agents can inspect different evidence: one looks for security signals; the other looks for compatibility issues. Each returns a structured finding with the candidate identity, evidence links, uncertainties, and a recommendation. Parallel work is useful here because the questions differ. A pair of agents reading the same green check is not independent verification.
+
+The workflow then rejects missing or conflicting findings and presents the evidence to a human. Approval must be bound to the candidate identity, not the vague instruction “ship the release.” Even after approval, the program re-checks the tested digest and current tag target. A retry must not silently perform a second, different promotion; compare the current target with the intended one and halt on a mismatch.
+
+The boundary is deliberately asymmetric:
+
+| Step                                        | Owner                     | Failure behavior                                     |
+| ------------------------------------------- | ------------------------- | ---------------------------------------------------- |
+| Identify candidate and match CI evidence    | Deterministic code        | Stop on missing or mismatched identity               |
+| Explain security and compatibility concerns | Agents                    | Return evidence and uncertainty, never a write token |
+| Approve exact candidate                     | Human                     | No approval, no promotion                            |
+| Revalidate and move `latest`                | Narrowly scoped operation | Stop if state changed; record success or conflict    |
+
+This does not prove the release is safe. It makes a bad decision inspectable and prevents a persuasive summary from bypassing mechanical preconditions.
+
+## Try the gate
+
+Pick the failure you want your team to catch. Open each case, then decide whether it should **stop**, **request a fresh approval**, or **proceed** before reading the answer.
+
+<details>
+  <summary>
+    <strong>Case A:</strong> CI is green, but its run belongs to the previous commit.
+  </summary>
+  <p>
+    <strong>Stop.</strong> The tested artifact is not the selected candidate. Re-run or locate
+    matching evidence; the agent's confidence cannot repair a digest mismatch.
+  </p>
+</details>
+
+<details>
+  <summary>
+    <strong>Case B:</strong> both assessments look fine, but the candidate changed after approval.
+  </summary>
+  <p>
+    <strong>Request a fresh approval.</strong> The person approved a particular version and digest.
+    New bytes are a new decision, even if the version label did not change.
+  </p>
+</details>
+
+<details>
+  <summary>
+    <strong>Case C:</strong> the write request times out, and `latest` already points to the
+    intended digest.
+  </summary>
+  <p>
+    <strong>Verify and record the result, then stop.</strong> Do not blindly replay the write. A
+    timeout does not tell you whether the first attempt succeeded.
+  </p>
+</details>
+
+<details>
+  <summary>
+    <strong>Case D:</strong> the write request times out, and `latest` now points somewhere else.
+  </summary>
+  <p>
+    <strong>Stop with a conflict.</strong> Someone or something changed the target. A retry that
+    overwrites it would turn a concurrency issue into an unreviewed release.
+  </p>
+</details>
+
+<details>
+  <summary>
+    <strong>Case E:</strong> the checks match, findings have evidence, approval names the same
+    digest, and the tag has not changed.
+  </summary>
+  <p>
+    <strong>Proceed.</strong> Perform the narrowly scoped write and read back the resulting target.
+    If the read-back fails, report uncertainty instead of claiming success.
+  </p>
+</details>
+
+The interesting part is not the number of cases. It is that none of the stop conditions depend on a model's eloquence.
+
+## Where Copilot's feature fits
+
+In the [current documentation](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows), Copilot CLI requires experimental features (`--experimental` or `/experimental on`) to use dynamic workflows. A workflow lives in an extension and can be started by name in a session; the docs also describe `copilot workflow run WORKFLOW-NAME`. Check the documentation before implementing: this is public-preview behavior, not a stable interface guarantee.
+
+If your release path already has a deterministic pipeline, do **not** rebuild it as an agent workflow. Keep the tested, permissioned write in the existing system. Add agent-assisted analysis only where human judgment currently consumes messy evidence, and require a structured handoff back to the gate. The workflow should make the release decision easier to review—not make the release authority harder to locate.
+
+### Sources
+
+- [GitHub Changelog: Dynamic workflows in Copilot CLI and the Copilot app (October 1, 2026)](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/)
+- [GitHub Docs: Dynamic workflows (public preview)](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows)
+- [GitHub Docs: Using dynamic workflows](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows)
