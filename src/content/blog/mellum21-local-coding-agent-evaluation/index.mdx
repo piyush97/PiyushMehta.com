@@ -1,0 +1,68 @@
+---
+title: 'Mellum2.1 and the Local Coding Agent Test That Actually Matters'
+description: 'JetBrains reports a big jump in agentic coding for Mellum2.1. A practical, repeatable evaluation for deciding whether a small local model can handle your repo.'
+date: 2026-10-14
+tags: ['AI', 'Coding Agents', 'Software Engineering', 'Open Models']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+---
+
+A model that can write a function is not necessarily a model that can repair a repository. The latter has to find the right file, avoid unrelated edits, run the right test, and stop when it has enough evidence. That is the interesting question behind [JetBrains' October 8 release of Mellum2.1](https://blog.jetbrains.com/ai/2026/10/mellum2-1-gets-to-work-a-fast-open-model-for-coding-agents/), a 12B-total-parameter mixture-of-experts model with 2.5B active parameters, released under Apache 2.0. JetBrains says the architecture stayed the same as Mellum2; most of the change was post-training, including reinforcement learning in repositories with shell and file-editing tools.
+
+On its [model card](https://huggingface.co/JetBrains/Mellum2.1-12B-A2.5B-Thinking), JetBrains reports **47.0% on SWE-bench Verified** for Mellum2.1 Thinking, versus **2.0% for Mellum2 Thinking**, using its own evaluation pipeline. That is a striking _vendor-reported_ difference, not a prediction that 47% of your issues will be fixed. The card specifies a shared Pi v0.73.1 harness with shell/file tools, 114K context, up to 16K tokens per turn, and each model's default sampling. Change the harness, task mix, or time budget and the comparison changes too.
+
+The useful takeaway isn't “switch models.” It's **test the entire worker, not just the model**. A local agent may be an excellent cheap first pass for a narrow, well-tested job; it might be the wrong choice for a migration spanning five services.
+
+## A small repo trial, not a leaderboard victory lap
+
+Pick **five closed issues** whose fixes already have tests. Hide the solution commits from the candidate's workspace, but retain them for grading. Include at least one issue requiring navigation across files and one where the first plausible fix is wrong. Run every candidate from the same base commit in an isolated worktree or disposable container, with the same tool permissions and time/token budget. No network or production credentials unless the task truly requires them.
+
+For each run, record:
+
+1. **Outcome:** did the original failing test pass, and did the full relevant suite remain green? A passing suite alone can miss an incomplete fix; compare behavior against the issue's acceptance criteria.
+2. **Scope:** how many files changed outside the expected area? Inspect the diff, including test deletions and config changes.
+3. **Intervention:** did a human have to redirect the agent, repair its patch, or select a different tool?
+4. **Cost and latency:** measure wall time, tokens if exposed, and peak memory for the _whole agent run_. “2.5B active” is not a hardware-memory specification: the model has 12B total parameters, plus runtime overhead and KV cache.
+5. **Reproducibility:** repeat a couple of tasks with another seed or run. One lucky patch isn't a reliable routing policy.
+
+Keep a holdout issue outside the tuning set. If you change the prompt or harness after looking at a failure, rerun that holdout before trusting the improvement. Never compare two models with different file access and then attribute the result solely to weights.
+
+## A routing decision you can practice
+
+You have a local worker with read/write access to a disposable worktree. Which task gets an _automated candidate patch_ first? Open a case, make your call, then read the tradeoff.
+
+<details>
+<summary>Case A: A utility function fails on empty input; the regression test already exists</summary>
+
+**Good first candidate.** Give the agent the failing test and a bounded file scope. Accept only a patch that passes that test and the surrounding suite; review the diff. Small blast radius, cheap oracle.
+
+</details>
+
+<details>
+<summary>Case B: Rotate production signing keys across three services with no integration tests</summary>
+
+**Do not auto-route.** The absence of a reliable oracle and the credential blast radius dominate model speed. First design the rollout and rollback with a human owner, then delegate isolated implementation pieces in a credential-free sandbox.
+
+</details>
+
+<details>
+<summary>Case C: A flaky integration test passes locally but fails in CI</summary>
+
+**Investigate first.** Ask the worker to collect hypotheses and evidence without changing files. A green local run isn't evidence that the CI race is fixed. Reproduce the failure under the relevant CI conditions before accepting a patch.
+
+</details>
+
+This isn't a vendor-specific flow. You can run the same trial against a hosted model or a different local worker. The point is to set the task boundary and acceptance test _before_ seeing a persuasive answer.
+
+## Serving details that change the experiment
+
+The [Mellum2.1 Thinking card](https://huggingface.co/JetBrains/Mellum2.1-12B-A2.5B-Thinking) documents vLLM serving with `--reasoning-parser qwen3`, and adds `--enable-auto-tool-choice --tool-call-parser hermes` when using tools. Those flags matter for an agent evaluation: a chat endpoint that answers coding questions but cannot emit parseable tool calls is testing a different workflow. The card lists a 131,072-token context length; it does **not** mean every local machine can serve that maximum efficiently. Choose a context limit your hardware can actually sustain and record it with the results.
+
+JetBrains also [describes](https://blog.jetbrains.com/ai/2026/10/mellum2-1-gets-to-work-a-fast-open-model-for-coding-agents/) both a Thinking model for longer tasks and an Instruct variant for shorter responses. Don't silently mix them in a comparison. Pin the model revision, serving stack, prompt, harness version, permissions, and budget. Then run the same repo issues again when any of those change.
+
+If the trial shows good patches on narrow tasks, use the local worker as a **proposer**: it writes a branch, deterministic checks run, and a person reviews before merge. If it fails the test, keep the failure trace. That is useful data for choosing a narrower task or a stronger fallback, not a reason to loosen the release gate.
+
+### Sources
+
+- [JetBrains: Mellum2.1 release and post-training overview](https://blog.jetbrains.com/ai/2026/10/mellum2-1-gets-to-work-a-fast-open-model-for-coding-agents/)
+- [JetBrains: Mellum2.1 Thinking model card, evaluation setup, license, and serving flags](https://huggingface.co/JetBrains/Mellum2.1-12B-A2.5B-Thinking)
