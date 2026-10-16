@@ -110,5 +110,5 @@ docs.push({
   text: json({ channels: p.contactChannels, topics: p.contactTopics }),
 });
 
-writeFileSync(OUT, JSON.stringify({ version: 1, docs }) + '\n');
+writeFileSync(OUT, JSON.stringify({ version: 1, docs }, null, 2) + '\n');
 console.log(`✅ Wrote chat index (${docs.length} chunks)`);
