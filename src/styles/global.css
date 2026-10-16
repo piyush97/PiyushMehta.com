@@ -302,7 +302,7 @@ main {
     transform: translate3d(0, 0, 0);
   }
   to {
-    opacity: 0;
+    opacity: 1;
     transform: translate3d(-52px, 0, 0);
   }
 }
@@ -324,7 +324,7 @@ main {
     transform: translate3d(0, 0, 0);
   }
   to {
-    opacity: 0;
+    opacity: 1;
     transform: translate3d(52px, 0, 0);
   }
 }
@@ -346,9 +346,19 @@ main {
     transform: translateY(0);
   }
   to {
-    opacity: 0;
+    opacity: 1;
     transform: translateY(-0.4rem);
   }
+}
+
+/* Paint the theme background on the canvas and behind the snapshots so a
+   navigation never exposes the browser's default white. */
+html {
+  background-color: var(--color-bg);
+}
+
+::view-transition {
+  background-color: var(--color-bg);
 }
 
 ::view-transition-group(root) {
