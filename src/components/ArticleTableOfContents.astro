@@ -16,15 +16,18 @@ const { headings } = Astro.props;
     data-pagefind-ignore
   >
     <p class="article-toc__title" id="article-toc-desktop-label">On this page</p>
-    <ol class="article-toc__list">
-      {
-        headings.map((heading) => (
-          <li>
-            <a href={`#${heading.slug}`} data-toc-depth={heading.depth} data-astro-reload>{heading.text}</a>
-          </li>
-        ))
-      }
-    </ol>
+    <div class="article-toc__track">
+      <span class="article-toc__marker" aria-hidden="true"></span>
+      <ol class="article-toc__list">
+        {
+          headings.map((heading) => (
+            <li>
+              <a href={`#${heading.slug}`} data-toc-depth={heading.depth} data-astro-reload>{heading.text}</a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
   </nav>
 
   <details class="article-toc article-toc--mobile" data-article-toc="mobile" data-pagefind-ignore>
@@ -119,6 +122,13 @@ const { headings } = Astro.props;
         }
 
         const desktopRail = root.querySelector<HTMLElement>('[data-article-toc="desktop"]');
+        const marker = desktopRail?.querySelector<HTMLElement>('.article-toc__marker');
+        const desktopActive = desktopRail?.querySelector<HTMLElement>('a.is-active');
+        if (marker && desktopActive) {
+          marker.style.setProperty('--marker-y', `${desktopActive.offsetTop}px`);
+          marker.style.setProperty('--marker-h', `${desktopActive.offsetHeight}px`);
+          marker.dataset.ready = 'true';
+        }
         if (!activeLink || !desktopRail || desktopRail.scrollHeight <= desktopRail.clientHeight) return;
 
         const railBounds = desktopRail.getBoundingClientRect();
@@ -267,10 +277,39 @@ const { headings } = Astro.props;
   .article-toc__list a.is-active {
     background: color-mix(in srgb, var(--color-accent) 9%, transparent);
     color: var(--color-accent);
+  }
+
+  .article-toc__marker {
+    display: none;
+  }
+
+  .article-toc__track {
+    position: relative;
+  }
+
+  .article-toc--desktop .article-toc__marker[data-ready='true'] {
+    position: absolute;
+    inset: 0 auto auto 0;
+    display: block;
+    width: 1px;
+    height: var(--marker-h, 0);
+    background: var(--color-accent);
+    transform: translateY(var(--marker-y, 0));
+    transition:
+      transform var(--motion-base) var(--motion-ease-out),
+      height var(--motion-base) var(--motion-ease-out);
+    pointer-events: none;
+  }
+
+  .article-toc--mobile .article-toc__list a.is-active {
     box-shadow: inset 1px 0 0 var(--color-accent);
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .article-toc__marker {
+      transition: none !important;
+    }
+
     .article-toc__list a {
       transition: none;
     }

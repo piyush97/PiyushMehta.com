@@ -97,13 +97,17 @@ const {
       };
 
       applyTheme();
-      document.addEventListener('astro:after-swap', applyTheme);
+      document.addEventListener('astro:after-swap', () => {
+        applyTheme();
+        // Entrance animations (e.g. nav slide-in) are for first load only.
+        document.documentElement.dataset.navigated = '';
+      });
     </script>
   </head>
   <body>
     <a href="#main-content" class="skip-to-main">Skip to main content</a>
     <Navbar />
-    <main id="main-content" data-pagefind-body transition:animate="none">
+    <main id="main-content" data-pagefind-body>
       <slot />
     </main>
     <Footer />
