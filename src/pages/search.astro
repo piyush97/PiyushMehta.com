@@ -39,6 +39,10 @@ export const prerender = true;
         Loading the search index…
       </p>
 
+      <p class="search-ask">
+        Can’t find it? <a href="/ask/">Ask Piyush instead</a>.
+      </p>
+
       <noscript>
         <p class="search-state search-state--warn">
           Search needs JavaScript. Browse <a href="/blog/">writing</a> instead.
@@ -265,5 +269,14 @@ export const prerender = true;
       max-width: 18ch;
       font-size: clamp(2.2rem, 9vw, 3.2rem);
     }
+  }
+
+  .search-ask {
+    margin: 1rem 0 0;
+    color: var(--color-text-secondary);
+  }
+  .search-ask a {
+    color: var(--color-accent);
+    font-weight: 700;
   }
 </style>

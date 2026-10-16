@@ -25,7 +25,6 @@ The site should show AI engineering skill, not only describe it. A public chatbo
 - Free quota is the capacity limit; exhaustion shows a polite unavailable state.
 - Every non-greeting question costs one extra small classifier call (~0.5s).
 - Follow-ups such as "tell me more" are not supported, since there is no history.
-- `remoteBindings: false` in `astro.config.mjs` lets `astro dev` run without a Cloudflare token; the AI binding is therefore absent locally and chat uses Groq or reports unavailable.
 
 ## Not done yet
 

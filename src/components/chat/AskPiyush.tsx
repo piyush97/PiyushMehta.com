@@ -137,6 +137,15 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
   const activeIsLive = busy && active?.id === answers.at(-1)?.id;
   const waiting = busy && messages.at(-1)?.role === 'user';
 
+  // Doorways link here as /ask?q=...; fill the box but never send, so a link cannot spend quota.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('q');
+    if (!q) return;
+    setInput(q.slice(0, MAX));
+    inputRef.current?.focus({ preventScroll: true });
+    window.history.replaceState(null, '', window.location.pathname);
+  }, []);
+
   useEffect(() => {
     const el = logRef.current;
     if (!el) return;

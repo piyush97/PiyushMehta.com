@@ -52,6 +52,8 @@ export function useAskPiyush(siteKey: string) {
             sitekey: siteKey,
             action: 'chat-session',
             size: 'invisible',
+            // Run only when we call execute(); the default runs on render and then warns on our execute().
+            execution: 'execute',
             callback: (t: string) => {
               window.clearTimeout(timer);
               resolve(t);

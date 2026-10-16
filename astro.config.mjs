@@ -154,8 +154,5 @@ export default defineConfig({
       runtime: 'passthrough',
     },
     prerenderEnvironment: 'node',
-    // The Workers AI binding is remote-only; without this, `astro dev` needs a Cloudflare API
-    // token. Local dev then has no AI binding and chat falls back to Groq or "unavailable".
-    remoteBindings: false,
   }),
 });

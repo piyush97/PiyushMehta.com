@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { socialLinks } from '../data/portfolio';
+import AskLink from '../components/AskLink.astro';
 import speakerPhoto from '../images/piyush-devfest.jpg';
 import speakerPhotoAvif320 from '../images/responsive/piyush-devfest-320.avif';
 import speakerPhotoAvif640 from '../images/responsive/piyush-devfest-640.avif';
@@ -118,6 +119,11 @@ const toPostHref = (id: string) =>
             </svg>
           </a>
           <a class="ledger__secondary" href="/resume/">Read Résumé</a>
+          <div class="ledger__ask" data-home-section="ask">
+            <AskLink label="Or ask about my work" q="What does Piyush do?" />
+            <AskLink label="FocusTube" q="Tell me about FocusTube" />
+            <AskLink label="AI agents" q="What has Piyush written about AI agents?" />
+          </div>
         </div>
       </div>
 
@@ -202,6 +208,28 @@ const toPostHref = (id: string) =>
 </Layout>
 
 <style>
+  /* Secondary doorway row. Lives inside .ledger__actions, whose `a` rules style every link as a
+     large button (padding, min-height, width:100% on mobile), so reset them for these text links. */
+  .ledger__ask {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    gap: 0 1.5rem;
+    margin-top: -0.9rem;
+  }
+  .ledger__actions .ledger__ask :global(a.ask-link) {
+    width: auto;
+    min-height: 44px;
+    padding: 0;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    font-size: var(--text-base, 1rem);
+    white-space: nowrap;
+  }
+  .ledger__ask :global(.ask-link:not(:first-child)) {
+    color: var(--color-text-secondary);
+    font-weight: 700;
+  }
   .home {
     --home-paper: var(--color-bg);
     --home-paper-deep: var(--color-surface-raised);
@@ -1050,6 +1078,13 @@ const toPostHref = (id: string) =>
       align-items: stretch;
       flex-direction: column;
       gap: 0.75rem;
+    }
+
+    .ledger__ask {
+      flex-direction: column;
+      flex-basis: auto;
+      margin-top: 0;
+      gap: 0;
     }
 
     .ledger__actions a {

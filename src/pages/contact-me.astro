@@ -1,4 +1,5 @@
 ---
+import AskLink from '../components/AskLink.astro';
 import ContactForm from '../components/ContactForm';
 import EditorialHeader from '../components/EditorialHeader.astro';
 import SectionHeader from '../components/SectionHeader.astro';
@@ -48,6 +49,7 @@ export const prerender = true;
       id="contact-form-heading"
       description="Use the form to reach my inbox. It is rate-limited and spam-filtered; the useful details are the problem, constraints, and what a good outcome would make possible."
     />
+    <p class="contact-ask"><AskLink label="Ask before you write" q="What kind of work does Piyush take on?" /></p>
     <div class="form-shell">
       <ContactForm client:load />
     </div>
@@ -215,5 +217,9 @@ export const prerender = true;
     .channel-record a:focus-visible svg {
       transform: none;
     }
+  }
+
+  .contact-ask {
+    margin: 0 0 1.5rem;
   }
 </style>

@@ -7,6 +7,7 @@ import {
   resumeRoles,
   resumeSkillGroups,
 } from '../data/portfolio';
+import AskLink from '../components/AskLink.astro';
 import Layout from '../layouts/Layout.astro';
 
 export const prerender = true;
@@ -142,6 +143,7 @@ export const prerender = true;
   <section class="resume-cta">
     <p class="eyebrow">Best next step</p>
     <h2>If you need technical judgment, product delivery, or AI workflow help, let’s talk.</h2>
+    <p class="resume-ask"><AskLink label="Ask about anything not on the résumé" q="What is Piyush's educational background?" /></p>
     <div class="resume-actions">
       <a class="btn-primary" href="/contact-me/">Contact Piyush</a>
       <a class="btn-secondary" href="/blog/">Read technical writing</a>
@@ -493,5 +495,9 @@ export const prerender = true;
       color: #000;
       text-decoration: underline;
     }
+  }
+
+  .resume-ask {
+    margin: 0 0 1rem;
   }
 </style>

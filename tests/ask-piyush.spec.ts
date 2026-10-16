@@ -116,3 +116,50 @@ test.describe('Ask Piyush', () => {
     await expect(page.locator(':focus')).toBeVisible();
   });
 });
+
+test.describe('Ask Piyush doorways', () => {
+  test('?q= prefills the box without sending and then cleans the URL', async ({ page }) => {
+    let sent = 0;
+    await stubTurnstile(page);
+    await page.route('**/api/chat', (route) => {
+      sent++;
+      return route.abort();
+    });
+    await page.goto('/ask?q=Tell%20me%20about%20FocusTube');
+    await expect(page.locator('astro-island[component-url*="AskPiyush"]:not([ssr])')).toBeAttached();
+    await expect(page.getByLabel('Your question about Piyush')).toHaveValue('Tell me about FocusTube');
+    await expect(page).toHaveURL(/\/ask\/?$/);
+    expect(sent).toBe(0);
+  });
+
+  test('?q= is capped at the input limit', async ({ page }) => {
+    await stubTurnstile(page);
+    await page.goto(`/ask?q=${'x'.repeat(900)}`);
+    await expect(page.locator('astro-island[component-url*="AskPiyush"]:not([ssr])')).toBeAttached();
+    await expect
+      .poll(async () => (await page.getByLabel('Your question about Piyush').inputValue()).length)
+      .toBe(500);
+  });
+
+  for (const [path, name] of [
+    ['/', /ask about my work/i],
+    ['/contact-me/', /ask before you write/i],
+    ['/resume/', /ask about anything not on the résumé/i],
+  ] as const) {
+    test(`${path} links to /ask`, async ({ page }) => {
+      await page.goto(path);
+      await expect(page.getByRole('link', { name }).first()).toHaveAttribute('href', /^\/ask\/(\?q=.+)?$/);
+    });
+  }
+
+  test('navbar has an Ask button on desktop', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/about/');
+    await expect(page.locator('.ask-button')).toHaveAttribute('href', '/ask/');
+  });
+
+  test('search page offers the Ask fallback', async ({ page }) => {
+    await page.goto('/search/');
+    await expect(page.getByRole('link', { name: /ask piyush instead/i })).toHaveAttribute('href', '/ask/');
+  });
+});
