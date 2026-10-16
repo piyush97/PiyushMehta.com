@@ -122,6 +122,7 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
     setMessages,
     turnstileHost,
     verifyError,
+    historyError,
   } = useAskPiyush(siteKey);
   const [input, setInput] = useState('');
   const [picked, setPicked] = useState<string | null>(null);
@@ -277,6 +278,12 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
           )}
         </div>
 
+        {historyError && (
+          <p className="ask__hint" role="status">
+            {historyError}
+          </p>
+        )}
+
         <form
           className="ask__composer"
           onSubmit={(e) => {
@@ -319,9 +326,11 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
                     setMessages([]);
                     clearError();
                     setPicked(null);
+                    setInput('');
+                    inputRef.current?.focus({ preventScroll: true });
                   }}
                 >
-                  Clear
+                  New chat
                 </button>
               )}
               {busy ? (

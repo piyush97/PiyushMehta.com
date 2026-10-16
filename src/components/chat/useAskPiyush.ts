@@ -1,7 +1,9 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import type { ChatUIMessage } from '../../utils/chat/pipeline';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { isAllowedUrl } from '../../utils/chat/guard';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { z } from 'zod';
 
 declare global {
   interface Window {
@@ -16,6 +18,38 @@ declare global {
 
 const SESSION_REFRESH_MS = 25 * 60 * 1000;
 const TURNSTILE_TIMEOUT_MS = 20_000;
+const HISTORY_KEY = 'ask-piyush:chat:v1';
+const MAX_HISTORY_SIZE = 1_000_000;
+const savedMessages = z.array(
+  z.object({
+    id: z.string().max(200),
+    role: z.enum(['user', 'assistant']),
+    parts: z
+      .array(
+        z.discriminatedUnion('type', [
+          z.object({ type: z.literal('text'), text: z.string().max(10_000) }),
+          z.object({
+            type: z.literal('source-url'),
+            sourceId: z.string(),
+            url: z.string().refine(isAllowedUrl),
+            title: z.string().optional(),
+          }),
+          z.object({
+            type: z.literal('data-trace'),
+            id: z.string().optional(),
+            data: z.object({
+              scope: z.enum(['meta', 'classifier', 'unavailable']),
+              verdict: z.enum(['answered', 'refused', 'unavailable', 'interrupted']),
+              sources: z.number().int().min(0),
+              provider: z.string().optional(),
+              guard: z.enum(['passed', 'blocked']).optional(),
+            }),
+          }),
+        ]),
+      )
+      .max(100),
+  }),
+);
 
 function loadTurnstile(): Promise<void> {
   if (window.turnstile) return Promise.resolve();
@@ -106,10 +140,10 @@ export function useAskPiyush(siteKey: string) {
           session.current = null;
           return send();
         },
-        // Only the plain-text turns are sent; the server re-validates everything.
+        // The server answers each question independently; saved history stays in the browser.
         prepareSendMessagesRequest: ({ messages }) => ({
           body: {
-            messages: messages.map((m) => ({
+            messages: messages.slice(-1).map((m) => ({
               role: m.role,
               parts: m.parts
                 .filter((p) => p.type === 'text')
@@ -122,5 +156,41 @@ export function useAskPiyush(siteKey: string) {
   );
 
   const chat = useChat<ChatUIMessage>({ transport });
-  return { ...chat, turnstileHost: host, verifyError };
+  const { messages, setMessages } = chat;
+  const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [historyError, setHistoryError] = useState('');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(HISTORY_KEY);
+      if (saved) {
+        if (saved.length > MAX_HISTORY_SIZE) throw new Error('history too large');
+        setMessages(savedMessages.parse(JSON.parse(saved)));
+      }
+    } catch {
+      setHistoryError('Saved chat history could not be restored in this browser.');
+    }
+    setHistoryLoaded(true);
+  }, [setMessages]);
+
+  useEffect(() => {
+    if (!historyLoaded) return;
+    try {
+      if (messages.length) {
+        const saved = JSON.stringify(messages.map(({ id, role, parts }) => ({ id, role, parts })));
+        if (saved.length > MAX_HISTORY_SIZE) throw new Error('history too large');
+        localStorage.setItem(HISTORY_KEY, saved);
+      } else {
+        localStorage.removeItem(HISTORY_KEY);
+      }
+    } catch {
+      setHistoryError(
+        messages.length
+          ? 'Chat history could not be saved. Keep this page open to retain it.'
+          : 'Saved chat history could not be cleared in this browser.',
+      );
+    }
+  }, [messages, historyLoaded]);
+
+  return { ...chat, turnstileHost: host, verifyError, historyError };
 }
