@@ -75,5 +75,11 @@ export type Gate =
 export function topicGate(question: string, idx: Bm25 = getIndex()): Gate {
   const q = question.trim();
   if (META.test(q)) return { kind: 'allow', chunks: [], reason: 'meta' };
-  return { kind: 'classify', chunks: idx.search(q, 5).map((h) => h.chunk) };
+  // Short profile questions can contain only stop words; always ground the site's subject.
+  const profile = idx.docs.filter((d) => d.id.startsWith('facts:'));
+  const hits = idx.search(q, 5).map((h) => h.chunk);
+  return {
+    kind: 'classify',
+    chunks: [...profile, ...hits.filter((d) => !d.id.startsWith('facts:'))].slice(0, 5),
+  };
 }

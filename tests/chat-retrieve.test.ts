@@ -5,6 +5,17 @@ import { topicGate } from '../src/utils/chat/retrieve';
 const allowed = (q: string) => topicGate(q).kind === 'allow';
 const evidence = (q: string) => topicGate(q).chunks.length;
 
+describe('profile questions without searchable keywords', () => {
+  for (const q of ['what does he do', 'What does Piyush do?', 'Who is he?']) {
+    it(`grounds ${q} in the canonical profile without bypassing classification`, () => {
+      const gate = topicGate(q);
+      assert.equal(gate.kind, 'classify');
+      assert.equal(gate.chunks[0]?.url, '/about');
+      assert.match(gate.chunks[0]?.text ?? '', /Tundra Technical Solutions/);
+    });
+  }
+});
+
 describe('topicGate: on-topic questions still need the classifier but retrieve evidence', () => {
   for (const q of [
     'What does Piyush do at Tundra?',

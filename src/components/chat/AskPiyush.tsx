@@ -65,6 +65,7 @@ function errorCopy(error: Error): string {
 const SCOPE_LABEL: Record<ChatTrace['scope'], string> = {
   meta: 'Greeting',
   classifier: 'Classifier: about Piyush',
+  unavailable: 'Model unavailable',
 };
 
 const STATE_TEXT = {
