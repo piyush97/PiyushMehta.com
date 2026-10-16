@@ -11,11 +11,19 @@ export default function Answer({ text }: { text: string }) {
       components={{
         a({ href, children }) {
           if (!href || !isAllowedUrl(href)) return <span>{children}</span>;
+          let isPiyushMehtaDomain = false;
+          try {
+            const { hostname } = new URL(href, window.location.origin);
+            isPiyushMehtaDomain =
+              hostname === 'piyushmehta.com' || hostname.endsWith('.piyushmehta.com');
+          } catch {
+            isPiyushMehtaDomain = false;
+          }
           return (
             <a
               href={href}
               rel="noopener noreferrer"
-              target={href.includes('piyushmehta.com') ? undefined : '_blank'}
+              target={isPiyushMehtaDomain ? undefined : '_blank'}
             >
               {children}
             </a>
