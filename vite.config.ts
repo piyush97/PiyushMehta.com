@@ -4,6 +4,8 @@ export default defineConfig({
   fmt: {
     ignorePatterns: [
       '.astro/**',
+      '.github/skills/impeccable/scripts/**',
+      '.omo/**',
       'dist/**',
       'node_modules/**',
       'public/**',
@@ -18,6 +20,8 @@ export default defineConfig({
   lint: {
     ignorePatterns: [
       '.astro/**',
+      '.github/skills/impeccable/scripts/**',
+      '.omo/**',
       'dist/**',
       'node_modules/**',
       'public/**',
