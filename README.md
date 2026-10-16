@@ -201,6 +201,14 @@ Recommended Cloudflare build settings:
 
 Runtime credentials remain in the Worker's Variables and Secrets settings; they are not stored in GitHub Actions.
 
+Ask Piyush requires `PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`,
+`CHAT_SESSION_SECRET`, and the Upstash bindings. Provide these to the Cloudflare
+build/deploy environment so `varlock-wrangler` includes them in its environment
+binding. The Turnstile widget must allow `piyushmehta.com`; generate the session
+secret with `openssl rand -base64 32`. The public site key resolves at runtime,
+so a credential-free build does not permanently disable the page. Workers AI
+uses the `AI` binding in `wrangler.jsonc`; `GROQ_API_KEY` is an optional fallback.
+
 ## Contributing
 
 Contributions are welcome! PRs are reviewed and validated by CI.
