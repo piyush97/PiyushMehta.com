@@ -5,7 +5,8 @@ import { createWorkersAI } from 'workers-ai-provider';
 import { CLASSIFIER_PROMPT, classifierInput } from './prompt';
 
 export const MODELS = {
-  primary: '@cf/google/gemma-4-26b-a4b-it',
+  primary: '@cf/ibm-granite/granite-4.0-h-micro',
+  classifier: '@cf/google/gemma-4-26b-a4b-it',
   fallback: 'openai/gpt-oss-20b',
 } as const;
 
@@ -19,10 +20,19 @@ export interface ChatEnv {
   groqKey?: string;
 }
 
-export function chatModels(env: ChatEnv): { name: string; model: LanguageModel }[] {
-  const out: { name: string; model: LanguageModel }[] = [];
-  if (env.ai)
-    out.push({ name: 'workers-ai', model: createWorkersAI({ binding: env.ai })(MODELS.primary) });
+export function chatModels(
+  env: ChatEnv,
+): { name: string; model: LanguageModel; classifier?: LanguageModel }[] {
+  const out: ReturnType<typeof chatModels> = [];
+  if (env.ai) {
+    const workers = createWorkersAI({ binding: env.ai });
+    // Granite handles answers cheaply; Gemma keeps the scope decision reliable.
+    out.push({
+      name: 'workers-ai',
+      model: workers(MODELS.primary),
+      classifier: workers(MODELS.classifier),
+    });
+  }
   if (env.groqKey)
     out.push({ name: 'groq', model: createGroq({ apiKey: env.groqKey })(MODELS.fallback) });
   return out;
@@ -43,14 +53,14 @@ export type ScopeVerdict = 'yes' | 'no' | 'error';
  * Tries each provider; 'error' means no provider could classify (not a refusal).
  */
 export async function classifyScope(
-  models: { model: LanguageModel }[],
+  models: { model: LanguageModel; classifier?: LanguageModel }[],
   question: string,
   pageTitles: string[] = [],
 ): Promise<ScopeVerdict> {
-  for (const { model } of models) {
+  for (const { model, classifier } of models) {
     try {
       const { text } = await generateText({
-        model,
+        model: classifier ?? model,
         system: CLASSIFIER_PROMPT,
         messages: [{ role: 'user', content: classifierInput(question, pageTitles) }],
         // Small buffer: some models emit a short reasoning prefix even with thinking off.

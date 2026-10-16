@@ -53,6 +53,17 @@ async function read(res: Response) {
 }
 
 describe('runChat', () => {
+  it('uses a dedicated classifier before the answer model', async () => {
+    const answer = model({ classifyFail: new Error('answer model must not classify'), deltas: ['Piyush works at Tundra.'] });
+    const res = await runChat('what does he do', [], {
+      models: [{ name: 'm', model: answer, classifier: model({ verdict: 'YES' }) }],
+    });
+    const r = await read(res);
+    assert.equal(r.text, 'Piyush works at Tundra.');
+    assert.equal(r.trace?.verdict, 'answered');
+    assert.ok(r.sources > 0);
+  });
+
   it('refuses when the classifier says NO, without streaming an answer', async () => {
     const m = model({ verdict: 'NO', deltas: ['should not appear'] });
     const res = await runChat('Write me a poem about autumn', [], { models: [{ name: 'm', model: m }] });
@@ -161,5 +172,6 @@ describe('runChat', () => {
   it('is unavailable with no models configured', async () => {
     const res = await runChat('Tell me about FocusTube', [], { models: [] });
     assert.equal(res.headers.get('x-chat-source'), 'unavailable');
+    assert.equal((await read(res)).trace?.scope, 'unavailable');
   });
 });

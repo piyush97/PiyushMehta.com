@@ -52,7 +52,8 @@ export function checkOutput(text: string, canary: string): Violation {
   if (flat.includes(flatten(canary)) || /canary[0-9a-f]{8}/.test(flat)) return 'canary';
   if (FLAT_LEAKS.some((p) => flat.includes(p))) return 'prompt_leak';
   if (MD_IMAGE_RE.test(text)) return 'image';
-  if (HTML_RE.test(text)) return 'html';
+  // Markdown autolinks are URLs, not HTML; the URL allowlist below still applies.
+  if (HTML_RE.test(text.replace(/<https?:\/\/[^<>\s]+>/gi, ''))) return 'html';
   for (const m of text.match(URL_RE) ?? []) if (!isAllowedUrl(m)) return 'url';
   return null;
 }

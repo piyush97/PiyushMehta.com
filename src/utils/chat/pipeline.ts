@@ -16,13 +16,13 @@ import { topicGate, type Chunk } from './retrieve';
 import type { ChatMessage } from './schema';
 
 export interface PipelineDeps {
-  models: { name: string; model: LanguageModel }[];
+  models: { name: string; model: LanguageModel; classifier?: LanguageModel }[];
   onEvent?: (event: string, detail?: Record<string, unknown>) => void;
 }
 
 /** What the pipeline actually did for one answer; rendered by the UI as the trace line. */
 export interface ChatTrace {
-  scope: 'meta' | 'classifier';
+  scope: 'meta' | 'classifier' | 'unavailable';
   verdict: 'answered' | 'refused' | 'unavailable' | 'interrupted';
   sources: number;
   provider?: string;
@@ -60,7 +60,7 @@ export async function runChat(
   const { models, onEvent } = deps;
   if (models.length === 0)
     return textResponse(UNAVAILABLE, 'unavailable', {
-      scope: 'meta',
+      scope: 'unavailable',
       verdict: 'unavailable',
       sources: 0,
     });
