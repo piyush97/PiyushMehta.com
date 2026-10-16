@@ -5,6 +5,7 @@
  * Mints session tokens in-process from CHAT_SESSION_SECRET; the secret is never printed.
  * Each case uses its own client IP so per-IP rate limits do not skew results.
  */
+import type { ChatTrace } from '../src/utils/chat/pipeline';
 import { signSession } from '../src/utils/chat/session';
 
 const BASE = process.argv[2] ?? 'http://localhost:4321';
@@ -16,7 +17,7 @@ if (!SECRET) {
 
 const REFUSAL = 'I can only answer questions about Piyush';
 type Turn = { role: 'user' | 'assistant'; text: string };
-type Result = { text: string; trace?: Record<string, unknown>; sources: string[]; status: number };
+type Result = { text: string; trace?: ChatTrace; sources: string[]; status: number };
 type Check = (r: Result) => string | null;
 
 const refused: Check = (r) => (r.text.includes(REFUSAL) ? null : 'expected refusal');
