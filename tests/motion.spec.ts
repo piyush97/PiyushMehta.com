@@ -31,22 +31,40 @@ test.describe('site motion', () => {
     }
   });
 
-  test('blog list row and article h1 share a view-transition name', async ({ page }) => {
-    // Given the blog index
+  test('only the clicked title morphs into the article h1', async ({ page }) => {
+    // Given the blog index with motion initialized
     await page.goto('/blog/', { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => Boolean(window.__portfolioMotionState));
     const row = page.locator('[data-post-card] h3 a').first();
     const href = await row.getAttribute('href');
     const slug = href!.replace(/^\/blog\//, '').replace(/\/$/, '');
 
-    // Then the row title carries the post's transition name
-    const rowName = await page
-      .locator('[data-post-card] h3')
-      .first()
-      .evaluate((el) => getComputedStyle(el).viewTransitionName);
-    expect(rowName).toBe(`post-title-${slug}`);
+    // Then no listed title is named before a click
+    const named = await page
+      .locator('[data-vt-title]')
+      .evaluateAll((els) => els.filter((el) => getComputedStyle(el).viewTransitionName !== 'none').length);
+    expect(named).toBe(0);
 
-    // When the post opens, its h1 carries the same name
-    await page.goto(href!, { waitUntil: 'networkidle' });
+    // When the first title is clicked, record names right before the swap
+    await page.evaluate(() => {
+      document.addEventListener(
+        'astro:before-swap',
+        () => {
+          (window as unknown as { __named: string[] }).__named = Array.from(
+            document.querySelectorAll('[data-vt-title]'),
+          )
+            .map((el) => getComputedStyle(el).viewTransitionName)
+            .filter((name) => name !== 'none');
+        },
+        { once: true },
+      );
+    });
+    await row.click();
+    await page.waitForURL(`**${href}`);
+
+    // Then exactly the clicked title was named, matching the article h1
+    const before = await page.evaluate(() => (window as unknown as { __named: string[] }).__named);
+    expect(before).toEqual([`post-title-${slug}`]);
     const h1Name = await page
       .locator('h1.blog-post-title')
       .evaluate((el) => getComputedStyle(el).viewTransitionName);

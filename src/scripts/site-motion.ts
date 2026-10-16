@@ -73,7 +73,20 @@ const initRouteDirection = (state: MotionState): void => {
     const navEvent = event as unknown as {
       from?: { pathname: string };
       to?: { pathname: string };
+      sourceElement?: Element;
     };
+
+    // Only the clicked post title morphs into the article header. Naming every
+    // listed title would lift each into its own layer and fade them out of sync.
+    document.querySelectorAll<HTMLElement>('[data-vt-title]').forEach((title) => {
+      title.style.removeProperty('view-transition-name');
+    });
+    const clickedTitle = navEvent.sourceElement
+      ?.closest('[data-post-card], .note')
+      ?.querySelector<HTMLElement>('[data-vt-title]');
+    if (clickedTitle?.dataset.vtTitle) {
+      clickedTitle.style.setProperty('view-transition-name', clickedTitle.dataset.vtTitle);
+    }
     const from = navEvent.from;
     const to = navEvent.to;
     if (!from || !to) return;

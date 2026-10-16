@@ -171,7 +171,7 @@ const toPostHref = (id: string) =>
                   })}
                 </time>
               </div>
-              <h3 transition:name={`post-title-${toPostHref(post.id).replace("/blog/", "")}`}><a href={toPostHref(post.id)}>{post.data.title}</a></h3>
+              <h3 data-vt-title={`post-title-${toPostHref(post.id).replace("/blog/", "")}`}><a href={toPostHref(post.id)}>{post.data.title}</a></h3>
               {post.data.description && <p>{post.data.description}</p>}
               <a class="note__link" href={toPostHref(post.id)} aria-label={`Read ${post.data.title}`}>
                 Read note <span aria-hidden="true">↗</span>

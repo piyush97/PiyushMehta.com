@@ -38,7 +38,7 @@ const formatDate = (dateString: string) =>
     <span>{post.readingTime} min read</span>
   </div>
   <div class="editorial-article-row__body">
-    <h3 transition:name={`post-title-${post.slug}`}>
+    <h3 data-vt-title={`post-title-${post.slug}`}>
       <a href={`/blog/${post.slug}/`}>{post.title}</a>
     </h3>
     <p>{post.excerpt}</p>

@@ -285,69 +285,41 @@ main {
   transform: translate3d(0, var(--parallax-offset, 0px), 0) scale(1);
 }
 
-@keyframes route-in-forward {
+/* Route transitions: nav and page background hold still; only <main> moves.
+   Old content fades out quickly, new content drifts in slightly in the route
+   direction. Overlap is short so text never visibly double-exposes. */
+:root {
+  --route-shift: 0px;
+  --route-rise: 0.5rem;
+}
+
+:root[data-route-direction='forward'] {
+  --route-shift: 1rem;
+  --route-rise: 0px;
+}
+
+:root[data-route-direction='backward'] {
+  --route-shift: -1rem;
+  --route-rise: 0px;
+}
+
+@keyframes route-content-out {
+  to {
+    opacity: 0;
+    transform: translate3d(calc(var(--route-shift) * -0.5), calc(var(--route-rise) * -0.5), 0);
+  }
+}
+
+@keyframes route-content-in {
   from {
     opacity: 0;
-    transform: translate3d(52px, 0, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(var(--route-shift), var(--route-rise), 0);
   }
 }
 
-@keyframes route-out-forward {
-  from {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(-52px, 0, 0);
-  }
-}
-
-@keyframes route-in-backward {
+@keyframes route-fade-in {
   from {
     opacity: 0;
-    transform: translate3d(-52px, 0, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes route-out-backward {
-  from {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(52px, 0, 0);
-  }
-}
-
-@keyframes route-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.6rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes route-out {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-0.4rem);
   }
 }
 
@@ -361,8 +333,12 @@ html {
   background-color: var(--color-bg);
 }
 
-::view-transition-group(root) {
-  animation-duration: 0ms;
+#main-content {
+  view-transition-name: page-content;
+}
+
+.site-nav {
+  view-transition-name: site-nav;
 }
 
 /* Shared-element morphs (post title: list/home -> article header). */
@@ -371,40 +347,42 @@ html {
   animation-timing-function: var(--motion-ease-out);
 }
 
-::view-transition-group(root) {
-  animation-duration: 0ms;
+::view-transition-group(root),
+::view-transition-group(page-content),
+::view-transition-group(site-nav) {
+  animation: none;
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 380ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  animation-fill-mode: both;
+::view-transition-old(*),
+::view-transition-new(*) {
   mix-blend-mode: normal;
 }
 
+/* Background/footer: old stays opaque, new fades over it. */
 ::view-transition-old(root) {
-  animation-name: route-out;
+  animation: none;
 }
 
 ::view-transition-new(root) {
-  animation-name: route-in;
+  animation: route-fade-in 240ms ease-out both;
 }
 
-:root[data-route-direction='forward']::view-transition-old(root) {
-  animation-name: route-out-forward;
+/* Nav: swap in place, no movement. */
+::view-transition-old(site-nav) {
+  animation: none;
+  opacity: 0;
 }
 
-:root[data-route-direction='forward']::view-transition-new(root) {
-  animation-name: route-in-forward;
+::view-transition-new(site-nav) {
+  animation: none;
 }
 
-:root[data-route-direction='backward']::view-transition-old(root) {
-  animation-name: route-out-backward;
+::view-transition-old(page-content) {
+  animation: route-content-out 160ms cubic-bezier(0.4, 0, 1, 1) both;
 }
 
-:root[data-route-direction='backward']::view-transition-new(root) {
-  animation-name: route-in-backward;
+::view-transition-new(page-content) {
+  animation: route-content-in 340ms var(--motion-ease-out) 90ms both;
 }
 
 @keyframes hero-eyebrow-fade {
