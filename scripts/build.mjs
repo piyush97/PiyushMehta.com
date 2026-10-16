@@ -36,6 +36,9 @@ step('Type generation', 'bunx varlock codegen');
 // 2. Generate the published post manifest used by runtime APIs.
 step('Published post manifest', 'node scripts/generate-post-manifest.mjs');
 
+// 2b. Build the Ask Piyush retrieval index from published content.
+step('Chat index', 'node scripts/build-chat-index.mjs');
+
 // 3. Migrate blog images to public/
 step('Image migration', 'node scripts/migrate-images-to-public.mjs');
 

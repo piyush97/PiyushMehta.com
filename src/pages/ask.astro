@@ -1,0 +1,68 @@
+---
+import { ENV } from 'varlock/env';
+import AskPiyush from '../components/chat/AskPiyush';
+import Layout from '../layouts/Layout.astro';
+import '../styles/ask.css';
+
+export const prerender = false;
+
+const siteKey = ENV.PUBLIC_TURNSTILE_SITE_KEY ?? '';
+---
+
+<Layout
+  title="Ask Piyush - Piyush Mehta"
+  description="Ask questions about Piyush Mehta's work, projects, writing, and skills. Answers come only from this site and link their sources."
+  type="website"
+>
+  <header class="ask-head">
+    <h1>Ask Piyush</h1>
+    <p>
+      A streaming assistant grounded in this site’s field notes, case studies, and résumé. It answers only questions
+      about Piyush, runs on free models, and links the page behind every answer.
+    </p>
+  </header>
+
+  <div class="ask-shell">
+    {
+      siteKey ? (
+        <AskPiyush client:load siteKey={siteKey} />
+      ) : (
+        <p class="ask-offline" role="status">
+          Ask Piyush is not configured in this environment. The <a href="/contact-me">contact page</a> reaches Piyush directly.
+        </p>
+      )
+    }
+  </div>
+</Layout>
+
+<style>
+  .ask-head {
+    width: min(100% - 2rem, 1120px);
+    margin: 0 auto;
+    padding-block: clamp(2rem, 4vw, 3rem) clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+  .ask-head h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-text-primary);
+  }
+  .ask-head p {
+    margin: 0;
+    max-width: 68ch;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+  .ask-shell {
+    width: min(100% - 2rem, 1120px);
+    margin: 0 auto clamp(3rem, 8vw, 6rem);
+  }
+  .ask-offline {
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 0.5rem;
+    color: var(--color-text-secondary);
+  }
+  .ask-offline a { color: var(--color-accent); }
+</style>

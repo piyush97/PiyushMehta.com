@@ -420,6 +420,14 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* Tablet: all seven links need ~614px, so drop the wordmark (PM mark stays)
+     and tighten links to keep the theme button inside the viewport. */
+  @media (min-width: 768px) and (max-width: 959px) {
+    .site-nav__brand strong { display: none; }
+    .site-nav__links { gap: 0.15rem; }
+    .site-nav__links a { padding-inline: 0.6rem; }
+  }
+
   @media (max-width: 767px) {
     .site-nav { grid-template-columns: auto 1fr auto; }
     .site-nav__links { display: none; }
