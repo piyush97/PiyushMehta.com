@@ -7,16 +7,15 @@ import {
   type UIMessage,
   createUIMessageStreamResponse,
   streamText,
-  type LanguageModel,
 } from 'ai';
 import { createStreamGuard } from './guard';
-import { NO_THINKING, classifyScope, isFallbackError } from './models';
+import { NO_THINKING, chatModels, classifyScope, isFallbackError } from './models';
 import { REFUSAL, UNAVAILABLE, buildMessages, newCanary, systemPrompt } from './prompt';
 import { topicGate, type Chunk } from './retrieve';
 import type { ChatMessage } from './schema';
 
 export interface PipelineDeps {
-  models: { name: string; model: LanguageModel; classifier?: LanguageModel }[];
+  models: ReturnType<typeof chatModels>;
   onEvent?: (event: string, detail?: Record<string, unknown>) => void;
 }
 
