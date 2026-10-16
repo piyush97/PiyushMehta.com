@@ -1,15 +1,25 @@
 # piyushmehta.com
 
-Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, deployed on Cloudflare Workers.
+Personal portfolio, technical blog, and Ask Piyush — a streaming AI assistant grounded in my work and writing. Built with Astro 7, React 19, and Tailwind CSS v4, deployed on Cloudflare Workers.
 
 [![CI/CD](https://github.com/piyush97/PiyushMehta.com/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/piyush97/PiyushMehta.com/actions/workflows/ci-cd.yml)
 [![CodeQL](https://github.com/piyush97/PiyushMehta.com/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/piyush97/PiyushMehta.com/actions/workflows/codeql-analysis.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/piyush97/PiyushMehta.com)](https://github.com/piyush97/PiyushMehta.com/releases)
 
-**Live:** [piyushmehta.com](https://piyushmehta.com) · **Write-up:** [I moved this site from Vercel to Cloudflare. Here is what broke.](https://piyushmehta.com/blog/vercel-to-cloudflare-migration)
+**Live:** [piyushmehta.com](https://piyushmehta.com) · **Ask AI:** [Ask Piyush](https://piyushmehta.com/ask/) · **Write-up:** [I moved this site from Vercel to Cloudflare. Here is what broke.](https://piyushmehta.com/blog/vercel-to-cloudflare-migration)
 
 ![A screen tour of piyushmehta.com: the systems-ledger homepage, the writing index, the redesigned article reading experience, the project index, and the light theme.](.github/demo.gif)
+
+## Showcase: Ask Piyush
+
+[Try Ask Piyush →](https://piyushmehta.com/ask/) Ask “What does Piyush do at Tundra?” or explore my projects, writing, and experience. Answers stream from the Worker, use published site content, and link back to source pages.
+
+- **Grounded answers:** a build-time retrieval index draws from field notes, case studies, and résumé/portfolio facts. The assistant is scoped to questions about Piyush.
+- **Cloudflare Workers AI:** `@cf/cloudflare/clef-flash` classifies scope before `@cf/ibm-granite/granite-4.0-h-micro` generates answers. Groq is an optional fallback.
+- **Safeguards:** Turnstile verification, short-lived IP-bound sessions, Upstash rate and budget limits, and output checks for leaked instructions and unsafe links.
+- **Persistent chat:** messages, source links, and evidence survive refreshes in browser storage until **New chat** clears them. Authentication tokens are not saved; each question is answered independently.
+- **Evaluated behavior:** 56 live-model cases cover portfolio questions, off-topic requests, prompt injection, forged history, and hallucination traps. See the [eval suite](evals/) and [live harness](scripts/chat-live-eval.ts).
 
 ## Built with
 
@@ -32,6 +42,7 @@ Personal portfolio and blog. Built with Astro 7, React 19, Tailwind CSS v4, depl
 | Language | TypeScript 7 |
 | Content | MDX — blog posts with component support |
 | Search | [Pagefind](https://pagefind.app/) — static full-text search |
+| Ask AI | [Cloudflare Workers AI](https://developers.cloudflare.com/workers-ai/) — Clef scope classification + Granite streaming answers |
 | Email | [Resend](https://resend.com/) — contact form delivery |
 | Rate limiting | [Upstash Redis](https://upstash.com/) — serverless Redis |
 | Monitoring | [Sentry](https://sentry.io/) — errors + performance |
