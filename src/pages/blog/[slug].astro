@@ -4,6 +4,7 @@ import ArticleCareerCard from '../../components/ArticleCareerCard.astro';
 import ArticleMeta from '../../components/ArticleMeta.astro';
 import ArticleTableOfContents from '../../components/ArticleTableOfContents.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AskLink from '../../components/AskLink.astro';
 import NextBestRead from '../../components/NextBestRead.astro';
 import OptimizedImage from '../../components/OptimizedImage.astro';
 import PostReactions from '../../components/PostReactions.astro';
@@ -267,6 +268,9 @@ const articleSchema = {
         </header>
 
         {nextBest && <NextBestRead nextRead={nextBest} />}
+
+        <p class="article-ask"><AskLink label="Ask about this post" q={`Summarize the post: ${title}`} /></p>
+
 
         <!-- Post Reactions -->
         <PostReactions 
@@ -1081,6 +1085,7 @@ const articleSchema = {
   }
 
   .blog-post-after :global(.next-best-read),
+  .blog-post-after :global(.article-ask),
   .blog-post-after :global(.post-reactions),
   .blog-post-after :global(.article-career),
   .blog-post-after :global(.related-posts-section) {
@@ -1097,6 +1102,9 @@ const articleSchema = {
     .blog-post-shell:has(.article-reading-layout--with-toc)
       .blog-post-after
       :global(.next-best-read),
+    .blog-post-shell:has(.article-reading-layout--with-toc)
+      .blog-post-after
+      :global(.article-ask),
     .blog-post-shell:has(.article-reading-layout--with-toc)
       .blog-post-after
       :global(.post-reactions),
@@ -1151,5 +1159,9 @@ const articleSchema = {
       flex-direction: column;
       gap: 0.75rem;
     }
+  }
+
+  .blog-post-after :global(.article-ask) {
+    margin-block: 0 1.5rem;
   }
 </style>

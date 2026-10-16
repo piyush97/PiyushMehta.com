@@ -16,6 +16,9 @@ export const REQUIRED_PRODUCTION_ENV = [
   'UPSTASH_REDIS_REST_URL',
   'UPSTASH_REDIS_REST_TOKEN',
   'RESEND_API_KEY',
+  'TURNSTILE_SECRET_KEY',
+  'PUBLIC_TURNSTILE_SITE_KEY',
+  'CHAT_SESSION_SECRET',
 ];
 
 export function missingProductionEnv(env = process.env) {
