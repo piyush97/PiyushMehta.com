@@ -124,19 +124,19 @@ const toPostHref = (id: string) =>
       <div class="ledger__metrics" data-home-section="metrics" aria-label="Selected impact" data-reveal>
         <article data-reveal data-reveal-stagger="0">
           <span class="ledger__metric-index">01</span>
-          <strong>30%</strong>
+          <strong data-count-up>30%</strong>
           <h2>workflow efficiency</h2>
           <p>Enterprise AI workflow delivery</p>
         </article>
         <article data-reveal data-reveal-stagger="60">
           <span class="ledger__metric-index">02</span>
-          <strong>35–40%</strong>
+          <strong data-count-up>35–40%</strong>
           <h2>fewer vulnerabilities</h2>
           <p>Secure engineering and review programs</p>
         </article>
         <article data-reveal data-reveal-stagger="120">
           <span class="ledger__metric-index">03</span>
-          <strong>1,500+</strong>
+          <strong data-count-up>1,500+</strong>
           <h2>developers mentored</h2>
           <p>Workshops, community, and technical education</p>
         </article>
@@ -171,7 +171,7 @@ const toPostHref = (id: string) =>
                   })}
                 </time>
               </div>
-              <h3><a href={toPostHref(post.id)}>{post.data.title}</a></h3>
+              <h3 transition:name={`post-title-${toPostHref(post.id).replace("/blog/", "")}`}><a href={toPostHref(post.id)}>{post.data.title}</a></h3>
               {post.data.description && <p>{post.data.description}</p>}
               <a class="note__link" href={toPostHref(post.id)} aria-label={`Read ${post.data.title}`}>
                 Read note <span aria-hidden="true">↗</span>
@@ -393,6 +393,12 @@ const toPostHref = (id: string) =>
   .ledger__secondary:hover {
     border-color: var(--home-ink);
     background: var(--home-paper-deep);
+  }
+
+  .ledger__primary:active,
+  .ledger__secondary:active,
+  .contact__actions > a:active {
+    transform: scale(0.98);
   }
 
   .ledger__portrait {
@@ -688,6 +694,18 @@ const toPostHref = (id: string) =>
   .note__link {
     color: inherit;
     text-decoration: none;
+  }
+
+  .note h3 a {
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size var(--motion-base) var(--motion-ease-out);
+  }
+
+  @media (hover: hover) {
+    .note h3 a:hover,
+    .note h3 a:focus-visible {
+      background-size: 100% 1px;
+    }
   }
 
   .note > p {
@@ -1063,7 +1081,8 @@ const toPostHref = (id: string) =>
 
     .ledger__actions svg,
     .ledger__evidence svg,
-    .contact__actions > a span[aria-hidden='true'] {
+    .contact__actions > a span[aria-hidden='true'],
+    .note h3 a {
       transition: none;
     }
   }

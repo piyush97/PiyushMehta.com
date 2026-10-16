@@ -11,6 +11,8 @@ type MotionState = {
   parallaxFrame: number;
   parallaxHandler: (() => void) | null;
   routeDirectionHandler: ((event: Event) => void) | null;
+  countObserver: IntersectionObserver | null;
+  countFrames: Set<number>;
 };
 
 declare global {
@@ -28,6 +30,8 @@ const getMotionState = (): MotionState => {
       parallaxFrame: 0,
       parallaxHandler: null,
       routeDirectionHandler: null,
+      countObserver: null,
+      countFrames: new Set(),
     };
   }
   return window.__portfolioMotionState;
@@ -196,10 +200,63 @@ const initParallax = (reducedMotion: boolean, state: MotionState): void => {
   onScroll();
 };
 
+const COUNT_DURATION_MS = 900;
+
+// Animates each number in the element's own text (30%, 35–40%, 1,500+) and keeps
+// the rest of the string intact; the final text is always the markup's original.
+const runCountUp = (element: HTMLElement, state: MotionState): void => {
+  const finalText = element.textContent ?? '';
+  const parts = finalText.split(/(\d[\d,]*)/);
+  const targets = parts.map((part) => (/^\d/.test(part) ? Number(part.replace(/,/g, '')) : null));
+  if (targets.every((target) => target === null)) return;
+
+  const start = performance.now();
+  const tick = (now: number): void => {
+    const t = Math.min((now - start) / COUNT_DURATION_MS, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    element.textContent = parts
+      .map((part, index) => {
+        const target = targets[index];
+        if (target === null || target === undefined) return part;
+        const value = Math.round(target * eased);
+        return part.includes(',') ? value.toLocaleString('en-US') : String(value);
+      })
+      .join('');
+    if (t < 1) {
+      state.countFrames.add(requestAnimationFrame(tick));
+    } else {
+      element.textContent = finalText;
+    }
+  };
+  state.countFrames.add(requestAnimationFrame(tick));
+};
+
+const initCountUp = (reducedMotion: boolean, state: MotionState): void => {
+  state.countObserver?.disconnect();
+  state.countFrames.forEach((frame) => cancelAnimationFrame(frame));
+  state.countFrames.clear();
+
+  const elements = Array.from(document.querySelectorAll<HTMLElement>('[data-count-up]'));
+  if (reducedMotion || elements.length === 0 || !('IntersectionObserver' in window)) return;
+
+  state.countObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        runCountUp(entry.target as HTMLElement, state);
+        state.countObserver?.unobserve(entry.target);
+      }
+    },
+    { threshold: 0.6 },
+  );
+  elements.forEach((element) => state.countObserver?.observe(element));
+};
+
 export const initSiteMotion = (): void => {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const state = getMotionState();
   initRouteDirection(state);
   initReveal(reducedMotion, state);
   initParallax(reducedMotion, state);
+  initCountUp(reducedMotion, state);
 };

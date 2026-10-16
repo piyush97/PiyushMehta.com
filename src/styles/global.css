@@ -355,6 +355,16 @@ main {
   animation-duration: 0ms;
 }
 
+/* Shared-element morphs (post title: list/home -> article header). */
+::view-transition-group(*) {
+  animation-duration: var(--motion-page);
+  animation-timing-function: var(--motion-ease-out);
+}
+
+::view-transition-group(root) {
+  animation-duration: 0ms;
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 380ms;
@@ -892,8 +902,9 @@ html {
     --parallax-offset: 0px;
   }
 
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
     animation: none;
   }
 }
