@@ -133,6 +133,7 @@ const articleSchema = {
   ogTheme={ogTheme}
   preloadImage={image?.url}
 >
+  <div class="reading-progress" aria-hidden="true"></div>
   <div class="page-container blog-post-page">
     <div class="blog-post-shell">
       <!-- Breadcrumbs -->
@@ -150,6 +151,7 @@ const articleSchema = {
           <div class="article-masthead__content">
             <h1
               class="blog-post-title"
+              transition:name={`post-title-${currentSlug}`}
               itemprop="headline"
               data-pagefind-meta="title"
             >
@@ -293,6 +295,32 @@ const articleSchema = {
 </Layout>
 
 <style>
+  .reading-progress {
+    display: none;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .reading-progress {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 60;
+      display: block;
+      height: 2px;
+      background: var(--color-accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: reading-progress linear both;
+      animation-timeline: scroll(root);
+      pointer-events: none;
+    }
+  }
+
+  @keyframes reading-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
   .blog-post-page {
     padding: clamp(2.75rem, 6vw, 5.5rem) 1rem clamp(4rem, 7vw, 6rem);
   }

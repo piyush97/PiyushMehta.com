@@ -38,7 +38,7 @@ const formatDate = (dateString: string) =>
     <span>{post.readingTime} min read</span>
   </div>
   <div class="editorial-article-row__body">
-    <h3>
+    <h3 data-vt-title={`post-title-${post.slug}`}>
       <a href={`/blog/${post.slug}/`}>{post.title}</a>
     </h3>
     <p>{post.excerpt}</p>
@@ -100,6 +100,23 @@ const formatDate = (dateString: string) =>
   .editorial-article-row h3 a {
     color: inherit;
     text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition:
+      color var(--motion-fast) ease,
+      background-size var(--motion-base) var(--motion-ease-out);
+  }
+
+  @media (hover: hover) {
+    .editorial-article-row h3 a:hover,
+    .editorial-article-row h3 a:focus-visible {
+      background-size: 100% 1px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editorial-article-row h3 a {
+      transition: none;
+    }
   }
 
   .editorial-article-row h3 a:hover,
