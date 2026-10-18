@@ -137,6 +137,41 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
   {
+    title: 'RoastTube',
+    eyebrow: 'Google OAuth review, Cloudflare Workers, Gemini',
+    role: 'Product Engineer',
+    timeframe: '2026',
+    summary:
+      'Built and shipped a free entertainment site that reads a visitor’s YouTube likes with read-only Google access, scores their taste in code, and has Gemini write a shareable tabloid verdict.',
+    problem:
+      'A comedy product that wants access to a stranger’s Google account has to pass a real privacy review before it can read anything. The first submission was rejected: the privacy policy lacked substance and the home page read like a login wall that never explained what the product does.',
+    approach: [
+      'Opened the whole pipeline to anonymous visitors first: three fabricated demo defendants run the real scoring and generation path with no account, cached for an hour.',
+      'Wrote the privacy policy section by section against the code, naming retention per store: reports kept until deletion is requested, rate-limit counters about an hour, budget counters 48 hours, and no server-side token storage.',
+      'Ran a twelve-run head-to-head eval across Gemini and three Workers AI models before choosing an engine, then kept Gemini at the schema boundary and recorded the free fallback as needing a repair layer.',
+      'Kept every judgement in code: the Brain Rot Score is computed from signals and overwrites the model’s self-reported score, so the model only ever writes prose.',
+      'Rationed the paid model with a three-per-hour per-IP limit, a fifteen-per-day site budget, and error copy a person can act on instead of bare status codes.',
+    ],
+    outcomes: [
+      'Shipped to production on Cloudflare Workers with the live OAuth flow, a permanent report link per visitor, and a per-report Open Graph card.',
+      'Answered the login-wall finding by making the no-account path the primary one, then resubmitted verification with all three reviewer findings addressed directly.',
+      'Fixed two production-only failures the local build never showed: a share card that crashed the runtime’s CSS parser, and a deploy wizard that double-wrapped the OAuth client secret.',
+    ],
+    stack: [
+      'Next.js',
+      'Cloudflare Workers',
+      'Workers KV',
+      'Google OAuth',
+      'YouTube Data API',
+      'Gemini',
+      'Turnstile',
+    ],
+    links: [
+      { label: 'Technical article', href: '/blog/roasttube-ai-roast-youtube-history/' },
+      { label: 'Live site', href: 'https://roasttube.piyushmehta.com' },
+    ],
+  },
+  {
     title: 'Enterprise AI Workflows',
     eyebrow: 'AI systems for consulting clients',
     role: 'Senior Software Consultant / Senior Software Engineer',

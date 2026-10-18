@@ -1,0 +1,323 @@
+---
+/**
+ * The shipped admission path for one roast, drawn.
+ *
+ * This is the order the route actually runs in (`src/app/api/roast/route.ts`):
+ * rate limit, parse, bot check or session, daily budget, collect, compute,
+ * generate, store. The outcome column is editorial labelling, not a
+ * measurement, and no step here is claimed to be faster or slower than another.
+ */
+---
+
+<figure class="pipe">
+  <div class="pipe__head">
+    <span class="pipe__label">How one verdict gets made</span>
+    <span class="pipe__note">Schematic: the shipped admission order</span>
+  </div>
+
+  <div class="pipe__entries">
+    <div class="pipe__entry">
+      <span class="pipe__entry-kind">Demo defendant</span>
+      <p class="pipe__entry-text">
+        Three fabricated personas. No account, no sign-in, and the finished verdict is cached
+        for an hour.
+      </p>
+    </div>
+    <div class="pipe__entry">
+      <span class="pipe__entry-kind">Your account</span>
+      <p class="pipe__entry-text">
+        Google sign-in with one read-only scope. Likes, subscriptions and playlist titles are
+        read once, then the token is discarded.
+      </p>
+    </div>
+  </div>
+
+  <p class="pipe__merge">
+    <span>Both entries meet the same gate:</span>
+  </p>
+
+  <ol class="pipe__steps">
+    <li class="pipe__step">
+      <span class="pipe__index" aria-hidden="true">01</span>
+      <div class="pipe__body">
+        <p class="pipe__row">
+          <span class="pipe__title">Rate limit</span>
+          <span class="pipe__tag">abuse</span>
+        </p>
+        <p class="pipe__detail">
+          Three roasts per hour per IP, checked before the request body is even parsed.
+          Rejected requests never write, so hammering cannot extend the window.
+        </p>
+      </div>
+    </li>
+
+    <li class="pipe__step">
+      <span class="pipe__index" aria-hidden="true">02</span>
+      <div class="pipe__body">
+        <p class="pipe__row">
+          <span class="pipe__title">Bot check or session</span>
+          <span class="pipe__tag">identity</span>
+        </p>
+        <p class="pipe__detail">
+          A demo request passes Cloudflare Turnstile. A real roast needs a sealed session
+          cookie, and a missing secret fails closed instead of waving requests through.
+        </p>
+      </div>
+    </li>
+
+    <li class="pipe__step">
+      <span class="pipe__index" aria-hidden="true">03</span>
+      <div class="pipe__body">
+        <p class="pipe__row">
+          <span class="pipe__title">Daily budget</span>
+          <span class="pipe__tag">cost</span>
+        </p>
+        <p class="pipe__detail">
+          One counter for the whole site, fifteen roasts a day by default. When it is spent,
+          the answer is a 429 with a sentence a person can read.
+        </p>
+      </div>
+    </li>
+
+    <li class="pipe__step">
+      <span class="pipe__index" aria-hidden="true">04</span>
+      <div class="pipe__body">
+        <p class="pipe__row">
+          <span class="pipe__title">Collect and compute</span>
+          <span class="pipe__tag">evidence</span>
+        </p>
+        <p class="pipe__detail">
+          Liked videos, subscriptions and playlist titles come back from the YouTube Data
+          API, then become ordinary numbers: shorts ratio, topic entropy, late-night count,
+          a lurker index.
+        </p>
+      </div>
+    </li>
+
+    <li class="pipe__step">
+      <span class="pipe__index" aria-hidden="true">05</span>
+      <div class="pipe__body">
+        <p class="pipe__row">
+          <span class="pipe__title">Score in code</span>
+          <span class="pipe__tag">scoring</span>
+        </p>
+        <p class="pipe__detail">
+          The Brain Rot Score is arithmetic over those signals. The model never sets it, and
+          its opinion of the score is overwritten if it tries.
+        </p>
+      </div>
+    </li>
+
+    <li class="pipe__step">
+      <span class="pipe__index" aria-hidden="true">06</span>
+      <div class="pipe__body">
+        <p class="pipe__row">
+          <span class="pipe__title">Model writes the roast</span>
+          <span class="pipe__tag">language</span>
+        </p>
+        <p class="pipe__detail">
+          Gemini returns the headline, the roast body, the red flags, the channel verdicts
+          and the share line against a response schema, and nothing else.
+        </p>
+      </div>
+    </li>
+
+    <li class="pipe__step">
+      <span class="pipe__index" aria-hidden="true">07</span>
+      <div class="pipe__body">
+        <p class="pipe__row">
+          <span class="pipe__title">Store the verdict</span>
+          <span class="pipe__tag">sharing</span>
+        </p>
+        <p class="pipe__detail">
+          The report is written once under a random id, so the link a reader shares keeps
+          working. There is no TTL, which is why deletion is a request a person makes.
+        </p>
+      </div>
+    </li>
+  </ol>
+
+  <figcaption class="pipe__caption">
+    Read in either direction: the top is what a visitor experiences, the bottom is what the
+    route has to survive before the joke reaches the page.
+  </figcaption>
+</figure>
+
+<style>
+  .pipe {
+    margin: 2.5rem 0;
+    padding: 1.5rem 1.5rem 1.25rem;
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-card-border);
+    border-radius: 12px;
+  }
+
+  .pipe__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.4rem 1rem;
+  }
+
+  .pipe__label {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+  }
+
+  .pipe__note {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  /* Nested resets so the article page's prose rules for lists and paragraphs do
+     not reshape the ledger inside this figure. */
+  .pipe .pipe__entries {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 1.15rem 0 0;
+    padding: 0;
+  }
+
+  .pipe__entry {
+    padding: 0.85rem 1rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
+  }
+
+  .pipe__entry-kind {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .pipe .pipe__entry-text {
+    margin: 0.45rem 0 0;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: var(--color-text-secondary);
+  }
+
+  .pipe .pipe__merge {
+    position: relative;
+    margin: 1.15rem 0 0;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .pipe .pipe__merge::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: var(--color-card-border);
+  }
+
+  .pipe .pipe__merge span {
+    position: relative;
+    padding-right: 0.8rem;
+    background: var(--color-surface-raised);
+  }
+
+  .pipe .pipe__steps {
+    display: grid;
+    gap: 0;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+
+  .pipe .pipe__step {
+    display: grid;
+    grid-template-columns: 2.1rem minmax(0, 1fr);
+    gap: 0.9rem;
+    margin: 0;
+    padding: 0.75rem 0;
+    list-style: none;
+  }
+
+  .pipe .pipe__step + .pipe__step {
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .pipe__index {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    padding-top: 0.15rem;
+  }
+
+  .pipe .pipe__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 0.7rem;
+    margin: 0;
+  }
+
+  .pipe__title {
+    font-size: 0.98rem;
+    font-weight: 800;
+    line-height: 1.25;
+    color: var(--color-text-primary);
+  }
+
+  .pipe__tag {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-card-border);
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+  }
+
+  .pipe .pipe__detail {
+    margin: 0.35rem 0 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+
+  .pipe .pipe__caption {
+    margin: 1.05rem 0 0;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-card-border);
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 640px) {
+    .pipe {
+      padding: 1.2rem 1rem 1rem;
+    }
+
+    .pipe .pipe__entries {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pipe .pipe__step {
+      grid-template-columns: 1.7rem minmax(0, 1fr);
+      gap: 0.7rem;
+    }
+  }
+</style>
