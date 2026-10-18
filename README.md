@@ -13,9 +13,9 @@ Personal portfolio, technical blog, and Ask Piyush — a streaming AI assistant 
 
 ## Showcase: Ask Piyush
 
-[![Watch the 22-second showcase: Ask Piyush answers a question about AI agents and links to the technical blog.](.github/ask-piyush-showcase.jpg)](.github/ask-piyush-showcase.mp4)
+https://github.com/user-attachments/assets/fd7e6887-5e55-4f94-9c36-89b9be29672a
 
-[Watch the showcase with music →](.github/ask-piyush-showcase.mp4) Ask AI, follow the sources, and explore the technical writing. The AI interaction is illustrative.
+22-second showcase with music: ask AI, follow the sources, and explore the technical writing. The AI interaction is illustrative.
 
 Music: [“Motivator”](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100803) by Kevin MacLeod (incompetech.com), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); trimmed, faded, and mixed.
 
