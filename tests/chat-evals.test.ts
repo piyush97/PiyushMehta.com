@@ -58,5 +58,12 @@ describe('eval: output guard attack corpus', () => {
       checkOutput('Piyush built FocusTube. [Read more](https://piyushmehta.com/blog/building-focustube-typesafe-jev)', C),
       null,
     );
+    assert.equal(
+      checkOutput(
+        'Piyush built RoastTube. [Read more](https://piyushmehta.com/blog/roasttube-ai-roast-youtube-history)',
+        C,
+      ),
+      null,
+    );
   });
 });

@@ -6,6 +6,7 @@ import { useAskPiyush } from './useAskPiyush';
 const MAX = 500;
 const SUGGESTIONS = [
   'What does Piyush do at Tundra?',
+  'Tell me about RoastTube',
   'Tell me about FocusTube',
   'What has Piyush written about AI agents?',
   'How can I contact Piyush?',
