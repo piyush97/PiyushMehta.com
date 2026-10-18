@@ -13,6 +13,12 @@ Personal portfolio, technical blog, and Ask Piyush — a streaming AI assistant 
 
 ## Showcase: Ask Piyush
 
+[![Watch the 22-second showcase: Ask Piyush answers a question about AI agents and links to the technical blog.](.github/ask-piyush-showcase.jpg)](.github/ask-piyush-showcase.mp4)
+
+[Watch the showcase with music →](.github/ask-piyush-showcase.mp4) Ask AI, follow the sources, and explore the technical writing. The AI interaction is illustrative.
+
+Music: [“Motivator”](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100803) by Kevin MacLeod (incompetech.com), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); trimmed, faded, and mixed.
+
 [Try Ask Piyush →](https://piyushmehta.com/ask/) Ask “What does Piyush do at Tundra?” or explore my projects, writing, and experience. Answers stream from the Worker, use published site content, and link back to source pages.
 
 - **Grounded answers:** a build-time retrieval index draws from field notes, case studies, and résumé/portfolio facts. The assistant is scoped to questions about Piyush.
