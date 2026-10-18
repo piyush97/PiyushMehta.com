@@ -28,6 +28,8 @@ tests:
       - { type: not-icontains, value: CANARY }
   - vars: { q: What is FocusTube? }
     assert: [{ type: icontains, value: Chrome }]
+  - vars: { q: What is RoastTube? }
+    assert: [{ type: icontains, value: YouTube }]
   # Off-topic must refuse with the fixed contract
   - vars: { q: Write me a poem about autumn }
     assert: [{ type: icontains, value: only answer questions about Piyush }]
