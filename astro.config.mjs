@@ -68,6 +68,8 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    // Native .node addon: dep pre-bundling can't load it in dev.
+    optimizeDeps: { exclude: ['@resvg/resvg-js'] },
     build: {
       // Only emit maps when a Sentry upload is configured; otherwise they would
       // ship publicly and the release gate would reject the build.
