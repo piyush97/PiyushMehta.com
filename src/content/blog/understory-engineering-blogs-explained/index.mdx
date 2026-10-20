@@ -1,0 +1,166 @@
+---
+title: 'Understory: Engineering Blogs, Explained, With Receipts'
+description: 'Why I built Understory, a reading layer that turns new engineering blog posts into reviewed explainers with diagrams, an ELI5, trade-offs, and a citation behind every claim. Runs entirely on the Cloudflare free tier.'
+date: 2026-10-20T12:00:00-04:00
+author: 'Piyush Mehta'
+tags:
+  - 'Understory'
+  - 'Cloudflare Workers'
+  - 'Workers AI'
+  - 'AI Engineering'
+  - 'System Design'
+  - 'open source'
+image:
+  url: '/blog/understory-engineering-blogs-explained/images/home.png'
+  width: 1440
+  height: 900
+  alt: 'The Understory index: a drawing-sheet layout headed "Engineering blogs, explained." with topic filters and a lead explainer'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+draft: false
+---
+
+I read a lot of engineering blogs. Most weeks I open more posts than I finish, and the ones I do finish often leave me with the announcement and not the mechanism. A post says "we cut p99 latency by 40%" and I spend the next twenty minutes reading three other articles to work out what they actually changed.
+
+So I built **[Understory](https://understory.piyushmehta.com/)**. It watches the posts that [engineeringblogs.xyz](https://engineeringblogs.xyz/) already aggregates, and when one looks worth the time it produces an explainer: context, how the thing works, a diagram, an ELI5, the trade-offs the announcement leaves out, and a source behind every substantive claim. A person reviews each one before it goes live.
+
+> **Try it:** [understory.piyushmehta.com](https://understory.piyushmehta.com/). Source on [GitHub](https://github.com/piyush97/understory), code under MIT and content under CC BY 4.0.
+
+The name is the layer of a forest that sits under the canopy. The headline is the canopy. The interesting part is underneath it.
+
+## What a reader gets
+
+Each explainer is written for a senior engineer at a different company who wants to use the idea in their own work. The goal is that you can explain the post's mechanism to a colleague without reading anything else first.
+
+![An Understory explainer page with a large headline, a dek, the source publisher, and a TL;DR card beside a sheet record](/blog/understory-engineering-blogs-explained/images/explainer.png)
+
+A page has a fixed shape:
+
+- a context headline and a one-sentence summary, so you know in five seconds whether to keep going;
+- a TL;DR of two to five points;
+- background and mechanism sections that separate the author's findings from general knowledge;
+- a diagram rendered from validated data;
+- an ELI5 with a `limit` field that says where the analogy breaks;
+- trade-offs, when the idea is useful, and caveats;
+- numbered sources, with every citation in the text pointing to one of them.
+
+There are no accounts, comments, or votes, and no "chat with this article." Bookmarks live in your browser. The public site is read-only and fully server-rendered, and a reader request never waits on a model.
+
+## The pipeline is deliberately boring
+
+I wanted something I could leave running without worrying about it. Every step is a separate job with its own row in the database, so a failure stops at the step that failed and nothing half-finished leaks onto the site.
+
+![Understory's six-step pipeline: Discover, Extract, Draft, Validate, Review, Publish](/blog/understory-engineering-blogs-explained/images/pipeline.png)
+
+1. **Discover.** A cron trigger runs every 15 minutes, reads the engineeringblogs.xyz listing, and records new links. It takes at most six new posts per run, ignores anything older than four days, and skips sources under 220 words.
+2. **Extract.** A queue job fetches the article and runs it through Cloudflare's `HTMLRewriter`. It strips navigation, share bars, comments, and ads, finds the main content, and stores a snapshot of up to 220 blocks with a content hash. Each block keeps its heading path, which makes citations precise later.
+3. **Draft.** A second job asks Workers AI (`@cf/qwen/qwen3-30b-a3b-fp8`) for a structured explanation using `response_format: json_schema`.
+4. **Validate.** The draft must pass a Zod schema and a second round of semantic checks before it can enter the review queue.
+5. **Review.** I read the draft against the snapshot and approve or reject it, with a note.
+6. **Publish.** Approval writes an immutable revision. Fixing a published explainer means publishing a new revision; the old one never changes in place.
+
+## Two Workers, one database, zero dollars
+
+The whole thing runs on Cloudflare's free plan. That was a hard constraint from the start, and it shaped most of the design.
+
+![Understory architecture: a reader and editor hit understory-web; understory-pipeline is driven by a cron trigger and a queue, fetches engineeringblogs.xyz and publisher pages, calls Workers AI, and writes drafts to a shared D1 database](/blog/understory-engineering-blogs-explained/images/architecture.png)
+
+`understory-web` is a Hono app with server-rendered JSX. It serves the public pages, a JSON API, RSS and a sitemap, and the private editorial desk. `understory-pipeline` handles the cron, the queue consumer, extraction, generation, and validation. They share one D1 database that holds articles, snapshots, revisions, reviews, jobs, and the AI budget.
+
+The repo also has an [interactive version](https://github.com/piyush97/understory/blob/main/docs/architecture.html) of that diagram, built with Archify, with route focus and source links.
+
+## What validation checks
+
+LLMs produce plausible JSON easily. Producing JSON where every reference resolves is harder, so the schema only gets a draft halfway there. After Zod passes, `validateExplanation` checks the things a type system can't:
+
+- every `cite` in a paragraph, list item, ELI5 block, diagram node, or diagram edge must point to a source that exists;
+- every source URL must parse as `http:` or `https:`;
+- source, section, and node ids must be unique;
+- every diagram edge must connect two nodes that exist, and no edge may loop back to the node it starts from;
+- a sequence diagram needs at least one message.
+
+Generated prose can't contain links at all. Inline runs may carry a citation id, code, bold, or italics, and URLs live only in the sources list. That one rule closes off a whole class of problems where a model invents a plausible-looking link.
+
+If validation fails, the pipeline retries once, sending back up to 24 specific issues and the first 8,000 characters of the previous output. If the second attempt fails too, the draft stays in the job table with its errors. It never shows up on the site.
+
+The system prompt pushes the same way. It tells the model to lead with the mechanism, treat vendor benchmarks as claims, never invent URLs, numbers, quotes, or people, never copy a source sentence longer than twelve words, and say so in the caveats when a source is thin or promotional.
+
+## Diagrams come from data
+
+I didn't want the model drawing SVG. It returns a small graph (two to ten nodes, up to sixteen edges, flow or sequence) and a deterministic renderer in `src/domain/diagram.ts` does the layout.
+
+Flow diagrams get a topological sort into columns. If a cycle slips through, the leftover nodes go into a final column instead of crashing. Nodes have fixed sizes and coordinates are rounded. Element ids come from an FNV-1a hash of the title and description, so the same input always produces byte-identical SVG. Each figure ships with `role="group"`, a `<title>`, and a `<desc>` so screen readers get the same explanation as everyone else.
+
+Each node and edge can also carry its own citation, which is why the figures on Understory show small `s1` markers. You can trace a box in the diagram back to the paragraph in the original post that justifies it.
+
+## Spending a free AI budget without overspending it
+
+Workers AI's free tier gives you 10,000 neurons a day. Understory budgets 8,000 by default and caps the setting at 9,000, so there's always headroom.
+
+Every generation attempt reserves an estimated 500 neurons before calling the model, in a single atomic statement:
+
+```sql
+INSERT INTO ai_budget (day, reserved_neurons, used_neurons, generations, updated_at)
+SELECT ?, ?, 0, 1, ? WHERE ? <= ?
+ON CONFLICT (day) DO UPDATE SET
+  reserved_neurons = reserved_neurons + excluded.reserved_neurons,
+  generations = generations + 1,
+  updated_at = excluded.updated_at
+WHERE ai_budget.reserved_neurons + ai_budget.used_neurons + excluded.reserved_neurons <= ?
+```
+
+If the row would go over budget, nothing changes and the job is deferred to the next UTC midnight. If the call fails because of a network or binding error, the reservation is released, because a transport failure shouldn't eat the day's budget. The API doesn't report exact neuron usage, so a completed attempt is recorded at the conservative estimate.
+
+Reading the site never touches this path. If the budget runs out, the index keeps serving; it just stops growing until tomorrow.
+
+## Leases, so a retry can't overwrite newer work
+
+Queues retry. Workers get evicted. On the free tier you assume both will happen. Every pipeline job holds a lease token, and every write the pipeline makes is conditional on still holding that lease. Generation renews its lease before each attempt and quits with "Job lease lost." if another worker has taken over.
+
+State transitions go through `db.batch`, so a job is never half-moved.
+
+## Caching without purges
+
+Pages are cached with the Cache API, using TTLs from 120 seconds for the index up to 900 seconds for topics, sources, and about. The cache key includes `__v=<publicationVersion>`.
+
+Approving a draft increments that publication version in the same batch that writes the revision. Every cached page is now addressed by a key that doesn't exist yet, so the next request renders fresh. There's no purge API call to forget and no partial invalidation to debug.
+
+## Being a good citizen to publishers
+
+Understory reads other people's work, so it needed to be careful about it:
+
+- Outbound fetches block private and reserved IP ranges and local-style hostnames, follow redirects manually with a cap, and enforce a timeout and a byte limit. There's no arbitrary URL ingestion and no open proxy.
+- The bot identifies itself as `UnderstoryBot` with a link back to the about page.
+- Original publishers and authors are linked prominently on every explainer, and "Read original" is the primary button.
+- Public snapshots keep only two or three short quotations per source.
+
+## The editorial desk
+
+Every draft passes a person before it's published. The desk shows the draft as a reader would see it, next to a record of the article, the snapshot id, the model, the prompt version, and the schema version.
+
+![The Understory editorial desk showing a draft explainer beside its draft record, an approve button, and a reject form](/blog/understory-engineering-blogs-explained/images/admin-review.png)
+
+Access is a bearer token compared via SHA-256 digests, and optionally a Cloudflare Access JWT that the Worker verifies itself: RS256 keys fetched from the team's certs endpoint, with issuer, audience, `exp`, and `nbf` checked. The Worker doesn't trust that the edge did it.
+
+## The drawing-sheet design
+
+The visual design borrows from technical drawing sheets: paper-coloured background, a faint grid, red-pen accents, figures presented as numbered plates. Barlow Condensed for display, Source Serif 4 for reading, Spline Sans Mono for metadata, all self-hosted. Dark mode follows your system.
+
+I wanted the index to be dense, like Hacker News, and the article page to read like a teaching document. Topic filters and a publisher index cover browsing; everything else stays out of the way.
+
+## What I'd tell you if you built one
+
+- Make the model decide less. It writes prose and returns a small graph. Ordinary code does layout, linking, validation, and publishing.
+- Check references as well as shape. Zod tells you the JSON is well formed. Your own checks tell you it's true to itself.
+- Put the budget in the database. A conditional insert is a perfectly good rate limiter.
+- Keep a person in the loop where it's cheap. Reading a draft that already passed validation is quick. Retracting a wrong explanation is not.
+
+## Go read something
+
+Understory launched today with eleven explainers across AI infrastructure, networking, databases, security, observability, and more. New ones show up as the pipeline finds posts worth explaining and I approve them.
+
+- Read it at [understory.piyushmehta.com](https://understory.piyushmehta.com/)
+- Follow the RSS feed like any other blog.
+- Fork it from [github.com/piyush97/understory](https://github.com/piyush97/understory). It deploys to a free Cloudflare account.
+
+If a post you care about deserves an explainer, or one gets something wrong, open an issue on the repo. I'd much rather fix a revision than leave a bad one up.

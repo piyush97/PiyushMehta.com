@@ -172,6 +172,33 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
   {
+    title: 'Understory',
+    eyebrow: 'Cloudflare Workers, Workers AI, open source',
+    role: 'Product Engineer',
+    timeframe: '2026',
+    summary:
+      'Built a reading layer that turns new engineering blog posts into reviewed explainers with context, mechanism, a diagram, an ELI5, trade-offs, and a source behind every claim.',
+    problem:
+      'Engineering blog posts announce results but skip the mechanism and trade-offs. Summary bots compress the announcement and invent details; readers still have to open three more articles to understand one.',
+    approach: [
+      'Split discovery, extraction, generation, and validation into leased queue jobs so a failed step stays in D1 and never reaches the public index.',
+      'Validated model output with a Zod schema plus reference checks: every citation, source URL, and diagram edge must resolve before a draft enters review.',
+      'Rendered diagrams deterministically from a small validated graph instead of letting the model draw SVG.',
+      'Reserved the Workers AI neuron budget with one conditional SQL statement and invalidated the edge cache by bumping a publication version on approval.',
+    ],
+    outcomes: [
+      'Launched with eleven reviewed explainers across thirty sources, running entirely on the Cloudflare free plan.',
+      'Kept readers off the inference path: every page is server-rendered from approved, immutable revisions.',
+      'Published the code under MIT and the explainers under CC BY 4.0.',
+    ],
+    stack: ['Cloudflare Workers', 'Workers AI', 'D1', 'Queues', 'Hono', 'TypeScript'],
+    links: [
+      { label: 'Live site', href: 'https://understory.piyushmehta.com/' },
+      { label: 'Technical article', href: '/blog/understory-engineering-blogs-explained/' },
+      { label: 'GitHub', href: 'https://github.com/piyush97/understory' },
+    ],
+  },
+  {
     title: 'Enterprise AI Workflows',
     eyebrow: 'AI systems for consulting clients',
     role: 'Senior Software Consultant / Senior Software Engineer',
