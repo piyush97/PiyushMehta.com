@@ -23,9 +23,9 @@ test.describe('redesigned public surfaces', () => {
 
     const index = page.locator('[data-work-section="index"]');
     const records = page.locator('[data-case-record]');
-    await expect(index.locator('a')).toHaveCount(7);
-    await expect(records).toHaveCount(7);
-    await expect(page.locator('main h2')).toHaveCount(9);
+    await expect(index.locator('a')).toHaveCount(9);
+    await expect(records).toHaveCount(9);
+    await expect(page.locator('main h2')).toHaveCount(11);
 
     const firstRecord = records.first();
     await expect(firstRecord.getByRole('heading', { name: 'FocusTube' })).toBeVisible();

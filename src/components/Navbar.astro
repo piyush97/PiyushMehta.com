@@ -8,7 +8,8 @@ const navItems = [
   { href: '/about/', label: 'About' },
   { href: '/resume/', label: 'Resume' },
   { href: '/contact-me/', label: 'Contact' },
-  { href: 'https://os.piyushmehta.com/', label: 'Desktop', external: true },
+  { href: 'https://understory.piyushmehta.com/', label: 'Understory', external: true, title: 'Understory: engineering blogs, explained' },
+  { href: 'https://os.piyushmehta.com/', label: 'Desktop', external: true, title: 'MehtaDesk: my portfolio as an interactive desktop' },
 ];
 
 const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
@@ -32,7 +33,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
         <a
           href={item.href}
           aria-current={isActive(item.href) ? 'page' : undefined}
-          title={item.external ? 'MehtaDesk: my portfolio as an interactive desktop' : undefined}
+          title={item.title}
         >
           {item.label}
           {item.external && <span aria-hidden="true"> ↗</span>}
@@ -426,12 +427,12 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Tablet: all seven links need ~614px, so drop the wordmark (PM mark stays)
+  /* Tablet: all eight links need ~700px, so drop the wordmark (PM mark stays)
      and tighten links to keep the theme button inside the viewport. */
-  @media (min-width: 768px) and (max-width: 959px) {
+  @media (min-width: 768px) and (max-width: 1039px) {
     .site-nav__brand strong { display: none; }
-    .site-nav__links { gap: 0.15rem; }
-    .site-nav__links a { padding-inline: 0.6rem; }
+    .site-nav__links { gap: 0; }
+    .site-nav__links a { padding-inline: 0.4rem; font-size: 0.8rem; }
   }
 
   .ask-button {
@@ -457,6 +458,9 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
     outline-offset: 2px;
   }
   .site-nav__actions { gap: 0.5rem; }
+  @media (min-width: 768px) and (max-width: 1039px) {
+    .ask-button { padding-inline: 0.6rem; }
+  }
 
   @media (max-width: 767px) {
     .ask-button { display: none; }
