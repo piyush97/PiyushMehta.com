@@ -21,6 +21,10 @@
 /robots.txt
   Cache-Control: public, max-age=86400
 
+/.well-known/security.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=86400
+
 /search/*
   Cache-Control: public, max-age=0, must-revalidate
 
