@@ -1,0 +1,172 @@
+---
+title: 'Kimi K3.1 Pro: Benchmarks, Pricing, API and Open Weights'
+description: 'Kimi K3.1 Pro benchmarks vs Claude Opus 5.5, $2/$10 pricing, API setup, and the Nov 4 open-weights date. Independent results kept separate from Moonshot claims.'
+date: 2026-10-23T18:00:00-04:00
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'Kimi K3.1 Pro'
+  - 'Kimi K3'
+  - 'Moonshot AI'
+  - 'Open Weights'
+  - 'LLM Benchmarks'
+  - 'Coding Agents'
+  - 'AI API Pricing'
+image:
+  url: '/blog/kimi-k3-1-pro-open-weight-gap/images/cover.svg'
+  width: 1200
+  height: 630
+  alt: 'Bar chart: Claude Opus 5.5 at 58, Kimi K3.1 Pro at 55, Kimi K3 at 44 on the Artificial Analysis Intelligence Index'
+draft: false
+---
+
+Kimi K3.1 Pro is Moonshot AI's new flagship model, released October 23, 2026. On the Artificial Analysis Intelligence Index, Claude Opus 5.5 scores **58**. Kimi K3.1 Pro scores **55**.
+
+When Moonshot released K3 in July, the best open-weight model trailed the best proprietary one by 12 points. Once the K3.1 Pro weights ship, that gap drops to 3, per [Artificial Analysis](https://artificialanalysis.ai/articles/kimi-k3-1-pro-launch-benchmarks). Moonshot also cut the price by a third.
+
+There's a catch: as of today you can't download it. You can call it through Moonshot's API and apps, and Moonshot [says](https://www.kimi.ai/blog/kimi-k3-1-pro) the full weights will be released **by Nov 4, 2026**. Until they are, "open weight" is a promise.
+
+This post covers what changed, which numbers someone other than Moonshot has checked, and what to test before you switch an agent over.
+
+## What is Kimi K3.1 Pro? Same model, more post-training
+
+K3.1 Pro uses the same architecture as K3. Moonshot calls it "a post-trained version of Kimi K3, with substantially larger post-training compute," trained with joint RL across "hundreds of downstream domains."
+
+The specs carry over from K3, which I covered in [Kimi K3 Is Open Weight, but You Still Need a Datacenter to Run It](/blog/kimi-k3-open-weights-datacenter):
+
+- **2.8T total parameters, ~104B active** per token (MoE)
+- **1,048,576-token** context window
+- Text and image input
+
+So the hardware story hasn't changed. When the weights land, you'll still need a multi-accelerator cluster to run them, not a workstation. What changed is how well the model behaves once it's running.
+
+## Kimi K3.1 Pro benchmarks vs Claude Opus 5.5, sorted by who measured them
+
+Most launch coverage mixes vendor claims and independent results into one table. I've kept them apart.
+
+### Independent: Artificial Analysis
+
+| Metric                            | Kimi K3 | Kimi K3.1 Pro                         |
+| --------------------------------- | ------- | ------------------------------------- |
+| Intelligence Index                | 44      | **55** (4th overall)                  |
+| Terminal-Bench 4.0                | 13%     | **67%** (highest of any model tested) |
+| GDPval-AA (Elo)                   | 1,534   | **1,846** (3rd)                       |
+| AutomationBench-AA                | 58%     | **73%**                               |
+| AA-Omniscience hallucination rate | 53%     | **44%**                               |
+| Humanity's Last Exam              | 47%     | **52%**                               |
+
+The three models ahead of it on the Index are Claude Opus 5.5 (58), Claude Sonnet 5.5 (56), and Muse Wonder Full (56). On Terminal-Bench 4.0 it scored above Sonnet 5.5 (64%).
+
+Terminal-Bench is the number I'd weight most heavily. Moonshot claimed 65.7% in its own Claude Code harness, and AA measured 67%. A vendor coding claim held up under someone else's harness on launch day, and that doesn't happen often.
+
+### Vendor-reported: Moonshot
+
+These come from [Moonshot's tech blog](https://www.kimi.ai/blog/kimi-k3-1-pro) and haven't been independently reproduced:
+
+- **Kimi Code Bench 3.0 Long-horizon:** 61.2 vs 55.95 for K3. Moonshot owns both the benchmark and the harness.
+- **BenchCAD with tools:** 92.7, behind Opus 5.5 (96.2) and GPT-6 Astra (95.9), level with Claude Fable 5.1 (92.6).
+- **Internal finance evals:** Business Operation went from 8.9 to 37, Research from 58.8 to 70.4.
+- **Kimi Hallu Bench Hard:** claim-level hallucination fell from 23.4% to 8.3%.
+
+### Two hallucination numbers that measure different things
+
+Moonshot reports **8.3%** and AA reports **44%**. Both can be true because they measure different things.
+
+- Moonshot's 8.3% counts false claims inside responses, with tools available.
+- AA's 44% counts how often the model answers wrong when it should have said it didn't know.
+
+Both moved in the right direction. The 44% is the one to remember if your agent answers questions without retrieval. In close to half of those cases it still guesses instead of abstaining.
+
+## Kimi K3.1 Pro pricing: cheaper per token, flat per task
+
+Per 1M tokens, [confirmed by Artificial Analysis](https://artificialanalysis.ai/articles/kimi-k3-1-pro-launch-benchmarks):
+
+|                   | Input     | Cache hit | Output     |
+| ----------------- | --------- | --------- | ---------- |
+| Kimi K3           | $3.00     | $0.30     | $15.00     |
+| **Kimi K3.1 Pro** | **$2.00** | **$0.20** | **$10.00** |
+
+There's no long-context surcharge, so the price is the same at token 1,000 and token 1,000,000. One million input tokens plus 200K output costs **$4.00** on K3.1 Pro versus **$6.00** on K3.
+
+Per task the saving is smaller. AA measured 55K output tokens per Index task, up 14% from K3, and a cost of **$1.98 per task**, which it calls roughly equal to K3. The model is cheaper per token but spends more tokens thinking, so measure your own workload before you budget for a 33% drop.
+
+`kimi-k3.1-pro-highspeed` is the same model served 2 to 3 times faster. [OrcaRouter lists it](https://www.orcarouter.ai/blog/kimi-k3-1-pro-release) at $4 input and $20 output, double the standard rate.
+
+## How to use the Kimi K3.1 Pro API
+
+The API is OpenAI-compatible. From the [quickstart](https://platform.kimi.ai/docs/guide/kimi-k3-1-pro-quickstart):
+
+```bash
+curl https://api.moonshot.ai/v1/chat/completions \
+  -H "Authorization: Bearer $MOONSHOT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kimi-k3.1-pro",
+    "reasoning_effort": "high",
+    "messages": [{"role": "user", "content": "Explain this stack trace"}]
+  }'
+```
+
+Four things will break a drop-in swap from another model:
+
+1. **You can't turn reasoning off.** `reasoning_effort` accepts `low`, `high`, or `max`, and **defaults to `max`**. If latency spikes after you switch, check this setting first.
+2. **Sampling is fixed.** `temperature=1.0`, `top_p=0.95`, `n=1`, and both penalties at 0 are locked. Leave them out of your requests. OrcaRouter reports that other values return an error.
+3. **Return the full assistant message.** In multi-turn and tool-calling loops, send back the complete assistant message, not just `content`. Streaming returns `reasoning_content` and `content` as separate deltas.
+4. **You need to top up first.** The model unlocks after at least $1 in credit, and your cumulative top-up sets your rate-limit tier.
+
+## Moonshot removed some of its hacking ability on purpose
+
+This is the most unusual part of the release.
+
+Moonshot filtered cyberattack-related material out of the training data before the open release. The reason it gave, as [reported by TNW](https://thenextweb.com/news/moonshot-kimi-k3-1-pro-open-weight-cyber), is to avoid pushing the frontier of freely available offensive capability. On Moonshot's in-house exploit benchmark:
+
+| Model                          | Real-vuln exploit score |
+| ------------------------------ | ----------------------- |
+| K3.1 Pro, before the filtering | 90.5%                   |
+| DeepSeek V4.1-Flash            | 85.7%                   |
+| **K3.1 Pro, as released**      | **81.0%**               |
+| Kimi K3                        | 33.3%                   |
+
+Even after the filtering, it scores far higher than K3. Moonshot reduced the capability but didn't remove it. Weights can also be fine-tuned once they're public, so treat 81% as the starting point, not a ceiling.
+
+For defenders: if you run open models in security tooling, K3.1 Pro will be very capable and will still be somewhat restricted. Test it on your actual use cases. Don't assume either way.
+
+## What we still don't know
+
+- **Whether the weights ship on time.** Nov 4 is a promise, and AA's "leading open-weights model" label depends on it.
+- **The license.** Moonshot's blog doesn't state one. K3's license terms may or may not carry over.
+- **Third-party serving.** Real price and speed competition starts when providers other than Moonshot can host the model. That can't happen before the weights are out.
+- **Independent checks of the finance and CAD numbers.** So far they're vendor-only.
+- **Behavior across a full 1M-token context.** It's supported. Whether quality holds at that length is a separate question that no published evaluation has answered yet.
+
+## Should you switch to Kimi K3.1 Pro?
+
+- **Coding-agent builders on Opus or Sonnet:** run your own eval. The independent Terminal-Bench result says it's worth an afternoon. Set `reasoning_effort` explicitly and track cost per task, not per token.
+- **Teams on Kimi K3:** switch. It's the same architecture, it's cheaper per token, and it scores 11 Index points higher. Strip your sampling parameters first.
+- **Teams waiting to self-host:** wait for the Nov 4 weights and the license, then plan hardware using the same numbers as K3.
+- **Anyone answering factual questions without retrieval:** the 44% abstention failure rate is better than before, but it's still high. Keep retrieval in the loop.
+
+When K3 came out, the open-weight story was mostly about access. With K3.1 Pro, an open-weight model is close enough to the top proprietary models that the choice now depends on cost, latency, and hosting control. Run your own benchmarks to find out which matters for you.
+
+## Kimi K3.1 Pro FAQ
+
+### When will the Kimi K3.1 Pro weights be released?
+
+Moonshot says the full weights will be released by November 4, 2026. Until then, the model is only available through Moonshot's API and Kimi apps.
+
+### How much does Kimi K3.1 Pro cost?
+
+$2.00 per 1M input tokens, $0.20 per 1M cached input tokens, and $10.00 per 1M output tokens, with no long-context surcharge. That's a third cheaper than Kimi K3.
+
+### Is Kimi K3.1 Pro better than Claude Opus 5.5?
+
+Overall, no. Opus 5.5 scores 58 on the Artificial Analysis Intelligence Index, and K3.1 Pro scores 55. On Terminal-Bench 4.0, Artificial Analysis measured K3.1 Pro at 67%, the highest of any model it tested.
+
+### What is the Kimi K3.1 Pro API model ID?
+
+`kimi-k3.1-pro`, or `kimi-k3.1-pro-highspeed` for the faster variant. The API is OpenAI-compatible at `https://api.moonshot.ai/v1`.
+
+### Can I run Kimi K3.1 Pro locally?
+
+Not on a laptop or a single GPU. It has 2.8T total parameters, the same as Kimi K3, so self-hosting it will take a multi-accelerator cluster once the weights are out.

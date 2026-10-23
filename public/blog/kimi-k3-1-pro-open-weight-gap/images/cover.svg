@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">Kimi K3.1 Pro closes the open-weight gap to 3 points</title>
+  <desc id="description">Bar chart of the Artificial Analysis Intelligence Index: Claude Opus 5.5 at 58, Kimi K3.1 Pro at 55, Kimi K3 at 44.</desc>
+  <rect width="1200" height="630" fill="#0b1220"/>
+  <text x="80" y="110" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="26">ARTIFICIAL ANALYSIS INTELLIGENCE INDEX</text>
+  <text x="80" y="185" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="64" font-weight="700">The gap is now 3 points</text>
+  <g font-family="system-ui, sans-serif" font-size="30">
+    <text x="80" y="300" fill="#cbd5e1">Claude Opus 5.5</text>
+    <rect x="380" y="270" width="638" height="44" rx="6" fill="#475569"/>
+    <text x="1040" y="302" fill="#f8fafc" font-weight="700">58</text>
+    <text x="80" y="390" fill="#f8fafc" font-weight="700">Kimi K3.1 Pro</text>
+    <rect x="380" y="360" width="605" height="44" rx="6" fill="#38bdf8"/>
+    <text x="1007" y="392" fill="#f8fafc" font-weight="700">55</text>
+    <text x="80" y="480" fill="#cbd5e1">Kimi K3</text>
+    <rect x="380" y="450" width="484" height="44" rx="6" fill="#334155"/>
+    <text x="886" y="482" fill="#f8fafc" font-weight="700">44</text>
+  </g>
+  <text x="80" y="570" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="22">$2 in / $10 out per 1M tokens · weights promised by Nov 4, 2026</text>
+</svg>
