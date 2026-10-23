@@ -1,0 +1,82 @@
+---
+title: 'Coding Agents Changed the Queue: How to Budget Pull Request Review'
+description: 'A practical review system for coding-agent PRs: use empirical failure patterns, diff-size limits, risk tiers, and reviewer capacity—not just code throughput.'
+date: 2026-10-23T12:00:00-04:00
+author: 'Piyush Mehta'
+tags: ['AI Agents', 'Code Review', 'Software Engineering', 'Developer Productivity']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+draft: false
+---
+
+A coding agent can make the first draft of a change cheaper. It cannot make the review of that change free.
+
+That distinction matters. If a team measures only how quickly code appears, it can mistake a growing review queue for higher throughput. The engineering system still has a human acceptance boundary: someone must decide whether the change is correct, wanted, safe, and maintainable.
+
+This is not an argument against coding agents. It is an argument for treating review capacity as part of the system you are optimizing.
+
+## The evidence points to a review problem, not a model leaderboard
+
+A 2026 study examined 33,000 pull requests authored by five coding agents across GitHub repositories, then qualitatively analyzed 600 of them. The authors report that documentation, CI, and build-update tasks had the highest merge success, while performance and bug-fix tasks performed worst. Unmerged PRs tended to be larger, touch more files, and fail CI more often. The paper also identifies duplicate submissions, unwanted implementations, and weak reviewer engagement among rejection patterns.[1]
+
+Those observations do not prove that agents universally increase PR volume or that review is every team's bottleneck. The dataset is a sample of agent-authored PRs, and merge outcomes depend on repository norms and task selection. But it gives teams a useful operational warning: a plausible-looking patch is not the same thing as an accepted change.
+
+GitHub's description of its coding agent similarly frames the result as a pull request returned for review, not a change that bypasses review.[2] The review boundary remains part of the product, even when the author is an agent.
+
+## Model the queue you actually have
+
+Start with two separate flows:
+
+```text
+work requested → agent drafts change → CI → human review → merge
+                                  ↘ revisions ↗
+```
+
+The agent can reduce drafting time while increasing the number of reviewable changes arriving. If arrivals exceed reviewer capacity for long enough, queue age grows. That is a queueing consequence, not evidence that reviewers are slow or that agents are bad.
+
+Track a small set of measures together, rather than celebrating lines generated:
+
+- **Arrival rate:** PRs opened per week, split by human and agent authorship.
+- **Review wait:** time from ready-for-review to first substantive human review.
+- **Review load:** active PRs per reviewer and median changed files per PR.
+- **Rework:** review rounds and changes requested after the first review.
+- **Outcome:** merge, close, or supersede rate, separated by task category.
+
+These are diagnostic signals, not individual performance scores. A high merge rate can still hide shallow review; a long wait can reflect deliberate prioritization. Read the measures together and sample diffs directly.
+
+## A review policy that scales with risk
+
+Use a default that keeps ordinary changes easy to inspect, then spend deeper attention where mistakes matter:
+
+1. **Make the task bounded.** One issue, one outcome, explicit non-goals. Ask the agent to stop and report if it discovers unrelated work.
+2. **Set a diff budget.** Require an explanation before exceeding a team-set threshold for files or changed lines. Split independent changes rather than bundling them for convenience. A threshold is a prompt to decompose, not a correctness guarantee.
+3. **Keep CI authoritative.** Require the repository's existing formatting, tests, type checks, and security gates. Passing CI is necessary evidence, not proof of behavioral correctness.
+4. **Review by risk.** Spend extra scrutiny on authorization, migrations, concurrency, data deletion, public APIs, and production configuration. Check callers and invariants beyond the changed lines.
+5. **Protect reviewer capacity.** Limit how many agent PRs can be marked ready at once. If the queue ages, pause new agent work or narrow its task scope before adding more reviewers by default.
+6. **Record why changes fail.** Distinguish technical defects from duplicate work, unwanted scope, missing context, and lack of reviewer availability. Each points to a different fix.
+
+A task-size limit works best when it is measurable. For example, teams can begin with a local policy such as “one behavior change and one reviewer-visible reason per PR,” then compare review time and rework against their baseline. Do not copy an arbitrary universal line-count cap; code density varies by project and task.
+
+## Interactive: what should happen to this PR?
+
+Imagine an agent opens a PR that passes CI, changes 18 files, combines a bug fix with a dependency update, and has no tests for the changed behavior. The summary is polished, but the reviewer queue is already aging.
+
+<details>
+<summary>Reveal a sensible next step</summary>
+
+Do not merge because CI is green, and do not simply ask for “more tests.” Ask the author to split the dependency update from the behavior fix, identify the expected behavior and affected callers, and add a focused regression test. Then review the risky code path against the task's stated scope. If the agent cannot explain why a changed file is necessary, remove it or spin it into a separate proposal. This improves traceability and makes the review smaller; it does not guarantee correctness.
+
+</details>
+
+That interaction is intentionally a decision exercise rather than a score. Review is contextual: the right response depends on impact, repository conventions, and whether the change is wanted.
+
+## Optimize accepted change, not generated change
+
+An agent that produces ten patches but leaves humans with an unreviewable queue has not increased useful delivery. Conversely, an agent handling small, well-specified maintenance tasks may return changes that are cheap to verify and genuinely free engineers for harder work.
+
+The practical unit of productivity is not tokens, files, or PR count. It is a correct, wanted change that a responsible reviewer can understand and safely accept. Build your workflow around that unit—and measure the queue, not just the typing.
+
+## Sources
+
+1. Ramtin Ehsani et al., [“Where Do AI Coding Agents Fail? An Empirical Study of Failed Agentic Pull Requests in GitHub”](https://arxiv.org/html/2601.15195), 2026. The paper studies 33k agent-authored PRs and qualitatively analyzes 600.
+2. Martin Woodward, [“The next developer interface is ambient intelligence”](https://github.blog/news-insights/company-news/the-next-developer-interface-is-ambient-intelligence/), GitHub Blog, October 15, 2026. Describes coding agent work being returned as a PR for review.
