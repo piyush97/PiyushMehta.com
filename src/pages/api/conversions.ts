@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { readLimitedText } from '@/utils/chat/schema';
 import { isClientEvent, recordConversion, runInBackground } from '@/utils/conversions';
 import { createRatelimit, getClientIp, reactionRedis } from '@/utils/redis';
 import { isAllowedFormOrigin } from '@/utils/request-security';
@@ -15,8 +16,8 @@ const status = (code: number) =>
 export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
   if (!isAllowedFormOrigin(request)) return status(403);
 
-  const text = await request.text();
-  if (text.length > MAX_BODY_BYTES) return status(413);
+  const text = await readLimitedText(request, MAX_BODY_BYTES);
+  if (text === null) return status(413);
 
   let event: unknown;
   try {
