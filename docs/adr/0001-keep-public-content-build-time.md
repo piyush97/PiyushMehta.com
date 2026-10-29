@@ -1,3 +1,11 @@
+---
+id: adr-public-content
+type: module-design
+title: Keep public content build-time and database-free
+status: draft
+parent: architecture
+---
+
 # ADR-0001: Keep public content build-time and database-free
 
 - **Status:** Accepted

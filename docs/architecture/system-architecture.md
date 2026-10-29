@@ -1,3 +1,12 @@
+---
+id: architecture
+type: architecture-design
+title: System architecture
+status: draft
+parent: product
+references: [adr-public-content, adr-deployment, adr-chat]
+---
+
 # System architecture
 
 **Status:** Accepted design — source implementation complete; production verification pending
@@ -6,7 +15,7 @@
 
 ## 1. Executive decision
 
-The accepted target is not a database-backed blog. It is a build-time content system with an edge-delivered static frontend and a small set of independently scalable runtime APIs. The current source still has the gaps recorded in Section 5; this document defines the implementation target rather than claiming those changes are already deployed.
+The accepted target is not a database-backed blog. It is a build-time content system with an edge-delivered static frontend and a small set of independently scalable runtime APIs. Source implementation is complete for the release-hardening scope; production deployment and verification remain pending.
 
 - Git and MDX remain the source of truth for articles.
 - Astro produces public pages, feeds, social cards, and search assets at build time; only API routes execute Worker code.

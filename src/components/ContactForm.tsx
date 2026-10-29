@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { HANDOFF_KEY, parseHandoff } from '../utils/contact-handoff';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -24,6 +25,17 @@ export default function ContactForm({ className = '' }: { className?: string }) 
   useEffect(() => {
     if (status === 'success') successRef.current?.focus();
   }, [status]);
+
+  // One-time prefill from an Ask Piyush answer; consumed so a reload starts clean.
+  useEffect(() => {
+    try {
+      const handoff = parseHandoff(sessionStorage.getItem(HANDOFF_KEY));
+      sessionStorage.removeItem(HANDOFF_KEY);
+      if (handoff) setFields((prev) => ({ ...prev, ...handoff }));
+    } catch {
+      // Storage blocked: keep the empty form.
+    }
+  }, []);
 
   function validate(): boolean {
     const e: Partial<Field> = {};

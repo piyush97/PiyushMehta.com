@@ -63,6 +63,44 @@ test.describe('Ask Piyush', () => {
     expect(Object.keys(body!.messages[0]).sort()).toEqual(['parts', 'role']);
   });
 
+  test('answered reply hands question and sources to the contact form once', async ({ page }) => {
+    await page.route('**/api/chat', (route) =>
+      route.fulfill({
+        headers: { 'content-type': 'text/event-stream', 'x-vercel-ai-ui-message-stream': 'v1' },
+        body: answer('Piyush built FocusTube.', [{ url: 'https://piyushmehta.com/projects', title: 'Projects' }]),
+      }),
+    );
+    await openAsk(page);
+    await page.getByRole('button', { name: 'Tell me about FocusTube' }).click();
+    await page.getByRole('link', { name: 'Write to Piyush about this' }).click();
+    await expect(page).toHaveURL(/\/contact-me\/#contact-form$/);
+    await expect(page.locator('#cf-subject')).toHaveValue('Following up from Ask Piyush');
+    const message = page.locator('#cf-message');
+    await expect(message).toHaveValue(/Tell me about FocusTube/);
+    await expect(message).toHaveValue(/https:\/\/piyushmehta\.com\/projects/);
+    await expect(message).not.toHaveValue(/Piyush built FocusTube\./);
+    await page.reload();
+    await expect(page.locator('#cf-subject')).toHaveValue('');
+  });
+
+  test('refused reply offers no contact handoff', async ({ page }) => {
+    await page.route('**/api/chat', (route) =>
+      route.fulfill({
+        headers: { 'content-type': 'text/event-stream', 'x-vercel-ai-ui-message-stream': 'v1' },
+        body: sse([
+          { type: 'text-start', id: 't' },
+          { type: 'text-delta', id: 't', delta: 'I only answer questions about Piyush.' },
+          { type: 'text-end', id: 't' },
+          { type: 'data-trace', id: 'trace', data: { scope: 'classifier', verdict: 'refused', sources: 0 } },
+        ]),
+      }),
+    );
+    await openAsk(page);
+    await page.getByRole('button', { name: 'Tell me about FocusTube' }).click();
+    await expect(page.getByRole('article', { name: 'Answer', exact: true })).toContainText('only answer');
+    await expect(page.getByRole('link', { name: 'Write to Piyush about this' })).toHaveCount(0);
+  });
+
   test('keeps messages and sources after refresh until New chat', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));

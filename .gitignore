@@ -68,6 +68,7 @@ examples/**/env.d.ts
 .serena/
 .claudedocs/
 *.md
+!**/SPEC.md
 # Source of truth for the Ask Piyush assistant; the build reads it.
 !src/content/chat/facts.md
 tests/*.ts-snapshots

@@ -1,3 +1,11 @@
+---
+id: adr-deployment
+type: module-design
+title: Use the generated adapter config and fail closed on shipped artifacts
+status: draft
+parent: architecture
+---
+
 # ADR-0002: Use the generated adapter config and fail closed on shipped artifacts
 
 - **Status:** Accepted — source implementation complete; production verification pending
