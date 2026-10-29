@@ -199,6 +199,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.ask__contact {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 0.6rem 1.25rem 0 0;
+  color: var(--color-accent);
+  font-weight: 700;
+  text-underline-offset: 0.2em;
+}
 .ask__inspect {
   display: inline-block;
   margin-top: 0.6rem;

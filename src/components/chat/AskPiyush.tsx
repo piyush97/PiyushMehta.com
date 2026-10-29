@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { ChatTrace, ChatUIMessage } from '../../utils/chat/pipeline';
+import { HANDOFF_KEY, buildHandoff } from '../../utils/contact-handoff';
 import Answer from './Answer';
 import { useAskPiyush } from './useAskPiyush';
 
@@ -203,7 +204,7 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
             </div>
           )}
 
-          {messages.map((m) => {
+          {messages.map((m, i) => {
             const { text, sources, trace } = partsOf(m);
             if (m.role === 'user') {
               return (
@@ -241,6 +242,25 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
                       </li>
                     ))}
                   </ul>
+                )}
+                {trace?.verdict === 'answered' && messages[i - 1]?.role === 'user' && (
+                  <a
+                    className="ask__contact"
+                    href="/contact-me/#contact-form"
+                    onClick={() => {
+                      try {
+                        const handoff = buildHandoff(
+                          partsOf(messages[i - 1]).text,
+                          sources.map((s) => s.url),
+                        );
+                        sessionStorage.setItem(HANDOFF_KEY, JSON.stringify(handoff));
+                      } catch {
+                        // Storage blocked: the link still opens an empty form.
+                      }
+                    }}
+                  >
+                    Write to Piyush about this
+                  </a>
                 )}
                 {!isActive && (
                   <button
