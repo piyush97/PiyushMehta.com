@@ -1,4 +1,5 @@
 ---
+import { env as cfEnv } from 'cloudflare:workers';
 import { ENV } from 'varlock/env';
 import Layout from '../layouts/Layout.astro';
 import {
@@ -15,7 +16,15 @@ export const prerender = false;
 const noStore = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' };
 
 // Fail closed: no secret means no page, never an open one.
-const password = ENV.STATS_PASSWORD;
+// Varlock's ENV only holds keys baked into the build-time blob and throws for the rest; a secret
+// added later with `wrangler secret put` is only on the native binding.
+let password: string | undefined;
+try {
+  password = ENV.STATS_PASSWORD;
+} catch {
+  password = undefined;
+}
+password ||= (cfEnv as { STATS_PASSWORD?: string }).STATS_PASSWORD;
 if (!password) return new Response('Stats unavailable.', { status: 503, headers: noStore });
 if (!(await checkBasicPassword(Astro.request.headers.get('authorization'), password)))
   return new Response('Password required.', {
