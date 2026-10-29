@@ -2,7 +2,8 @@ import type { APIRoute } from 'astro';
 import { env as cfEnv } from 'cloudflare:workers';
 import { ENV } from 'varlock/env';
 import { isAllowedFormOrigin } from '@/utils/request-security';
-import { createRatelimit, getClientIp } from '@/utils/redis';
+import { recordConversion, runInBackground } from '@/utils/conversions';
+import { createRatelimit, getClientIp, reactionRedis } from '@/utils/redis';
 import { chatModels } from '@/utils/chat/models';
 import { runChat } from '@/utils/chat/pipeline';
 import { MAX_BODY_BYTES, parseChatRequest, readLimitedText } from '@/utils/chat/schema';
@@ -21,7 +22,7 @@ const json = (data: unknown, status = 200) =>
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
   });
 
-export const POST: APIRoute = async ({ request, clientAddress }) => {
+export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
   try {
     if (!isAllowedFormOrigin(request)) return json({ error: 'Forbidden.' }, 403);
 
@@ -57,6 +58,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     // Site-wide cap is counted last: only valid, rate-allowed questions spend it.
     if (!(await globalDay.limit('all')).success)
       return json({ error: 'Daily capacity reached. Please come back tomorrow.' }, 429);
+    runInBackground(locals, recordConversion(reactionRedis, 'chat_question'));
 
     const models = chatModels({ ai: (cfEnv as { AI?: Ai }).AI, groqKey: ENV.GROQ_API_KEY });
     // Client-sent history is untrusted (assistant turns can be forged), so each question

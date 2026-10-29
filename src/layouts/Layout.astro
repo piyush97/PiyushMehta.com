@@ -112,6 +112,10 @@ const {
     </main>
     <Footer />
     <script>
+      import { initConversionBeacon } from '../scripts/conversions';
+      initConversionBeacon();
+    </script>
+    <script>
       // Defer all motion/interaction logic until the browser is idle.
       // The reveal, parallax, and hero typography work is non-critical for
       // FCP/LCP — only the theme + route direction touch initial paint.
