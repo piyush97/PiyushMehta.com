@@ -30,7 +30,7 @@ This decision assumes the deployment pipeline will use one verified Wrangler con
 3. Cloudflare Workers Static Assets serves the public content from the edge.
 4. A latest-article request will not query Redis or a database.
 5. Cache optimization will focus on static asset delivery, ETag revalidation, fingerprinted immutable assets, and measured page performance.
-6. Upstash Redis remains limited to explicitly ephemeral or operational state such as rate limits and reaction counters.
+6. Upstash Redis remains limited to explicitly ephemeral or operational state: rate limits, reaction counters, and anonymous daily conversion totals (amended 2026-10-29). Conversion totals carry no visitor identifier and expire after 60 days; see the `routes` spec.
 7. Resend remains the authority for contact email delivery.
 8. No application database will be added until a named feature requires durable, relational application state.
 
