@@ -234,6 +234,7 @@ The control plane is kept separate from the visitor request path. A monitoring-p
 | Search documents             | Generated from published content                                          | Pagefind assets          | Same content release                |
 | Rate-limit windows           | Upstash Redis                                                             | Upstash Redis            | Short-lived and operational         |
 | Reaction totals              | Upstash Redis while this feature remains ephemeral                        | Upstash Redis            | Eventual is acceptable              |
+| Conversion totals            | Upstash Redis, daily anonymous counters with 60-day expiry                | Upstash Redis            | Best effort; undercount acceptable  |
 | Contact delivery status      | Resend                                                                    | Resend                   | Provider-managed                    |
 | Contact messages             | Resend delivery path                                                      | No local copy            | No application database requirement |
 | Comments                     | Disabled in the baseline; Giscus remains an unapproved future integration | None                     | Not applicable                      |

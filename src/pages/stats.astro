@@ -1,0 +1,134 @@
+---
+import { ENV } from 'varlock/env';
+import Layout from '../layouts/Layout.astro';
+import {
+  WINDOW_DAYS,
+  checkBasicPassword,
+  readConversionTotals,
+  type ConversionEvent,
+  type ConversionTotals,
+} from '../utils/conversions';
+import { redis } from '../utils/redis';
+
+export const prerender = false;
+
+const noStore = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' };
+
+// Fail closed: no secret means no page, never an open one.
+const password = ENV.STATS_PASSWORD;
+if (!password) return new Response('Stats unavailable.', { status: 503, headers: noStore });
+if (!(await checkBasicPassword(Astro.request.headers.get('authorization'), password)))
+  return new Response('Password required.', {
+    status: 401,
+    headers: { ...noStore, 'WWW-Authenticate': 'Basic realm="stats", charset="UTF-8"' },
+  });
+
+for (const [k, v] of Object.entries(noStore)) Astro.response.headers.set(k, v);
+
+let totals: ConversionTotals[] | null = null;
+if (redis) {
+  try {
+    totals = await readConversionTotals(redis);
+  } catch (err) {
+    console.error('[stats] read failed:', (err as Error)?.name);
+  }
+}
+
+const LABELS: Record<ConversionEvent, string> = {
+  contact_sent: 'Contact messages sent',
+  resume_download: 'Résumé downloads',
+  chat_question: 'Ask Piyush questions',
+  reading_path_click: 'Reading-path article clicks',
+};
+
+const change = ({ current, previous }: ConversionTotals) => {
+  if (previous === 0) return current === 0 ? 'No change' : 'New this period';
+  const pct = Math.round(((current - previous) / previous) * 100);
+  return pct === 0 ? 'No change' : `${pct > 0 ? 'Up' : 'Down'} ${Math.abs(pct)}%`;
+};
+---
+
+<Layout title="Conversion totals - Piyush Mehta" description="Private conversion totals." noindex>
+  <section class="stats">
+    <h1>Conversion totals</h1>
+    <p class="stats__note">
+      Anonymous daily counts in UTC. Last {WINDOW_DAYS} days, including today, compared with the {WINDOW_DAYS} days
+      before. Visitors are not identified.
+    </p>
+    {
+      totals ? (
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Event</th>
+              <th scope="col">Last {WINDOW_DAYS} days</th>
+              <th scope="col">Previous {WINDOW_DAYS} days</th>
+              <th scope="col">Change</th>
+            </tr>
+          </thead>
+          <tbody>
+            {totals.map((t) => (
+              <tr>
+                <th scope="row">{LABELS[t.event]}</th>
+                <td>{t.current}</td>
+                <td>{t.previous}</td>
+                <td>{change(t)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p class="stats__error" role="alert">
+          Totals are unavailable because the counter store could not be read. Reload to try again.
+        </p>
+      )
+    }
+  </section>
+</Layout>
+
+<style>
+  .stats {
+    width: min(100% - 2rem, 860px);
+    margin: clamp(2rem, 5vw, 4rem) auto;
+  }
+  .stats h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--color-text-primary);
+  }
+  .stats__note {
+    margin: 0 0 1.5rem;
+    max-width: 65ch;
+    color: var(--color-text-secondary);
+  }
+  .stats table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  .stats :is(th, td) {
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--color-card-border);
+    text-align: right;
+    color: var(--color-text-primary);
+  }
+  .stats :is(thead th, tbody th) {
+    text-align: left;
+  }
+  .stats thead th {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+  }
+  .stats__error {
+    padding: 1rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 0.5rem;
+    color: var(--color-text-primary);
+  }
+  @media (max-width: 560px) {
+    .stats :is(th, td) {
+      padding-inline: 0.25rem;
+      font-size: 0.9rem;
+    }
+  }
+</style>

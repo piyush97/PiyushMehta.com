@@ -2,7 +2,8 @@ import type { APIRoute } from 'astro';
 import { ENV } from 'varlock/env';
 import { sendContactEmail } from '@/utils/contact';
 import { isAllowedFormOrigin } from '@/utils/request-security';
-import { createRatelimit, getClientIp } from '@/utils/redis';
+import { recordConversion, runInBackground } from '@/utils/conversions';
+import { createRatelimit, getClientIp, reactionRedis } from '@/utils/redis';
 
 export const prerender = false;
 
@@ -20,7 +21,7 @@ function json(data: unknown, status = 200) {
   });
 }
 
-export const POST: APIRoute = async ({ request, clientAddress }) => {
+export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
   try {
     // CSRF: only accept requests from an explicitly allowed site origin.
     if (!isAllowedFormOrigin(request)) {
@@ -103,6 +104,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       return json({ error: 'Failed to send. Try again or email directly.' }, 502);
     }
 
+    runInBackground(locals, recordConversion(reactionRedis, 'contact_sent'));
     return json({ ok: true });
   } catch (err) {
     console.error('[contact] unhandled:', err);

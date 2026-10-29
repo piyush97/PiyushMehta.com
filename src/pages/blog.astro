@@ -258,7 +258,7 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
                   <span>{String(index + 1).padStart(2, '0')}</span>
                   {step.stepLabel}
                 </p>
-                <h4><a href={step.href}>{step.title}</a></h4>
+                <h4><a href={step.href} data-conversion="reading_path_click">{step.title}</a></h4>
                 <p class="reading-path-step__description">{step.description}</p>
                 <div class="reading-path-step__meta">
                   <span>{step.readingTime} min read</span>

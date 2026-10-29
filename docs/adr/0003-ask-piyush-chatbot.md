@@ -12,7 +12,7 @@ references: [adr-public-content]
 - **Status:** Accepted
 - **Date:** 2026-10-16
 - **Decision owners:** Piyush Mehta
-- **Supersedes:** none. ADR-0001 item 6 still applies: Upstash holds operational state, including rate limits and reaction counters; the chatbot uses it for rate limits.
+- **Supersedes:** none. ADR-0001 item 6 still applies: Upstash holds operational state (rate limits, reaction counters, anonymous conversion totals); the chatbot uses it for rate limits and its `chat_question` total.
 
 ## Context
 
