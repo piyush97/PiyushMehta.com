@@ -1,4 +1,9 @@
 ---
+id: visual-design
+type: module-design
+title: Visual design
+status: draft
+parent: architecture
 name: PiyushMehta.com
 description: Evidence-led portfolio and technical journal for durable product systems.
 colors:

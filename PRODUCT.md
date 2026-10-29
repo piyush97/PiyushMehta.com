@@ -1,3 +1,10 @@
+---
+id: product
+type: goal-and-requirements
+title: Product
+status: draft
+---
+
 # Product
 
 <!-- impeccable:product-schema 1 -->
@@ -28,6 +35,8 @@ The site is differentiated by first-person engineering evidence: real constraint
 - Public routes share navigation, theme controls, responsive behavior, and the Evidence Ledger design direction.
 
 ## Capabilities and Constraints
+
+- Ask Piyush answers questions about Piyush and his work using published site content. *(Inferred from the implementation; unconfirmed.)*
 
 - Every published article must retain its authored MDX content and factual meaning.
 - Article routes must keep titles, descriptions, dates, authors, tags, canonical URLs, Open Graph metadata, and Article structured data accurate.

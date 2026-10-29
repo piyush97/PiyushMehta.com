@@ -1,9 +1,18 @@
+---
+id: adr-chat
+type: module-design
+title: Ask Piyush chatbot
+status: draft
+parent: architecture
+references: [adr-public-content]
+---
+
 # ADR-0003: Ask Piyush, a scoped, streaming, eval-gated chatbot on free models
 
 - **Status:** Accepted
 - **Date:** 2026-10-16
 - **Decision owners:** Piyush Mehta
-- **Supersedes:** none. Narrows ADR-0001 item 6 (Upstash stays ephemeral/operational: rate limits only).
+- **Supersedes:** none. ADR-0001 item 6 still applies: Upstash holds operational state, including rate limits and reaction counters; the chatbot uses it for rate limits.
 
 ## Context
 
