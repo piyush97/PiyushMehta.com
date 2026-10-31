@@ -39,8 +39,8 @@ step('Published post manifest', 'node scripts/generate-post-manifest.mjs');
 // 2b. Build the Ask Piyush retrieval index from published content.
 step('Chat index', 'node scripts/build-chat-index.mjs');
 
-// 3. Migrate blog images to public/
-step('Image migration', 'node scripts/migrate-images-to-public.mjs');
+// 3. Verify blog images are migrated (read-only; a build never rewrites MDX sources).
+step('Image migration', 'node scripts/migrate-images-to-public.mjs --verify');
 
 // 4. Copy the versioned resume asset before Astro copies public/ into dist/client.
 step('Resume PDF asset', 'node scripts/copy-resume-pdf.mjs');

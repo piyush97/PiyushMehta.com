@@ -11,6 +11,7 @@
     "preview": "varlock-wrangler dev --config dist/server/wrangler.json",
     "astro": "astro",
     "migrate:images": "node scripts/migrate-images-to-public.mjs",
+    "check:images": "node scripts/migrate-images-to-public.mjs --verify",
     "resume:generate": "node scripts/generate-resume-pdf.mjs",
     "resume:copy": "node scripts/copy-resume-pdf.mjs",
     "generate:posts": "node scripts/generate-post-manifest.mjs",
