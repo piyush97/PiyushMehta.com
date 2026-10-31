@@ -12,8 +12,14 @@ const CONTENT_DIR = path.join(PROJECT_ROOT, 'src', 'content', 'blog');
 const PUBLIC_DIR = path.join(PROJECT_ROOT, 'public');
 const BLOG_IMAGES_DIR = path.join(PUBLIC_DIR, 'blog');
 
+// --verify reports source/public drift and exits non-zero without writing anything.
+// The release build uses this so a build can never rewrite committed MDX sources.
+const VERIFY_ONLY = process.argv.includes('--verify');
+
+const rel = (target) => path.relative(PROJECT_ROOT, target);
+
 // Ensure the blog images directory exists in public
-if (!fs.existsSync(BLOG_IMAGES_DIR)) {
+if (!VERIFY_ONLY && !fs.existsSync(BLOG_IMAGES_DIR)) {
   fs.mkdirSync(BLOG_IMAGES_DIR, { recursive: true });
   console.log('✅ Created public/blog directory');
 }
@@ -38,11 +44,34 @@ function copyDirRecursive(src, dest) {
   }
 }
 
-// Function to update image paths in MDX files
-function updateImagePaths(filePath, blogSlug) {
-  const content = fs.readFileSync(filePath, 'utf8');
+// Compare public copies against their source images without touching the filesystem.
+function collectImageDrift(srcDir, destDir) {
+  const drift = [];
 
-  // Update relative image paths in markdown syntax
+  for (const entry of fs.readdirSync(srcDir)) {
+    const srcPath = path.join(srcDir, entry);
+    const destPath = path.join(destDir, entry);
+
+    if (fs.statSync(srcPath).isDirectory()) {
+      drift.push(...collectImageDrift(srcPath, destPath));
+      continue;
+    }
+
+    if (!fs.existsSync(destPath)) {
+      drift.push(`missing public copy: ${rel(destPath)}`);
+      continue;
+    }
+
+    if (!fs.readFileSync(srcPath).equals(fs.readFileSync(destPath))) {
+      drift.push(`stale public copy: ${rel(destPath)}`);
+    }
+  }
+
+  return drift;
+}
+
+// Rewrite relative image references to the served /blog/<slug>/images/ form.
+function migratedImagePaths(content, blogSlug) {
   let updatedContent = content.replace(
     /!\[([^\]]*)\]\(\.\/images\/([^)]+)\)/g,
     `![$1](/blog/${blogSlug}/images/$2)`,
@@ -60,18 +89,35 @@ function updateImagePaths(filePath, blogSlug) {
     `url: "/blog/${blogSlug}/images/$1"`,
   );
 
-  if (content !== updatedContent) {
-    fs.writeFileSync(filePath, updatedContent);
-    console.log(`✅ Updated image paths in ${filePath}`);
-    return true;
+  return updatedContent;
+}
+
+// Function to update image paths in MDX files
+function updateImagePaths(filePath, blogSlug) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const updatedContent = migratedImagePaths(content, blogSlug);
+
+  if (content === updatedContent) {
+    return false;
   }
 
-  return false;
+  if (VERIFY_ONLY) {
+    return false;
+  }
+
+  fs.writeFileSync(filePath, updatedContent);
+  console.log(`✅ Updated image paths in ${filePath}`);
+  return true;
 }
 
 async function migrateImages() {
-  console.log('🚀 Starting image migration...\n');
+  if (VERIFY_ONLY) {
+    console.log('🔍 Verifying image migration (read-only)...\n');
+  } else {
+    console.log('🚀 Starting image migration...\n');
+  }
 
+  const drift = [];
   const blogDirs = fs.readdirSync(CONTENT_DIR);
   let totalMoved = 0;
   let totalUpdated = 0;
@@ -90,6 +136,19 @@ async function migrateImages() {
 
       console.log(`📁 Processing ${blogDir}...`);
 
+      if (VERIFY_ONLY) {
+        drift.push(...collectImageDrift(imagesDir, targetImageDir));
+
+        const source = fs.readFileSync(mdxFile, 'utf8');
+
+        if (migratedImagePaths(source, blogDir) !== source) {
+          drift.push(`un-migrated image paths: ${rel(mdxFile)}`);
+        }
+
+        console.log('');
+        continue;
+      }
+
       // Copy images to public directory
       copyDirRecursive(imagesDir, targetImageDir);
       console.log(`  ✅ Copied images to public/blog/${blogDir}/images/`);
@@ -103,6 +162,21 @@ async function migrateImages() {
 
       console.log('');
     }
+  }
+
+  if (VERIFY_ONLY) {
+    if (drift.length > 0) {
+      console.error(`❌ Image migration drift (${drift.length}):`);
+      for (const item of drift) {
+        console.error(`   - ${item}`);
+      }
+      console.error('\n💡 Run `bun run migrate:images` and commit the result.');
+      process.exitCode = 1;
+      return;
+    }
+
+    console.log('✅ Image migration is up to date (sources and public copies match).');
+    return;
   }
 
   console.log('🎉 Migration complete!');
