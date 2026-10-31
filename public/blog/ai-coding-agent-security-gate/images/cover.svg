@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="LSCBench, six coding agents: functional pass rate 73.6 to 91.3 percent, functional and secure only 16.4 to 25.1 percent">
+  <rect width="1200" height="630" fill="#171a2f"/>
+  <g stroke="#343a5f" stroke-opacity="0.22"><path d="M0 90H1200M0 180H1200M0 270H1200M0 360H1200M0 450H1200M0 540H1200"/></g>
+  <g font-family="Muli, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <text x="88" y="150" fill="#f6f7ff" font-size="56" font-weight="800">Coding agents pass the tests.</text>
+    <text x="88" y="218" fill="#f6f7ff" font-size="56" font-weight="800">The code still isn't secure.</text>
+    <text x="88" y="268" fill="#8f96ba" font-size="24" font-weight="600">LSCBench, 6 frontier agents, 450 tasks from real CVEs (arXiv 2610.14766)</text>
+
+    <text x="88" y="356" fill="#c8cbe8" font-size="24" font-weight="700">Passes functional tests</text>
+    <rect x="88" y="372" width="1024" height="44" rx="6" fill="#23274a"/>
+    <rect x="88" y="372" width="935" height="44" rx="6" fill="#8f96ba"/>
+    <rect x="841" y="372" width="182" height="44" fill="#b4bad8"/>
+    <text x="1004" y="402" fill="#171a2f" font-size="22" font-weight="800" text-anchor="end">73.6–91.3%</text>
+
+    <text x="88" y="480" fill="#c8cbe8" font-size="24" font-weight="700">Passes functional tests and is secure</text>
+    <rect x="88" y="496" width="1024" height="44" rx="6" fill="#23274a"/>
+    <rect x="88" y="496" width="257" height="44" rx="6" fill="#ffcc68"/>
+    <rect x="256" y="496" width="89" height="44" fill="#ffe2a3"/>
+    <text x="361" y="527" fill="#ffcc68" font-size="22" font-weight="800">16.4–25.1%</text>
+    <text x="88" y="586" fill="#8f96ba" font-size="20">Bars show each range; the lighter segment marks the spread across agents.</text>
+  </g>
+</svg>
