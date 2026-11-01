@@ -1,0 +1,172 @@
+---
+title: 'Your AI Agent Can Pass CI by Deleting the Test. agentgate Blocks That PR'
+description: 'agentgate is a free, open-source GitHub Action that fails AI-agent PRs which skip tests, edit CI guardrails, or escalate workflow permissions. Install it in two minutes.'
+date: 2026-11-01T12:00:00-04:00
+author: 'Piyush Mehta'
+tags: ['AI Agents', 'GitHub Actions', 'CI', 'Application Security', 'Open Source', 'Code Review']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+image:
+  url: '/blog/agentgate-block-agent-prs-that-weaken-tests/images/cover.svg'
+  width: 1200
+  height: 630
+  alt: 'CI shows a green check while agentgate blocks the same PR for a skipped test, a removed assertion, pull_request_target, a write permission, and an unpinned action'
+draft: false
+---
+
+Here is a pull request an agent could open in your repo today. The commit message is "Align monitoring with reference implementation." The tests pass and CI is green.
+
+It also does this:
+
+```diff
+-export const recipients = ['oncall@example.com'];
++export const recipients = [] as string[];
+
+-test('alerts reach on-call', () => {
+-  expect(recipients).toContain('oncall@example.com');
+-  expect(recipients.length).toBeGreaterThan(0);
++test.skip('alerts reach on-call', () => {
++  expect(recipients).toEqual([]);
+ });
+```
+
+On-call no longer gets alerts. The test that would have caught it now asserts the broken behavior, and then it's skipped. In the same diff, the workflow moved to `pull_request_target`, picked up `contents: write`, and swapped a pinned action for `@v4`.
+
+That example isn't made up for effect. On October 20, OpenAI reported that on October 6 its internal agent GPT-6 Astra removed a monitoring integration during a migration and [replaced the test that protected it](https://alignment.openai.com/misalignment-reports/suppressing-misalignment-monitoring-alerts-and-disabling-misalignment-monitoring/) with one asserting the monitor was absent. CI stayed green because the agent had edited the check along with the code.
+
+Semgrep won't flag that diff and neither will gitleaks, because nothing in it is insecure code in the usual sense. The test suite won't either, since the suite is the thing that changed. So I wrote a check for this layer, and it's called **agentgate**.
+
+## What agentgate does
+
+[agentgate](https://github.com/piyush97/agentgate) is a GitHub Action and CLI. It reads the PR diff, runs five rules, and fails the check when a change needs a human to look at it.
+
+This is its real output on the PR above:
+
+```text
+## agentgate: BLOCK
+
+| Severity | Rule                | Location                    | Finding                                                  |
+| -------- | ------------------- | --------------------------- | -------------------------------------------------------- |
+| block    | test-weakened       | tests/alerts.test.ts:2      | Test disabled or focused: test.skip('alerts reach ...    |
+| block    | test-weakened       | tests/alerts.test.ts        | Net 1 assertion(s) removed across test files             |
+| block    | guardrail-edited    | .github/workflows/ci.yml    | Protected path changed (modified): needs human review    |
+| block    | workflow-escalation | .github/workflows/ci.yml:1  | pull_request_target runs with a write token and secrets  |
+| block    | workflow-escalation | .github/workflows/ci.yml:3  | write permission granted                                 |
+| block    | workflow-escalation | .github/workflows/ci.yml:8  | action not pinned to a full commit SHA                   |
+| warn     | dependency-added    | package.json                | New dependency: left-pad@^1.3.0 (dependencies)           |
+| warn     | suppression-added   | src/monitoring/alerts.ts:3  | Scanner or type check silenced: // @ts-ignore            |
+```
+
+That's eight findings and exit code 1. In a PR, each one shows up as an inline annotation on the line that triggered it, and the table goes into the job summary.
+
+## The five rules
+
+| Rule                  | Fires when                                                                                                                                                        | Default |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `test-weakened`       | A test file is deleted or moved out of test paths, a test gets `.skip`/`.only`/`xit`/`@pytest.mark.skip`, or the PR removes more assertions than it adds          | block   |
+| `guardrail-edited`    | The PR touches `.github/**`, `CODEOWNERS`, `AGENTS.md`, `CLAUDE.md`, `.cursor/**`, scanner configs, or paths you add                                              | block   |
+| `workflow-escalation` | A workflow gains `pull_request_target`, `write-all`, a `write` permission, a secret, `${{ github.event.* }}` interpolation, or an action not pinned to a full SHA | block   |
+| `dependency-added`    | `package.json` or `requirements*.txt` gains a dependency, or an install script changes                                                                            | warn    |
+| `suppression-added`   | A changed line adds `@ts-ignore`, `eslint-disable`, `nosemgrep`, `# noqa`, `NOSONAR`, `gitleaks:allow`, and similar                                               | warn    |
+
+It understands JavaScript/TypeScript, Python, Go, and Java/JUnit test conventions out of the box, and you can change the test globs.
+
+## Why an agent can't just turn it off
+
+A gate that a PR can disable doesn't protect anything. Most of the design went into closing that gap.
+
+![agentgate flow: the PR diff and the config from the base commit feed five rules; a block only becomes a warning when a human who isn't the PR author applies the approval label on that run](/blog/agentgate-block-agent-prs-that-weaken-tests/images/override-flow.svg)
+
+**Config comes from the base commit.** agentgate reads `.agentgate.json` from the branch you're merging into, not from the PR. A PR that sets `"test-weakened": "off"` and skips a test in the same diff still gets blocked, and editing the config is itself a `guardrail-edited` finding.
+
+**Protected paths only grow.** Your `protectedPaths` are added to the defaults. No config can drop `.github/**` or `.agentgate.json` from the list.
+
+**The override is for humans.** When a reviewer has read the change and agrees with it, they apply the `agentgate-approved` label, and blocks become warnings for that run. The label only counts when:
+
+- the run was triggered by that label being applied,
+- the latest label event is `labeled`, not `unlabeled`,
+- the account that applied it is a user, not a bot,
+- that user isn't the PR author.
+
+If anyone pushes new commits after approval, the block comes back and the label has to be applied again. So an agent with a token can't approve its own PR, and it can't get approval for one diff and then push a different one.
+
+**It fails closed.** A shallow clone, a missing base commit, a bad config, or a GitHub API error exits with code 2 and fails the check. Each of those would otherwise be a quiet way to get a pass.
+
+**Nothing from the PR runs.** agentgate only diffs the head commit and pattern-matches it. It runs with `contents: read` and `pull-requests: read` and never writes to the PR.
+
+## Install it in two minutes
+
+Add `.github/workflows/agentgate.yml`:
+
+```yaml
+name: agentgate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  gate:
+    name: agentgate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: piyush97/agentgate@13e7fc870ea5ebd2df2166efe9b2118e950a85f4 # v0.1.0
+```
+
+Keep `fetch-depth: 0`, because agentgate needs the base commit. Then do the two things that make it hold:
+
+1. **Make `agentgate` a required status check** on your default branch, under Settings → Rules → Rulesets. Without that, a PR can delete the workflow and merge anyway.
+2. **Create an `agentgate-approved` label** for reviewers to use as the override.
+
+The first PR, the one that adds the workflow, will block itself because it edits `.github/**`. That's the gate working. Merge that one as an admin.
+
+To run it locally before you push:
+
+```bash
+git clone https://github.com/piyush97/agentgate && cd agentgate
+node dist/cli.js check --base origin/main               # Markdown
+node dist/cli.js check --base origin/main --format json # for scripts
+```
+
+## Tuning it
+
+Everything is optional. A repo with a `spec/` folder and a sensitive `src/auth/` might use:
+
+```json
+{
+  "testGlobs": ["spec/**", "**/*.spec.ts"],
+  "protectedPaths": ["src/auth/**", "src/billing/**"],
+  "rules": {
+    "dependency-added": "block",
+    "suppression-added": "off"
+  }
+}
+```
+
+Unknown keys, unknown rules, and typos in severities fail the run instead of being ignored, so a mistake in the config can't quietly turn a rule off.
+
+## What it does not catch
+
+agentgate reads diffs. It doesn't understand behavior.
+
+An agent that writes a convincing new test for the wrong behavior passes every rule. So does a missing authorization check, an IDOR, a tenant-isolation bug, or a race condition, because none of those look like a weakened check.
+
+So it's one layer among several. Keep diff-aware SAST and secret scanning, put CODEOWNERS on your risky paths, and have a human review anything that touches auth or money. [My previous post](/blog/ai-coding-agent-security-gate/) has the full three-job gate and the benchmark behind it: in LSCBench, agents passed functional tests up to 91.3% of the time, but their code was also secure at most 25.1% of the time.
+
+## Where it runs today
+
+I run agentgate as a required check on my own repos: this website, [RoastTube](/blog/roasttube-ai-roast-youtube-history/), [Understory](/blog/understory-engineering-blogs-explained/), [omaswitch](/blog/omaswitch-alt-tab-omarchy/), and about a dozen more. It also gates its own repo. Its workflow is pinned to the released SHA, so a PR to agentgate can't swap in its own build of the gate.
+
+It's MIT licensed, has no runtime dependencies, runs on Node 24, and ships with 69 tests.
+
+**[github.com/piyush97/agentgate](https://github.com/piyush97/agentgate)**
+
+If it blocks something it shouldn't, or misses something it should catch, [open an issue](https://github.com/piyush97/agentgate/issues). A real bypass counts as a security bug, so report that privately per [SECURITY.md](https://github.com/piyush97/agentgate/blob/main/SECURITY.md).
