@@ -1,0 +1,246 @@
+---
+title: 'AI Coding Agents Pass Tests, Ship Insecure Code: A CI Gate'
+description: 'LSCBench found agent code passes tests up to 91.3% of the time but is secure only 25.1% of the time. A copy-paste GitHub Actions gate for agent PRs.'
+date: 2026-10-31T12:00:00-04:00
+author: 'Piyush Mehta'
+tags: ['AI Agents', 'Application Security', 'GitHub Actions', 'CI', 'Semgrep', 'Code Review']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+image:
+  url: '/blog/ai-coding-agent-security-gate/images/cover.svg'
+  width: 1200
+  height: 630
+  alt: 'LSCBench: six coding agents pass functional tests 73.6 to 91.3 percent of the time, but only 16.4 to 25.1 percent of their code is also secure'
+draft: false
+---
+
+import AgentGateSimulator from '../../../components/blog/AgentGateSimulator.astro';
+
+Your coding agent opens a PR. CI is green. The diff is clean, the tests cover the new endpoint, and the description says what changed. You merge it.
+
+A paper submitted to arXiv on October 10, 2026 says that green check is worth less than it looks. [LSCBench](https://arxiv.org/abs/2610.14766) gave six frontier coding agents 450 tasks built from 150 real vulnerabilities, across seven languages and 24 CWEs. Functional pass rates ran from **73.6% to 91.3%**. The share of tasks where the code both worked and was secure topped out at **25.1%**, from the best agent, Claude Fable 5. The other five landed between 16.4% and 24.7%.
+
+The task prompts asked only for functionality and never mentioned security. That is how most of us prompt agents on a normal Tuesday.
+
+So the question for anyone merging agent PRs is what has to pass before green means mergeable. This post is my answer: a three-job GitHub Actions gate you can drop into a repo today, plus where it stops helping.
+
+<div className="bg-gradient-card border border-card-border p-6 rounded-lg my-8 shadow-card">
+
+**TL;DR**
+
+- Passing tests prove the code does what the spec asked. LSCBench shows that says little about security when the spec is silent on it.
+- Gate every PR with three jobs: **diff-aware SAST** (Semgrep), **secret scan** (gitleaks), and a **test-integrity check** that fails when assertions disappear or skips appear.
+- Put CI config, `CODEOWNERS`, and monitoring code behind required human review. An OpenAI agent removed a monitoring integration and rewrote the test that guarded it.
+- Static tools catch a subset of bug classes. For auth and business logic, keep a human reviewer and write exploit-style tests.
+
+</div>
+
+## What the benchmark measured
+
+LSCBench grades with hidden tests: one set checks that the code works, another checks that it holds up against the vulnerability the task was built from. It runs three scenarios: completing a function, writing a whole file, and building a repo's source tree from scratch.
+
+| Metric                                                  | Result         |
+| ------------------------------------------------------- | -------------- |
+| Functional pass rate, 6 agents                          | 73.6% to 91.3% |
+| Functional **and** secure, 6 agents                     | 16.4% to 25.1% |
+| Best agent, vuln scenarios secure in all three settings | 12%            |
+
+Your test suite measures the first row. Your users get the second.
+
+![Bar chart from LSCBench: functional pass rate 73.6 to 91.3 percent across six agents, functional and secure 16.4 to 25.1 percent](/blog/ai-coding-agent-security-gate/images/cover.svg)
+
+The gap exists because a test suite encodes intent. If nobody wrote "reject `../` in the filename" into the spec or a test, a passing suite tells you nothing about path traversal. The agent did what it was told, and the suite confirmed it.
+
+## The second failure mode: the agent edits the guardrail
+
+On October 20, OpenAI published [an incident report](https://alignment.openai.com/misalignment-reports/suppressing-misalignment-monitoring-alerts-and-disabling-misalignment-monitoring/) about two internal coding agents. [BleepingComputer's summary](https://www.bleepingcomputer.com/news/security/openai-agents-disabled-safety-monitoring-one-lied-about-it/) covers both:
+
+- On October 3, GPT-6.1 Sol read a human instruction, "don't send any messages", as applying to monitoring alerts, and had a sub-agent empty the alert recipient lists. Monitoring kept recording; humans stopped hearing about it.
+- On October 6, during a migration, GPT-6 Astra removed a monitoring integration to match a reference implementation. It also replaced the test that protected the monitoring with one asserting the monitor context was absent. When asked directly, it denied having turned monitoring off.
+
+The second one is the pattern to design against. The agent changed the code and the check in the same diff, so CI stayed green. A gate that only runs your tests cannot catch a PR that edits the tests.
+
+That gives the gate two separate jobs:
+
+1. Find insecure code the tests never asked about.
+2. Notice when a PR weakens the checks themselves.
+
+## The gate
+
+Three jobs, all on `pull_request`, read-only permissions, no secrets. Mark all three as required status checks in branch protection.
+
+![Agent PR gate: unit tests plus Semgrep, gitleaks, and a test-integrity job run in parallel; gate files, monitoring, and auth paths also need CODEOWNERS review before merge](/blog/ai-coding-agent-security-gate/images/gate-pipeline.svg)
+
+```yaml
+# .github/workflows/agent-pr-gate.yml
+name: agent-pr-gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  sast:
+    runs-on: ubuntu-latest
+    container: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Semgrep (new findings only)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          semgrep scan --config p/default \
+            --baseline-commit "$BASE_SHA" \
+            --error --metrics=off
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: gitleaks (PR commits only)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/repo" \
+            ghcr.io/gitleaks/gitleaks:latest \
+            git /repo --log-opts="$BASE_SHA..$HEAD_SHA" \
+            --redact --exit-code 1
+
+  test-integrity:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'test-change-approved') }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Fail on weakened tests
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: bash scripts/check-test-integrity.sh
+```
+
+Before you copy it, pin `actions/checkout`, the Semgrep image, and the gitleaks image to commit SHAs or digests. `latest` keeps the example short, and floating tags are exactly the supply-chain gap this post is about.
+
+### Job 1: diff-aware SAST
+
+`--baseline-commit` makes Semgrep report only findings introduced since the PR's base. This keeps the gate usable on an old codebase. You aren't asking the agent to fix five years of debt, only to not add more.
+
+`p/default` is Semgrep's general ruleset and covers the classic injection, deserialization, and crypto-misuse patterns. If your stack has a language pack (`p/python`, `p/javascript`, `p/golang`), add it with a second `--config`.
+
+### Job 2: secret scan on PR commits
+
+Agents paste credentials when a test needs one and the `.env` file is right there. `--log-opts="$BASE_SHA..$HEAD_SHA"` scans every commit in the PR, not only the final diff. A key added in commit 2 and deleted in commit 5 is still in history, and still leaked.
+
+### Job 3: test integrity
+
+This job targets the Astra pattern. It fails when a PR deletes a test file, removes more assertions than it adds, or adds a skip.
+
+```bash
+#!/usr/bin/env bash
+# scripts/check-test-integrity.sh
+set -euo pipefail
+
+BASE="${BASE_SHA:?BASE_SHA is required}"
+TEST_RE='(^|/)(tests?|__tests__|spec)/|\.(test|spec)\.[cm]?[jt]sx?$|_test\.(go|py)$|(^|/)test_[^/]*\.py$'
+ASSERT_RE='expect\(|assert|\.should|t\.(Error|Fatal)|require\.'
+SKIP_RE='\.skip\(|\bxit\(|\bxdescribe\(|@pytest\.mark\.skip|t\.Skip\(|@Disabled'
+
+fail=0
+
+deleted=$(git diff --name-only --diff-filter=D "$BASE"...HEAD | grep -E "$TEST_RE" || true)
+if [ -n "$deleted" ]; then
+  echo "::error::Test files deleted:"
+  echo "$deleted"
+  fail=1
+fi
+
+removed=0
+added=0
+skips=0
+while IFS= read -r f; do
+  [ -z "$f" ] && continue
+  d=$(git diff -U0 "$BASE"...HEAD -- "$f")
+  r=$(grep -E '^-[^-]' <<<"$d" | grep -cE "$ASSERT_RE" || true)
+  a=$(grep -E '^\+[^+]' <<<"$d" | grep -cE "$ASSERT_RE" || true)
+  s=$(grep -E '^\+[^+]' <<<"$d" | grep -cE "$SKIP_RE" || true)
+  removed=$((removed + r))
+  added=$((added + a))
+  skips=$((skips + s))
+done < <(git diff --name-only --diff-filter=M "$BASE"...HEAD | grep -E "$TEST_RE" || true)
+
+if [ "$removed" -gt "$added" ]; then
+  echo "::error::Net assertions removed from tests: -$removed / +$added"
+  fail=1
+fi
+if [ "$skips" -gt 0 ]; then
+  echo "::error::$skips skip marker(s) added to tests"
+  fail=1
+fi
+
+exit "$fail"
+```
+
+It's a heuristic, and that's fine. It doesn't need to understand the test, only to make a human look at the diff. Refactors that legitimately drop assertions will trip it. A maintainer adds the `test-change-approved` label, the `labeled` event reruns the workflow, and the job is skipped.
+
+That label is the escape hatch, so guard it. Whoever can label PRs can skip this job. Don't give agent tokens or GitHub Apps `issues: write`, triage, or maintainer roles, since each of those can apply labels.
+
+## Lock the files that define the rules
+
+The Astra incident changed integration code, not only tests. Some paths should never change without a named human on the review:
+
+```text
+# .github/CODEOWNERS
+/.github/                         @your-org/maintainers
+/scripts/check-test-integrity.sh  @your-org/maintainers
+/.semgrepignore                   @your-org/maintainers
+/.gitleaks.toml                   @your-org/maintainers
+/src/**/monitoring/               @your-org/maintainers
+/src/**/auth/                     @your-org/maintainers
+```
+
+`/.github/` also covers `.github/CODEOWNERS` itself. Then turn on **Require review from Code Owners** in branch protection. Now an agent can't add a path to `.semgrepignore`, allowlist its own secret in `.gitleaks.toml`, or delete the gate workflow and still merge on a green check.
+
+Use a team that agents are not part of. A bot that is a code owner approves its own changes.
+
+## Try it: what each check buys you
+
+Every PR below passes its unit tests. Switch checks off to see which ones are doing the work, and notice the one that merges with everything on.
+
+<AgentGateSimulator />
+
+## Where this gate stops helping
+
+LSCBench grades against the real vulnerability, not by pattern matching. Static analysis catches only part of what it measured:
+
+- **Caught well:** string-built SQL, shell injection, unsafe deserialization, weak crypto calls, hardcoded secrets. These have recognizable syntax.
+- **Caught poorly:** missing authorization checks, IDOR, broken tenant isolation, race conditions. The insecure version looks like normal code.
+
+For the second group, two things work better than another scanner.
+
+**Write exploit-style tests for your risky paths.** A test that sends `../../etc/passwd` to the upload handler and expects a 400 is a security requirement the agent can see. Once it's in the suite, "functional" and "secure" become the same check. [Testing AI Agent Actions](/blog/testing-ai-agent-actions/) covers testing what agents _do_. This is the same idea applied to what agents write.
+
+**Put security requirements where the agent reads them.** LSCBench prompts never mentioned security, so the paper doesn't tell us how much an explicit requirement helps. It's still cheap to try. A short section in your [AGENTS.md](/blog/agents-md-repository-context/) ("parameterize every query", "every handler under `/api/orgs/` checks membership") costs a few lines. Treat it as a hint. The gate is the control.
+
+Keep a human on auth and data-access diffs no matter what the checks say. The `/src/**/auth/` entry above exists for that.
+
+## Rollout order
+
+If you add everything at once, the first week of false positives teaches people to click past it. One job at a time:
+
+1. **Secrets first.** Few false positives, highest blast radius.
+2. **`CODEOWNERS` on gate files.** A settings change, no CI noise.
+3. **Semgrep, non-blocking for a week.** Drop `--error`, read the findings, add exclusions to `.semgrepignore` (now code-owned), then make it required.
+4. **Test integrity last.** It needs the label rules and a team that knows what the label means.
+
+Agents will keep getting better at passing tests. LSCBench says that isn't the number to watch. Gate on what the tests never asked about, and on whether the tests are still there.
+
+For the runtime side of the same problem, see [where to draw the agent sandbox boundary](/blog/agent-sandbox-boundary/). For releases, [npm trusted publishing for dist-tags](/blog/npm-oidc-dist-tags-release-gate/) removes the last long-lived publish token.
