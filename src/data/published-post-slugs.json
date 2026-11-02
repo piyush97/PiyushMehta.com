@@ -1,5 +1,6 @@
 [
   "agent-sandbox-boundary",
+  "agent-sandbox-shared-cache",
   "agentgate-block-agent-prs-that-weaken-tests",
   "agents-md-repository-context",
   "ai-agents-killed-junior-developer-jobs",
