@@ -1,6 +1,19 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
+/* Self-hosted Mulish (the open successor to Muli, which is what DESIGN.md names).
+   Without this the stack silently fell back to DejaVu/SF/Arial, so headline
+   metrics changed per OS. */
+@font-face {
+  font-family: 'Muli';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('/fonts/mulish-latin-var.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* ─── Design Tokens (migrated from tailwind.config.mjs) ─── */
 @theme {
   --font-sans:
@@ -216,7 +229,7 @@ pre code {
   --color-text: #364057;
   --color-text-primary: #121827;
   --color-text-secondary: #4b5871;
-  --color-text-muted: #6e778d;
+  --color-text-muted: #656d80;
   --color-card-border: #ddd3c2;
   --color-accent: #8d3d1f;
   --color-accent-rgb: 141, 61, 31;
@@ -424,7 +437,7 @@ html {
   z-index: 9999;
   padding: 0.75rem 1.5rem;
   background: var(--color-accent);
-  color: #11131f;
+  color: var(--color-accent-foreground);
   font-weight: 700;
   border-radius: 0.375rem;
   text-decoration: none;
@@ -649,6 +662,44 @@ html {
   background: transparent;
 }
 
+.load-more-row {
+  display: flex;
+  justify-content: center;
+  padding-block: 1.5rem;
+  border-bottom: 1px solid var(--color-card-border);
+  background: color-mix(in srgb, var(--color-surface-raised) 38%, var(--color-bg));
+}
+
+.load-more {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast, 150ms) ease,
+    color var(--motion-fast, 150ms) ease;
+}
+
+.load-more:hover,
+.load-more:focus-visible {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.load-more[hidden] {
+  display: none;
+}
+
 .blog-filter .writing-list article,
 .blog-filter .empty-state {
   background: color-mix(in srgb, var(--color-surface-raised) 38%, var(--color-bg));
@@ -843,11 +894,12 @@ html {
 
 @media (max-width: 640px) {
   .blog-filter .filter-panel {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .blog-filter .filter-panel__search {
-    grid-column: auto;
+  .blog-filter .filter-panel__search,
+  .blog-filter .filter-panel button {
+    grid-column: 1 / -1;
   }
 
   .blog-filter .filter-panel button {

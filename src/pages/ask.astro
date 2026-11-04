@@ -15,6 +15,7 @@ const siteKey = ENV.PUBLIC_TURNSTILE_SITE_KEY ?? '';
   type="website"
 >
   <header class="ask-head">
+    <p class="ask-eyebrow">Assistant</p>
     <h1>Ask Piyush</h1>
     <p>
       A streaming assistant grounded in this site’s field notes, case studies, and résumé. It answers only questions
@@ -47,6 +48,14 @@ const siteKey = ENV.PUBLIC_TURNSTILE_SITE_KEY ?? '';
     font-weight: 800;
     line-height: 1;
     color: var(--color-text-primary);
+  }
+  .ask-eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--color-accent);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
   .ask-head p {
     margin: 0;
