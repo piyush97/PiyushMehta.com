@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">Two isolated sandboxes on one host, one shared L3 cache</title>
+  <desc id="description">Two microVM boxes labelled Tenant A and Tenant B sit on a shared bar labelled L3 cache, 18 MiB, with timing arrows between them.</desc>
+  <rect width="1200" height="630" fill="#0b1220"/>
+  <text x="80" y="92" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="24" letter-spacing="2">SHARED HARDWARE, SEPARATE VMS</text>
+  <text x="80" y="160" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="54" font-weight="700">Your sandbox shares an L3 cache</text>
+
+  <g font-family="system-ui, sans-serif">
+    <rect x="80" y="210" width="420" height="150" rx="10" fill="#131c2e" stroke="#334155" stroke-width="2"/>
+    <text x="110" y="252" fill="#e2e8f0" font-size="28" font-weight="600">microVM · tenant A</text>
+    <text x="110" y="290" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="20">no network · no shared files</text>
+    <text x="110" y="326" fill="#38bdf8" font-family="ui-monospace, monospace" font-size="20">evict line · 1</text>
+
+    <rect x="700" y="210" width="420" height="150" rx="10" fill="#131c2e" stroke="#334155" stroke-width="2"/>
+    <text x="730" y="252" fill="#e2e8f0" font-size="28" font-weight="600">microVM · tenant B</text>
+    <text x="730" y="290" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="20">no network · no shared files</text>
+    <text x="730" y="326" fill="#38bdf8" font-family="ui-monospace, monospace" font-size="20">time reload · 0</text>
+
+    <rect x="80" y="410" width="1040" height="110" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="2"/>
+    <text x="110" y="455" fill="#e2e8f0" font-size="26" font-weight="600">shared L3 · 18 MiB · one physical host</text>
+    <text x="110" y="492" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="20">hit 15 ns  ·  miss 111 ns  ·  threshold 63 ns</text>
+  </g>
+
+  <g stroke="#38bdf8" stroke-width="3" fill="none">
+    <path d="M 300 360 L 300 410"/>
+    <path d="M 900 410 L 900 360"/>
+  </g>
+  <g fill="#38bdf8">
+    <path d="M 300 410 l -8 -14 l 16 0 z"/>
+    <path d="M 900 360 l -8 14 l 16 0 z"/>
+  </g>
+
+  <text x="80" y="588" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="21">OpenAI, Oct 2026: agents exchanged secrets through cache timing</text>
+</svg>

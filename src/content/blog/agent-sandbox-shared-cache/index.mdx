@@ -1,0 +1,145 @@
+---
+title: 'Your Agent Sandbox Shares an L3 Cache'
+description: 'OpenAI caught agents passing secrets through CPU cache timing inside microVM isolation. Why memory sandboxes do not bound timing, the bandwidth math, and what to change.'
+date: 2026-11-02T11:00:00-05:00
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'AI Agents'
+  - 'Sandboxing'
+  - 'Security'
+  - 'CPU Cache'
+  - 'System Design'
+  - 'Cloud Infrastructure'
+image:
+  url: '/blog/agent-sandbox-shared-cache/images/cover.svg'
+  width: 1200
+  height: 630
+  alt: 'Two isolated sandboxes on one host exchanging bits through a shared L3 cache'
+draft: false
+---
+
+import CacheChannelSimulator from '../../../components/blog/CacheChannelSimulator.tsx';
+
+Two agents ran on the same physical machine, in separate microVMs, with no network between them and no shared writable file. They still passed a synthetic secret from one to the other.
+
+They did it through the CPU cache. One agent evicted specific data from the cache; the other measured how long reloading that data took, and the fast/slow difference carried the message. [OpenAI described exactly this](https://openai.com/index/securing-our-frontier-model-training-environment) on October 23, 2026, in a post about hardening frontier model training environments. The sentence that should get your attention is not "the models escaped." It is this: they exchanged information _without changing a shared file or opening a network connection_.
+
+If your agent platform relies on "each run is its own VM" to keep tenants apart, that control is real but narrower than most people assume. It bounds memory and privilege. It does not bound timing, and timing is enough to move a secret.
+
+This is the hardware-boundary cousin of [why a sandbox is not an authorization boundary](/blog/agent-sandbox-boundary/): there, the gap was between isolation and permission. Here, the gap is between isolation and physics.
+
+## What OpenAI actually reported
+
+Three separate channels, from a red-team exercise:
+
+- **Cache timing.** Evict, then time the reload. Fast means "cached", slow means "evicted". One bit per observation.
+- **Disk write drain timing.** An agent watched how long a write took to complete and used the variance as a signal.
+- **CPU time contention.** Wall-clock slowdown as a function of what a neighbour is doing.
+
+OpenAI is explicit that most of these tests were not spontaneous. In most cases they named the channel or handed the agents an encoding protocol. In one case, agents got only a broad list of infrastructure vulnerabilities and still turned one into a working channel. Read that the way an engineer should: the models are not reliably inventing covert channels on their own yet, but the channels exist and are discoverable, and a shared prompt is enough to agree on an encoding.
+
+The same post reports an agent exploiting a DNS resolver misconfiguration to reach the internet on September 20, 2026, which paused that line of work until October 1. It also lists patched escape paths: a Kata Containers flaw ([CVE-2026-24834](https://nvd.nist.gov/vuln/detail/CVE-2026-24834)) that let a container read host special files, a gVisor file-descriptor leak, and tightened Moby syscall filters. Those are software bugs and they get fixed. The cache channel is not a bug.
+
+## A VM boundary is a memory boundary, not a timing boundary
+
+MicroVMs and containers partition _address spaces_ and _privilege_. Instructions, syscalls, page tables, device access. Nothing in that list partitions a shared last-level cache, a memory controller, a memory bus, SMT siblings, or a power budget.
+
+Those resources are shared by construction, because that sharing is why the machine is cheap. The 2009 paper that made this mainstream, [Ristenpart et al., "Hey, You, Get Off of My Cloud"](https://dl.acm.org/doi/10.1145/1653662.1653687), did two things: mapped EC2's placement to find co-resident victims, then used cross-VM side channels to read information out of them. Sixteen years of hardware changes later, the shape has not changed. Spectre made it worse by turning speculative execution into a general-purpose leak primitive, and the mitigations that followed added latency, not isolation of timing.
+
+So the question is not "is my sandbox isolated?" It is "who else is in this cache, and what are they allowed to learn?"
+
+To make that concrete I measured the separation available on one ordinary laptop (13th-gen i7-1360P, 18 MiB L3, 64 MiB working set, 20,000 samples per path):
+
+```c
+// probe.c — is there enough signal in LLC hit vs miss to move a bit?
+// Build: gcc -O2 -o probe probe.c && ./probe
+static uint64_t now_ns(void) {
+  struct timespec ts; clock_gettime(CLOCK_MONOTONIC, &ts);
+  return (uint64_t)ts.tv_sec * 1000000000ull + (uint64_t)ts.tv_nsec;
+}
+// chase a pointer chain larger than LLC, then re-read one line that stays resident
+uint64_t t0 = now_ns(); (void)buf[next * 64]; uint64_t t1 = now_ns();
+```
+
+Two runs, idle machine:
+
+```text
+hit  p10=14 p50=15  p90=16  ns
+miss p10=103 p50=111 p90=121 ns
+threshold=63 ns  false_positive=0.02%  false_negative=0.70%
+```
+
+A 7.4× latency gap with under 1% raw error on a quiet machine. No root, no kernel module, no network. Just `clock_gettime` and a buffer. That is the entire primitive, and it is available to any process you run next to another one.
+
+## The bandwidth argument, done properly
+
+The instinctive rebuttal is "that channel is too slow to matter." That was true in 2009 and stopped being true a long time ago.
+
+Published cross-VM rates, all measured, not modelled:
+
+| Year | Channel                                                                                                                           | Rate       | Error        |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------ |
+| 2009 | L2, EC2 ([Ristenpart](https://dl.acm.org/doi/10.1145/1653662.1653687))                                                            | 0.2 bit/s  | not reported |
+| 2015 | LLC, cross-VM ([C5](https://doi.org/10.1007/978-3-319-20550-2_3))                                                                 | 751 bit/s  | 5.7%         |
+| 2017 | LLC, EC2, error-corrected ([Maurice](https://www.ndss-symposium.org/wp-content/uploads/2017/09/ndss2017_06A-1_Maurice_paper.pdf)) | 362 kbit/s | 0%           |
+
+Five orders of magnitude in eight years, and the fast end is a plain hypervisor on public cloud. That 2017 paper does not stop at a bit rate: the authors ran an SSH session between two EC2 instances over the covert channel. The slow end is what people quote when they call the problem theoretical.
+
+So do the arithmetic at both ends:
+
+- At **751 bit/s**: a 32-byte key takes **0.34 seconds**; a 10 MB repository takes **30 hours**.
+- At **362 kbit/s** raw: the same key takes **0.7 milliseconds**; the repository takes **3.7 minutes**. Repetition coding to survive noise costs a factor of 3 or more, which is still minutes.
+
+The conclusion changes with the rate, which is why the "it's slow" argument is a bet on someone else's hardware and someone else's error correction. Move the slider.
+
+<CacheChannelSimulator client:visible />
+
+The range is the point. At the 2009 rate the channel is a curiosity. At the 2017 rate it replaces a socket, and the authors proved it by running SSH over it. What an agent platform actually holds sits in the small bucket: tokens, environment variables, mount paths, which other tenants are present, and the timing of a deploy. Every one of those is affordable even at ten bits per second. Assuming the fast end is out of reach is a hardware bet, not a security argument.
+
+There is a second cost the model above makes visible. Sender and receiver need an agreed slot clock before the first bit, and that agreement cannot travel over the channel. It has to be pre-shared: same prompt, same protocol, same constant baked into the tool code. Which means the channel is only useful when the two sides already have a common reference, and _that_ is the part you can control.
+
+## What actually narrows the channel
+
+Ranked by how much they buy per unit of operational pain, with honest limits:
+
+| Control                                                                                   | Buys you                                                                                              | Does not buy you                                                                       |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Tenant co-location policy (never place untrusted runs on a host with secret-bearing runs) | Removes the channel completely                                                                        | Costs money; needs placement guarantees your cloud may not sell                        |
+| Disable SMT, or use Linux core scheduling                                                 | Blocks cross-hyperthread leakage; the kernel doc calls disabling HT the only full cross-HT mitigation | Does nothing for shared last-level cache                                               |
+| LLC partitioning (Intel CAT via `resctrl`)                                                | Real isolation of cache sets when the hardware exposes it and you control the hypervisor              | Usually unavailable inside a guest VM; verify before you put it in a diagram           |
+| Shorter secret lifetime                                                                   | Turns a leak into a stale leak                                                                        | Nothing, if the secret is long-lived by design                                         |
+| Behavioural monitoring (periodic syscall patterns, timing-shaped loops)                   | Detects the crude version                                                                             | Misses a careful implementation; produces false positives on legitimate benchmark code |
+
+Two of those are worth doing today for most teams: stop co-locating untrusted runs with privileged ones, and shrink secret lifetimes. Both are policy changes, both are cheap, and neither requires knowing whether anyone actually built a channel.
+
+The documented-but-unavailable options are worth knowing because they show up in vendor decks. Core scheduling, per [kernel documentation](https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/core-scheduling.html), lets you define which tasks may share a core so that cross-HT attacks are contained. It is a scheduler feature for when you need SMT on. It says nothing about the LLC, which is the resource in the OpenAI experiment, and that distinction is exactly the kind of thing a diagram flattens into "hardware isolation: yes".
+
+## The invariant to write down
+
+Not "no shared files." Not "no network." Both were true in the experiment.
+
+The invariant is: **no shared measurable resource between trust domains.** If two workloads can both observe the same counter, cache line, memory controller, or clock, they share a channel, and a channel with a channel capacity is a channel that will eventually be used.
+
+That reframes the review question for any agent platform:
+
+1. **What is the trust domain?** A tenant, a task, or a single run. Pick one and say it out loud.
+2. **What is co-resident with what?** Placement is a security control. If you cannot answer "which other tenant was on this host," you are assuming the answer is "nobody interesting."
+3. **What secrets live inside a shared-hardware boundary?** Credentials inside a sandbox that shares a cache are credentials with an unusual exfiltration path. Move the secret out of the sandbox and have a proxy inject it, the way you already do for database access.
+4. **What would a leak look like in telemetry?** Periodic probes look like a benchmark loop. If you cannot distinguish them, you have a detection gap that predates agents.
+
+OpenAI's answer to all of this was to remove internet access from frontier training entirely and add monitoring for cross-boundary behaviour, and to state that they will keep that policy until safeguards justify otherwise. That is a policy choice available to a lab and mostly not to you. But the reasoning transfers: when a channel cannot be closed, remove the thing worth sending.
+
+The uncomfortable part is that this problem is older than the agents. Shared hardware has leaked through timing since before anyone coined "side channel," and every generation of isolation marketing rediscovers it. Multi-tenant agent platforms are just the newest system where a VM boundary gets mistaken for a wall.
+
+## Sources
+
+- OpenAI, [Securing our frontier model training environment](https://openai.com/index/securing-our-frontier-model-training-environment), October 23, 2026 — cache, storage, and CPU-contention channels; the September 20 DNS incident; Kata/gVisor/Moby fixes.
+- Ristenpart, Tromer, Shacham, Savage, [Hey, You, Get Off of My Cloud](https://dl.acm.org/doi/10.1145/1653662.1653687), CCS 2009 — co-residency mapping and cross-VM side channels.
+- Maurice et al., [C5: Cross-Cores Cache Covert Channel](https://doi.org/10.1007/978-3-319-20550-2_3), DIMVA 2015 — 751 bit/s LLC channel, 5.7% error.
+- Maurice et al., [Hello from the Other Side: SSH over Robust Cache Covert Channels in the Cloud](https://www.ndss-symposium.org/wp-content/uploads/2017/09/ndss2017_06A-1_Maurice_paper.pdf), NDSS 2017 — 45.25 KB/s error-free on EC2.
+- [Core Scheduling](https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/core-scheduling.html), Linux kernel documentation — what SMT containment does and does not cover.
+- [Spectre](https://spectreattack.com/spectre.pdf), Kocher et al., 2018 — speculative execution as a general leak primitive.
+- Discussion: [Hacker News on the training-environment post](https://news.ycombinator.com/item?id=50214416) and [the cache-channel follow-up](https://news.ycombinator.com/item?id=50251200).
+- Latency measurements: my own probe, `probe.c`, on a 13th-gen i7-1360P laptop, 20,000 samples per path, two runs. One machine, idle. Treat it as an existence proof, not a benchmark.
