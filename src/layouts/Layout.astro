@@ -59,6 +59,13 @@ const {
       href="/rss.xml"
     />
     <link rel="manifest" href="/manifest.json" />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/mulish-latin-var.woff2"
+      crossorigin="anonymous"
+    />
     <meta name="generator" content={Astro.generator} />
     <ClientRouter />
     {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}

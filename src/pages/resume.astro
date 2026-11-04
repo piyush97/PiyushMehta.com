@@ -198,8 +198,10 @@ export const prerender = true;
   }
 
   .resume-hero h1 {
-    max-width: 11ch;
-    font-size: clamp(3rem, 7vw, 5.25rem);
+    /* 11ch was sized for a three-word headline; this one runs 12 words and
+       wrapped to eight lines at 84px. Fit the copy, not the rule. */
+    max-width: 20ch;
+    font-size: clamp(2.5rem, 3.8vw, 3.5rem);
   }
 
   .lede,

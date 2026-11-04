@@ -143,6 +143,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
             id="cf-name"
             name="name"
             type="text"
+            required
             autoComplete="name"
             placeholder="Your name"
             value={fields.name}
@@ -151,7 +152,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
             aria-describedby={errors.name ? 'cf-name-err' : undefined}
           />
           {errors.name && (
-            <span id="cf-name-err" className="contact-form__error">
+            <span id="cf-name-err" className="contact-form__error" role="alert">
               {errors.name}
             </span>
           )}
@@ -163,6 +164,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
             id="cf-email"
             name="email"
             type="email"
+            required
             autoComplete="email"
             placeholder="you@example.com"
             value={fields.email}
@@ -171,7 +173,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
             aria-describedby={errors.email ? 'cf-email-err' : undefined}
           />
           {errors.email && (
-            <span id="cf-email-err" className="contact-form__error">
+            <span id="cf-email-err" className="contact-form__error" role="alert">
               {errors.email}
             </span>
           )}
@@ -184,6 +186,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           id="cf-subject"
           name="subject"
           type="text"
+          required
           placeholder="What's this about?"
           value={fields.subject}
           onChange={updateField}
@@ -191,7 +194,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           aria-describedby={errors.subject ? 'cf-subject-err' : undefined}
         />
         {errors.subject && (
-          <span id="cf-subject-err" className="contact-form__error">
+          <span id="cf-subject-err" className="contact-form__error" role="alert">
             {errors.subject}
           </span>
         )}
@@ -203,6 +206,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           id="cf-message"
           name="message"
           rows={6}
+          required
           placeholder="Tell me about the project, constraints, and what good looks like."
           value={fields.message}
           onChange={updateField}
@@ -210,7 +214,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           aria-describedby={errors.message ? 'cf-message-err' : undefined}
         />
         {errors.message && (
-          <span id="cf-message-err" className="contact-form__error">
+          <span id="cf-message-err" className="contact-form__error" role="alert">
             {errors.message}
           </span>
         )}
