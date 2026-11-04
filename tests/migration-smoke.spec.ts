@@ -49,6 +49,37 @@ test.describe('astro v6 migration smoke', () => {
     await expect(page.getByText(/^0\s+published pieces$/i)).toHaveCount(0);
   });
 
+  test('blog archive pagination preserves keyboard focus and hides exhausted controls', async ({ page }) => {
+    await page.goto('/blog/', { waitUntil: 'networkidle' });
+    const rows = page.locator('[data-writing-list] [data-post-card]:not([hidden])');
+    const total = await page.locator('[data-post-card]').count();
+    const loadMore = page.locator('[data-load-more]');
+    const loadMoreRow = page.locator('.load-more-row');
+    expect(total).toBeGreaterThan(24);
+    await expect(rows).toHaveCount(12);
+
+    let shown = 12;
+    while (shown < total) {
+      const firstNew = shown;
+      await loadMore.focus();
+      await page.keyboard.press('Enter');
+      shown = Math.min(shown + 12, total);
+      await expect(rows).toHaveCount(shown);
+      await expect(page.locator('[data-result-count]')).toHaveText(String(shown));
+      await expect(rows.nth(firstNew).locator('h3 a')).toBeFocused({ timeout: 3000 });
+    }
+    await expect(loadMoreRow).toBeHidden();
+    await expect(page.locator('[data-result-total]')).toHaveText(String(total));
+
+    await page.locator('#blog-search').fill('zzzz-no-match');
+    await expect(page.locator('[data-empty-state]')).toBeVisible();
+    await expect(rows).toHaveCount(0);
+    await expect(loadMoreRow).toBeHidden();
+    await page.locator('[data-filter-reset]').click();
+    await expect(rows).toHaveCount(12);
+    await expect(loadMoreRow).toBeVisible();
+  });
+
   test('blog filters hydrate from URL query params', async ({ page }) => {
     await page.goto('/blog/?q=astro&sort=title&order=asc', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#blog-search')).toHaveValue('astro');

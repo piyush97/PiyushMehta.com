@@ -209,8 +209,10 @@ const categories = ['all', ...Array.from(new Set(posts.flatMap((post) => post.ca
         applyFilters();
       });
       loadMore?.addEventListener('click', () => {
+        const firstNew = Number(resultCount.textContent);
         pageSize += PAGE_SIZE;
         applyFilters();
+        list.querySelectorAll<HTMLAnchorElement>('[data-post-card]:not([hidden]) h3 a')[firstNew]?.focus();
       });
       reset.addEventListener('click', () => {
         search.value = '';
