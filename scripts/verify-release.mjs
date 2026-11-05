@@ -10,6 +10,7 @@ const REQUIRED_CLIENT_FILES = [
   'sitemap.xml',
   'sitemap-index.xml',
   'robots.txt',
+  '.well-known/security.txt',
   'search/index.html',
   'pagefind/pagefind-entry.json',
   'pagefind/pagefind-ui.js',
@@ -61,6 +62,8 @@ function verifyHeaders(clientDir, errors) {
     'X-Frame-Options',
     'Referrer-Policy',
     'Permissions-Policy',
+    'Cross-Origin-Opener-Policy',
+    'Cross-Origin-Resource-Policy',
   ]) {
     if (!headers.includes(header)) {
       addError(errors, `Static asset headers are missing ${header}`);
@@ -75,6 +78,7 @@ function verifyHeaders(clientDir, errors) {
     '/sitemap.xml',
     '/sitemap-index.xml',
     '/robots.txt',
+    '/.well-known/security.txt',
     '/search/*',
     '/pagefind/*',
     '/og/*',
@@ -137,6 +141,14 @@ export function verifyRelease(root = process.cwd()) {
     }
   }
 
+  const securityPath = join(clientDir, '.well-known/security.txt');
+  if (existsSync(securityPath)) {
+    const expires = readFileSync(securityPath, 'utf8').match(/^Expires:\s*(\S+)/m)?.[1];
+    if (!expires || !Number.isFinite(Date.parse(expires)) || Date.parse(expires) <= Date.now()) {
+      addError(errors, 'Missing, invalid or expired security.txt Expires field');
+    }
+  }
+
   for (const retiredPath of ['newsletter/index.html', 'og/newsletter.png']) {
     if (existsSync(join(clientDir, retiredPath))) {
       addError(errors, `Retired newsletter artifact is still shipped: dist/client/${retiredPath}`);
@@ -189,6 +201,9 @@ export function verifyRelease(root = process.cwd()) {
   const redirectsPath = join(clientDir, '_redirects');
   if (existsSync(redirectsPath)) {
     const redirects = readFileSync(redirectsPath, 'utf8');
+    if (!/^\/security\.txt\s+\/\.well-known\/security\.txt\s+301\s*$/m.test(redirects)) {
+      addError(errors, 'Missing canonical security.txt redirect');
+    }
     for (const retiredPath of ['/newsletter', '/newsletter/', '/og/newsletter.png']) {
       if (!redirects.includes(retiredPath)) {
         addError(errors, `Retired newsletter URL is missing a redirect: ${retiredPath}`);

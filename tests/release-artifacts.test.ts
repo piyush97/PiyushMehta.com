@@ -13,6 +13,7 @@ function makeFixture(): string {
   const client = join(root, 'dist', 'client');
   const server = join(root, 'dist', 'server');
   mkdirSync(join(client, 'search'), { recursive: true });
+  mkdirSync(join(client, '.well-known'), { recursive: true });
   mkdirSync(join(client, 'pagefind'), { recursive: true });
   mkdirSync(join(client, 'og'), { recursive: true });
   mkdirSync(server, { recursive: true });
@@ -23,6 +24,7 @@ function makeFixture(): string {
     'sitemap.xml',
     'sitemap-index.xml',
     'robots.txt',
+    '.well-known/security.txt',
     '_redirects',
     'og/default.png',
     'pagefind/pagefind-entry.json',
@@ -32,9 +34,10 @@ function makeFixture(): string {
   ]) {
     writeFileSync(join(client, file), file === 'resume.pdf' ? '%PDF-fixture' : 'fixture');
   }
+  writeFileSync(join(client, '.well-known/security.txt'), 'Contact: mailto:security@example.com\nExpires: 2099-01-01T00:00:00.000Z\n');
   writeFileSync(
     join(client, '_redirects'),
-    ['/newsletter /blog 301', '/newsletter/ /blog/ 301', '/og/newsletter.png /og/blog.png 301'].join('\n'),
+    ['/security.txt /.well-known/security.txt 301', '/newsletter /blog 301', '/newsletter/ /blog/ 301', '/og/newsletter.png /og/blog.png 301'].join('\n'),
   );
   writeFileSync(join(client, '_headers'), [
     '/*',
@@ -42,6 +45,8 @@ function makeFixture(): string {
     '  X-Content-Type-Options: nosniff',
     '  X-Frame-Options: DENY',
     '  Referrer-Policy: strict-origin-when-cross-origin',
+    '  Cross-Origin-Opener-Policy: same-origin',
+    '  Cross-Origin-Resource-Policy: same-origin',
     '  Permissions-Policy: camera=()',
     '/_astro/*',
     '  Cache-Control: public, max-age=31536000, immutable',
@@ -53,6 +58,8 @@ function makeFixture(): string {
     '  Cache-Control: public, max-age=3600',
     '/robots.txt',
     '  Cache-Control: public, max-age=86400',
+    '/.well-known/security.txt',
+    '  Content-Type: text/plain; charset=utf-8',
     '/search/*',
     '  Cache-Control: public, max-age=0, must-revalidate',
     '/pagefind/*',
@@ -84,6 +91,22 @@ describe('verifyRelease', () => {
     const result = verifyRelease(makeFixture());
     assert.deepEqual(result.errors, []);
     assert.equal(result.ok, true);
+  });
+
+  it('rejects missing or expired security discovery artifacts', () => {
+    const root = makeFixture();
+    const path = join(root, 'dist', 'client', '.well-known', 'security.txt');
+    writeFileSync(path, 'Expires: 2000-01-01T00:00:00.000Z\n');
+    assert.ok(verifyRelease(root).errors.some((error) => error.includes('expired security.txt')));
+    rmSync(path);
+    assert.ok(verifyRelease(root).errors.some((error) => error.includes('dist/client/.well-known/security.txt')));
+  });
+
+  it('rejects a missing legacy security.txt redirect', () => {
+    const root = makeFixture();
+    const path = join(root, 'dist', 'client', '_redirects');
+    writeFileSync(path, readFileSync(path, 'utf8').replace('/security.txt /.well-known/security.txt 301', ''));
+    assert.ok(verifyRelease(root).errors.some((error) => error.includes('security.txt redirect')));
   });
 
   it('rejects a root asset directory', () => {

@@ -14,6 +14,22 @@ const smokeRoutes = [
 ];
 
 test.describe('portfolio smoke', () => {
+  test('security discovery serves a current RFC 9116 document and canonical redirect', async ({ request }) => {
+    const response = await request.get('/.well-known/security.txt');
+    expect(response.status()).toBe(200);
+    expect(response.headers()['content-type']).toContain('text/plain');
+    const body = await response.text();
+    expect(body).toMatch(/^Contact: mailto:/m);
+    expect(body).toContain('Canonical: https://piyushmehta.com/.well-known/security.txt');
+    expect(Date.parse(body.match(/^Expires:\s*(\S+)/m)?.[1] ?? '')).toBeGreaterThan(Date.now());
+    const head = await request.head('/.well-known/security.txt');
+    expect(head.status()).toBe(200);
+    expect(head.headers()['content-type']).toContain('text/plain');
+    const redirect = await request.get('/security.txt', { maxRedirects: 0 });
+    expect(redirect.status()).toBe(301);
+    expect(redirect.headers().location).toMatch(/\/\.well-known\/security\.txt$/);
+  });
+
   for (const route of smokeRoutes) {
     test(`${route} renders core page content`, async ({ page }) => {
       const response = await page.goto(route, { waitUntil: 'domcontentloaded' });
