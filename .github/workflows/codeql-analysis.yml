@@ -36,24 +36,27 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@486fec2a3ea2626afcd8c7e9208b4f515078dd7e # v3.29.11
         with:
-          languages: javascript
+          languages: javascript,actions
           queries: security-extended,security-and-quality
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .node-version
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
-          bun-version: latest
+          bun-version-file: package.json
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
       - name: Build project
-        run: bun run build || echo "Build completed with warnings"
+        run: bun run build
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@486fec2a3ea2626afcd8c7e9208b4f515078dd7e # v3.29.11
-        with:
-          category: '/language:javascript'
 
   dependency-review:
     name: Dependency Review
@@ -72,6 +75,6 @@ jobs:
           persist-credentials: false
 
       - name: Dependency Review
-        uses: actions/dependency-review-action@v5
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
         with:
           config-file: '.github/dependency-review-config.yml'

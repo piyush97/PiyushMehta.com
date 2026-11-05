@@ -1,7 +1,7 @@
 # Dependency Review Configuration
 # https://github.com/actions/dependency-review-action#configuration
 
-fail-on-severity: 'critical'
+fail-on-severity: 'high'
 
 vulnerability-check: true
 license-check: false
