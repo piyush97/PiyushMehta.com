@@ -10,6 +10,7 @@
  */
 
 import type { MiddlewareHandler } from 'astro';
+import securityText from '../../public/.well-known/security.txt?raw';
 
 export const SECURITY_HEADERS: Record<string, string> = {
   'Content-Security-Policy':
@@ -26,8 +27,21 @@ export const SECURITY_HEADERS: Record<string, string> = {
 /**
  * Astro middleware that adds security headers to HTML responses.
  */
-export const onRequest: MiddlewareHandler = async (_context, next) => {
-  const response = await next();
+export const onRequest: MiddlewareHandler = async ({ request, url }, next) => {
+  const isRead = request.method === 'GET' || request.method === 'HEAD';
+  let response: Response;
+  if (isRead && url.pathname === '/.well-known/security.txt') {
+    response = new Response(request.method === 'HEAD' ? null : securityText, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'public, max-age=86400',
+      },
+    });
+  } else if (isRead && url.pathname === '/security.txt') {
+    response = Response.redirect(new URL('/.well-known/security.txt', url), 301);
+  } else {
+    response = await next();
+  }
 
   const newHeaders = new Headers(response.headers);
   for (const [key, value] of Object.entries(SECURITY_HEADERS)) {

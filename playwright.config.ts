@@ -14,7 +14,7 @@ export default defineConfig({
     ['list'],
   ],
   use: {
-    baseURL: 'http://localhost:4321',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:4321',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -45,12 +45,14 @@ export default defineConfig({
       use: { ...devices['iPhone 13'] },
     },
   ],
-  webServer: {
-    // Astro auto-backgrounds its dev server when it detects an AI agent. Playwright
-    // needs to own the foreground process so it can manage its lifecycle.
-    command: 'ASTRO_DEV_BACKGROUND=1 bun run dev',
-    url: 'http://localhost:4321',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+  webServer: process.env.PLAYWRIGHT_BASE_URL
+    ? undefined
+    : {
+        // Astro auto-backgrounds its dev server when it detects an AI agent. Playwright
+        // needs to own the foreground process so it can manage its lifecycle.
+        command: 'ASTRO_DEV_BACKGROUND=1 bun run dev',
+        url: 'http://localhost:4321',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120 * 1000,
+      },
 });

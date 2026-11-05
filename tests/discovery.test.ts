@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
-import { SECURITY_HEADERS } from '../src/middleware/security';
+import { onRequest as security, SECURITY_HEADERS } from '../src/middleware/security';
 import { onRequest as markdown } from '../src/middleware/markdown';
 import { generateCanonicalUrl } from '../src/utils/og-generator';
 import { escapeXml, serializeJson } from '../src/utils/xml';
@@ -39,6 +39,28 @@ describe('security headers', () => {
       assert.ok(headers.includes(`${name}: ${SECURITY_HEADERS[name]}`), name);
     }
     assert.equal(SECURITY_HEADERS['Permissions-Policy'].includes('interest-cohort'), false);
+  });
+});
+
+describe('security discovery fallback', () => {
+  it('serves GET and HEAD from the same security.txt source when assets are absent', async () => {
+    for (const method of ['GET', 'HEAD']) {
+      const request = new Request('https://piyushmehta.com/.well-known/security.txt', { method });
+      const response = await security({ request, url: new URL(request.url) } as Parameters<typeof security>[0], async () => {
+        throw new Error('Security discovery must not depend on an asset lookup');
+      });
+      assert.ok(response);
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get('content-type'), 'text/plain; charset=utf-8');
+      assert.equal(await response.text(), method === 'HEAD' ? '' : readFileSync(new URL('../public/.well-known/security.txt', import.meta.url), 'utf8'));
+    }
+  });
+
+  it('redirects the legacy URL without falling through to an HTML 404', async () => {
+    const request = new Request('https://piyushmehta.com/security.txt');
+    const response = await security({ request, url: new URL(request.url) } as Parameters<typeof security>[0], async () => new Response('missing', { status: 404 }));
+    assert.equal(response?.status, 301);
+    assert.equal(response?.headers.get('location'), 'https://piyushmehta.com/.well-known/security.txt');
   });
 });
 
