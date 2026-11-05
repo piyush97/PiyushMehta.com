@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { isAllowedFormOrigin, readLimitedText } from '@/utils/request-security';
 import { isPublishedPostSlug, toPublishedPostSlug } from '@/utils/published-posts';
 import { toBlogPostSlug } from '@/utils/blog-recommendations';
 import { createRatelimit, getClientIp, reactionRedis, redis } from '@/utils/redis';
@@ -69,13 +70,20 @@ export const GET: APIRoute = async ({ url }) => {
 };
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
-  const contentLength = Number(request.headers.get('content-length'));
-  if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
-    return json({ error: 'Request body is too large' }, 413);
+  if (!isAllowedFormOrigin(request)) return json({ error: 'Forbidden' }, 403);
+  if (
+    request.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== 'application/json'
+  ) {
+    return json({ error: 'Content-Type must be application/json' }, 415);
   }
 
-  const bodyText = await request.text();
-  if (new TextEncoder().encode(bodyText).byteLength > MAX_BODY_BYTES) {
+  let bodyText: string | null;
+  try {
+    bodyText = await readLimitedText(request, MAX_BODY_BYTES);
+  } catch {
+    return json({ error: 'Invalid request body' }, 400);
+  }
+  if (bodyText === null) {
     return json({ error: 'Request body is too large' }, 413);
   }
 

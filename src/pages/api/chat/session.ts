@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { ENV } from 'varlock/env';
 import { isAllowedFormOrigin } from '@/utils/request-security';
 import { createRatelimit, getClientIp } from '@/utils/redis';
-import { readLimitedText } from '@/utils/chat/schema';
+import { readLimitedText } from '@/utils/request-security';
 import { signSession, verifyTurnstile } from '@/utils/chat/session';
 
 export const prerender = false;

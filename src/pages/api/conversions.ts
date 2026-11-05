@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { readLimitedText } from '@/utils/chat/schema';
+import { readLimitedText } from '@/utils/request-security';
 import { isClientEvent, recordConversion, runInBackground } from '@/utils/conversions';
 import { createRatelimit, getClientIp, reactionRedis } from '@/utils/redis';
 import { isAllowedFormOrigin } from '@/utils/request-security';

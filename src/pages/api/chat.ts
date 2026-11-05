@@ -1,12 +1,12 @@
 import type { APIRoute } from 'astro';
 import { env as cfEnv } from 'cloudflare:workers';
 import { ENV } from 'varlock/env';
-import { isAllowedFormOrigin } from '@/utils/request-security';
+import { isAllowedFormOrigin, readLimitedText } from '@/utils/request-security';
 import { recordConversion, runInBackground } from '@/utils/conversions';
 import { createRatelimit, getClientIp, reactionRedis } from '@/utils/redis';
 import { chatModels } from '@/utils/chat/models';
 import { runChat } from '@/utils/chat/pipeline';
-import { MAX_BODY_BYTES, parseChatRequest, readLimitedText } from '@/utils/chat/schema';
+import { MAX_BODY_BYTES, parseChatRequest } from '@/utils/chat/schema';
 import { sanitizeUserText, MAX_MESSAGE_CHARS } from '@/utils/chat/sanitize';
 import { verifySession } from '@/utils/chat/session';
 
@@ -56,8 +56,7 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
     if (question.length === 0 || question.length > MAX_MESSAGE_CHARS)
       return json({ error: `Questions must be 1-${MAX_MESSAGE_CHARS} characters.` }, 422);
     // Site-wide cap is counted last: only valid, rate-allowed questions spend it.
-    if (!(await globalDay.limit('all')).success)
-      return json({ error: 'Daily capacity reached. Please come back tomorrow.' }, 429);
+    if (!(await globalDay.limit('all')).success) return json({ error: 'Chat unavailable.' }, 503);
     runInBackground(locals, recordConversion(reactionRedis, 'chat_question'));
 
     const models = chatModels({ ai: (cfEnv as { AI?: Ai }).AI, groqKey: ENV.GROQ_API_KEY });

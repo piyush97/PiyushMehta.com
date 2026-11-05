@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { ENV } from 'varlock/env';
 import { sendContactEmail } from '@/utils/contact';
-import { isAllowedFormOrigin } from '@/utils/request-security';
+import { isAllowedFormOrigin, readLimitedText } from '@/utils/request-security';
 import { recordConversion, runInBackground } from '@/utils/conversions';
 import { createRatelimit, getClientIp, reactionRedis } from '@/utils/redis';
 
@@ -28,13 +28,14 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
       return json({ error: 'Forbidden.' }, 403);
     }
 
-    const contentLength = Number(request.headers.get('content-length'));
-    if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
-      return json({ error: 'Request body is too large.' }, 413);
+    if (
+      request.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== 'application/json'
+    ) {
+      return json({ error: 'Content-Type must be application/json.' }, 415);
     }
 
-    const bodyText = await request.text();
-    if (new TextEncoder().encode(bodyText).byteLength > MAX_BODY_BYTES) {
+    const bodyText = await readLimitedText(request, MAX_BODY_BYTES);
+    if (bodyText === null) {
       return json({ error: 'Request body is too large.' }, 413);
     }
 
@@ -100,14 +101,17 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
         message: cleanMessage,
       });
     } catch (err) {
-      console.error('[contact] Resend request failed:', err);
+      console.error(
+        '[contact] Resend request failed:',
+        err instanceof Error ? err.name : 'UnknownError',
+      );
       return json({ error: 'Failed to send. Try again or email directly.' }, 502);
     }
 
     runInBackground(locals, recordConversion(reactionRedis, 'contact_sent'));
     return json({ ok: true });
   } catch (err) {
-    console.error('[contact] unhandled:', err);
+    console.error('[contact] unhandled:', err instanceof Error ? err.name : 'UnknownError');
     return json({ error: 'Unexpected server error.' }, 500);
   }
 };
