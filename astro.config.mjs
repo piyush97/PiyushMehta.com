@@ -4,7 +4,7 @@ import cloudflare from '@astrojs/cloudflare';
 import sentry from '@sentry/astro';
 import tailwindcss from '@tailwindcss/vite';
 import varlock from '@varlock/astro-integration';
-import { defineConfig, memoryCache } from 'astro/config';
+import { defineConfig } from 'astro/config';
 
 const isProductionBuild = process.env.NODE_ENV === 'production';
 const hasSentryAuth = Boolean(process.env.SENTRY_AUTH_TOKEN);
@@ -21,16 +21,6 @@ export default defineConfig({
     prefetchAll: false,
     defaultStrategy: 'hover',
     prefetchOnHover: true,
-  },
-  // Astro v7 stable caching — enables Astro.cache.set() on server routes and APIs
-  cache: {
-    provider: memoryCache({ max: 500 }),
-  },
-  // Route-level cache rules for API and content routes
-  routeRules: {
-    '/rss.xml': { headers: { 'Cache-Control': 'public, max-age=3600, s-maxage=3600' } },
-    '/sitemap.xml': { headers: { 'Cache-Control': 'public, max-age=3600, s-maxage=3600' } },
-    '/robots.txt': { headers: { 'Cache-Control': 'public, max-age=86400, s-maxage=86400' } },
   },
   experimental: {
     // Speculative prerendering of prefetched pages — instant navigation
@@ -88,7 +78,6 @@ export default defineConfig({
         '@/assets': new URL('./src/assets', import.meta.url).pathname,
         '@/styles': new URL('./src/styles', import.meta.url).pathname,
         '@/middleware': new URL('./src/middleware', import.meta.url).pathname,
-        '@/app': new URL('./src/app', import.meta.url).pathname,
         '@/scripts': new URL('./scripts', import.meta.url).pathname,
       },
     },
@@ -110,44 +99,6 @@ export default defineConfig({
     // round-trips on first paint. Layout.css (108KB) stays external so it
     // can be cached and parallel-downloaded.
     inlineStylesheets: 'auto',
-    assetsInlineLimit: 4096,
-    rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          // Core vendor libraries (rarely change, cache for long time)
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('@astrojs/')) {
-              return 'vendor-astro';
-            }
-            if (id.includes('@sentry/')) {
-              return 'vendor-monitoring';
-            }
-            if (id.includes('satori') || id.includes('@resvg')) {
-              return 'vendor-images';
-            }
-            // Other third-party packages
-            return 'vendor-libs';
-          }
-
-          // Application code chunking
-          if (id.includes('/src/components/blog/')) {
-            return 'components-blog';
-          }
-          if (id.includes('CommentSystem') || id.includes('AuthModal')) {
-            return 'components-interactive';
-          }
-          if (id.includes('/src/utils/')) {
-            return 'utils';
-          }
-          if (id.includes('/src/middleware/')) {
-            return 'middleware';
-          }
-        },
-      },
-    },
   },
 
   adapter: cloudflare({

@@ -3,6 +3,14 @@ import { defineConfig } from 'vite-plus';
 export default defineConfig({
   fmt: {
     ignorePatterns: [
+      // Preserve Markdown formatting scope without hiding new docs from Git.
+      '**/*.md',
+      '!**/SPEC.md',
+      '!src/content/chat/facts.md',
+      '!docs/growth/2026-09-content-and-career-plan.md',
+      '!docs/architecture/*.md',
+      '!docs/adr/*.md',
+      '!docs/plans/*.md',
       '.astro/**',
       '.github/skills/impeccable/scripts/**',
       '.omo/**',
