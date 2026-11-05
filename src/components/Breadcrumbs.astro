@@ -1,4 +1,6 @@
 ---
+import { serializeJson } from '../utils/xml';
+
 export interface Props {
   title: string;
   url?: string;
@@ -61,7 +63,7 @@ const breadcrumbSchema = {
 <script
   is:inline
   type="application/ld+json"
-  set:html={JSON.stringify(breadcrumbSchema)}
+  set:html={serializeJson(breadcrumbSchema)}
 />
 
 <nav aria-label="Breadcrumb" class="mb-8">

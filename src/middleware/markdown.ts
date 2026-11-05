@@ -31,21 +31,32 @@ export const onRequest: MiddlewareHandler = async ({ request, isPrerendered }, n
   if (isPrerendered) return next();
 
   const response = await next();
+  if (!response.headers.get('content-type')?.includes('text/html')) return response;
+
+  const headers = new Headers(response.headers);
+  const vary = headers.get('Vary');
+  if (vary !== '*' && !vary?.split(',').some((name) => name.trim().toLowerCase() === 'accept')) {
+    headers.set('Vary', vary ? `${vary}, Accept` : 'Accept');
+  }
   const accept = request.headers.get('accept') ?? '';
   const acceptsMarkdown = /(?:^|,)\s*text\/markdown(?:\s*;[^,]*)?(?:,|$)/i.test(accept);
 
-  if (!acceptsMarkdown || !response.headers.get('content-type')?.includes('text/html')) {
-    return response;
+  if (!acceptsMarkdown) {
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   }
 
   const markdown = toMarkdownDocument(await response.text());
-  const headers = new Headers(response.headers);
   headers.set('Content-Type', 'text/markdown; charset=utf-8');
   headers.set(
     'x-markdown-tokens',
     String(Math.ceil(markdown.split(/\s+/).filter(Boolean).length / 0.75)),
   );
-  headers.set('Vary', 'Accept');
+  headers.delete('Content-Length');
+  headers.delete('ETag');
 
   return new Response(markdown, {
     status: response.status,

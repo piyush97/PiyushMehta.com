@@ -52,7 +52,7 @@ describe('parseChatRequest', () => {
   });
 });
 
-import { readLimitedText } from '../src/utils/chat/schema';
+import { readLimitedText } from '../src/utils/request-security';
 
 describe('review regressions', () => {
   it('strips interlinear annotation characters and maps line separators to newlines', () => {

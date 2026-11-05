@@ -1,4 +1,5 @@
 ---
+import { serializeJson } from '../utils/xml';
 import type { JsonLdData } from '../types/schema';
 import {
   generateCanonicalUrl,
@@ -227,7 +228,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
 <meta name="format-detection" content="telephone=no" />
 
 <!-- Structured Data -->
-<script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData)} />
+<script is:inline type="application/ld+json" set:html={serializeJson(schemaData)} />
 
 <!-- Additional structured data for articles -->
 {
@@ -235,7 +236,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
     <script
       is:inline
       type="application/ld+json"
-      set:html={JSON.stringify({
+      set:html={serializeJson({
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -269,7 +270,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
     <script
       is:inline
       type="application/ld+json"
-      set:html={JSON.stringify({
+      set:html={serializeJson({
         '@context': 'https://schema.org',
         '@type': 'WebSite',
         name: 'Piyush Mehta',
@@ -293,7 +294,7 @@ const optimizedKeywords = optimizeKeywords(keywords, tags);
     <script
       is:inline
       type="application/ld+json"
-      set:html={JSON.stringify({
+      set:html={serializeJson({
         '@context': 'https://schema.org',
         '@type': 'Person',
         name: 'Piyush Mehta',

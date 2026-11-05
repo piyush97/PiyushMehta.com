@@ -1,6 +1,7 @@
 ---
 // src/components/JsonLd.astro - Component for adding structured JSON-LD data to pages
 // This component injects JSON-LD structured data for better SEO
+import { serializeJson } from '../utils/xml';
 import type { JsonLdData } from '../types/schema';
 
 export interface Props {
@@ -10,4 +11,4 @@ export interface Props {
 const { data } = Astro.props;
 ---
 
-<script is:inline type="application/ld+json" set:html={JSON.stringify(data)} />
+<script is:inline type="application/ld+json" set:html={serializeJson(data)} />
