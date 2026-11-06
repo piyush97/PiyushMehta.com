@@ -1,0 +1,191 @@
+---
+title: 'One Asterisk: How a Libc Error String Became an OpenSSH Bypass'
+description: 'OpenSSH 10.6p2 closed a bypass where any 257-byte password matched a "*" shadow field on musl. Four decisions from 2012 to 2022 had to line up, and the fix is one length check.'
+date: 2026-11-06T11:00:00-05:00
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'Security'
+  - 'Linux'
+  - 'OpenSSH'
+  - 'musl'
+  - 'libc'
+  - 'Vulnerability Disclosure'
+image:
+  url: '/blog/openssh-musl-asterisk-bypass/images/cover.svg'
+  width: 1200
+  height: 630
+  alt: 'A shadow field containing a single asterisk matched against a crypt() error return of a single asterisk'
+draft: false
+---
+
+import AsteriskChain from '../../../components/blog/AsteriskChain.tsx';
+
+On November 5, 2026, the OpenSSH project shipped [10.6p2](https://www.openssh.org/txt/release-10.6p2) with one security fix and an unusually blunt release note: on Linux systems built against musl with PAM disabled, sshd could be made to accept a password it should never accept.
+
+The mechanics fit in three sentences. musl's `crypt()` returns the string `"*"` when it refuses a key. An account with no password has `"*"` where the hash belongs. Send a password long enough that musl refuses it, and sshd compares `"*"` with `"*"` and opens the door.
+
+Any password is not quite right. It has to be 257 to 1024 bytes, because those are the two functions' limits. Below 257 the hash gets computed normally; above 1024 sshd drops the attempt before the compare. Inside that window, on the affected build, one connection is enough and no retries are needed.
+
+I reproduced the libc half of this on both libcs, and the numbers below are measured, not quoted. What follows is the four-way conjunction that made it exploitable, why it survived ten years of review, and the part that is genuinely new: how fast this got disclosed.
+
+## The four conditions, and the one that is interesting
+
+Alpine's [advisory](https://alpinelinux.org/posts/2026-11-05-openssh-password-authentication-bypass/) lists the preconditions. All four must hold:
+
+1. sshd is linked against musl (Alpine, OpenWrt, Buildroot, Yocto, and images derived from them) and is not using PAM.
+2. `PasswordAuthentication yes`, which is the OpenSSH default.
+3. The target account's `/etc/shadow` field is exactly `*`, meaning no password.
+4. Some **other** account on the box has a real `$5$` or `$6$` hash.
+
+The fourth condition looks like bookkeeping and is actually the engine. An account with `*` has no salt, so sshd cannot hash the attempt the normal way. Since 2016 it deliberately borrows a salt from another account instead of answering immediately — and that 2016 change, made to close a username-enumeration oracle, is what routes the password into the broken path.
+
+Account number four is not a victim. It is the donor.
+
+## The compare, before and after
+
+OpenSSH's password check without PAM is a hash-and-string-compare in `auth-passwd.c`. Here is the shape of it, reduced to the two branches that matter:
+
+```c
+/* 10.6p1 and earlier, sys_auth_passwd() */
+char *pw_password = shadow_pw(pw);          /* "*" for a passwordless account */
+
+if (pw_password == NULL)
+    return 0;
+
+/* no usable salt in "*" → xcrypt() borrows one via pick_salt() */
+char *encrypted = xcrypt(password, NULL);
+
+return encrypted != NULL && strcmp(encrypted, pw_password) == 0;
+```
+
+The [fix](https://github.com/openssh/openssh-portable/commit/4353fdc43ef646c43a8dda7025cc1a898caf1482) adds one condition:
+
+```c
+#define MIN_PASSWORD_HASH_LEN 4
+...
+return encrypted != NULL &&
+       strlen(pw_password) >= MIN_PASSWORD_HASH_LEN &&
+       strcmp(encrypted, pw_password) == 0;
+```
+
+Four bytes. Every locked-field marker in use (`*`, `!`, `!!`, `*LK*`) is shorter than that, or contains characters no hash function emits, so the comparison never gets to run against a sentinel. It is a shape check on data that was already assumed to be a hash.
+
+To confirm the libc side, I wrote a small C probe that calls `crypt()` directly and ran it inside `alpine:3.22` (musl 1.2) and `debian:bookworm` (glibc via libxcrypt):
+
+```
+musl,     251-byte key, "$6$abc$"  -> len=93  $6$abc$53LZjlm/HufdKotlY...
+musl,     256-byte key, "$6$abc$"  -> len=93  $6$abc$ZE4Pk3kxdvXasbkMc...
+musl,     257-byte key, "$6$abc$"  -> len= 1  *
+musl,    1024-byte key, "$6$abc$"  -> len= 1  *
+musl,     257-byte key, "$5$abc$"  -> len= 1  *
+musl,   short key,      "*"        -> len= 1  x
+glibc,    257-byte key, "$6$abc$"  -> len=93  $6$abc$ocmVhh3bHlRiZKvmKza...
+glibc,  short key,      "*"        -> len= 2  *0
+```
+
+Two details worth staring at. The boundary is exactly at 256: musl's `KEY_MAX` check rejects keys longer than 256, not equal to it. And musl answers a `"*"` _setting_ with `"x"`, not `"*"` — a guard that exists in the DES module and not in the SHA-256/SHA-512 ones.
+
+Then I reimplemented `sys_auth_passwd()`'s compare (the real logic, calling the real `crypt()`) and ran it against both versions:
+
+| password   | stored field | 10.6p1 | 10.6p2 |
+| ---------- | ------------ | ------ | ------ |
+| 256 bytes  | `*`          | reject | reject |
+| 257 bytes  | `*`          | ACCEPT | reject |
+| 1024 bytes | `*`          | ACCEPT | reject |
+| 257 bytes  | real `$6$…`  | reject | reject |
+
+That last row is the containment: this is not a password bypass against accounts that have passwords. It is a bypass against accounts that were configured to have none.
+
+<AsteriskChain client:visible />
+
+## Why `"*"` means two things
+
+The asterisk was a sentinel before it was an error string. In `/etc/passwd`, `*` sits where the hash goes and no password can produce it, because it is not a valid encoding of any hash. musl adopted the same character for a completely different job: signalling that `crypt()` failed.
+
+The [2012 commit](https://git.musl-libc.org/cgit/musl/commit/?id=b3c4cc12) explains the reasoning, and the reasoning is good:
+
+> unfortunately, a large portion of programs which call crypt are not prepared for its failure and do not check that the return value is non-null before using it. thus, always "succeeding" but giving an unmatchable hash is reportedly a better behavior than failing
+
+POSIX said `crypt()` returns NULL on error. Programs ignored it and crashed or compared against NULL. musl made failure a value instead of an absence: "unmatchable hash." The word _unmatchable_ is doing the work, and it stops being true the moment a caller stores `*` in the same field.
+
+Twenty days later, [SHA-256 and SHA-512 crypt landed](https://git.musl-libc.org/cgit/musl/commit/?id=88bf5a8a) in the same tree. Both derive from the reference design, both document `on error "*" is returned`, and both cap the key at 256 bytes for denial-of-service reasons: SHA-crypt is O(key length²), so a multi-megabyte password is a cheap CPU bomb. That cap is what turns "error" into "reachable by an attacker who chooses the input length."
+
+In the same commit, the DES module special-cases the collision: if the setting is `*`, return `x`, so the result can never match a stored asterisk. The SHA modules added twenty days later had no such guard and returned a bare `*` for every failure. My probe shows both behaviours side by side, fourteen years later, in one binary.
+
+That is the whole bug. Not a crypto flaw, not a logic inversion. A shared value space between "this is not a hash" and "hashing failed," plus one caller that stores both in the same variable.
+
+## Why ten years of review missed it
+
+Four separate hardening decisions, each defensible on its own, had to line up:
+
+- **August 2012:** failure becomes `"*"` instead of NULL. Fixes real crashes across the ecosystem.
+- **August 2012:** `KEY_MAX 256` in SHA-crypt. Fixes a real DoS.
+- **July 2016:** sshd stops answering instantly for unknown users, and for users whose field is `*`, by hashing the attempt with a borrowed salt ([CVE-2016-6210](https://nvd.nist.gov/vuln/detail/CVE-2016-6210)). Fixes a real username oracle. This is the step that feeds attacker-chosen-length input into `crypt()` for an account that never needed hashing.
+- **2022:** Alpine moves root's shadow field from `!` to `*`. That is the reverse of the 2019 fix, where Alpine locked root with `!` after [CVE-2019-5021](https://nvd.nist.gov/vuln/detail/CVE-2019-5021) shipped images with no root password — and then discovered that, without PAM, `!` also kills public-key logins, which is how their cloud images authenticate. `*` keeps keys working. Both choices are correct for their constraint.
+
+Individually, none of those is a mistake. Together they produce a path where an unauthenticated stranger picks the key length, triggers an error, and gets the error compared against a sentinel that happens to be the same string.
+
+The reason nobody hit it in testing is structural. Almost every sshd test runs on OpenBSD or glibc. Most Linux distributions route password auth through PAM, and a PAM stack refuses a locked field without ever calling `crypt()`. musl itself does not test sshd. So the one combination that breaks — musl, no PAM, `*` in shadow, a salt donor — is a configuration that exists mostly in container base images and appliances, which are exactly the systems nobody builds a test rig for.
+
+## Am I affected, and what is the actual blast radius
+
+The interesting victims are not servers someone deliberately configured. Alpine's official tiny-cloud images ship an `alpine` user with a `*` field and passwordless `doas`. On first boot that is safe, because there is no `$6$` hash anywhere for the borrower to find. The moment an admin sets a console password, or `user-data` adds a user with `hashed_passwd`, the donor exists — and an attacker who logs in as `alpine` can `doas` to root.
+
+Check the version, then check the field:
+
+```bash
+apk info -v openssh                # fixed: 10.3_p1-r2 on 3.24, 10.6_p2-r0 on edge
+sshd -T | grep -i passwordauthentication
+sudo awk -F: '$2=="*"{print $1}' /etc/shadow
+```
+
+`apk upgrade -U -a` then `rc-service sshd restart` — upgrading the package does not restart the running daemon, which is the step people skip. If you cannot patch, `PasswordAuthentication no` closes the path at the cost of password logins; keep an existing session open until a new key login succeeds, or you will lock yourself out of a box you were trying to secure.
+
+Detection is one line shape, and it only exists if you kept auth logs:
+
+```
+sshd[...]: Accepted password for alpine from 203.0.113.7
+```
+
+A password acceptance for an account whose shadow field has no password is the whole signature. Alpine recommends treating any host where you cannot rule that out as compromised.
+
+## The part that is new
+
+Here is the part of the release notes that is not about the bug:
+
+> Recently the OpenSSH team have received a large number of security bug reports, many of which are findings from AI models or made with AI assistance. [...] We have seen a number of cases where a security bug identified by AI tools is subsequently independently discovered by a different researcher. This suggests that adversaries who do not report bugs to OSS projects are likely to be able to discover these bugs too. Given this, the OpenSSH team will, for now, be making more frequent releases to get bugfixes into users' hands more quickly rather than batching them until the next planned release.
+
+Damien Miller's [release mail](https://lists.mindrot.org/pipermail/openssh-unix-dev/2026-November/042837.html) is more direct: the project learned of the problem _yesterday_, shipped in under a day, and cited "multiple cases of rapid bug rediscovery by AI agents, sometimes within hours" as the reason long embargoes are now "a dangerous practice that primarily benefits attackers."
+
+Read that as an engineering change, not a press release. The traditional embargo model assumed rediscovery costs weeks of expert attention, so a 90-day quiet period was cheap for defenders and expensive for attackers. When a fleet of agents can re-derive a finding in hours, the quiet period mostly means the defender who reported it waits while everyone else converges on the same bug. The rational response is the one OpenSSH chose: ship a workaround immediately, even a workaround the maintainers consider to be in someone else's code.
+
+Which raises the uncomfortable question this bug is a good test case for. OpenSSH called the root cause "outside sshd"; Rich Felker [called it](https://www.openwall.com/lists/musl/2026/11/05/4) "not a bug in musl just an erroneous use by the caller," while conceding the mechanism "very likely will be changed in the upcoming release cycle." Both statements are defensible, and the vulnerable window is the space between them. When a defect lives at a boundary, the party that ships the fix is the party whose users are exposed — not the party whose abstraction leaked.
+
+## What to change in your own code
+
+The transferable rule is narrower than "validate your inputs," and it is worth stating precisely because this class of bug keeps landing:
+
+- **Never let an error indicator share a value space with valid data.** If a function's failure mode is a string, that string must be one that no legitimate value can hold. `"*"` fails this test; `"*0"` and `"x!"` pass it by accident, which is not a design.
+- **Validate shape before comparing.** The 10.6p2 fix does not attempt to detect the libc bug; it asserts that the thing it is about to compare is long enough to be a hash. Cheap, local, and it survives the next libc that invents a new sentinel.
+- **When a fix closes a timing oracle by doing more work, ask what input you just accepted.** The 2016 change was correct and it widened the input surface of a function that had previously been called with a fixed, safe argument.
+- **Test the configuration nobody runs.** The vulnerable combination was in the release notes of three projects and in no test matrix.
+
+The bug is patched, and the window is closed. The reason it is worth writing down is that it took four good decisions, fourteen years, and one character to make an authentication check return true for a password nobody set.
+
+## Sources
+
+- [OpenSSH 10.6p2 release notes](https://www.openssh.org/txt/release-10.6p2), 2026-11-05 — the fix, the AI-reporting paragraph, and the release-cadence change.
+- [Commit 4353fdc](https://github.com/openssh/openssh-portable/commit/4353fdc43ef646c43a8dda7025cc1a898caf1482) — `MIN_PASSWORD_HASH_LEN 4`, the length check, and the `pick_salt()` memory handling changes.
+- [Alpine Linux advisory](https://alpinelinux.org/posts/2026-11-05-openssh-password-authentication-bypass/), 2026-11-05 — preconditions, fixed versions per branch, tiny-cloud impact, detection guidance.
+- [Damien Miller, "urgent security release: 10.6p2"](https://lists.mindrot.org/pipermail/openssh-unix-dev/2026-November/042837.html) — one-day turnaround and the embargo reasoning.
+- [Rich Felker, "Advisory for OpenSSH+musl users"](https://www.openwall.com/lists/musl/2026/11/05/4) — musl's position and the planned change.
+- [musl commit b3c4cc12](https://git.musl-libc.org/cgit/musl/commit/?id=b3c4cc12), 2012-08-09 — "unmatchable hash rather than NULL", and the `"x"` guard for a `*` setting in the DES module.
+- [musl commit 88bf5a8a](https://git.musl-libc.org/cgit/musl/commit/?id=88bf5a8a), 2012-08-29 — SHA-256/SHA-512 crypt, `KEY_MAX 256`, "on error `*` is returned".
+- [musl `crypt_sha512.c`](https://git.musl-libc.org/cgit/musl/tree/src/crypt/crypt_sha512.c) — `KEY_MAX`, the O(klen²) comment, and `__crypt_sha512` returning `"*"` on failure.
+- [CVE-2016-6210](https://nvd.nist.gov/vuln/detail/CVE-2016-6210) — the user-enumeration timing fix that introduced salt borrowing.
+- [CVE-2019-5021](https://nvd.nist.gov/vuln/detail/CVE-2019-5021) — Alpine images shipping root with no password, and the `!` → `*` history that followed.
+- Özgün Kültekin, [\*sshole writeup](https://sshhole.com) — the discovery, the 1980→2026 history, and the build matrix that isolated musl-without-PAM.
+- SecurityWeek, [OpenSSH rushes patches for "SSHole"](https://www.securityweek.com/openssh-rushes-patches-for-sshole-authentication-bypass/) — reports CVE-2026-123158 (CVSS 8.1); Alpine's advisory notes no CVE had been assigned when it published.
+- Measurements: my own probes, `cryptprobe.c` and `sshd_compare.c`, run in `alpine:3.22` (musl 1.2, gcc from `apk`) and `debian:bookworm` (glibc via libxcrypt). The compare table reimplements `sys_auth_passwd()` and calls the real `crypt()`; it is not sshd itself. One image per libc, no kernel or build variation explored.
