@@ -3,6 +3,7 @@ import CaseStudyRecord from '../components/CaseStudyRecord.astro';
 import EditorialHeader from '../components/EditorialHeader.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import { caseStudies, socialLinks } from '../data/portfolio';
+import UnderstoryFeature from '../components/UnderstoryFeature.astro';
 import Layout from '../layouts/Layout.astro';
 
 export const prerender = true;
@@ -32,6 +33,8 @@ export const prerender = true;
       <strong>Read the work as a sequence of decisions.</strong>
     </div>
   </EditorialHeader>
+
+  <UnderstoryFeature eyebrow="Currently building" />
 
   <section class="case-index" aria-labelledby="case-index-heading" data-work-section="index">
     <SectionHeader

@@ -14,6 +14,7 @@ import speakerPhotoWebp1280 from '../images/responsive/piyush-devfest-1280.webp'
 import speakerPhotoJpg320 from '../images/responsive/piyush-devfest-320.jpg';
 import speakerPhotoJpg640 from '../images/responsive/piyush-devfest-640.jpg';
 import speakerPhotoJpg960 from '../images/responsive/piyush-devfest-960.jpg';
+import UnderstoryFeature from '../components/UnderstoryFeature.astro';
 import Layout from '../layouts/Layout.astro';
 
 export const prerender = true;
@@ -159,9 +160,11 @@ const toPostHref = (id: string) =>
       </div>
     </section>
 
+    <UnderstoryFeature eyebrow="02 / Currently building" />
+
     <section class="notebook" aria-labelledby="notebook-title">
       <header class="section-intro" data-reveal>
-        <p class="folio">02 / Latest writing</p>
+        <p class="folio">03 / Latest writing</p>
         <h2 id="notebook-title">Recent writing</h2>
         <p>Practical notes on systems, software, and decisions worth making visible.</p>
       </header>
@@ -192,7 +195,7 @@ const toPostHref = (id: string) =>
     </section>
 
     <section class="contact" data-reveal aria-labelledby="contact-title">
-      <p class="folio">03 / Next chapter</p>
+      <p class="folio">04 / Next chapter</p>
       <div>
         <h2 id="contact-title">Good systems begin with a precise conversation.</h2>
         <p>
