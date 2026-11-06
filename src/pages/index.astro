@@ -42,6 +42,8 @@ const toPostHref = (id: string) =>
   ogTemplate="tech"
   ogTheme="dark"
   preloadImage={speakerPhotoAvif1280.src}
+  preloadImageSrcset={`${speakerPhotoAvif320.src} 320w, ${speakerPhotoAvif640.src} 640w, ${speakerPhotoAvif960.src} 960w, ${speakerPhotoAvif1280.src} 1280w`}
+  preloadImageSizes="(max-width: 900px) calc(100vw - 2rem), 42vw"
 >
   <div class="home" data-home-ledger>
     <section class="ledger" aria-labelledby="home-title">
@@ -103,7 +105,7 @@ const toPostHref = (id: string) =>
             <p><strong>Decision</strong> — workflow-first AI with security guardrails</p>
             <p><strong>Outcome</strong> — 30% greater workflow efficiency</p>
           </div>
-          <a href="/projects/">
+          <a href="/projects">
             View case study
             <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
               <path d="M5 12h14M13 6l6 6-6 6"></path>
@@ -112,13 +114,13 @@ const toPostHref = (id: string) =>
         </article>
 
         <div class="ledger__actions" data-home-section="actions" aria-label="Primary actions">
-          <a class="ledger__primary" href="/blog/">
+          <a class="ledger__primary" href="/blog">
             Read recent writing
             <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
               <path d="M5 12h14M13 6l6 6-6 6"></path>
             </svg>
           </a>
-          <a class="ledger__secondary" href="/resume/">Read Résumé</a>
+          <a class="ledger__secondary" href="/resume">Read Résumé</a>
           <div class="ledger__ask" data-home-section="ask">
             <AskLink label="Or ask about my work" q="What does Piyush do?" />
             <AskLink label="FocusTube" q="Tell me about FocusTube" />
@@ -199,7 +201,7 @@ const toPostHref = (id: string) =>
         </p>
       </div>
       <div class="contact__actions">
-        <a href="/contact-me/">Start a conversation <span aria-hidden="true">↗</span></a>
+        <a href="/contact-me">Start a conversation <span aria-hidden="true">↗</span></a>
         <div aria-label="Professional links">
           {socialLinks.map((link) => <a href={link.href}>{link.label}</a>)}
         </div>

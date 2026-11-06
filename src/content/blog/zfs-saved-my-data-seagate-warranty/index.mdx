@@ -17,8 +17,8 @@ tags:
 image:
   url: '/blog/zfs-saved-my-data-seagate-warranty/images/zfs-drive-failure-hero.webp'
   alt: 'Four-bay homelab storage enclosure and hard drives during a ZFS mirror recovery'
-  width: 1672
-  height: 941
+  width: 1600
+  height: 900
   type: 'image/webp'
 draft: false
 ---
@@ -80,7 +80,14 @@ Its short SMART self-test also completed without error.
 
 The Seagate part was refreshingly easy. A failed drive already gives you enough to worry about. I did not have to fight the warranty process too.
 
-![Two intact NAS hard drives beside anti-static packaging and a warranty replacement box](/blog/zfs-saved-my-data-seagate-warranty/images/seagate-warranty-replacement.webp)
+<img
+  src="/blog/zfs-saved-my-data-seagate-warranty/images/seagate-warranty-replacement.webp"
+  alt="Two intact NAS hard drives beside anti-static packaging and a warranty replacement box"
+  width="1536"
+  height="1024"
+  loading="lazy"
+  decoding="async"
+/>
 
 ## The degraded mirror kept serving data
 
@@ -142,7 +149,14 @@ ZFS partitioned the blank replacement and started resilvering it.
 
 The resilver copied the allocated data from the surviving 12TB drive to the new 16TB drive:
 
-![Sealed hard drives with blue and green data blocks illustrating a ZFS mirror resilver](/blog/zfs-saved-my-data-seagate-warranty/images/zfs-mirror-resilver.webp)
+<img
+  src="/blog/zfs-saved-my-data-seagate-warranty/images/zfs-mirror-resilver.webp"
+  alt="Sealed hard drives with blue and green data blocks illustrating a ZFS mirror resilver"
+  width="1536"
+  height="1024"
+  loading="lazy"
+  decoding="async"
+/>
 
 ```text
 scan: resilvered 3.38T in 05:30:27 with 0 errors

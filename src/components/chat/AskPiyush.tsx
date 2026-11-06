@@ -1,7 +1,7 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { ChatTrace, ChatUIMessage } from '../../utils/chat/pipeline';
 import { HANDOFF_KEY, buildHandoff } from '../../utils/contact-handoff';
-import Answer from './Answer';
+const Answer = lazy(() => import('./Answer'));
 import { useAskPiyush } from './useAskPiyush';
 
 const MAX = 500;
@@ -221,7 +221,9 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
                 className={`ask__a${isActive ? ' is-active' : ''}`}
                 aria-label="Answer"
               >
-                <Answer text={text} />
+                <Suspense fallback={<p>{text}</p>}>
+                  <Answer text={text} />
+                </Suspense>
                 {trace && (
                   <p className="ask__trace">
                     <span>{SCOPE_LABEL[trace.scope]}</span>
@@ -246,7 +248,7 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
                 {trace?.verdict === 'answered' && messages[i - 1]?.role === 'user' && (
                   <a
                     className="ask__contact"
-                    href="/contact-me/#contact-form"
+                    href="/contact-me#contact-form"
                     onClick={() => {
                       try {
                         const handoff = buildHandoff(

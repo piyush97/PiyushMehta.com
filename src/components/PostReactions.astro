@@ -199,7 +199,17 @@ const componentId = `reactions-${postId.replace(/[^a-zA-Z0-9]/g, '-')}`;
       this.updateUI();
       this.setupEventListeners();
       this.setupKeyboardNavigation();
-      this.fetchGlobalCounts();
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          observer.disconnect();
+          void this.fetchGlobalCounts();
+        });
+        observer.observe(this.container);
+        document.addEventListener('astro:before-swap', () => observer.disconnect(), { once: true });
+      } else {
+        void this.fetchGlobalCounts();
+      }
     }
 
     private loadUserReactions() {

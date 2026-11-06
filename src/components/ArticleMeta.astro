@@ -34,7 +34,7 @@ const shareLinks = [
       </div>
     </details>
   </div>
-  {tags.length > 0 && <nav class="article-meta__topics" aria-label="Article topics">{tags.map((tag) => <a href={`/blog/?theme=${encodeURIComponent(tag)}`}>{tag}</a>)}</nav>}
+  {tags.length > 0 && <nav class="article-meta__topics" aria-label="Article topics">{tags.map((tag) => <a href={`/blog?theme=${encodeURIComponent(tag)}`}>{tag}</a>)}</nav>}
 </div>
 <script>
   function initializeArticleSharing() {

@@ -23,6 +23,8 @@ export interface Props {
   ogTemplate?: 'default' | 'minimal' | 'tech' | 'blog' | 'modern' | 'professional';
   ogTheme?: 'dark' | 'light' | 'retro';
   preloadImage?: string;
+  preloadImageSrcset?: string;
+  preloadImageSizes?: string;
 }
 
 const {
@@ -41,7 +43,8 @@ const {
   ogTemplate = 'default',
   ogTheme = 'dark',
   preloadImage,
-} = Astro.props;
+  preloadImageSrcset,
+  preloadImageSizes,} = Astro.props;
 ---
 
 <!doctype html>
@@ -68,7 +71,7 @@ const {
     />
     <meta name="generator" content={Astro.generator} />
     <ClientRouter />
-    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} imagesrcset={preloadImageSrcset} imagesizes={preloadImageSizes} type={preloadImage.endsWith('.avif') ? 'image/avif' : undefined} fetchpriority="high" />}
     <SEO
       title={title}
       description={description}
@@ -87,7 +90,9 @@ const {
     />
     <script is:inline>
       const applyTheme = () => {
-        const savedTheme = localStorage.getItem('theme');
+        let savedTheme;
+        try { savedTheme = localStorage.getItem('theme'); } catch {}
+        if (!['professional-light', 'professional-dark'].includes(savedTheme)) savedTheme = undefined;
         const preferredTheme =
           savedTheme ||
           (window.matchMedia('(prefers-color-scheme: light)').matches
