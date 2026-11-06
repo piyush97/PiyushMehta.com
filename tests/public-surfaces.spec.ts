@@ -38,7 +38,7 @@ test.describe('redesigned public surfaces', () => {
   test('about composes practice, evidence, proof, and writing in order', async ({ page }) => {
     await page.goto('/about/', { waitUntil: 'networkidle' });
 
-    await expect(page.locator('a[href="/about/"][aria-current="page"]')).toHaveCount(2);
+    await expect(page.locator('a[href="/about"][aria-current="page"]')).toHaveCount(2);
     await expect(page.locator('[data-about-section="focus"] .focus-record')).toHaveCount(3);
     await expect(page.locator('[data-about-section="proof"] .proof-record')).toHaveCount(3);
     await expect(page.locator('.metric-band .evidence-metric')).toHaveCount(4);

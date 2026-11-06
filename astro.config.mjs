@@ -1,9 +1,11 @@
+import { unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import cloudflare from '@astrojs/cloudflare';
 import sentry from '@sentry/astro';
 import tailwindcss from '@tailwindcss/vite';
 import varlock from '@varlock/astro-integration';
+import { visit } from 'unist-util-visit';
 import { defineConfig } from 'astro/config';
 
 const isProductionBuild = process.env.NODE_ENV === 'production';
@@ -25,8 +27,6 @@ export default defineConfig({
   experimental: {
     // Speculative prerendering of prefetched pages — instant navigation
     clientPrerender: true,
-    // Reuse unchanged prerendered pages between builds when cacheKey + module graph are unchanged
-    incrementalBuild: true,
   },
   // Sessions are not used in this project; skip session runtime wiring to reduce SSR bundle/runtime work
   session: false,
@@ -51,6 +51,23 @@ export default defineConfig({
     react(),
   ],
   markdown: {
+    processor: unified({
+      rehypePlugins: [
+        () => (tree) => {
+          visit(tree, 'element', (node) => {
+            const href = node.properties?.href;
+            if (
+              node.tagName === 'a' &&
+              typeof href === 'string' &&
+              /^\/(?!\/)[^?#]+/.test(href) &&
+              href.split(/[?#]/)[0] !== '/'
+            ) {
+              node.properties.href = href.replace(/\/(?=[?#]|$)/, '');
+            }
+          });
+        },
+      ],
+    }),
     shikiConfig: {
       theme: 'github-dark-dimmed',
       wrap: true,
@@ -94,7 +111,7 @@ export default defineConfig({
   },
 
   build: {
-    // Incremental static builds currently require concurrency: 1 to use the cache.
+    // Keep content rendering sequential.
     concurrency: 1,
     // Inline small CSS (under 4KB) directly into HTML to reduce render-blocking
     // round-trips on first paint. Layout.css (108KB) stays external so it
@@ -103,6 +120,7 @@ export default defineConfig({
   },
 
   adapter: cloudflare({
+    remoteBindings: process.env.ASTRO_DEV_BACKGROUND !== '1' && !process.env.CI,
     imageService: {
       build: 'compile',
       runtime: 'passthrough',

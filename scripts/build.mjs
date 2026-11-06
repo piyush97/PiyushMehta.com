@@ -52,7 +52,7 @@ step('Astro build', 'astro build', {
 
 // 6. Rescue legacy mixed-case blog URLs (must run after the Astro build copies public/_redirects
 //    into dist/client/, and before deploy — see scripts/generate-legacy-redirects.mjs)
-step('Legacy blog redirects', 'node scripts/generate-legacy-redirects.mjs');
+step('Legacy blog redirects', 'bun scripts/generate-legacy-redirects.mjs');
 
 // 7. Fail the build if any og:image/twitter:image/JSON-LD image reference is missing, wrong
 //    size, or looks like the blank-fallback card — see scripts/verify-og.mjs

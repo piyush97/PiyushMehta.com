@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Generates 301 redirects for legacy blog URLs so historical shares (which used the original
  * mixed-case directory name, e.g. /blog/The-Silent-S-in-HTTPS) resolve instead of 404ing.
@@ -36,7 +36,23 @@ async function main() {
   const postDirs = dirents.filter((d) => d.isDirectory()).map((d) => d.name);
 
   const pairs = new Map();
+  const tags = new Map();
   for (const name of postDirs) {
+    let source;
+    try {
+      source = await readFile(`${CONTENT_DIR}/${name}/index.mdx`, 'utf8');
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+      try {
+        source = await readFile(`${CONTENT_DIR}/${name}/index.md`, 'utf8');
+      } catch (error) {
+        if (error.code !== 'ENOENT') throw error;
+        continue;
+      }
+    }
+    const data = Bun.YAML.parse(source.match(/^---\s*\n([\s\S]*?)\n---/)?.[1] ?? '') ?? {};
+    if (!data.draft)
+      for (const tag of data.tags ?? []) tags.set(tag.toLowerCase().replace(/\s+/g, '-'), tag);
     if (name !== name.toLowerCase()) {
       pairs.set(name, name.toLowerCase());
     }
@@ -45,7 +61,7 @@ async function main() {
     pairs.set(from, to);
   }
 
-  if (pairs.size === 0) {
+  if (pairs.size === 0 && tags.size === 0) {
     console.log('No legacy mixed-case blog slugs found — nothing to generate.');
     return;
   }
@@ -55,6 +71,11 @@ async function main() {
     lines.push(`/blog/${from} /blog/${to} 301`);
     lines.push(`/blog/${from}/ /blog/${to} 301`);
     lines.push(`/og/blog/${from}.png /og/blog/${to}.png 301`);
+  }
+  for (const [slug, tag] of tags) {
+    const path = slug.split('/').map(encodeURIComponent).join('/');
+    lines.push(`/blog/tag/${path} /blog?theme=${encodeURIComponent(tag)} 301`);
+    lines.push(`/blog/tag/${path}/ /blog?theme=${encodeURIComponent(tag)} 301`);
   }
   lines.push('/opengraph-image /og/default.png 301');
   lines.push('/twitter-image /og/default.png 301');
@@ -74,7 +95,13 @@ async function main() {
     throw error;
   }
 
-  await writeFile(REDIRECTS_FILE, `${existing}\n${lines.join('\n')}`);
+  const start = existing.indexOf(MARKER_BEGIN);
+  if (start !== -1) {
+    const end = existing.indexOf(MARKER_END, start);
+    if (end === -1) throw new Error('Incomplete generated redirect block');
+    existing = existing.slice(0, start) + existing.slice(end + MARKER_END.length);
+  }
+  await writeFile(REDIRECTS_FILE, `${existing.trimEnd()}\n${lines.join('\n')}`);
   console.log(`Appended ${pairs.size} legacy blog redirect(s) to ${REDIRECTS_FILE}:`);
   for (const [from, to] of pairs) {
     console.log(`  /blog/${from} -> /blog/${to}`);

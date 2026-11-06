@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { isAllowedFormOrigin, json, readLimitedText } from '@/utils/request-security';
+import { runInBackground } from '@/utils/conversions';
 import { isPublishedPostSlug, toPublishedPostSlug } from '@/utils/published-posts';
 import { toBlogPostSlug } from '@/utils/blog-recommendations';
 import {
@@ -19,7 +20,7 @@ const MAX_BODY_BYTES = 8 * 1024;
 // readers but collapses repeat reads onto one Redis round-trip per PoP.
 const GET_HEADERS = {
   'Content-Type': 'application/json',
-  'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=60',
+  'Cache-Control': 'public, max-age=15',
 } as const;
 
 const ratelimit = createRatelimit('reactions:ratelimit', 30, '1 m');
@@ -41,7 +42,7 @@ function validatePublishedPost(postId: string): Response | null {
   return json({ error: 'Post not found' }, 404);
 }
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
   const postId = normalizePostId(url.searchParams.get('postId'));
   if (!postId) {
     return json(
@@ -53,6 +54,19 @@ export const GET: APIRoute = async ({ url }) => {
   const postError = validatePublishedPost(postId);
   if (postError) return postError;
 
+  const cache =
+    typeof caches === 'undefined'
+      ? undefined
+      : (caches as CacheStorage & { default: Cache }).default;
+  const cacheUrl = new URL('/api/reactions', url);
+  cacheUrl.searchParams.set('postId', postId);
+  const cacheKey = new Request(cacheUrl);
+  try {
+    const hit = await cache?.match(cacheKey);
+    if (hit) return hit;
+  } catch {
+    /* Cache failures must not hide available counts. */
+  }
   if (!redis) return json({ error: 'Reaction service unavailable' }, 503);
 
   try {
@@ -60,7 +74,13 @@ export const GET: APIRoute = async ({ url }) => {
     const result = Object.fromEntries(
       VALID_REACTIONS.map((reaction) => [reaction, safeCount(counts?.[reaction])]),
     );
-    return json(result, 200, GET_HEADERS);
+    const response = json(result, 200, GET_HEADERS);
+    if (cache)
+      runInBackground(
+        locals,
+        cache.put(cacheKey, response.clone()).catch(() => {}),
+      );
+    return response;
   } catch {
     return json({ error: 'Reaction service unavailable' }, 503);
   }

@@ -20,7 +20,7 @@ async function stubTurnstile(page: Page) {
     }),
   );
   await page.route('**/api/chat/session', (route) =>
-    route.fulfill({ json: { session: 'sess-token' } }),
+    route.fulfill({ json: route.request().method() === 'GET' ? { siteKey: 'test-public-key' } : { session: 'sess-token' } }),
   );
 }
 
@@ -73,7 +73,7 @@ test.describe('Ask Piyush', () => {
     await openAsk(page);
     await page.getByRole('button', { name: 'Tell me about FocusTube' }).click();
     await page.getByRole('link', { name: 'Write to Piyush about this' }).click();
-    await expect(page).toHaveURL(/\/contact-me\/#contact-form$/);
+    await expect(page).toHaveURL(/\/contact-me#contact-form$/);
     await expect(page.locator('#cf-subject')).toHaveValue('Following up from Ask Piyush');
     const message = page.locator('#cf-message');
     await expect(message).toHaveValue(/Tell me about FocusTube/);
@@ -136,11 +136,10 @@ test.describe('Ask Piyush', () => {
   });
 
   test('continues a long saved chat within the API message limit', async ({ page }) => {
-    await openAsk(page);
-    await page.evaluate(() => localStorage.setItem('ask-piyush:chat:v1', JSON.stringify(
+    await page.addInitScript(() => localStorage.setItem('ask-piyush:chat:v1', JSON.stringify(
       Array.from({ length: 42 }, (_, i) => ({ id: String(i), role: i % 2 ? 'assistant' : 'user', parts: [{ type: 'text', text: i % 2 ? 'Piyush works at Tundra.' : 'What does he do?' }] })),
     )));
-    await page.reload();
+    await openAsk(page);
     await expect(page.getByRole('article', { name: 'You asked' })).toHaveCount(21);
     let sent = 0;
     let bytes = 0;
@@ -277,11 +276,11 @@ test.describe('Ask Piyush doorways', () => {
   test('navbar has an Ask button on desktop', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/about/');
-    await expect(page.locator('.ask-button')).toHaveAttribute('href', '/ask/');
+    await expect(page.locator('.ask-button')).toHaveAttribute('href', '/ask');
   });
 
   test('search page offers the Ask fallback', async ({ page }) => {
     await page.goto('/search/');
-    await expect(page.getByRole('link', { name: /ask piyush instead/i })).toHaveAttribute('href', '/ask/');
+    await expect(page.getByRole('link', { name: /ask piyush instead/i })).toHaveAttribute('href', '/ask');
   });
 });

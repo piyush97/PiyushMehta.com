@@ -6,9 +6,9 @@ import { pathToFileURL } from 'node:url';
 
 const REQUIRED_CLIENT_FILES = [
   'index.html',
+  'ask/index.html',
   'rss.xml',
   'sitemap.xml',
-  'sitemap-index.xml',
   'robots.txt',
   '.well-known/security.txt',
   'search/index.html',
@@ -180,6 +180,13 @@ export function verifyRelease(root = process.cwd()) {
   // Client source maps contain original sources and are publicly cacheable, so
   // they must only exist transiently while Sentry uploads them.
   if (isDirectory(clientDir)) {
+    for (const entry of readdirSync(clientDir, { recursive: true, withFileTypes: true })) {
+      if (!entry.isFile() || !entry.name.endsWith('.html')) continue;
+      const file = join(entry.parentPath, entry.name);
+      if (/\bhref="\/(?!\/)[^"?#]+\/(?:[?#][^"]*)?"/.test(readFileSync(file, 'utf8'))) {
+        addError(errors, `Internal link has a trailing slash: ${relative(clientDir, file)}`);
+      }
+    }
     const sourceMaps = collectSourceMaps(clientDir);
     if (sourceMaps.length > 0) {
       addError(
