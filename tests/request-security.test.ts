@@ -138,11 +138,20 @@ describe('configured API failures', () => {
       } }),
     }));
     globalThis.fetch = (async (url, init) => {
-      if (String(url).includes('siteverify')) return Response.json({ success: proof, action: 'contact-form', hostname: 'piyushmehta.com' });
-      if (String(url).includes('api.resend.com')) { sent = JSON.parse(String(init?.body)); return Response.json({ id: 'test-delivery' }); }
+      const href = new URL(url instanceof Request ? url.url : url).href;
+      if (href === 'https://challenges.cloudflare.com/turnstile/v0/siteverify') return Response.json({ success: proof, action: 'contact-form', hostname: 'piyushmehta.com' });
+      if (href === 'https://api.resend.com/emails') { sent = JSON.parse(String(init?.body)); return Response.json({ id: 'test-delivery' }); }
       throw new Error('Unexpected network request');
     }) as typeof fetch;
     try {
+      for (const url of [
+        'https://api.resend.com.evil.example/emails',
+        'https://api.resend.com@evil.example/emails',
+        'https://evil.example/?api.resend.com',
+        'https://evil.example/siteverify',
+      ]) {
+        await assert.rejects(() => fetch(url), /Unexpected network request/);
+      }
       const contact = (await import('../src/pages/api/contact')).POST;
       const session = await import('../src/pages/api/chat/session');
       const conversions = (await import('../src/pages/api/conversions')).POST;
