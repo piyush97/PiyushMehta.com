@@ -54,7 +54,7 @@ const word: Record<Result, string> = { pass: 'Pass', fail: 'Fail', review: 'Need
 ---
 
 <section class="gate-sim not-prose" data-gate-sim aria-label="Agent PR gate simulator">
-  <script type="application/json" data-fixtures set:html={JSON.stringify(fixtures)} />
+  <script type="application/json" data-fixtures set:html={JSON.stringify(fixtures).replace(/</g, '\\u003c')} />
   <header>
     <p class="gate-sim__eyebrow">Interactive</p>
     <h3>Would this agent PR merge?</h3>
