@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">One DNS key rewritten instead of a 20 million record zone</title>
+  <desc id="description">A TTL change on a zone with 20,000,012 keys maps to a single rewritten key, drawn as a short cyan mark against a full-width bar representing a complete rebuild.</desc>
+  <rect width="1200" height="630" fill="#0b1220"/>
+  <text x="80" y="86" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="22" letter-spacing="2.5">INCREMENTAL WORK NEEDS AN ORACLE</text>
+  <text x="80" y="146" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="46" font-weight="700">The smallest rebuild</text>
+  <text x="80" y="198" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="46" font-weight="700">you can prove correct</text>
+
+  <g font-family="system-ui, sans-serif">
+    <rect x="80" y="246" width="1040" height="150" rx="10" fill="#131c2e" stroke="#334155" stroke-width="2"/>
+    <text x="108" y="284" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="18" letter-spacing="1.5">EVENT</text>
+    <text x="108" y="322" fill="#e2e8f0" font-size="26" font-weight="600">example.com TTL changes</text>
+    <text x="108" y="356" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="18">one record key, same value</text>
+
+    <line x1="680" y1="318" x2="712" y2="318" stroke="#38bdf8" stroke-width="3"/>
+    <path d="M712 318 l-11 -6 l0 12 z" fill="#38bdf8"/>
+
+    <text x="736" y="284" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="18" letter-spacing="1.5">CLOSURE</text>
+    <text x="736" y="322" fill="#e2e8f0" font-size="26" font-weight="600">1 key rewritten</text>
+    <text x="736" y="356" fill="#38bdf8" font-family="ui-monospace, monospace" font-size="18">20,000,012 keys skipped</text>
+  </g>
+
+  <g>
+    <text x="80" y="436" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="17">FULL BUILD · 20,000,012 records</text>
+    <rect x="80" y="448" width="1040" height="22" rx="4" fill="#1e293b"/>
+    <text x="80" y="502" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="17">TARGETED BUILD · 1 record</text>
+    <rect x="80" y="514" width="1040" height="22" rx="4" fill="#182132"/>
+    <rect x="80" y="514" width="12" height="22" rx="2" fill="#38bdf8"/>
+    <text x="102" y="530" fill="#38bdf8" font-family="ui-monospace, monospace" font-size="14">1 of 20,000,012</text>
+  </g>
+
+  <text x="80" y="588" fill="#8291a5" font-family="ui-monospace, monospace" font-size="17">same output as the full build, or it is a guess</text>
+  <text x="1120" y="588" text-anchor="end" fill="#8291a5" font-family="ui-monospace, monospace" font-size="17">cloudflare · nov 2026</text>
+</svg>
