@@ -208,6 +208,29 @@ export function verifyRelease(root = process.cwd()) {
   const redirectsPath = join(clientDir, '_redirects');
   if (existsSync(redirectsPath)) {
     const redirects = readFileSync(redirectsPath, 'utf8');
+    let dynamic = false;
+    let staticRules = 0;
+    let dynamicRules = 0;
+    for (const line of redirects.split('\n')) {
+      const from = line.trim().split(/\s+/)[0];
+      if (!from || from.startsWith('#')) continue;
+      // Like Cloudflare, all rules after the first wildcard/placeholder count as dynamic.
+      dynamic ||= /\*|:[A-Za-z]\w*/.test(from);
+      if (dynamic) dynamicRules++;
+      else staticRules++;
+    }
+    if (staticRules > 2000) {
+      addError(
+        errors,
+        `_redirects exceeds Cloudflare's limit of 2000 static rules (${staticRules})`,
+      );
+    }
+    if (dynamicRules > 100) {
+      addError(
+        errors,
+        `_redirects exceeds Cloudflare's limit of 100 dynamic rules (${dynamicRules}); move exact rules before wildcards/placeholders`,
+      );
+    }
     if (!/^\/security\.txt\s+\/\.well-known\/security\.txt\s+301\s*$/m.test(redirects)) {
       addError(errors, 'Missing canonical security.txt redirect');
     }

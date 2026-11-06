@@ -12,8 +12,8 @@
  * directories still exist under public/blog/<Name>/images/** as real, currently-served hero
  * image assets. A splat redirect would break every one of those images.
  *
- * Runs after `astro build` (see scripts/build.mjs) so it can append to the copy of
- * public/_redirects that Astro already placed in dist/client/.
+ * Runs after `astro build` (see scripts/build.mjs) so it can insert exact redirects before any
+ * wildcard rules in the copy of public/_redirects that Astro placed in dist/client/.
  */
 
 import { readdir, readFile, writeFile } from 'node:fs/promises';
@@ -101,8 +101,18 @@ async function main() {
     if (end === -1) throw new Error('Incomplete generated redirect block');
     existing = existing.slice(0, start) + existing.slice(end + MARKER_END.length);
   }
-  await writeFile(REDIRECTS_FILE, `${existing.trimEnd()}\n${lines.join('\n')}`);
-  console.log(`Appended ${pairs.size} legacy blog redirect(s) to ${REDIRECTS_FILE}:`);
+  // Cloudflare counts every rule after the first wildcard/placeholder as dynamic (limit 100).
+  const existingLines = existing
+    .trim()
+    .split('\n')
+    .filter((line) => line.trim());
+  const firstDynamicRule = existingLines.findIndex((line) => {
+    const from = line.trim().split(/\s+/)[0];
+    return !from.startsWith('#') && /\*|:[A-Za-z]\w*/.test(from);
+  });
+  existingLines.splice(firstDynamicRule < 0 ? existingLines.length : firstDynamicRule, 0, ...lines);
+  await writeFile(REDIRECTS_FILE, `${existingLines.join('\n')}\n`);
+  console.log(`Generated ${pairs.size} legacy blog redirect(s) in ${REDIRECTS_FILE}:`);
   for (const [from, to] of pairs) {
     console.log(`  /blog/${from} -> /blog/${to}`);
   }
