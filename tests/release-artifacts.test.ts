@@ -12,6 +12,7 @@ function makeFixture(): string {
   roots.push(root);
   const client = join(root, 'dist', 'client');
   const server = join(root, 'dist', 'server');
+  mkdirSync(join(client, 'ask'), { recursive: true });
   mkdirSync(join(client, 'search'), { recursive: true });
   mkdirSync(join(client, '.well-known'), { recursive: true });
   mkdirSync(join(client, 'pagefind'), { recursive: true });
@@ -20,9 +21,9 @@ function makeFixture(): string {
 
   for (const file of [
     'index.html',
+    'ask/index.html',
     'rss.xml',
     'sitemap.xml',
-    'sitemap-index.xml',
     'robots.txt',
     '.well-known/security.txt',
     '_redirects',
@@ -107,6 +108,15 @@ describe('verifyRelease', () => {
     const path = join(root, 'dist', 'client', '_redirects');
     writeFileSync(path, readFileSync(path, 'utf8').replace('/security.txt /.well-known/security.txt 301', ''));
     assert.ok(verifyRelease(root).errors.some((error) => error.includes('security.txt redirect')));
+  });
+
+  it('rejects redirecting internal links but allows root and external URLs', () => {
+    const root = makeFixture();
+    const file = join(root, 'dist', 'client', 'index.html');
+    writeFileSync(file, '<a href="/">Home</a><a href="//example.org/">External</a>');
+    assert.equal(verifyRelease(root).ok, true);
+    writeFileSync(file, '<a href="/blog/">Writing</a>');
+    assert.ok(verifyRelease(root).errors.some((error) => error.includes('trailing slash')));
   });
 
   it('rejects a root asset directory', () => {

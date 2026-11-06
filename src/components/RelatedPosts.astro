@@ -44,7 +44,7 @@ const calculateReadingTime = (content: string) => {
           <p class="related-posts-section__label">Continue the record</p>
           <h2 id="related-posts-heading">Related field notes.</h2>
         </div>
-        <a href="/blog/" class="related-posts-section__all">
+        <a href="/blog" class="related-posts-section__all">
           View all writing
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
@@ -56,7 +56,7 @@ const calculateReadingTime = (content: string) => {
         {relatedPosts.map((post) => {
           const postSlug = toBlogPostSlug(post.id);
           const readingTime = calculateReadingTime(post.body ?? '');
-          const postUrl = `/blog/${postSlug}/`;
+          const postUrl = `/blog/${postSlug}`;
           const tags = post.data.tags ?? [];
           const descriptionId = post.data.description ? `post-${postSlug}-description` : undefined;
 
@@ -76,6 +76,8 @@ const calculateReadingTime = (content: string) => {
                     <img
                       src={post.data.image.url}
                       alt={post.data.image.alt || post.data.title}
+                      width="384"
+                      height="192"
                       loading="lazy"
                       decoding="async"
                     />
@@ -318,6 +320,7 @@ const calculateReadingTime = (content: string) => {
   .related-post-card__media img {
     display: block;
     width: 100%;
+    aspect-ratio: 2 / 1;
     max-height: 12rem;
     border: 1px solid var(--color-card-border);
     object-fit: cover;

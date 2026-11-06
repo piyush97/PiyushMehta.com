@@ -203,6 +203,47 @@ describe('configured API failures', () => {
   });
 });
 
+describe('reaction count cache', () => {
+  it('normalizes keys, reuses successful counts and never caches outages', async () => {
+    const { mock } = await import('bun:test');
+    const original = { ...await import('../src/utils/redis') };
+    const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'caches');
+    const entries = new Map<string, Response>();
+    const pending: Promise<unknown>[] = [];
+    let reads = 0;
+    let offline = false;
+    Object.defineProperty(globalThis, 'caches', { configurable: true, value: { default: {
+      match: async (key: Request) => entries.get(key.url)?.clone(),
+      put: async (key: Request, response: Response) => { entries.set(key.url, response); },
+    } } });
+    mock.module('../src/utils/redis', () => ({ ...original, redis: { hgetall: async () => {
+      reads++;
+      if (offline) throw new Error('offline');
+      return { like: '3' };
+    } } }));
+    try {
+      const { GET } = await import('../src/pages/api/reactions');
+      const slugs = (await import('../src/data/published-post-slugs.json')).default;
+      const invoke = (extra = '') => GET({ url: new URL(`https://piyushmehta.com/api/reactions?postId=${slugs[0]}${extra}`), locals: { cfContext: { waitUntil: (promise: Promise<unknown>) => pending.push(promise) } } } as Parameters<typeof GET>[0]);
+      assert.equal((await invoke() as Response).status, 200);
+      await Promise.all(pending);
+      const hit = await invoke('&tracking=ignored') as Response;
+      assert.equal((await hit.json()).like, 3);
+      assert.equal(hit.headers.get('cache-control'), 'public, max-age=15');
+      assert.equal(reads, 1);
+      entries.clear();
+      offline = true;
+      assert.equal((await invoke() as Response).status, 503);
+      assert.equal((await invoke() as Response).status, 503);
+      assert.equal(entries.size, 0);
+    } finally {
+      if (descriptor) Object.defineProperty(globalThis, 'caches', descriptor);
+      else Reflect.deleteProperty(globalThis, 'caches');
+      mock.module('../src/utils/redis', () => original);
+    }
+  });
+});
+
 describe('POST request boundaries', () => {
   it('rejects cross-origin, non-JSON, oversized and malformed bodies before service access', async () => {
     const { mock } = await import('bun:test');

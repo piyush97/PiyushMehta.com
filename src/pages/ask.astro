@@ -1,12 +1,10 @@
 ---
-import { ENV } from 'varlock/env';
 import AskPiyush from '../components/chat/AskPiyush';
 import Layout from '../layouts/Layout.astro';
 import '../styles/ask.css';
 
-export const prerender = false;
+export const prerender = true;
 
-const siteKey = ENV.PUBLIC_TURNSTILE_SITE_KEY ?? '';
 ---
 
 <Layout
@@ -23,15 +21,8 @@ const siteKey = ENV.PUBLIC_TURNSTILE_SITE_KEY ?? '';
   </header>
 
   <div class="ask-shell">
-    {
-      siteKey ? (
-        <AskPiyush client:load siteKey={siteKey} />
-      ) : (
-        <p class="ask-offline" role="status">
-          Ask Piyush is not configured in this environment. The <a href="/contact-me">contact page</a> reaches Piyush directly.
-        </p>
-      )
-    }
+    <AskPiyush client:load siteKey="" />
+    <noscript>JavaScript is required for chat. Use the <a href="/contact-me">contact page</a> instead.</noscript>
   </div>
 </Layout>
 

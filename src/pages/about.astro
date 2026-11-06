@@ -29,8 +29,8 @@ const featuredStudies = caseStudies.slice(0, 3);
       title="I build software with clarity, reliability, and useful proof."
       description="Senior software engineer across TypeScript, React, Node.js, Astro, AI-assisted workflows, and cloud-backed product systems. I care about what ships, what can be maintained, and what the team learns while building it."
       actions={[
-        { href: '/projects/', label: 'See work' },
-        { href: '/resume/', label: 'Read resume', variant: 'secondary' },
+        { href: '/projects', label: 'See work' },
+        { href: '/resume', label: 'Read resume', variant: 'secondary' },
       ]}
       asideLabel="Working thesis"
       pagefindTitle="title"
@@ -94,7 +94,7 @@ const featuredStudies = caseStudies.slice(0, 3);
               <h3>{study.title}</h3>
               <p>{study.summary}</p>
             </div>
-            <a href={`/projects/#case-${index + 1}`}>
+            <a href={`/projects#case-${index + 1}`}>
               Read case study
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />

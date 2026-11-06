@@ -3,16 +3,16 @@ const pathname = Astro.url.pathname;
 
 const navItems = [
   { href: '/', label: 'Home' },
-  { href: '/projects/', label: 'Work' },
-  { href: '/blog/', label: 'Writing' },
-  { href: '/about/', label: 'About' },
-  { href: '/resume/', label: 'Resume' },
-  { href: '/contact-me/', label: 'Contact' },
+  { href: '/projects', label: 'Work' },
+  { href: '/blog', label: 'Writing' },
+  { href: '/about', label: 'About' },
+  { href: '/resume', label: 'Resume' },
+  { href: '/contact-me', label: 'Contact' },
   { href: 'https://understory.piyushmehta.com/', label: 'Understory', external: true, title: 'Understory: engineering blogs, explained' },
   { href: 'https://os.piyushmehta.com/', label: 'Desktop', external: true, title: 'MehtaDesk: my portfolio as an interactive desktop' },
 ];
 
-const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`));
 ---
 
 <nav class="site-nav" aria-label="Primary navigation" data-reveal>
@@ -22,7 +22,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
   </a>
 
   {pathname === '/' && (
-    <span class="site-nav__edition" aria-label="Portfolio edition">
+    <span class="site-nav__edition">
       Piyush Mehta / Engineer’s Portfolio / 2026
     </span>
   )}
@@ -43,8 +43,8 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
   </div>
 
   <div class="site-nav__actions">
-    <a class="ask-button" href="/ask/" aria-current={pathname.startsWith('/ask') ? 'page' : undefined}><span aria-hidden="true">✦</span> Ask</a>
-    <button class="theme-button" type="button" id="theme-toggle-btn" aria-label="Toggle theme">
+    <a class="ask-button" href="/ask" aria-current={pathname.startsWith('/ask') ? 'page' : undefined}><span aria-hidden="true">✦</span> Ask</a>
+    <button class="theme-button" type="button" id="theme-toggle-btn" aria-label="Toggle theme" aria-pressed="false">
       <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
@@ -61,7 +61,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
 
 <div class="mobile-panel" id="mobile-panel" data-mobile-panel hidden>
   <div class="mobile-panel__inner">
-    <a class={`mobile-nav-link${pathname.startsWith('/ask') ? ' active' : ''}`} href="/ask/" aria-current={pathname.startsWith('/ask') ? 'page' : undefined} data-mobile-link><span aria-hidden="true">✦</span> Ask Piyush</a>
+    <a class={`mobile-nav-link${pathname.startsWith('/ask') ? ' active' : ''}`} href="/ask" aria-current={pathname.startsWith('/ask') ? 'page' : undefined} data-mobile-link><span aria-hidden="true">✦</span> Ask Piyush</a>
     {
       navItems.map((item) => (
         <a
@@ -75,7 +75,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
         </a>
       ))
     }
-    <button class="mobile-theme-button" type="button" id="mobile-theme-toggle-btn" aria-label="Toggle theme">
+    <button class="mobile-theme-button" type="button" id="mobile-theme-toggle-btn" aria-label="Toggle theme" aria-pressed="false">
       <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <span>Toggle theme</span>
@@ -210,6 +210,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
 
     function syncIcons() {
       const isDark = root.classList.contains('professional-dark');
+      document.querySelectorAll('#theme-toggle-btn, #mobile-theme-toggle-btn').forEach((button) => button.setAttribute('aria-pressed', String(isDark)));
       document.querySelectorAll('.theme-icon-sun').forEach((icon) => icon.classList.toggle('hidden', !isDark));
       document.querySelectorAll('.theme-icon-moon').forEach((icon) => icon.classList.toggle('hidden', isDark));
     }
@@ -226,11 +227,11 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.s
       root.classList.remove('professional-dark', 'professional-light', 'light', 'dark');
       if (currentlyDark) {
         root.classList.add('professional-light', 'light');
-        localStorage.setItem('theme', 'professional-light');
+        try { localStorage.setItem('theme', 'professional-light'); } catch {}
       } else {
         root.classList.add('professional-dark');
         root.classList.remove('light');
-        localStorage.setItem('theme', 'professional-dark');
+        try { localStorage.setItem('theme', 'professional-dark'); } catch {}
       }
       syncColorScheme(!currentlyDark);
       syncIcons();

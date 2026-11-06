@@ -132,7 +132,7 @@ const articleSchema = {
   schema={articleSchema}
   ogTemplate={ogTemplate}
   ogTheme={ogTheme}
-  preloadImage={image?.url}
+  preloadImage={showHeroImage ? image?.url : undefined}
 >
   <div class="reading-progress" aria-hidden="true"></div>
   <div class="page-container blog-post-page">
@@ -142,7 +142,7 @@ const articleSchema = {
         <Breadcrumbs title={title} url={canonicalUrl} />
       </div>
 
-      <article class="blog-post-article" itemscope itemtype="https://schema.org/Article" data-pagefind-body>
+      <article class="blog-post-article" data-pagefind-body>
         <!-- Post Header -->
         <header class="blog-post-header article-masthead" data-article-masthead>
           <div class="article-masthead__folio" aria-hidden="true" data-pagefind-ignore>
@@ -153,7 +153,6 @@ const articleSchema = {
             <h1
               class="blog-post-title"
               transition:name={`post-title-${currentSlug}`}
-              itemprop="headline"
               data-pagefind-meta="title"
             >
               {title}
@@ -220,7 +219,7 @@ const articleSchema = {
         <!-- Post Content -->
         <div class:list={['article-reading-layout', { 'article-reading-layout--with-toc': tableOfContentsHeadings.length > 0 }]}>
           {tableOfContentsHeadings.length > 0 && <ArticleTableOfContents headings={tableOfContentsHeadings} />}
-          <div class="blog-post-content prose mdx-content" itemprop="articleBody">
+          <div class="blog-post-content prose mdx-content">
             <Content />
           </div>
         </div>
@@ -229,7 +228,7 @@ const articleSchema = {
         <footer class="blog-post-footer">
           <div>
             <a
-              href="/blog/"
+              href="/blog"
               class="blog-post-back__link"
             >
               <svg
@@ -248,7 +247,6 @@ const articleSchema = {
             </a>
 
             <div class="article-date-record">
-              <meta itemprop="dateModified" content={displayDate.toISOString()} />
               <span>{dateLabel}</span>
               <time datetime={displayDate.toISOString()}>{formatArticleDate(displayDate)}</time>
             </div>
@@ -259,7 +257,7 @@ const articleSchema = {
       <div class="blog-post-after" aria-labelledby="article-continuation-title">
         <header class="article-continuation__header" data-pagefind-ignore>
           <h2 id="article-continuation-title">After this note</h2>
-          <a href="/blog/" class="article-continuation__all">
+          <a href="/blog" class="article-continuation__all">
             Browse all writing
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />

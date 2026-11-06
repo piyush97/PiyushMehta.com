@@ -123,7 +123,7 @@ const readingPaths = readingPathConfigs.map((path) => ({
       ...step,
       title: post.data.title,
       description: createExcerpt(post),
-      href: `/blog/${step.slug}/`,
+      href: `/blog/${step.slug}`,
       tags: post.data.tags ?? [],
       readingTime: calculateReadingTime(post),
     };
@@ -176,6 +176,7 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
       </ul>
     </div>
   </EditorialHeader>
+
 
   <section class="writing-featured" aria-label="Featured writing">
     <SectionHeader
@@ -279,9 +280,9 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
       description="Evaluating engineering help? Explore consulting services, review project case studies, or read the résumé."
     />
     <p class="archive-route-links">
-      <a href="/services/">Consulting services</a>
-      <a href="/projects/">Case studies</a>
-      <a href="/resume/">Résumé</a>
+      <a href="/services">Consulting services</a>
+      <a href="/projects">Case studies</a>
+      <a href="/resume">Résumé</a>
     </p>
     <div data-reveal data-reveal-delay="90">
       <BlogFilter posts={postsForFilter} />
