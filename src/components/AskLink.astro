@@ -9,7 +9,7 @@ interface Props {
   class?: string;
 }
 const { q, label, class: className = '' } = Astro.props;
-const href = q ? `/ask/?q=${encodeURIComponent(q)}` : '/ask/';
+const href = q ? `/ask#q=${encodeURIComponent(q)}` : '/ask';
 ---
 
 <a class={`ask-link ${className}`} href={href} data-ask-link>

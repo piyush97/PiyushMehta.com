@@ -54,6 +54,19 @@ async function read(res: Response) {
 }
 
 describe('runChat', () => {
+  it('times out a stalled provider and falls back before emitting an answer', async () => {
+    const stalled = new MockLanguageModelV4({
+      doStream: ({ abortSignal }) => new Promise<never>((_resolve, reject) => {
+        abortSignal?.addEventListener('abort', () => reject(abortSignal.reason), { once: true });
+      }),
+    });
+    const res = await runChat('hello', [], {
+      models: [{ name: 'stalled', model: stalled }, { name: 'fallback', model: model({ deltas: ['Hi!'] }) }],
+      providerTimeoutMs: 10,
+    });
+    assert.equal((await read(res)).text, 'Hi!');
+  });
+
   it('uses a dedicated classifier before the answer model', async () => {
     const answer = model({ classifyFail: new Error('answer model must not classify'), deltas: ['Piyush works at Tundra.'] });
     const res = await runChat('what does he do', [], {

@@ -6,6 +6,10 @@ import { buildMessages, contextBlock, systemPrompt } from '../src/utils/chat/pro
 const C = 'CANARY-abcd1234';
 
 describe('checkOutput', () => {
+  it('rejects insecure and non-HTTPS Markdown destinations', () => {
+    for (const link of ['javascript:alert(1)', 'data:text/html,hello', '//piyushmehta.com/about', 'http://piyushmehta.com/about'])
+      assert.equal(checkOutput(`[link](${link})`, C), 'url', link);
+  });
   it('passes normal answers with allowlisted links', () => {
     assert.equal(checkOutput('See [FocusTube](https://piyushmehta.com/blog/building-focustube-typesafe-jev).', C), null);
     assert.equal(checkOutput('Code: https://github.com/piyush97', C), null);

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { HANDOFF_KEY, parseHandoff } from '../utils/contact-handoff';
+import { MAX_NAME, MAX_EMAIL, MAX_SUBJECT, MAX_MESSAGE } from '../utils/contact';
+import { requestTurnstileToken } from '../utils/turnstile';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -19,6 +21,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
   const [status, setStatus] = useState<Status>('idle');
   const [serverError, setServerError] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
+  const turnstileHost = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const submittingRef = useRef(false);
 
@@ -64,10 +67,17 @@ export default function ContactForm({ className = '' }: { className?: string }) 
     setServerError('');
 
     try {
+      const config = await fetch('/api/chat/session', { signal: AbortSignal.timeout(10_000) });
+      if (!config.ok) throw new Error('Verification unavailable.');
+      const { siteKey } = (await config.json()) as { siteKey?: unknown };
+      if (typeof siteKey !== 'string' || !turnstileHost.current)
+        throw new Error('Verification unavailable.');
+      const token = await requestTurnstileToken(turnstileHost.current, siteKey, 'contact-form');
       const res = await fetch('/api/contact', {
         method: 'POST',
+        signal: AbortSignal.timeout(35_000),
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(fields),
+        body: JSON.stringify({ ...fields, token }),
       });
 
       const data = (await res.json()) as { ok?: boolean; error?: string };
@@ -80,8 +90,12 @@ export default function ContactForm({ className = '' }: { className?: string }) 
 
       setStatus('success');
       setFields(EMPTY);
-    } catch {
-      setServerError('Network error. Check your connection and try again.');
+    } catch (error) {
+      setServerError(
+        error instanceof Error && error.message.startsWith('Verification')
+          ? `${error.message} Retry or use an email link below.`
+          : 'Network error. Check your connection and try again.',
+      );
       setStatus('error');
     } finally {
       submittingRef.current = false;
@@ -120,6 +134,8 @@ export default function ContactForm({ className = '' }: { className?: string }) 
   return (
     <form
       ref={formRef}
+      method="post"
+      action="/api/contact"
       onSubmit={handleSubmit}
       noValidate
       aria-busy={status === 'sending'}
@@ -141,6 +157,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           <label htmlFor="cf-name">Name</label>
           <input
             id="cf-name"
+            maxLength={MAX_NAME}
             name="name"
             type="text"
             required
@@ -162,6 +179,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           <label htmlFor="cf-email">Email</label>
           <input
             id="cf-email"
+            maxLength={MAX_EMAIL}
             name="email"
             type="email"
             required
@@ -184,6 +202,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
         <label htmlFor="cf-subject">Subject</label>
         <input
           id="cf-subject"
+          maxLength={MAX_SUBJECT}
           name="subject"
           type="text"
           required
@@ -204,6 +223,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
         <label htmlFor="cf-message">Message</label>
         <textarea
           id="cf-message"
+          maxLength={MAX_MESSAGE}
           name="message"
           rows={6}
           required
@@ -220,6 +240,8 @@ export default function ContactForm({ className = '' }: { className?: string }) 
         )}
       </div>
 
+      <div ref={turnstileHost} />
+      {status === 'sending' && <p role="status">Verifying your browser and sending the message…</p>}
       {status === 'error' && (
         <p className="contact-form__server-error" role="alert">
           {serverError}

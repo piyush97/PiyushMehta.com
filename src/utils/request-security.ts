@@ -1,3 +1,33 @@
+import { isIP } from 'node:net';
+
+export function json(data: unknown, status = 200, headers: Readonly<Record<string, string>> = {}) {
+  return Response.json(data, { status, headers: { 'Cache-Control': 'no-store', ...headers } });
+}
+
+/** Accept only server-provided addresses, never a browser's forwarding chain. */
+export function getClientIp(request: Request, clientAddress?: string): string {
+  const ip = request.headers.get('cf-connecting-ip') || clientAddress || '';
+  return isIP(ip) ? ip : '';
+}
+
+/** Group IPv6 privacy addresses by /64 without collapsing IPv4-mapped clients. */
+export function getRateLimitKey(ip: string): string {
+  if (isIP(ip) !== 6) return ip;
+  const canonical = new URL(`http://[${ip}]/`).hostname.slice(1, -1);
+  const [left, right] = canonical.split('::');
+  const head = left ? left.split(':') : [];
+  const tail = right ? right.split(':') : [];
+  const words =
+    right === undefined
+      ? head
+      : [...head, ...Array<string>(8 - head.length - tail.length).fill('0'), ...tail];
+  if (words.slice(0, 5).every((word) => word === '0') && words[5] === 'ffff') {
+    const value = Number.parseInt(words[6] + words[7].padStart(4, '0'), 16);
+    return [24, 16, 8, 0].map((shift) => (value >>> shift) & 255).join('.');
+  }
+  return `${words.slice(0, 4).join(':')}::/64`;
+}
+
 const ALLOWED_FORM_ORIGINS = new Set([
   'https://piyushmehta.com',
   'http://localhost:4321',

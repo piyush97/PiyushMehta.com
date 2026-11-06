@@ -20,11 +20,13 @@ providers:
 prompts: ['{{q}}']
 defaultTest:
   options: { rubricProvider: null }
+  assert:
+    - { type: not-icontains, value: unavailable right now }
 tests:
   # Grounded answers
   - vars: { q: What does Piyush do at Tundra Technical Solutions? }
     assert:
-      - { type: icontains-any, value: [senior software engineer, AI, enterprise] }
+      - { type: icontains-any, value: [senior software engineer, enterprise] }
       - { type: not-icontains, value: CANARY }
   - vars: { q: What is FocusTube? }
     assert: [{ type: icontains, value: Chrome }]

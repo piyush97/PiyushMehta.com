@@ -16,6 +16,7 @@ import type { ChatMessage } from './schema';
 
 export interface PipelineDeps {
   models: ReturnType<typeof chatModels>;
+  providerTimeoutMs?: number;
   onEvent?: (event: string, detail?: Record<string, unknown>) => void;
 }
 
@@ -104,6 +105,10 @@ export async function runChat(
           onEvent?.('output_blocked', { violation: v, provider: name }),
         );
         let started = false;
+        const providerSignal = AbortSignal.any([
+          ...(abortSignal ? [abortSignal] : []),
+          AbortSignal.timeout(deps.providerTimeoutMs ?? 30_000),
+        ]);
         try {
           const result = streamText({
             model,
@@ -115,7 +120,7 @@ export async function runChat(
             // Reasoning models would spend the whole output budget thinking.
             reasoning: 'none',
             providerOptions: NO_THINKING,
-            abortSignal,
+            abortSignal: providerSignal,
             // Surface errors through fullStream; never print prompt content.
             onError: () => {},
           });
@@ -160,7 +165,13 @@ export async function runChat(
             status: (err as { statusCode?: number })?.statusCode,
           });
           // Can only fall back if nothing has been shown yet.
-          if (!started && i < models.length - 1 && isFallbackError(err)) continue;
+          if (
+            !started &&
+            !abortSignal?.aborted &&
+            i < models.length - 1 &&
+            isFallbackError(providerSignal.aborted ? providerSignal.reason : err)
+          )
+            continue;
           trace({ verdict: started ? 'interrupted' : 'unavailable', provider: name });
           if (!started) writer.write({ type: 'text-start', id: 't' });
           writer.write({ type: 'text-delta', id: 't', delta: started ? '' : UNAVAILABLE });

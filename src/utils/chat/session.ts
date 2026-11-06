@@ -1,3 +1,6 @@
+import { getRateLimitKey } from '../request-security';
+import { captureException } from '@sentry/astro';
+
 /** Turnstile verification. Returns true only on an explicit success from Cloudflare. */
 export const TURNSTILE_ACTION = 'chat-session';
 
@@ -8,6 +11,7 @@ export async function verifyTurnstile(
   ip: string,
   expectedHostname: string,
   fetchFn: typeof fetch = fetch,
+  expectedAction = TURNSTILE_ACTION,
 ): Promise<boolean> {
   if (!token || token.length > 2048 || !expectedHostname) return false;
   try {
@@ -17,14 +21,16 @@ export async function verifyTurnstile(
       body: new URLSearchParams({ secret, response: token, remoteip: ip }),
       signal: AbortSignal.timeout(10_000),
     });
-    if (!res.ok) return false;
+    if (!res.ok) {
+      captureException(new Error('Turnstile verification unavailable.'));
+      return false;
+    }
     const data = (await res.json()) as { success?: boolean; action?: string; hostname?: string };
     return (
-      data.success === true &&
-      data.action === TURNSTILE_ACTION &&
-      data.hostname === expectedHostname
+      data.success === true && data.action === expectedAction && data.hostname === expectedHostname
     );
   } catch {
+    captureException(new Error('Turnstile verification unavailable.'));
     return false;
   }
 }
@@ -52,7 +58,7 @@ export const SESSION_TTL_MS = 30 * 60 * 1000;
 /** Token format: `<expiryMs>.<ipHash>.<sig>`; bound to client IP so it cannot be replayed elsewhere. */
 export async function signSession(secret: string, ip: string, now = Date.now()): Promise<string> {
   const exp = now + SESSION_TTL_MS;
-  const ipHash = (await hmac(secret, `ip:${ip}`)).slice(0, 16);
+  const ipHash = (await hmac(secret, `ip:${getRateLimitKey(ip)}`)).slice(0, 16);
   return `${exp}.${ipHash}.${await hmac(secret, `${exp}.${ipHash}`)}`;
 }
 
@@ -66,7 +72,7 @@ export async function verifySession(
   if (!exp || !ipHash || !sig || !/^\d{10,15}$/.test(exp)) return false;
   if (Number(exp) < now) return false;
   const expectedSig = await hmac(secret, `${exp}.${ipHash}`);
-  const expectedIp = (await hmac(secret, `ip:${ip}`)).slice(0, 16);
+  const expectedIp = (await hmac(secret, `ip:${getRateLimitKey(ip)}`)).slice(0, 16);
   return timingSafeEqual(sig, expectedSig) && timingSafeEqual(ipHash, expectedIp);
 }
 

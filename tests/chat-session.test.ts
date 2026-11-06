@@ -5,6 +5,11 @@ import { signSession, verifySession, verifyTurnstile, SESSION_TTL_MS } from '../
 const S = 'test-secret-test-secret-test-secret';
 
 describe('session tokens', () => {
+  it('keeps a session bound to its IPv6 /64 across privacy-address changes', async () => {
+    const token = await signSession(S, '2001:db8:1:2::1');
+    assert.equal(await verifySession(S, token, '2001:db8:1:2::ffff'), true);
+    assert.equal(await verifySession(S, token, '2001:db8:1:3::1'), false);
+  });
   it('verifies a fresh token for the same ip', async () => {
     const t = await signSession(S, '1.2.3.4');
     assert.equal(await verifySession(S, t, '1.2.3.4'), true);
@@ -23,6 +28,11 @@ describe('session tokens', () => {
 });
 
 describe('verifyTurnstile', () => {
+  it('separates contact proofs from chat-session proofs', async () => {
+    const contact = (async () => Response.json({ success: true, action: 'contact-form', hostname: 'piyushmehta.com' })) as typeof fetch;
+    assert.equal(await verifyTurnstile('s', 't', 'ip', 'piyushmehta.com', contact), false);
+    assert.equal(await verifyTurnstile('s', 't', 'ip', 'piyushmehta.com', contact, 'contact-form'), true);
+  });
   const ok = { success: true, action: 'chat-session', hostname: 'piyushmehta.com' };
   const f =
     (body: unknown, good = true): typeof fetch =>
