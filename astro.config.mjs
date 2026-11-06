@@ -67,6 +67,7 @@ export default defineConfig({
     },
     assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp'],
     resolve: {
+      dedupe: ['react', 'react-dom'],
       alias: {
         '@': new URL('./src', import.meta.url).pathname,
         '@/components': new URL('./src/components', import.meta.url).pathname,

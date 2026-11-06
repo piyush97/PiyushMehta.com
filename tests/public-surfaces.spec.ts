@@ -46,6 +46,13 @@ test.describe('redesigned public surfaces', () => {
   });
 
   test('contact puts the form first and announces a successful submission', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.route('**/api/chat/session', route => route.fulfill({ json: { siteKey: 'test-public-key' } }));
+    await page.route('https://challenges.cloudflare.com/**', route => route.fulfill({
+      contentType: 'text/javascript',
+      body: `window.turnstile={render:(el,o)=>{window.__cfCb=o.callback;return 'contact'},execute:()=>window.__cfCb('test-proof'),remove(){},reset(){}}`,
+    }));
     await page.route('**/api/contact', (route) =>
       route.fulfill({
         status: 200,
@@ -67,8 +74,11 @@ test.describe('redesigned public surfaces', () => {
 
     const form = page.locator('#contact-form form');
     await expect(form).toBeVisible();
+    await form.scrollIntoViewIfNeeded();
+    await expect(page.locator('astro-island[component-url*="ContactForm"]:not([ssr])')).toBeAttached();
     await form.locator('button[type="submit"]').click();
     await expect(form.locator('#cf-name')).toBeFocused();
+    expect(errors).toEqual([]);
 
     await form.locator('#cf-name').fill('Test Reader');
     await form.locator('#cf-email').fill('reader@example.com');

@@ -5,19 +5,9 @@ import { isAllowedUrl } from '../../utils/chat/guard';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
 
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (el: HTMLElement, opts: Record<string, unknown>) => string;
-      execute: (id: string) => void;
-      reset: (id: string) => void;
-      remove: (id: string) => void;
-    };
-  }
-}
+import { requestTurnstileToken } from '../../utils/turnstile';
 
 const SESSION_REFRESH_MS = 25 * 60 * 1000;
-const TURNSTILE_TIMEOUT_MS = 20_000;
 const HISTORY_KEY = 'ask-piyush:chat:v1';
 const MAX_HISTORY_SIZE = 1_000_000;
 const savedMessages = z.array(
@@ -51,18 +41,6 @@ const savedMessages = z.array(
   }),
 );
 
-function loadTurnstile(): Promise<void> {
-  if (window.turnstile) return Promise.resolve();
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-    s.async = true;
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error('turnstile'));
-    document.head.appendChild(s);
-  });
-}
-
 /** Wraps useChat with Turnstile -> session-token handshake. */
 export function useAskPiyush(siteKey: string) {
   const session = useRef<{ token: string; at: number } | null>(null);
@@ -75,33 +53,20 @@ export function useAskPiyush(siteKey: string) {
     if (cur && Date.now() - cur.at < SESSION_REFRESH_MS) return cur.token;
     pending.current ??= (async () => {
       try {
-        await loadTurnstile();
         const el = host.current;
-        if (!el || !window.turnstile) throw new Error('turnstile');
-        let widgetId: string | undefined;
-        const turnstileToken = await new Promise<string>((resolve, reject) => {
-          const fail = () => reject(new Error('turnstile'));
-          const timer = window.setTimeout(fail, TURNSTILE_TIMEOUT_MS);
-          widgetId = window.turnstile!.render(el, {
-            sitekey: siteKey,
-            action: 'chat-session',
-            size: 'invisible',
-            // Run only when we call execute(); the default runs on render and then warns on our execute().
-            execution: 'execute',
-            callback: (t: string) => {
-              window.clearTimeout(timer);
-              resolve(t);
-            },
-            'error-callback': fail,
-            'timeout-callback': fail,
-            'expired-callback': fail,
-          });
-          window.turnstile!.execute(widgetId);
-        }).finally(() => {
-          if (widgetId) window.turnstile?.remove(widgetId);
-        });
+        if (!el) throw new Error('turnstile');
+        let key = siteKey;
+        if (!key) {
+          const config = await fetch('/api/chat/session', { signal: AbortSignal.timeout(10_000) });
+          if (!config.ok) throw new Error(String(config.status));
+          const data = (await config.json()) as { siteKey?: unknown };
+          if (typeof data.siteKey !== 'string') throw new Error('turnstile');
+          key = data.siteKey;
+        }
+        const turnstileToken = await requestTurnstileToken(el, key, 'chat-session');
         const res = await fetch('/api/chat/session', {
           method: 'POST',
+          signal: AbortSignal.timeout(20_000),
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: turnstileToken }),
         });
@@ -110,8 +75,12 @@ export function useAskPiyush(siteKey: string) {
         session.current = { token, at: Date.now() };
         setVerifyError('');
         return token;
-      } catch {
-        setVerifyError('Could not verify your browser. Reload the page and try again.');
+      } catch (error) {
+        setVerifyError(
+          error instanceof Error && error.message === '503'
+            ? 'Chat is temporarily unavailable. Try again later.'
+            : 'Could not verify your browser. Reload the page and try again.',
+        );
         throw new Error('verify');
       } finally {
         pending.current = null;

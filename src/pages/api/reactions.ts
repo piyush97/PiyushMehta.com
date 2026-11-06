@@ -1,14 +1,19 @@
 import type { APIRoute } from 'astro';
-import { isAllowedFormOrigin, readLimitedText } from '@/utils/request-security';
+import { isAllowedFormOrigin, json, readLimitedText } from '@/utils/request-security';
 import { isPublishedPostSlug, toPublishedPostSlug } from '@/utils/published-posts';
 import { toBlogPostSlug } from '@/utils/blog-recommendations';
-import { createRatelimit, getClientIp, reactionRedis, redis } from '@/utils/redis';
+import {
+  createRatelimit,
+  getClientIp,
+  limitOrUnavailable,
+  reactionRedis,
+  redis,
+} from '@/utils/redis';
 
 export const prerender = false;
 
 const VALID_REACTIONS = ['like', 'helpful', 'insightful', 'bookmark'] as const;
 const MAX_BODY_BYTES = 8 * 1024;
-const JSON_HEADERS = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } as const;
 
 // Counts are a vanity metric: a few seconds of edge staleness is invisible to
 // readers but collapses repeat reads onto one Redis round-trip per PoP.
@@ -18,14 +23,6 @@ const GET_HEADERS = {
 } as const;
 
 const ratelimit = createRatelimit('reactions:ratelimit', 30, '1 m');
-
-function json(
-  data: unknown,
-  status = 200,
-  headers: Readonly<Record<string, string>> = JSON_HEADERS,
-) {
-  return new Response(JSON.stringify(data), { status, headers });
-}
 
 function normalizePostId(value: unknown): string | null {
   if (typeof value !== 'string') return null;
@@ -121,12 +118,10 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   if (!reactionRedis || !ratelimit) return json({ error: 'Reaction service unavailable' }, 503);
 
-  try {
-    const { success } = await ratelimit.limit(getClientIp(request, clientAddress));
-    if (!success) return json({ error: 'Too many requests' }, 429);
-  } catch {
-    return json({ error: 'Rate limit unavailable' }, 503);
-  }
+  const ip = getClientIp(request, clientAddress);
+  if (!ip) return json({ error: 'Client address required.' }, 400);
+  const limitError = await limitOrUnavailable(ratelimit, ip);
+  if (limitError) return limitError;
 
   try {
     const key = `reactions:v1:${postId}`;

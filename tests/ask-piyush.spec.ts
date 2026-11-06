@@ -247,7 +247,7 @@ test.describe('Ask Piyush doorways', () => {
       sent++;
       return route.abort();
     });
-    await page.goto('/ask?q=Tell%20me%20about%20FocusTube');
+    await page.goto('/ask#q=Tell%20me%20about%20FocusTube');
     await expect(page.locator('astro-island[component-url*="AskPiyush"]:not([ssr])')).toBeAttached();
     await expect(page.getByLabel('Your question about Piyush')).toHaveValue('Tell me about FocusTube');
     await expect(page).toHaveURL(/\/ask\/?$/);
@@ -256,7 +256,7 @@ test.describe('Ask Piyush doorways', () => {
 
   test('?q= is capped at the input limit', async ({ page }) => {
     await stubTurnstile(page);
-    await page.goto(`/ask?q=${'x'.repeat(900)}`);
+    await page.goto(`/ask#q=${'x'.repeat(900)}`);
     await expect(page.locator('astro-island[component-url*="AskPiyush"]:not([ssr])')).toBeAttached();
     await expect
       .poll(async () => (await page.getByLabel('Your question about Piyush').inputValue()).length)
@@ -270,7 +270,7 @@ test.describe('Ask Piyush doorways', () => {
   ] as const) {
     test(`${path} links to /ask`, async ({ page }) => {
       await page.goto(path);
-      await expect(page.getByRole('link', { name }).first()).toHaveAttribute('href', /^\/ask\/(\?q=.+)?$/);
+      await expect(page.getByRole('link', { name }).first()).toHaveAttribute('href', /^\/ask(#q=.+)?$/);
     });
   }
 

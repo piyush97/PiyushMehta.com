@@ -26,7 +26,7 @@ const LEAK_PHRASES = [
 export function isAllowedUrl(raw: string): boolean {
   try {
     const u = new URL(raw);
-    if (u.protocol !== 'https:' && u.protocol !== 'http:') return false;
+    if (u.protocol !== 'https:') return false;
     if (u.username || u.password) return false;
     const host = u.hostname.toLowerCase();
     return ALLOWED_LINKS.some(
@@ -54,6 +54,7 @@ export function checkOutput(text: string, canary: string): Violation {
   if (MD_IMAGE_RE.test(text)) return 'image';
   // Markdown autolinks are URLs, not HTML; the URL allowlist below still applies.
   if (HTML_RE.test(text.replace(/<https?:\/\/[^<>\s]+>/gi, ''))) return 'html';
+  for (const m of text.matchAll(/\]\(\s*<?([^\s)>]+)/g)) if (!isAllowedUrl(m[1])) return 'url';
   for (const m of text.match(URL_RE) ?? []) if (!isAllowedUrl(m)) return 'url';
   return null;
 }

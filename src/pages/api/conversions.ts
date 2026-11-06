@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { readLimitedText } from '@/utils/request-security';
 import { isClientEvent, recordConversion, runInBackground } from '@/utils/conversions';
-import { createRatelimit, getClientIp, reactionRedis } from '@/utils/redis';
+import { createRatelimit, getClientIp, limitOrUnavailable, reactionRedis } from '@/utils/redis';
 import { isAllowedFormOrigin } from '@/utils/request-security';
 
 export const prerender = false;
@@ -16,7 +16,12 @@ const status = (code: number) =>
 export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
   if (!isAllowedFormOrigin(request)) return status(403);
 
-  const text = await readLimitedText(request, MAX_BODY_BYTES);
+  let text: string | null;
+  try {
+    text = await readLimitedText(request, MAX_BODY_BYTES);
+  } catch {
+    return status(400);
+  }
   if (text === null) return status(413);
 
   let event: unknown;
@@ -29,7 +34,10 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
 
   // Fail closed: without a limiter any client could inflate totals without bound.
   if (!ratelimit || !reactionRedis) return status(503);
-  if (!(await ratelimit.limit(getClientIp(request, clientAddress))).success) return status(429);
+  const ip = getClientIp(request, clientAddress);
+  if (!ip) return status(400);
+  const limitError = await limitOrUnavailable(ratelimit, ip);
+  if (limitError) return limitError;
 
   runInBackground(locals, recordConversion(reactionRedis, event));
   return status(204);

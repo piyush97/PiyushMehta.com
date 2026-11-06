@@ -9,7 +9,7 @@ import {
   type ConversionEvent,
   type ConversionTotals,
 } from '../utils/conversions';
-import { redis } from '../utils/redis';
+import { createRatelimit, getClientIp, limitOrUnavailable, redis } from '../utils/redis';
 
 export const prerender = false;
 
@@ -25,7 +25,14 @@ try {
   password = undefined;
 }
 password ||= (cfEnv as { STATS_PASSWORD?: string }).STATS_PASSWORD;
-if (!password) return new Response('Stats unavailable.', { status: 503, headers: noStore });
+if (!password || password.length < 32) return new Response('Stats unavailable.', { status: 503, headers: noStore });
+const ip = getClientIp(Astro.request, Astro.clientAddress);
+if (!ip) return new Response('Client address required.', { status: 400, headers: noStore });
+const limitError = await limitOrUnavailable(createRatelimit('ratelimit:stats', 5, '10 m'), ip);
+if (limitError) {
+  for (const [key, value] of Object.entries(noStore)) limitError.headers.set(key, value);
+  return limitError;
+}
 if (!(await checkBasicPassword(Astro.request.headers.get('authorization'), password)))
   return new Response('Password required.', {
     status: 401,

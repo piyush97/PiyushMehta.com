@@ -1,9 +1,10 @@
 import type { APIRoute } from 'astro';
 import { env as cfEnv } from 'cloudflare:workers';
 import { ENV } from 'varlock/env';
-import { isAllowedFormOrigin, readLimitedText } from '@/utils/request-security';
+import { captureException } from '@sentry/astro';
+import { isAllowedFormOrigin, json, readLimitedText } from '@/utils/request-security';
 import { recordConversion, runInBackground } from '@/utils/conversions';
-import { createRatelimit, getClientIp, reactionRedis } from '@/utils/redis';
+import { createRatelimit, getClientIp, limitOrUnavailable, reactionRedis } from '@/utils/redis';
 import { chatModels } from '@/utils/chat/models';
 import { runChat } from '@/utils/chat/pipeline';
 import { MAX_BODY_BYTES, parseChatRequest } from '@/utils/chat/schema';
@@ -15,12 +16,6 @@ export const prerender = false;
 const perMinute = createRatelimit('ratelimit:chat:min', 8, '1 m');
 const perDay = createRatelimit('ratelimit:chat:day', 60, '1 d');
 const globalDay = createRatelimit('ratelimit:chat:global', 600, '1 d');
-
-const json = (data: unknown, status = 200) =>
-  new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
-  });
 
 export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
   try {
@@ -35,13 +30,15 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
       return json({ error: 'Chat unavailable.' }, 503);
 
     const ip = getClientIp(request, clientAddress);
+    if (!ip) return json({ error: 'Client address required.' }, 400);
     const session = request.headers.get('x-chat-session') ?? '';
     if (!(await verifySession(secret, session, ip)))
       return json({ error: 'Session required.' }, 401);
 
     // Sequential so a rejected request never spends the daily or site-wide budget.
-    if (!(await perMinute.limit(ip)).success || !(await perDay.limit(ip)).success)
-      return json({ error: 'Too many requests. Please slow down.' }, 429);
+    const limitError =
+      (await limitOrUnavailable(perMinute, ip)) ?? (await limitOrUnavailable(perDay, ip));
+    if (limitError) return limitError;
 
     let body: unknown;
     try {
@@ -56,7 +53,8 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
     if (question.length === 0 || question.length > MAX_MESSAGE_CHARS)
       return json({ error: `Questions must be 1-${MAX_MESSAGE_CHARS} characters.` }, 422);
     // Site-wide cap is counted last: only valid, rate-allowed questions spend it.
-    if (!(await globalDay.limit('all')).success) return json({ error: 'Chat unavailable.' }, 503);
+    const capError = await limitOrUnavailable(globalDay, 'all');
+    if (capError) return json({ error: 'Chat unavailable.' }, 503, { 'Retry-After': '30' });
     runInBackground(locals, recordConversion(reactionRedis, 'chat_question'));
 
     const models = chatModels({ ai: (cfEnv as { AI?: Ai }).AI, groqKey: ENV.GROQ_API_KEY });
@@ -69,6 +67,7 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
       request.signal,
     );
   } catch (err) {
+    captureException(new Error('Chat request failed.'));
     console.error('[chat] unhandled:', (err as Error)?.name);
     return json({ error: 'Unexpected server error.' }, 500);
   }

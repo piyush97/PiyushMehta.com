@@ -1,3 +1,10 @@
+import { escapeXml as escapeHtml } from './xml';
+
+export const MAX_NAME = 100;
+export const MAX_EMAIL = 254;
+export const MAX_SUBJECT = 150;
+export const MAX_MESSAGE = 5_000;
+
 export interface ContactEmailInput {
   apiKey: string;
   fromAddress: string;
@@ -6,14 +13,6 @@ export interface ContactEmailInput {
   email: string;
   subject: string;
   message: string;
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 }
 
 export async function sendContactEmail(
