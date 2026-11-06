@@ -161,6 +161,10 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     eyebrow="Technical Writing"
     title="How I think through systems in public."
     description="Essays, implementation notes, and field reports about architecture, product engineering, platform reliability, AI workflows, and the human work of making software hold together."
+    actions={[
+      { href: '#archive', label: 'Browse the archive' },
+      { href: '/ask/', label: 'Ask about a note', variant: 'secondary' },
+    ]}
     asideLabel="Writing themes"
   >
     <div slot="aside">
@@ -176,6 +180,22 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
       </ul>
     </div>
   </EditorialHeader>
+
+  <section class="writing-index" id="archive" aria-label="All writing">
+    <SectionHeader
+      eyebrow="Archive"
+      title="Browse the full library."
+      description="Every published note, newest first. Search it, filter by theme, or sort by read time."
+    />
+    <div data-reveal data-reveal-delay="90">
+      <BlogFilter posts={postsForFilter} />
+    </div>
+    <p class="archive-route-links">
+      <a href="/services/">Consulting services</a>
+      <a href="/projects/">Case studies</a>
+      <a href="/resume/">Résumé</a>
+    </p>
+  </section>
 
   <section class="writing-featured" aria-label="Featured writing">
     <SectionHeader
@@ -272,22 +292,6 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     </div>
   </section>
 
-  <section class="writing-index" aria-label="All writing">
-    <SectionHeader
-      eyebrow="Archive"
-      title="Browse the full library."
-      description="Evaluating engineering help? Explore consulting services, review project case studies, or read the résumé."
-    />
-    <p class="archive-route-links">
-      <a href="/services/">Consulting services</a>
-      <a href="/projects/">Case studies</a>
-      <a href="/resume/">Résumé</a>
-    </p>
-    <div data-reveal data-reveal-delay="90">
-      <BlogFilter posts={postsForFilter} />
-    </div>
-  </section>
-
 </Layout>
 
 <style>
@@ -318,6 +322,10 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
   .writing-index {
     width: min(1120px, calc(100% - 2rem));
     margin-inline: auto;
+  }
+
+  .writing-index {
+    scroll-margin-top: 5rem;
   }
 
   .section-heading h2 {

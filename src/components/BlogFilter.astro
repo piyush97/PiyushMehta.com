@@ -67,8 +67,9 @@ const categories = ['all', ...Array.from(new Set(posts.flatMap((post) => post.ca
 
   <div class="results-bar" aria-live="polite">
     <p>
-      Showing <strong data-result-count>{posts.length}</strong> of <strong>{posts.length}</strong>
-      pieces
+      Showing <strong data-result-count>{posts.length}</strong> of <strong
+        data-result-total>{posts.length}</strong
+      > pieces
     </p>
     <div data-active-filters hidden></div>
   </div>
@@ -80,6 +81,10 @@ const categories = ['all', ...Array.from(new Set(posts.flatMap((post) => post.ca
 
   <div class="writing-list" data-writing-list>
     {posts.map((post) => <ArticleIndexRow post={post} />)}
+  </div>
+
+  <div class="load-more-row">
+    <button type="button" class="load-more" data-load-more hidden>Show more notes</button>
   </div>
 </div>
 
@@ -96,13 +101,18 @@ const categories = ['all', ...Array.from(new Set(posts.flatMap((post) => post.ca
       const reset = root.querySelector<HTMLButtonElement>('[data-filter-reset]');
       const list = root.querySelector<HTMLElement>('[data-writing-list]');
       const resultCount = root.querySelector<HTMLElement>('[data-result-count]');
+      const resultTotal = root.querySelector<HTMLElement>('[data-result-total]');
       const activeFilters = root.querySelector<HTMLElement>('[data-active-filters]');
       const emptyState = root.querySelector<HTMLElement>('[data-empty-state]');
+      const loadMore = root.querySelector<HTMLButtonElement>('[data-load-more]');
       const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-post-card]'));
 
       if (!search || !category || !sort || !order || !reset || !list || !resultCount || !activeFilters || !emptyState) {
         continue;
       }
+
+      const PAGE_SIZE = 12;
+      let pageSize = PAGE_SIZE;
 
       const hasOption = (select: HTMLSelectElement, value: string) =>
         Array.from(select.options).some((option) => option.value === value);
@@ -142,6 +152,7 @@ const categories = ['all', ...Array.from(new Set(posts.flatMap((post) => post.ca
         });
 
         let visibleCount = 0;
+        let revealedCount = 0;
 
         for (const card of sortedCards) {
           const searchable = `${card.dataset.title ?? ''} ${card.dataset.excerpt ?? ''} ${card.dataset.categories ?? ''}`;
@@ -149,31 +160,66 @@ const categories = ['all', ...Array.from(new Set(posts.flatMap((post) => post.ca
           const matchesSearch = !query || searchable.includes(query);
           const matchesCategory = selectedCategory === 'all' || categoryValues.includes(selectedCategory);
           const isVisible = matchesSearch && matchesCategory;
+          const isRevealed = isVisible && revealedCount < pageSize;
 
-          card.hidden = !isVisible;
+          card.hidden = !isRevealed;
           list.append(card);
 
           if (isVisible) {
             visibleCount += 1;
+            if (isRevealed) revealedCount += 1;
           }
         }
 
-        resultCount.textContent = String(visibleCount);
+        if (loadMore) {
+          const remaining = visibleCount - revealedCount;
+          loadMore.hidden = remaining <= 0;
+          loadMore.textContent =
+            remaining > PAGE_SIZE
+              ? `Show ${PAGE_SIZE} more notes`
+              : `Show ${remaining} more note${remaining === 1 ? '' : 's'}`;
+        }
+
+        resultCount.textContent = String(revealedCount);
+        if (resultTotal) resultTotal.textContent = String(visibleCount);
         emptyState.hidden = visibleCount > 0;
         list.hidden = visibleCount === 0;
         renderActiveFilters(activeFilters, query, selectedCategory);
         syncFiltersToUrl(query, selectedCategory, sortKey, order.value);
       };
 
-      search.addEventListener('input', applyFilters);
-      category.addEventListener('change', applyFilters);
-      sort.addEventListener('change', applyFilters);
-      order.addEventListener('change', applyFilters);
+      const resetPage = () => {
+        pageSize = PAGE_SIZE;
+      };
+
+      search.addEventListener('input', () => {
+        resetPage();
+        applyFilters();
+      });
+      category.addEventListener('change', () => {
+        resetPage();
+        applyFilters();
+      });
+      sort.addEventListener('change', () => {
+        resetPage();
+        applyFilters();
+      });
+      order.addEventListener('change', () => {
+        resetPage();
+        applyFilters();
+      });
+      loadMore?.addEventListener('click', () => {
+        const firstNew = Number(resultCount.textContent);
+        pageSize += PAGE_SIZE;
+        applyFilters();
+        list.querySelectorAll<HTMLAnchorElement>('[data-post-card]:not([hidden]) h3 a')[firstNew]?.focus();
+      });
       reset.addEventListener('click', () => {
         search.value = '';
         category.value = 'all';
         sort.value = 'date';
         order.value = 'desc';
+        resetPage();
         applyFilters();
         search.focus();
       });

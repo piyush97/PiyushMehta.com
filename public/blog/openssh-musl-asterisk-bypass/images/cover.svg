@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">A shadow field holding one asterisk, matched against crypt() returning one asterisk</title>
+  <desc id="description">Top row shows an sshd password attempt hashed with a borrowed salt, returning a single asterisk. Bottom row shows the shadow field of a passwordless account, also a single asterisk. Both feed a compare that returns true.</desc>
+  <rect width="1200" height="630" fill="#0b1220"/>
+  <text x="80" y="92" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="24" letter-spacing="2">OPENSSH 10.6p2 · CVE-2026-123158</text>
+  <text x="80" y="158" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="52" font-weight="700">One asterisk meant two things</text>
+  <text x="80" y="202" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="26">257 bytes in, root shell out — on musl, without PAM</text>
+
+  <g font-family="ui-monospace, monospace" font-size="22">
+    <rect x="80" y="248" width="470" height="112" rx="10" fill="#131c2e" stroke="#334155" stroke-width="2"/>
+    <text x="108" y="284" fill="#e2e8f0">crypt(257 B, "$6$abc$")</text>
+    <text x="108" y="320" fill="#38bdf8" font-size="20">musl KEY_MAX 256 → "*"</text>
+
+    <rect x="640" y="248" width="480" height="112" rx="10" fill="#131c2e" stroke="#334155" stroke-width="2"/>
+    <text x="668" y="284" fill="#e2e8f0">/etc/shadow · alpine:*:</text>
+    <text x="668" y="320" fill="#f472b6" font-size="20">no password set → "*"</text>
+
+    <rect x="80" y="404" width="1040" height="96" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="2"/>
+    <text x="108" y="445" fill="#94a3b8" font-size="20">strcmp("*", "*") → 0</text>
+    <text x="108" y="479" fill="#f8fafc" font-size="26" font-weight="700">login accepted</text>
+
+    <text x="640" y="445" fill="#94a3b8" font-size="20">fix: strlen(field) &gt;= 4</text>
+    <text x="640" y="479" fill="#38bdf8" font-size="26" font-weight="700">one length check</text>
+  </g>
+
+  <g stroke="#38bdf8" stroke-width="3" fill="none">
+    <path d="M 315 360 L 315 404"/>
+    <path d="M 880 404 L 880 360"/>
+  </g>
+  <g fill="#38bdf8">
+    <path d="M 315 404 l -8 -14 l 16 0 z"/>
+    <path d="M 880 404 l -8 -14 l 16 0 z"/>
+  </g>
+</svg>
