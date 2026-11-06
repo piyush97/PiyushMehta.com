@@ -105,13 +105,19 @@ Never hardcode secrets; add any new variable to `.env.schema` first, then
 
 1. Branch from `main` (e.g. `chore/foo` or `fix/bar`).
 2. Make changes; add/update Playwright tests in `tests/` for behavior changes.
-3. `bun run check` — format, lint, and type checks must pass.
+3. `bun run check && bun run test:unit`: formatting, lint, types and unit tests must pass.
 4. `bun run build` — full pipeline must produce `dist/`.
 5. `bun run check:release` — verify the generated Worker/static artifact boundary and required release files.
 6. Push and open a PR; wait for `ci-cd.yml` (Code Quality → Build Verification → Security Configuration Check) plus CodeQL and Dependency Review to pass.
 7. Merge with **squash**; Cloudflare Workers Builds deploys the `main` commit through the installed GitHub App using `dist/server/wrangler.json`.
-8. After deploy, spot-check the live site: blog post, homepage, and one API route (for example, `/api/reactions`).
+8. After deploy, spot-check the live site: blog post, homepage, and one API route (for example, `/api/reactions`). Verify security discovery against that deployment:
+   ```bash
+   PLAYWRIGHT_BASE_URL=https://piyushmehta.com bunx playwright test tests/portfolio-smoke.spec.ts --project=chromium --grep 'security discovery'
+   ```
 9. Keep runtime application credentials in the Worker's Variables and Secrets settings; GitHub Actions does not receive the Cloudflare deployment token.
+
+Manual `bun run deploy` requires a clean source tree before and after the build.
+Tracked, staged and untracked changes block deployment; Git failures also fail closed.
 
 ## Contact / ownership
 
