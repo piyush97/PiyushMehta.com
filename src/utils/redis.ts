@@ -8,6 +8,9 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis/cloudflare';
 import { ENV } from 'varlock/env';
+import { captureException } from '@sentry/astro';
+import { getRateLimitKey, json } from './request-security';
+export { getClientIp } from './request-security';
 
 function createRedisClient(retries: number) {
   const url = ENV.UPSTASH_REDIS_REST_URL;
@@ -42,10 +45,27 @@ export function createRatelimit(
     redis,
     limiter: Ratelimit.slidingWindow(tokens, window),
     prefix,
+    timeout: 0,
   });
 }
 
-/** Prefer Cloudflare's connecting IP; do not trust user-supplied forwarding headers. */
-export function getClientIp(request: Request, clientAddress?: string): string {
-  return request.headers.get('cf-connecting-ip') || clientAddress || 'anonymous';
+/** Redis failures and SDK timeouts must never grant an allowance. */
+export async function limitOrUnavailable(
+  limiter: Pick<Ratelimit, 'limit'> | null,
+  key: string,
+): Promise<Response | null> {
+  if (!limiter) return json({ error: 'Service unavailable.' }, 503, { 'Retry-After': '30' });
+  try {
+    const result = await limiter.limit(getRateLimitKey(key));
+    if (result.reason === 'timeout')
+      return json({ error: 'Service unavailable.' }, 503, { 'Retry-After': '30' });
+    if (!result.success)
+      return json({ error: 'Too many requests.' }, 429, {
+        'Retry-After': String(Math.max(1, Math.ceil((result.reset - Date.now()) / 1000))),
+      });
+    return null;
+  } catch {
+    captureException(new Error('Rate limit backend unavailable.'));
+    return json({ error: 'Service unavailable.' }, 503, { 'Retry-After': '30' });
+  }
 }

@@ -25,7 +25,7 @@ const {
   priority = false,
   sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
   quality = 80,
-  formats = ['webp', 'avif'],
+  formats = ['avif', 'webp'],
 } = Astro.props;
 
 const generateResponsiveImages = async (imageSrc: ImageMetadata | string) => {
@@ -43,14 +43,6 @@ const generateResponsiveImages = async (imageSrc: ImageMetadata | string) => {
   const baseHeight = height || imageSrc.height;
   const aspectRatio = baseWidth / baseHeight;
   const widths = [320, 640, 768, 1024, 1280, 1536].filter((w) => w <= baseWidth);
-
-  const variants = await Promise.all(
-    widths.map(async (w) => {
-      const h = Math.round(w / aspectRatio);
-      const image = await getImage({ src: imageSrc, width: w, height: h, quality, format: 'webp' });
-      return `${image.src} ${w}w`;
-    })
-  );
 
   const sources = await Promise.all(
     formats.map(async (format) => {
@@ -85,7 +77,7 @@ const generateResponsiveImages = async (imageSrc: ImageMetadata | string) => {
 
   return {
     src: fallbackImage.src,
-    srcset: variants.join(', '),
+    srcset: '',
     sources,
     width: baseWidth,
     height: baseHeight,
@@ -99,7 +91,7 @@ const imageData = await generateResponsiveImages(src);
   imageData.sources.length > 0 ? (
     <picture>
       {imageData.sources.map((source) => <source srcset={source.srcset} type={source.type} sizes={sizes} />)}
-      <img src={imageData.src} srcset={imageData.srcset} alt={alt} class={className}
+      <img src={imageData.src} srcset={imageData.srcset} sizes={sizes} alt={alt} class={className}
         loading={priority ? 'eager' : loading} decoding={priority ? 'async' : 'auto'}
         fetchpriority={priority ? 'high' : undefined} width={imageData.width} height={imageData.height} />
     </picture>

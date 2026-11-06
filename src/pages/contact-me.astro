@@ -23,7 +23,7 @@ export const prerender = true;
     description="Reach out for architecture reviews, AI workflow work, platform delivery, technical writing, or speaking. Best conversations start with context, constraints, and what “good” needs to look like."
     actions={[
       { href: '#contact-form', label: 'Send a message' },
-      { href: '/projects/', label: 'See work first', variant: 'secondary' },
+      { href: '/projects', label: 'See work first', variant: 'secondary' },
     ]}
     asideLabel="Useful first message"
   >
@@ -51,7 +51,8 @@ export const prerender = true;
     />
     <p class="contact-ask"><AskLink label="Ask before you write" q="What kind of work does Piyush take on?" /></p>
     <div class="form-shell">
-      <ContactForm client:load />
+      <ContactForm client:visible />
+      <noscript>JavaScript is required for spam verification. Use an email link below instead.</noscript>
     </div>
   </section>
 

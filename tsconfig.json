@@ -25,7 +25,6 @@
       "@/assets/*": ["./src/assets/*"],
       "@/styles/*": ["./src/styles/*"],
       "@/middleware/*": ["./src/middleware/*"],
-      "@/app/*": ["./src/app/*"],
       "@/scripts/*": ["./scripts/*"]
     }
   },

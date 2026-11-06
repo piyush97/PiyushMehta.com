@@ -1,10 +1,12 @@
+import { unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import cloudflare from '@astrojs/cloudflare';
 import sentry from '@sentry/astro';
 import tailwindcss from '@tailwindcss/vite';
 import varlock from '@varlock/astro-integration';
-import { defineConfig, memoryCache } from 'astro/config';
+import { visit } from 'unist-util-visit';
+import { defineConfig } from 'astro/config';
 
 const isProductionBuild = process.env.NODE_ENV === 'production';
 const hasSentryAuth = Boolean(process.env.SENTRY_AUTH_TOKEN);
@@ -22,21 +24,9 @@ export default defineConfig({
     defaultStrategy: 'hover',
     prefetchOnHover: true,
   },
-  // Astro v7 stable caching — enables Astro.cache.set() on server routes and APIs
-  cache: {
-    provider: memoryCache({ max: 500 }),
-  },
-  // Route-level cache rules for API and content routes
-  routeRules: {
-    '/rss.xml': { headers: { 'Cache-Control': 'public, max-age=3600, s-maxage=3600' } },
-    '/sitemap.xml': { headers: { 'Cache-Control': 'public, max-age=3600, s-maxage=3600' } },
-    '/robots.txt': { headers: { 'Cache-Control': 'public, max-age=86400, s-maxage=86400' } },
-  },
   experimental: {
     // Speculative prerendering of prefetched pages — instant navigation
     clientPrerender: true,
-    // Reuse unchanged prerendered pages between builds when cacheKey + module graph are unchanged
-    incrementalBuild: true,
   },
   // Sessions are not used in this project; skip session runtime wiring to reduce SSR bundle/runtime work
   session: false,
@@ -61,6 +51,23 @@ export default defineConfig({
     react(),
   ],
   markdown: {
+    processor: unified({
+      rehypePlugins: [
+        () => (tree) => {
+          visit(tree, 'element', (node) => {
+            const href = node.properties?.href;
+            if (
+              node.tagName === 'a' &&
+              typeof href === 'string' &&
+              /^\/(?!\/)[^?#]+/.test(href) &&
+              href.split(/[?#]/)[0] !== '/'
+            ) {
+              node.properties.href = href.replace(/\/(?=[?#]|$)/, '');
+            }
+          });
+        },
+      ],
+    }),
     shikiConfig: {
       theme: 'github-dark-dimmed',
       wrap: true,
@@ -77,6 +84,7 @@ export default defineConfig({
     },
     assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp'],
     resolve: {
+      dedupe: ['react', 'react-dom'],
       alias: {
         '@': new URL('./src', import.meta.url).pathname,
         '@/components': new URL('./src/components', import.meta.url).pathname,
@@ -88,7 +96,6 @@ export default defineConfig({
         '@/assets': new URL('./src/assets', import.meta.url).pathname,
         '@/styles': new URL('./src/styles', import.meta.url).pathname,
         '@/middleware': new URL('./src/middleware', import.meta.url).pathname,
-        '@/app': new URL('./src/app', import.meta.url).pathname,
         '@/scripts': new URL('./scripts', import.meta.url).pathname,
       },
     },
@@ -104,53 +111,16 @@ export default defineConfig({
   },
 
   build: {
-    // Incremental static builds currently require concurrency: 1 to use the cache.
+    // Keep content rendering sequential.
     concurrency: 1,
     // Inline small CSS (under 4KB) directly into HTML to reduce render-blocking
     // round-trips on first paint. Layout.css (108KB) stays external so it
     // can be cached and parallel-downloaded.
     inlineStylesheets: 'auto',
-    assetsInlineLimit: 4096,
-    rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          // Core vendor libraries (rarely change, cache for long time)
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('@astrojs/')) {
-              return 'vendor-astro';
-            }
-            if (id.includes('@sentry/')) {
-              return 'vendor-monitoring';
-            }
-            if (id.includes('satori') || id.includes('@resvg')) {
-              return 'vendor-images';
-            }
-            // Other third-party packages
-            return 'vendor-libs';
-          }
-
-          // Application code chunking
-          if (id.includes('/src/components/blog/')) {
-            return 'components-blog';
-          }
-          if (id.includes('CommentSystem') || id.includes('AuthModal')) {
-            return 'components-interactive';
-          }
-          if (id.includes('/src/utils/')) {
-            return 'utils';
-          }
-          if (id.includes('/src/middleware/')) {
-            return 'middleware';
-          }
-        },
-      },
-    },
   },
 
   adapter: cloudflare({
+    remoteBindings: process.env.ASTRO_DEV_BACKGROUND !== '1' && !process.env.CI,
     imageService: {
       build: 'compile',
       runtime: 'passthrough',

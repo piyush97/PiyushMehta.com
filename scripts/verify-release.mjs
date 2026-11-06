@@ -6,10 +6,11 @@ import { pathToFileURL } from 'node:url';
 
 const REQUIRED_CLIENT_FILES = [
   'index.html',
+  'ask/index.html',
   'rss.xml',
   'sitemap.xml',
-  'sitemap-index.xml',
   'robots.txt',
+  '.well-known/security.txt',
   'search/index.html',
   'pagefind/pagefind-entry.json',
   'pagefind/pagefind-ui.js',
@@ -61,6 +62,8 @@ function verifyHeaders(clientDir, errors) {
     'X-Frame-Options',
     'Referrer-Policy',
     'Permissions-Policy',
+    'Cross-Origin-Opener-Policy',
+    'Cross-Origin-Resource-Policy',
   ]) {
     if (!headers.includes(header)) {
       addError(errors, `Static asset headers are missing ${header}`);
@@ -75,6 +78,7 @@ function verifyHeaders(clientDir, errors) {
     '/sitemap.xml',
     '/sitemap-index.xml',
     '/robots.txt',
+    '/.well-known/security.txt',
     '/search/*',
     '/pagefind/*',
     '/og/*',
@@ -137,6 +141,14 @@ export function verifyRelease(root = process.cwd()) {
     }
   }
 
+  const securityPath = join(clientDir, '.well-known/security.txt');
+  if (existsSync(securityPath)) {
+    const expires = readFileSync(securityPath, 'utf8').match(/^Expires:\s*(\S+)/m)?.[1];
+    if (!expires || !Number.isFinite(Date.parse(expires)) || Date.parse(expires) <= Date.now()) {
+      addError(errors, 'Missing, invalid or expired security.txt Expires field');
+    }
+  }
+
   for (const retiredPath of ['newsletter/index.html', 'og/newsletter.png']) {
     if (existsSync(join(clientDir, retiredPath))) {
       addError(errors, `Retired newsletter artifact is still shipped: dist/client/${retiredPath}`);
@@ -168,6 +180,13 @@ export function verifyRelease(root = process.cwd()) {
   // Client source maps contain original sources and are publicly cacheable, so
   // they must only exist transiently while Sentry uploads them.
   if (isDirectory(clientDir)) {
+    for (const entry of readdirSync(clientDir, { recursive: true, withFileTypes: true })) {
+      if (!entry.isFile() || !entry.name.endsWith('.html')) continue;
+      const file = join(entry.parentPath, entry.name);
+      if (/\bhref="\/(?!\/)[^"?#]+\/(?:[?#][^"]*)?"/.test(readFileSync(file, 'utf8'))) {
+        addError(errors, `Internal link has a trailing slash: ${relative(clientDir, file)}`);
+      }
+    }
     const sourceMaps = collectSourceMaps(clientDir);
     if (sourceMaps.length > 0) {
       addError(
@@ -189,6 +208,32 @@ export function verifyRelease(root = process.cwd()) {
   const redirectsPath = join(clientDir, '_redirects');
   if (existsSync(redirectsPath)) {
     const redirects = readFileSync(redirectsPath, 'utf8');
+    let dynamic = false;
+    let staticRules = 0;
+    let dynamicRules = 0;
+    for (const line of redirects.split('\n')) {
+      const from = line.trim().split(/\s+/)[0];
+      if (!from || from.startsWith('#')) continue;
+      // Like Cloudflare, all rules after the first wildcard/placeholder count as dynamic.
+      dynamic ||= /\*|:[A-Za-z]\w*/.test(from);
+      if (dynamic) dynamicRules++;
+      else staticRules++;
+    }
+    if (staticRules > 2000) {
+      addError(
+        errors,
+        `_redirects exceeds Cloudflare's limit of 2000 static rules (${staticRules})`,
+      );
+    }
+    if (dynamicRules > 100) {
+      addError(
+        errors,
+        `_redirects exceeds Cloudflare's limit of 100 dynamic rules (${dynamicRules}); move exact rules before wildcards/placeholders`,
+      );
+    }
+    if (!/^\/security\.txt\s+\/\.well-known\/security\.txt\s+301\s*$/m.test(redirects)) {
+      addError(errors, 'Missing canonical security.txt redirect');
+    }
     for (const retiredPath of ['/newsletter', '/newsletter/', '/og/newsletter.png']) {
       if (!redirects.includes(retiredPath)) {
         addError(errors, `Retired newsletter URL is missing a redirect: ${retiredPath}`);

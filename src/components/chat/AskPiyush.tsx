@@ -1,7 +1,7 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { ChatTrace, ChatUIMessage } from '../../utils/chat/pipeline';
 import { HANDOFF_KEY, buildHandoff } from '../../utils/contact-handoff';
-import Answer from './Answer';
+const Answer = lazy(() => import('./Answer'));
 import { useAskPiyush } from './useAskPiyush';
 
 const MAX = 500;
@@ -141,9 +141,9 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
   const activeIsLive = busy && active?.id === answers.at(-1)?.id;
   const waiting = busy && messages.at(-1)?.role === 'user';
 
-  // Doorways link here as /ask?q=...; fill the box but never send, so a link cannot spend quota.
+  // Fragments never reach server logs. Prefill only; a link cannot spend quota.
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get('q');
+    const q = new URLSearchParams(window.location.hash.slice(1)).get('q');
     if (!q) return;
     setInput(q.slice(0, MAX));
     inputRef.current?.focus({ preventScroll: true });
@@ -221,7 +221,9 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
                 className={`ask__a${isActive ? ' is-active' : ''}`}
                 aria-label="Answer"
               >
-                <Answer text={text} />
+                <Suspense fallback={<p>{text}</p>}>
+                  <Answer text={text} />
+                </Suspense>
                 {trace && (
                   <p className="ask__trace">
                     <span>{SCOPE_LABEL[trace.scope]}</span>
@@ -246,7 +248,7 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
                 {trace?.verdict === 'answered' && messages[i - 1]?.role === 'user' && (
                   <a
                     className="ask__contact"
-                    href="/contact-me/#contact-form"
+                    href="/contact-me#contact-form"
                     onClick={() => {
                       try {
                         const handoff = buildHandoff(

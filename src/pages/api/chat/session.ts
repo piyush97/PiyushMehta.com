@@ -1,18 +1,18 @@
 import type { APIRoute } from 'astro';
 import { ENV } from 'varlock/env';
-import { isAllowedFormOrigin } from '@/utils/request-security';
-import { createRatelimit, getClientIp } from '@/utils/redis';
-import { readLimitedText } from '@/utils/chat/schema';
+import { isAllowedFormOrigin, json, readLimitedText } from '@/utils/request-security';
+import { createRatelimit, getClientIp, limitOrUnavailable } from '@/utils/redis';
 import { signSession, verifyTurnstile } from '@/utils/chat/session';
 
 export const prerender = false;
 
 const ratelimit = createRatelimit('ratelimit:chat-session', 20, '1 h');
-const json = (data: unknown, status = 200) =>
-  new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
-  });
+
+/** The public widget key remains runtime-bound; no secret or write is exposed by GET. */
+export const GET: APIRoute = async () => {
+  const siteKey = ENV.PUBLIC_TURNSTILE_SITE_KEY;
+  return siteKey ? json({ siteKey }) : json({ error: 'Verification unavailable.' }, 503);
+};
 
 /** Exchanges a Turnstile token for a short-lived, IP-bound chat session token. */
 export const POST: APIRoute = async ({ request, clientAddress }) => {
@@ -22,8 +22,9 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   if (!secret || !turnstile || !ratelimit) return json({ error: 'Chat unavailable.' }, 503);
 
   const ip = getClientIp(request, clientAddress);
-  const { success } = await ratelimit.limit(ip);
-  if (!success) return json({ error: 'Too many requests.' }, 429);
+  if (!ip) return json({ error: 'Client address required.' }, 400);
+  const limitError = await limitOrUnavailable(ratelimit, ip);
+  if (limitError) return limitError;
 
   let token: unknown;
   try {

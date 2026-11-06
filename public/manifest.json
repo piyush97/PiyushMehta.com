@@ -5,7 +5,7 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1a2e",
-  "theme_color": "#ffd700",
+  "theme_color": "#1a1a2e",
   "orientation": "portrait-primary",
   "scope": "/",
   "categories": ["technology", "developer", "portfolio"],

@@ -55,7 +55,7 @@ function copyDirRecursive(src, dest) {
 }
 
 // Compare public copies against their source images without touching the filesystem.
-function collectImageDrift(srcDir, destDir) {
+function collectImageDrift(srcDir, destDir, references) {
   const drift = [];
 
   for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
@@ -63,7 +63,7 @@ function collectImageDrift(srcDir, destDir) {
     const destPath = path.join(destDir, entry.name);
 
     if (entry.isDirectory()) {
-      drift.push(...collectImageDrift(srcPath, destPath));
+      drift.push(...collectImageDrift(srcPath, destPath, references));
       continue;
     }
 
@@ -81,6 +81,10 @@ function collectImageDrift(srcDir, destDir) {
       throw error;
     }
 
+    const publicPath = `/${path.relative(PUBLIC_DIR, destPath).split(path.sep).join('/')}`;
+    if (references.includes(publicPath) && publicCopy.length > 300 * 1024) {
+      drift.push(`referenced image exceeds 300 KiB: ${rel(destPath)}`);
+    }
     if (!fs.readFileSync(srcPath).equals(publicCopy)) {
       drift.push(`stale public copy: ${rel(destPath)}`);
     }
@@ -153,7 +157,7 @@ async function migrateImages() {
     console.log(`📁 Processing ${blogDir}...`);
 
     if (VERIFY_ONLY) {
-      drift.push(...collectImageDrift(imagesDir, targetImageDir));
+      drift.push(...collectImageDrift(imagesDir, targetImageDir, source));
 
       if (migratedImagePaths(source, blogDir) !== source) {
         drift.push(`un-migrated image paths: ${rel(mdxFile)}`);

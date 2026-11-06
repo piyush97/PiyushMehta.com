@@ -132,7 +132,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     stack: ['TypeSafe Jev', 'System One', 'TypeScript', 'Cloudflare Workers', 'Manifest V3'],
     links: [
-      { label: 'Technical article', href: '/blog/building-focustube-typesafe-jev/' },
+      { label: 'Technical article', href: '/blog/building-focustube-typesafe-jev' },
       { label: 'GitHub', href: 'https://github.com/piyush97/focus-tube' },
     ],
   },
@@ -167,7 +167,7 @@ export const caseStudies: CaseStudy[] = [
       'Turnstile',
     ],
     links: [
-      { label: 'Technical article', href: '/blog/roasttube-ai-roast-youtube-history/' },
+      { label: 'Technical article', href: '/blog/roasttube-ai-roast-youtube-history' },
       { label: 'Live site', href: 'https://roasttube.piyushmehta.com' },
     ],
   },
@@ -194,7 +194,7 @@ export const caseStudies: CaseStudy[] = [
     stack: ['Cloudflare Workers', 'Workers AI', 'D1', 'Queues', 'Hono', 'TypeScript'],
     links: [
       { label: 'Live site', href: 'https://understory.piyushmehta.com/' },
-      { label: 'Technical article', href: '/blog/understory-engineering-blogs-explained/' },
+      { label: 'Technical article', href: '/blog/understory-engineering-blogs-explained' },
       { label: 'GitHub', href: 'https://github.com/piyush97/understory' },
     ],
   },

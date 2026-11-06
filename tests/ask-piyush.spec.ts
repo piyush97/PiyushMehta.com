@@ -20,7 +20,7 @@ async function stubTurnstile(page: Page) {
     }),
   );
   await page.route('**/api/chat/session', (route) =>
-    route.fulfill({ json: { session: 'sess-token' } }),
+    route.fulfill({ json: route.request().method() === 'GET' ? { siteKey: 'test-public-key' } : { session: 'sess-token' } }),
   );
 }
 
@@ -73,7 +73,7 @@ test.describe('Ask Piyush', () => {
     await openAsk(page);
     await page.getByRole('button', { name: 'Tell me about FocusTube' }).click();
     await page.getByRole('link', { name: 'Write to Piyush about this' }).click();
-    await expect(page).toHaveURL(/\/contact-me\/#contact-form$/);
+    await expect(page).toHaveURL(/\/contact-me#contact-form$/);
     await expect(page.locator('#cf-subject')).toHaveValue('Following up from Ask Piyush');
     const message = page.locator('#cf-message');
     await expect(message).toHaveValue(/Tell me about FocusTube/);
@@ -136,11 +136,10 @@ test.describe('Ask Piyush', () => {
   });
 
   test('continues a long saved chat within the API message limit', async ({ page }) => {
-    await openAsk(page);
-    await page.evaluate(() => localStorage.setItem('ask-piyush:chat:v1', JSON.stringify(
+    await page.addInitScript(() => localStorage.setItem('ask-piyush:chat:v1', JSON.stringify(
       Array.from({ length: 42 }, (_, i) => ({ id: String(i), role: i % 2 ? 'assistant' : 'user', parts: [{ type: 'text', text: i % 2 ? 'Piyush works at Tundra.' : 'What does he do?' }] })),
     )));
-    await page.reload();
+    await openAsk(page);
     await expect(page.getByRole('article', { name: 'You asked' })).toHaveCount(21);
     let sent = 0;
     let bytes = 0;
@@ -247,7 +246,7 @@ test.describe('Ask Piyush doorways', () => {
       sent++;
       return route.abort();
     });
-    await page.goto('/ask?q=Tell%20me%20about%20FocusTube');
+    await page.goto('/ask#q=Tell%20me%20about%20FocusTube');
     await expect(page.locator('astro-island[component-url*="AskPiyush"]:not([ssr])')).toBeAttached();
     await expect(page.getByLabel('Your question about Piyush')).toHaveValue('Tell me about FocusTube');
     await expect(page).toHaveURL(/\/ask\/?$/);
@@ -256,7 +255,7 @@ test.describe('Ask Piyush doorways', () => {
 
   test('?q= is capped at the input limit', async ({ page }) => {
     await stubTurnstile(page);
-    await page.goto(`/ask?q=${'x'.repeat(900)}`);
+    await page.goto(`/ask#q=${'x'.repeat(900)}`);
     await expect(page.locator('astro-island[component-url*="AskPiyush"]:not([ssr])')).toBeAttached();
     await expect
       .poll(async () => (await page.getByLabel('Your question about Piyush').inputValue()).length)
@@ -270,18 +269,18 @@ test.describe('Ask Piyush doorways', () => {
   ] as const) {
     test(`${path} links to /ask`, async ({ page }) => {
       await page.goto(path);
-      await expect(page.getByRole('link', { name }).first()).toHaveAttribute('href', /^\/ask\/(\?q=.+)?$/);
+      await expect(page.getByRole('link', { name }).first()).toHaveAttribute('href', /^\/ask(#q=.+)?$/);
     });
   }
 
   test('navbar has an Ask button on desktop', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/about/');
-    await expect(page.locator('.ask-button')).toHaveAttribute('href', '/ask/');
+    await expect(page.locator('.ask-button')).toHaveAttribute('href', '/ask');
   });
 
   test('search page offers the Ask fallback', async ({ page }) => {
     await page.goto('/search/');
-    await expect(page.getByRole('link', { name: /ask piyush instead/i })).toHaveAttribute('href', '/ask/');
+    await expect(page.getByRole('link', { name: /ask piyush instead/i })).toHaveAttribute('href', '/ask');
   });
 });
