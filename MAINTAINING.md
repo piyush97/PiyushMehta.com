@@ -1,120 +1,99 @@
-# MAINTAINING.md — piyushmehta.com
+# Maintaining piyushmehta.com
 
-Maintenance runbook for the [PiyushMehta.com](https://github.com/piyush97/PiyushMehta.com)
-repository — personal website and blog for Piyush Mehta, built with **Astro 7.x**
-(SSR), **TypeScript 6.x**, **React 19** islands, **MDX**, **Tailwind CSS v4**,
-deployed to **Cloudflare Workers** with prerendered Static Assets and lightweight API routes.
+Astro 7, TypeScript 7, React 19 islands and Tailwind CSS 4 on Cloudflare Workers.
+Most pages are prerendered; API routes and runtime-bound pages execute in the Worker.
 
 ## Local development
 
-Runtime: **Bun** is the only supported package manager (`packageManager: bun@1.3.13`).
+Use the Bun version in `package.json#packageManager` and Node version in `.node-version`.
+`bun.lock` is the dependency lockfile.
 
 ```bash
-bun install          # install dependencies (bun.lock is the lockfile)
-bun run dev          # start dev server on http://localhost:4321
-bun run preview      # preview a production build
+bun install --frozen-lockfile
+bun run dev
+bun run preview
 ```
 
-## CI commands
-
-The repo's gate is `bun run check` (the `ci-cd.yml` workflow runs it before the
-build). Run it locally before pushing:
+## Checks and tests
 
 ```bash
-bun run check        # astro sync + varlock typegen + Vite+ format/lint/type checks (read-only)
-bun run check:write  # same, but auto-fix
-bun run build        # full pipeline: typegen → images → astro → pagefind → sitemap → RSS
-bun run lint         # Oxlint only
-bun run format       # Oxfmt only
+bun run check        # Astro sync, Varlock codegen, format/lint/type checks
+bun run lint
+bun run format
+bun run test:unit
+bun run build
+bun run check:release
+bunx playwright test --project=chromium
+bun run test         # unit tests, then the Playwright suite
 ```
 
-The full build is orchestrated by `scripts/build.mjs` (typegen, post manifest, image
-migration, required résumé asset copy, Astro build, legacy redirects, OG/discovery
-checks, Pagefind index, and release artifact validation). The canonical PDF source is
-`src/assets/resume.pdf`; run `bun run resume:generate` locally only when the résumé
-content changes.
+The build runs `scripts/build.mjs`: environment types, published-post manifest,
+image processing, résumé asset copy, Astro, legacy redirects, discovery checks,
+Pagefind and release validation. Feeds and sitemaps are Astro build outputs.
+`src/assets/resume.pdf` is the canonical résumé; run `bun run resume:generate`
+only after changing its source.
 
-### Tests (Playwright)
+Unit tests use Bun's runner for the `node:test` files in `tests/*.test.ts`.
+Playwright runs `*.spec.ts`. Do not substitute `bun build` for `bun run build`.
 
-```bash
-bun run test             # full Playwright suite (3 browsers + 2 mobile)
-bun run test:smoke       # smoke tests only
-bun run test -- --project=chromium   # single browser
-bun run test:report      # HTML report
-```
+## Dependency updates
 
-Playwright is the only test framework — no Jest/Vitest. E2E is currently
-commented out in `ci-cd.yml`; run tests locally after changes that affect
-rendering or interactivity.
+Dependabot is the only dependency updater. `.github/dependabot.yml` schedules
+Bun-compatible `npm` and `github-actions` updates for Monday at 06:00 UTC.
+Minor/patch package updates share the `bun-minor-patch` group; major updates stay
+separate. Each ecosystem permits five open PRs.
 
-## Dependency updates — KEEP BOTH mechanisms
+The former bulk `bun update` workflow was removed: its write-capable token and
+`GITHUB_TOKEN` PRs bypassed the intended PR-triggered validation path.
 
-Two complementary automation tracks are intentionally kept:
-
-| Mechanism | Cadence | Scope | PR shape |
-|---|---|---|---|
-| **Dependabot** (`.github/dependabot.yml`) | Weekly, Mon 06:00 UTC | `npm` ecosystem (handles `bun.lock`) + `github-actions` | Granular per-package PRs, grouped minor+patch into `bun-minor-patch`, labeled `dependencies` |
-| **`dependency-updates.yml` workflow** | Weekly, Mon 09:00 UTC | Bulk `bun update` | Single PR "chore: weekly dependency updates" labeled `dependencies`/`maintenance`/`automated` |
-
-**Do not delete either one.** Dependabot is the primary path (precise,
-per-package, reviewable); the workflow is the bulk fallback. They run on the
-same day at different hours to reduce overlap. Dependabot's
-`open-pull-requests-limit: 5` caps concurrent PRs; if the two ever produce
-conflicting PRs in the same week, merge the Dependabot granular PRs first and
-let the workflow PR handle only what remains.
-
-### Reviewing a dependency PR
-
-1. Check CI on the PR — `ci-cd.yml` must be green.
-2. For grouped Dependabot PRs, scan the diff for breaking major bumps
-   (Dependabot groups only minor+patch, so majors arrive as individual PRs).
-3. Merge with **squash**. Delete the branch.
-4. After merge, confirm the default-branch run of `ci-cd.yml` is green.
+Review updates against `bun run check`, unit tests, the build and relevant E2E
+coverage. Inspect major updates separately. Keep workflow actions SHA-pinned.
+The `vite` override selects Vite+'s matching core; change it with Vite+ itself.
 
 ## Stale policy
 
-`.github/workflows/stale.yml` (weekly, `actions/stale@v11`):
+`.github/workflows/stale.yml` labels issues after 60 days and PRs after 30 days.
+Neither is automatically closed. Dependency PRs are exempt. Comment to reactivate.
 
-- **Issues**: stale after 60 days of inactivity — labeled `stale` only, **never
-  auto-closed** (`days-before-issue-close: -1`).
-- **PRs**: stale after 30 days — labeled `stale` only, **never auto-closed**.
-- Dependabot PRs are exempt via `exempt-pr-labels: dependencies`.
+## Environment and abuse limits
 
-Stale items stay open; a comment or any activity clears the stale label
-automatically.
+`.env.schema` defines the public/server environment contract. Regenerate
+`src/varlock.env.d.ts` with `bunx varlock codegen` or `bun run check`; do not edit it.
+Keep secrets in local ignored env files or Cloudflare Variables and Secrets, never
+in commits or diagnostic payloads.
 
-## Environment variables
+Contact requires a Turnstile proof with action `contact-form`, an exact hostname,
+a per-IP limit and a 30-message daily site cap. Chat proofs use `chat-session`;
+the actions are not interchangeable. IPv6 rate/session identities use a /64.
+Missing limiter configuration, Redis errors and SDK timeout results fail closed.
+The public Turnstile key is runtime-bound; GET `/api/chat/session` returns only
+that public key. Contact submits JSON only after verification.
 
-All environment variables are declared in `.env.schema` (varlock `@env-spec`
-format) and type-checked via `@varlock/astro-integration`:
+`/stats` requires HTTP Basic authentication with a password of at least 32 random
+characters and applies a five-attempt/ten-minute address limit. Rotate its password
+after any suspected exposure. Cloudflare log/trace sampling is 10%; retention is a
+provider setting, not a Wrangler retention field.
+
+## Release verification
+
+1. Use a dedicated GitButler branch. Preserve other agents' working changes.
+2. Run `bun run check`, `bun run test:unit`, `bun run build` and `bun run check:release`.
+3. Run relevant Chromium tests, including discovery against the compiled Worker.
+4. Publish only approved branches. Open a draft PR when requested; require CI.
+5. Cloudflare Workers Builds deploys `main` with `dist/server/wrangler.json`.
+6. Verify the deployed site, discovery, one article and the relevant API flow.
 
 ```bash
-bunx varlock typegen   # regenerate src/varlock.env.d.ts from .env.schema
-bunx varlock scan      # validate local .env against .env.schema
+PLAYWRIGHT_BASE_URL=https://piyushmehta.com bunx playwright test tests/portfolio-smoke.spec.ts --project=chromium --grep 'security discovery'
 ```
 
-- `@optional` / `@required` — presence
-- `@sensitive` — secrets (excluded from client bundles)
-- `@type=url|number|boolean|email` — coercion
-- Public vars are prefixed `PUBLIC_` (e.g. `PUBLIC_SENTRY_DSN`)
+Manual `bun run deploy` rejects tracked, staged and untracked source changes both
+before and after the build. Git command failures also block it. Do not bypass the
+guard or upload `dist/server/` as public static assets. GitHub Actions does not need
+a production deployment token; Workers Builds uses its installed GitHub App.
 
-Never hardcode secrets; add any new variable to `.env.schema` first, then
-`bunx varlock codegen` (part of `bun run check`).
+## Ownership
 
-## Release / verification steps
-
-1. Branch from `main` (e.g. `chore/foo` or `fix/bar`).
-2. Make changes; add/update Playwright tests in `tests/` for behavior changes.
-3. `bun run check` — format, lint, and type checks must pass.
-4. `bun run build` — full pipeline must produce `dist/`.
-5. `bun run check:release` — verify the generated Worker/static artifact boundary and required release files.
-6. Push and open a PR; wait for `ci-cd.yml` (Code Quality → Build Verification → Security Configuration Check) plus CodeQL and Dependency Review to pass.
-7. Merge with **squash**; Cloudflare Workers Builds deploys the `main` commit through the installed GitHub App using `dist/server/wrangler.json`.
-8. After deploy, spot-check the live site: blog post, homepage, and one API route (for example, `/api/reactions`).
-9. Keep runtime application credentials in the Worker's Variables and Secrets settings; GitHub Actions does not receive the Cloudflare deployment token.
-
-## Contact / ownership
-
-- Maintainer: Piyush Mehta (piyush97)
-- Issues/PRs welcome; see the `Contributing` section in the README and the
-  pull request template in `.github/pull_request_template.md`.
+Maintainer: Piyush Mehta (`piyush97`). Use the contributing guide and PR template
+for review expectations. Production settings, credential rotation and media
+removal require the maintainer's approval and verification.
