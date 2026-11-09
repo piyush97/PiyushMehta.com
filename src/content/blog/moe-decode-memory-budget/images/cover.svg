@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">A 284B parameter model packed into 62.5 GiB of RAM at 1.71 bits per weight</title>
+  <desc id="description">A capacity bar showing 56.6 GiB of quantized weights inside 62.5 GiB of usable RAM, and the decode equation: bandwidth divided by active parameters times bits per weight.</desc>
+  <rect width="1200" height="630" fill="#0b1220"/>
+  <text x="80" y="92" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="22" letter-spacing="2">284.33B TOTAL · 13.17B ACTIVE · 1.71 BIT</text>
+  <text x="80" y="158" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="52" font-weight="700">Capacity is total params.</text>
+  <text x="80" y="216" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="52" font-weight="700">Speed is active params.</text>
+
+  <g font-family="system-ui, sans-serif">
+    <rect x="80" y="270" width="1040" height="70" rx="8" fill="#131c2e" stroke="#334155" stroke-width="2"/>
+    <rect x="80" y="270" width="942" height="70" rx="8" fill="#1d4ed8"/>
+    <text x="104" y="314" fill="#e2e8f0" font-size="26" font-weight="600">56.56 GiB of weights</text>
+    <text x="1040" y="314" fill="#94a3b8" font-size="20" text-anchor="end" font-family="ui-monospace, monospace">62.5 GiB usable</text>
+  </g>
+
+  <g font-family="ui-monospace, monospace" font-size="21">
+    <text x="80" y="400" fill="#38bdf8">bytes/token = 13.17B × 1.71 / 8 = 2.82 GB</text>
+    <text x="80" y="438" fill="#38bdf8">tok/s ≈ 33 GB/s ÷ 2.82 GB ≈ 11.7</text>
+    <text x="80" y="500" fill="#94a3b8">measured 9.06–14.69 tok/s on 16C Zen 5, 64 GB DDR5, 0 GPUs</text>
+    <text x="80" y="546" fill="#f59e0b">the bill for the last 2 bits: 5–20% task loss below 3 bpw</text>
+  </g>
+
+  <text x="1120" y="590" fill="#475569" font-family="ui-monospace, monospace" font-size="17" text-anchor="end">piyushmehta.com</text>
+</svg>
