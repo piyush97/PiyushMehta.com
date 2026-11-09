@@ -34,6 +34,7 @@
   "micro-frontends",
   "migrating-legacy-codebase-to-astro",
   "migrating-nginx-proxy-manager-to-swag",
+  "moe-decode-memory-budget",
   "npm-oidc-dist-tags-release-gate",
   "omaswitch-alt-tab-omarchy",
   "openssh-musl-asterisk-bypass",

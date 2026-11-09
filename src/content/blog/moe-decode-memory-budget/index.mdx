@@ -1,0 +1,99 @@
+---
+title: 'A 284B Model in 64 GB: What Bits per Weight Actually Buy'
+description: 'DeepSeek-V4-Flash at 1.71 bits per weight fits in a desktop and decodes at 9 to 15 tokens a second. Here is the arithmetic that decides both numbers, and what the last two bits cost.'
+date: 2026-11-09T11:00:00-05:00
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'Local Inference'
+  - 'Quantization'
+  - 'Mixture of Experts'
+  - 'Memory Bandwidth'
+  - 'Open Weights'
+image:
+  url: '/blog/moe-decode-memory-budget/images/cover.svg'
+  width: 1200
+  height: 630
+  alt: 'A capacity bar holding 56.6 GiB of quantized weights inside 62.5 GiB of usable RAM, with the decode equation below it'
+draft: false
+---
+
+import MoEDecodeBudget from '../../../components/blog/MoEDecodeBudget.tsx';
+
+A 284 billion parameter model running on a 64 GB desktop with no GPU sounds like a benchmark trick until you read the two numbers that make it work: 1.71 bits per weight, and 13.17 billion parameters active per token. [llama-modchip](https://github.com/synchopate/llama-modchip) shipped exactly that on October 29, and the project spent the weekend on the [front page of Hacker News](https://news.ycombinator.com/item?id=50411961) at 462 points.
+
+The published figures are specific enough to check: 56.56 GiB on disk, 57.61 GiB peak resident memory at 256K context, 44.36 tok/s prompt processing, 9.06 to 14.69 tok/s generation on a 16-core Zen 5 with 64 GB of DDR5. Nothing in that list requires trusting the author's quality claims. It is arithmetic, and the arithmetic explains why the same machine would crawl on a dense model of the same size.
+
+This is the local, one-machine version of a question that now decides datacenter bills too: once weights are a fixed cost per token, throughput is a memory bandwidth problem, not a FLOPs problem.
+
+## Two budgets, not one
+
+Capacity and speed come from two different parameters, and conflating them is where most "runs on 32 GB" claims go wrong.
+
+**Capacity is total parameters times bits per weight.** For [DeepSeek-V4-Flash](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash), the model card gives 284B total and 13B activated, with a 1M token context and mixed FP4/FP8 weights.
+
+```
+284.33e9 params × 1.71 bits / 8 = 60.7 GB = 56.6 GiB
+```
+
+That matches the repo's 56.56 GiB to within the file's metadata overhead. The same model at Q4_K, which the [ggml encoding table](https://github.com/ggml-org/llama.cpp/wiki/Tensor-Encoding-Schemes) puts at 4.5 bits per weight, needs 149 GiB and does not fit. At BF16 it needs 529 GiB. Quantization is not an optimization here. It is the only reason the model exists on this machine.
+
+**Speed is bandwidth divided by the bytes one token has to read.** Decode is batch size one, so every token streams weights from memory to the ALUs. For a dense model that means all of them. For a mixture of experts it means the routed experts plus the shared trunk:
+
+```
+13.17e9 active params × 1.71 bits / 8 = 2.82 GB per token
+```
+
+At 2.82 GB per token, a machine that sustains 33 GB/s of weight streaming lands at about 11.7 tok/s. The measured range of 9.06 to 14.69 tok/s implies 25.5 to 41.4 GB/s, which is 28% to 46% of the 89.6 GB/s peak of dual-channel DDR5-5600. The missing half is AVX-512 compute, MoE gather overhead, and cache misses that the repo's own page documents as the reason for its non-temporal streaming patches.
+
+Run the same rules against a dense 284B model at the same bit width and each token reads 60.7 GB, not 2.82 GB. At 41 GB/s that is 0.7 tok/s. The 20x difference is the whole point of sparse experts: total parameters buy knowledge, active parameters buy speed.
+
+<MoEDecodeBudget client:visible />
+
+## Where the arithmetic stops being clean
+
+Three honest caveats, because a 284B model at 1.71 bits is a pile of compromises that the headline hides.
+
+**1.71 is a file average, not a single width.** The repo's tensor table keeps embeddings, the dense layer zero, the 43 shared experts and the MLA projections at Q4_K, Q5_K or F32, and pushes only the 256 routed experts down to mostly `IQ1_S` at 1.5625 bits. That is the correct engineering choice (precision goes where the damage is cheapest), but it means bytes per token is slightly higher than the flat calculation above, so the implied bandwidth figure is slightly low.
+
+**Context is not free, and 1M does not fit.** The model card advertises a 1M token context. At 256K, the repo reports 57.61 GiB peak resident memory against 56.56 GiB of weights, so roughly a gigabyte of KV cache, and that is with the model's hybrid compressed attention doing the heavy lifting. Subtract those two published numbers yourself before assuming a million tokens is available at this size.
+
+**Prefill is compute bound, not bandwidth bound.** Generation reads 2.82 GB per token; prompt processing runs through 284B of weights once and does real matrix math. 44.36 tok/s of prefill on 16 AVX-512 cores means a 20K token agent prompt takes minutes, not seconds, before the first output token. Decode speed is the number people quote and the number most people will not notice first.
+
+Not every model scales the same way either. llama.cpp's own [quantize benchmark](https://github.com/ggml-org/llama.cpp/blob/master/tools/quantize/README.md) for Llama-3.1-8B shows `IQ1_S` at 2.0042 bits per weight generating 79.73 tok/s and `Q8_0` at 8.5008 bits per weight generating 50.93 tok/s: 1.6x for a quarter of the bits. An 8B model on a fast machine is compute bound, so shrinking the weights mostly saves RAM. Bit width buys throughput only when you are already bandwidth bound, which a 56 GiB checkpoint on CPU memory always is.
+
+## What the last two bits cost
+
+The quality evidence is consistent and does not depend on the project's own eval script.
+
+An [empirical study of LLaMA3 quantization](https://arxiv.org/abs/2404.14047) across 10 post-training methods and 1 to 8 bits found 4-bit models about 2% below 16-bit on perplexity and CommonSenseQA, which is close to noise. At 3 bits, plain round-to-nearest lost over 10% while GPTQ, AWQ, SliM-LLM and QuIP held the loss under 5%. At 2 bits, the same study reports the 2-bit LLaVA-Next-8B "completely collapses" in six multimodal QA tasks, scores dropping to zero. Text-only 2-bit models stay coherent; anything that has to read an image or a diagram does not.
+
+The project's own tensor allocation is the second piece of evidence, and it is more persuasive than any benchmark table: the authors kept the sensitive trunk at 4 to 5 bits and compressed only the routed experts. That is where the redundant capacity lives in a sparse model, and it is why an effective 1.71 bits per weight is not the same claim as "everything at 1.7 bits".
+
+Practitioners in the Hacker News thread are less diplomatic. One commenter running comparable DeepSeek builds wrote that "the absolute minimum for the 1017 DeepSeek is 3.75bpw. Anything below and you're better with Qwen3.8-flash-next at 4 bits or preferably 4.5." That is anecdote, not measurement, but it lines up with the study above and with the fact that 2-bit quantization is where the accuracy cliff starts for reasoning-heavy work.
+
+So the honest summary of the llama-modchip build: it buys a 284B model's _knowledge_ at 13B-model _speed_, with a quality floor roughly where a 3 to 4 bit quant of a smaller model sits. It does not buy you a frontier coder on your gaming PC, which is also what the thread's skeptics keep saying.
+
+## The same arithmetic in a datacenter
+
+Move the same two equations up a scale and they still hold. On November 3, [The Register](https://www.theregister.com/ai-and-ml/2026/11/03/british-fintech-revolut-slashes-ai-coding-costs-10x-by-cutting-out-claude-and-going-self-hosted/5307345) reported that Revolut made a self-hosted GLM model the default coding assistant for about 2,000 engineers: roughly 754B total parameters, 40B activated per token, NVFP4 weights, 56 Nvidia B200 GPUs, 256K context, about 200 tok/s, and a blended cost near $0.30 per million tokens, about a tenth of the previous Anthropic and OpenAI spend.
+
+Apply the same math. Forty billion active parameters at 4 bits is 20 GB of weight traffic per token. A single stream at 200 tok/s therefore needs about 4 TB/s, which only HBM provides; put that stream on dual-channel DDR5 at 89.6 GB/s and it caps at about 4.5 tok/s. The datacenter does not escape the equation, it just gets a wider pipe, and the reason 200 tok/s is affordable there is that many request streams share the same weight read.
+
+Cost is a utilization problem on top of that, which is why the 10x figure deserves a caveat. A third-party [teardown of the Revolut numbers](https://rohitghumare.com/blog/revolut-self-hosted-glm/) argues that most of the saving comes from the model choice rather than from self-hosting, and that at list prices self-hosting only wins above roughly 1,400 engineers once you pay for the platform staff. At $0.30 per million tokens the arithmetic is rent divided by tokens served, so idle GPUs are the expensive part. Useful counterweight to a headline that reads like self-hosting is inherently 10x cheaper.
+
+## A checklist for "runs on X GB" claims
+
+Before believing any local inference claim, including this one:
+
+1. **Bits per weight, and whether it is a file average.** Ask which tensors kept precision.
+2. **Total versus active parameters.** Capacity uses total, speed uses active. Sparse models move one without the other.
+3. **Context used in the benchmark.** KV cache is real memory, and long context is the most common hidden allocation.
+4. **Prefill, not just decode.** Prompt processing is compute bound and dominates time to first token on long agent contexts.
+5. **Memory channel count, not "DDR5".** Dual channel DDR5-5600 peaks at 89.6 GB/s; an eight-channel workstation moves roughly 4x that, which is why the project's 30B checkpoint reports 111 tok/s on Threadripper.
+6. **Your own eval at the bit width you plan to ship.** The cliff is task dependent, and 2-bit vision collapses before 2-bit text does.
+
+The 284B-in-64GB story is real, and the interesting part is not the model size. It is that both constraints were always arithmetic: 56.6 GiB to hold it, 2.82 GB to move a token past 89.6 GB/s of DRAM. Everything else in the article, including the quality cost, follows from those two numbers.
+
+If you want the background on the model itself, [the DeepSeek V4 Flash writeup](/blog/deepseek-v4-flash-0731/) covers the API side, and [Kimi K3's open weights](/blog/kimi-k3-open-weights-datacenter/) covers why open weights still want a datacenter. This post is the third position: what it costs to skip the datacenter entirely.
