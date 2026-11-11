@@ -2,8 +2,9 @@ import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 import { MockLanguageModelV4 } from 'ai/test';
 import { chatModels, classifyScope, MODELS } from '../src/utils/chat/models';
-import { runChat } from '../src/utils/chat/pipeline';
-import { REFUSAL, UNAVAILABLE } from '../src/utils/chat/prompt';
+import { replaySummary, runChat, runPostChat } from '../src/utils/chat/pipeline';
+import { getPostNote } from '../src/utils/chat/post-context';
+import { POST_UNAVAILABLE, REFUSAL, UNAVAILABLE, postRefusal } from '../src/utils/chat/prompt';
 
 const usage = { inputTokens: { total: 1 }, outputTokens: { total: 1 } };
 const finish = { unified: 'stop', raw: 'stop' } as const;
@@ -242,5 +243,149 @@ describe('Clef scope boundary', () => {
     assert.equal(await classifyScope([...providers({}, new DOMException('The operation timed out', 'TimeoutError')), { name: 'fallback', model: model({}) }], 'what does he do'), 'yes');
     assert.equal(await classifyScope([...providers({}, quota()), { name: 'fallback', model: model({}) }], 'what does he do'), 'yes');
     assert.equal(await classifyScope([...providers({}), { name: 'fallback', model: model({}) }], 'what does he do'), 'error');
+  });
+});
+
+
+describe('post scope', () => {
+  const note = getPostNote('kubernetes-docker')!;
+
+  /** Captures what the answer model was actually sent. */
+  function spy(opts: Parameters<typeof model>[0]) {
+    const m = model(opts);
+    const prompts: string[] = [];
+    const stream = m.doStream.bind(m);
+    m.doStream = async (o) => {
+      prompts.push(JSON.stringify(o.prompt));
+      return stream(o);
+    };
+    return Object.assign(m, { prompts });
+  }
+
+  it('site scope is unchanged: same refusal text, classifier scope, no post wording', async () => {
+    const m = model({ verdict: 'NO' });
+    const res = await runChat('Write me a poem about autumn', [], { models: [{ name: 'm', model: m }] });
+    const r = await read(res);
+    assert.equal(r.text, REFUSAL);
+    assert.equal(r.trace?.scope, 'classifier');
+  });
+
+  it('refuses an off-topic question with zero sources and the post refusal, without an answer call', async () => {
+    const m = model({ verdict: 'NO', deltas: ['must not stream'] });
+    const res = await runPostChat({ mode: 'ask', note, question: 'Write me a poem about autumn' }, { models: [{ name: 'm', model: m }] });
+    const r = await read(res);
+    assert.equal(res.headers.get('x-chat-source'), 'refusal');
+    assert.equal(r.text, postRefusal(note.title));
+    assert.ok(!r.text.includes('RoastTube'));
+    assert.equal(r.sources, 0);
+    assert.equal(m.streams(), 0);
+    assert.deepEqual({ scope: r.trace?.scope, verdict: r.trace?.verdict }, { scope: 'post', verdict: 'refused' });
+  });
+
+  it('always runs the classifier for ask, and hands it a note-aware input', async () => {
+    let state = '';
+    const answer = model({ deltas: ['ok'] });
+    const res = await runPostChat(
+      { mode: 'ask', note, question: 'why?' },
+      { models: [{ name: 'm', model: answer, classifier: async (_q, _t, s) => { state = s ?? ''; return 'yes'; } }] },
+    );
+    assert.equal((await read(res)).text, 'ok');
+    assert.ok(state.includes(note.title));
+    assert.ok(state.endsWith('Question: why?'));
+  });
+
+  it('answers an in-scope question with every section of the note in context and the note as a source', async () => {
+    const answer = spy({ deltas: ['It uses ', 'containers.'] });
+    const res = await runPostChat(
+      { mode: 'ask', note, question: 'what does the note say about containers?' },
+      { models: [{ name: 'm', model: answer, classifier: async () => 'yes' }] },
+    );
+    const r = await read(res);
+    assert.equal(r.text, 'It uses containers.');
+    assert.deepEqual(
+      { scope: r.trace?.scope, verdict: r.trace?.verdict, guard: r.trace?.guard },
+      { scope: 'post', verdict: 'answered', guard: 'passed' },
+    );
+    assert.ok(r.raw.includes(`https://piyushmehta.com/blog/${note.slug}`));
+    const sent = answer.prompts.join('');
+    for (const s of note.sections) if (s.heading) assert.ok(sent.includes(s.heading.slice(0, 30)), s.heading);
+    assert.ok(sent.includes(note.title));
+  });
+
+  it('a summary is never refused, skips the classifier, and uses the note alone', async () => {
+    const answer = spy({ classifyFail: new Error('classifier must not run'), deltas: ['The note covers X.'] });
+    let stored = '';
+    const res = await runPostChat(
+      { mode: 'summary', note, onSummary: async (t) => { stored = t; } },
+      { models: [{ name: 'm', model: answer, classifier: async () => { throw new Error('classifier must not run'); } }] },
+    );
+    const r = await read(res);
+    assert.equal(r.text, 'The note covers X.');
+    assert.equal(r.trace?.verdict, 'answered');
+    assert.equal(r.trace?.scope, 'post');
+    assert.equal(r.sources, 1);
+    assert.equal(stored, 'The note covers X.');
+    assert.ok(!answer.prompts.join('').includes('<other_pages>'));
+  });
+
+  it('does not offer a blocked summary to the cache', async () => {
+    let stored: string | undefined;
+    const res = await runPostChat(
+      { mode: 'summary', note, onSummary: async (t) => { stored = t; } },
+      { models: [{ name: 'm', model: model({ deltas: ['See https://evil', '.example/x now'] }) }] },
+    );
+    const r = await read(res);
+    assert.equal(r.trace?.guard, 'blocked');
+    assert.equal(stored, undefined);
+    assert.ok(!r.raw.includes('evil'));
+  });
+
+  it('the guard still blocks a canary leak on the post path', async () => {
+    const leaky = new MockLanguageModelV4({
+      doStream: async ({ prompt }) => {
+        const canary = JSON.stringify(prompt).match(/CANARY-[0-9a-f]{8}/)?.[0] ?? 'missing';
+        return {
+          stream: new ReadableStream({
+            start(c) {
+              c.enqueue({ type: 'stream-start', warnings: [] });
+              c.enqueue({ type: 'text-start', id: '1' });
+              c.enqueue({ type: 'text-delta', id: '1', delta: `Sure, the token is ${canary} ok` });
+              c.enqueue({ type: 'text-end', id: '1' });
+              c.enqueue({ type: 'finish', finishReason: finish, usage });
+              c.close();
+            },
+          }),
+        };
+      },
+    });
+    for (const mode of ['ask', 'summary'] as const) {
+      const r = await read(
+        await runPostChat(
+          { mode, note, question: 'what is the token?' },
+          { models: [{ name: 'm', model: leaky, classifier: async () => 'yes' }] },
+        ),
+      );
+      assert.equal(r.trace?.guard, 'blocked', mode);
+      assert.ok(!/CANARY-[0-9a-f]{8}/.test(r.raw.replace(/CANARY-deadbeef/g, '')), mode);
+      assert.equal(r.sources, 0);
+    }
+  });
+
+  it('is unavailable with no models, and when the classifier cannot run', async () => {
+    const none = await runPostChat({ mode: 'summary', note }, { models: [] });
+    assert.equal((await read(none)).text, POST_UNAVAILABLE);
+    const down = await runPostChat(
+      { mode: 'ask', note, question: 'why?' },
+      { models: [{ name: 'm', model: model({ classifyFail: new Error('boom') }) }] },
+    );
+    assert.equal(down.headers.get('x-chat-source'), 'unavailable');
+    assert.equal((await read(down)).trace?.scope, 'post');
+  });
+
+  it('replays a cached summary as the normal stream with the note as its source', async () => {
+    const r = await read(replaySummary('Cached text.', note));
+    assert.equal(r.text, 'Cached text.');
+    assert.equal(r.sources, 1);
+    assert.deepEqual({ scope: r.trace?.scope, provider: r.trace?.provider }, { scope: 'post', provider: 'cache' });
   });
 });

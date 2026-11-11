@@ -3,6 +3,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { gzipSync } from 'node:zlib';
 
 const REQUIRED_CLIENT_FILES = [
   'index.html',
@@ -38,6 +39,18 @@ function collectSourceMaps(directory, root = directory) {
     }
   }
   return maps;
+}
+
+/** Workers Free allows 3MB compressed; keep headroom for the post-sections corpus (ADR-0004). */
+export const MAX_SERVER_GZIP_BYTES = 2.5 * 1024 * 1024;
+
+function gzippedServerBytes(directory) {
+  let total = 0;
+  for (const entry of readdirSync(directory, { recursive: true, withFileTypes: true })) {
+    if (entry.isFile() && /\.(?:m?js|wasm)$/.test(entry.name))
+      total += gzipSync(readFileSync(join(entry.parentPath, entry.name))).length;
+  }
+  return total;
 }
 
 function isDirectory(path) {
@@ -213,6 +226,15 @@ export function verifyRelease(root = process.cwd()) {
   }
 
   verifyHeaders(clientDir, errors);
+
+  if (isDirectory(serverDir)) {
+    const bytes = gzippedServerBytes(serverDir);
+    if (bytes > MAX_SERVER_GZIP_BYTES)
+      addError(
+        errors,
+        `Gzipped Worker bundle is ${(bytes / 1024 / 1024).toFixed(2)}MB, over the ${(MAX_SERVER_GZIP_BYTES / 1024 / 1024).toFixed(1)}MB ceiling`,
+      );
+  }
 
   const redirectsPath = join(clientDir, '_redirects');
   if (existsSync(redirectsPath)) {

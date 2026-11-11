@@ -7,11 +7,15 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AskLink from '../../components/AskLink.astro';
 import NextBestRead from '../../components/NextBestRead.astro';
 import OptimizedImage from '../../components/OptimizedImage.astro';
+import PostAskPanel from '../../components/chat/PostAskPanel.astro';
 import PostReactions from '../../components/PostReactions.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
+import SeriesRail from '../../components/SeriesRail.astro';
+import SubscribeForm from '../../components/SubscribeForm.astro';
 import Layout from '../../layouts/Layout.astro';
 import { generateCanonicalUrl } from '../../utils/og-generator';
 import { selectBlogRecommendations, toBlogPostSlug } from '../../utils/blog-recommendations';
+import { getSeriesContext } from '../../utils/series';
 import { createSocialCardMetadata } from '../../utils/social-card';
 import { getSocialCardManifest } from '../../utils/social-card-manifest';
 
@@ -39,6 +43,7 @@ const typedTags: string[] = tags ?? [];
 const showHeroImage = featuredImage !== false;
 
 const publishedPosts = await getCollection('blog', ({ data }) => !data.draft);
+const series = getSeriesContext(publishedPosts, currentSlug);
 const [nextBestRecommendation] = selectBlogRecommendations(publishedPosts, {
   currentSlug,
   currentTags: typedTags,
@@ -135,6 +140,13 @@ const articleSchema = {
   preloadImage={showHeroImage ? image?.url : undefined}
 >
   <div class="reading-progress" aria-hidden="true"></div>
+  <PostAskPanel
+    slug={currentSlug}
+    title={title}
+    description={description}
+    readingTime={readingTime}
+    headings={tableOfContentsHeadings.map((h) => h.text)}
+  />
   <div class="page-container blog-post-page">
     <div class="blog-post-shell">
       <!-- Breadcrumbs -->
@@ -190,6 +202,8 @@ const articleSchema = {
             </dl>
           </section>
         </header>
+
+        {series && <SeriesRail series={series} />}
 
         <!-- Featured Image -->
         {
@@ -279,6 +293,8 @@ const articleSchema = {
           compact={true}
           orientation="horizontal"
         />
+
+        <SubscribeForm />
 
         <ArticleCareerCard />
 

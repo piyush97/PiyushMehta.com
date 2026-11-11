@@ -3,8 +3,8 @@
   "version": "5.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node scripts/generate-post-manifest.mjs && node scripts/build-chat-index.mjs && node scripts/copy-resume-pdf.mjs && astro dev",
-    "start": "node scripts/generate-post-manifest.mjs && node scripts/build-chat-index.mjs && node scripts/copy-resume-pdf.mjs && astro dev",
+    "dev": "node scripts/generate-post-manifest.mjs && node scripts/build-chat-index.mjs && node scripts/build-post-sections.mjs && node scripts/copy-resume-pdf.mjs && astro dev",
+    "start": "node scripts/generate-post-manifest.mjs && node scripts/build-chat-index.mjs && node scripts/build-post-sections.mjs && node scripts/copy-resume-pdf.mjs && astro dev",
     "build": "node scripts/build.mjs",
     "deploy": "bun run check:clean && bun run build && bun run check:clean && bun run check:production-env && varlock-wrangler deploy --config dist/server/wrangler.json",
     "cf:types": "varlock-wrangler types .wrangler/worker-configuration.d.ts --config dist/server/wrangler.json",
@@ -35,6 +35,7 @@
     "test:report": "playwright show-report",
     "doctor": "react-doctor",
     "build:chat-index": "node scripts/build-chat-index.mjs",
+    "build:post-sections": "node scripts/build-post-sections.mjs",
     "eval": "promptfoo eval -c evals/promptfooconfig.yaml",
     "eval:live": "varlock run -- bun scripts/chat-live-eval.ts"
   },

@@ -4,6 +4,7 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, it } from 'node:test';
+import { randomBytes } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { verifyRelease } from '../scripts/verify-release.mjs';
 
@@ -94,6 +95,12 @@ describe('verifyRelease', () => {
     const result = verifyRelease(makeFixture());
     assert.deepEqual(result.errors, []);
     assert.equal(result.ok, true);
+  });
+
+  it('rejects a gzipped Worker bundle over the 2.5MB ceiling', () => {
+    const root = makeFixture();
+    writeFileSync(join(root, 'dist', 'server', 'chunk.mjs'), randomBytes(2.6 * 1024 * 1024));
+    assert.ok(verifyRelease(root).errors.some((error) => error.includes('Gzipped Worker bundle')));
   });
 
   it('rejects missing or expired security discovery artifacts', () => {
