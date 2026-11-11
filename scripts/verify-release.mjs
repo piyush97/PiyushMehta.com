@@ -160,6 +160,15 @@ export function verifyRelease(root = process.cwd()) {
     addError(errors, 'Retired newsletter route is still present in sitemap.xml');
   }
 
+  const llmsPath = join(clientDir, 'llms.txt');
+  if (existsSync(llmsPath)) {
+    const llms = readFileSync(llmsPath, 'utf8');
+    if (!/^# \S/.test(llms)) addError(errors, 'llms.txt must start with an H1 site name');
+    if (/localhost|127\.0\.0\.1|0\.0\.0\.0|\/\/blog\//i.test(llms)) {
+      addError(errors, 'llms.txt contains a non-production or malformed URL');
+    }
+  }
+
   const resumePath = join(clientDir, 'resume.pdf');
   if (existsSync(resumePath)) {
     const resume = readFileSync(resumePath);
