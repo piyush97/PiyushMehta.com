@@ -7,6 +7,7 @@ Shared rendered UI and interactive article demos; score 12 (36 files, 378 declar
 - `BlogFilter.astro`: search, category, sort, and reset controls for the writing list.
 - `ArticleTableOfContents.astro`: desktop/mobile TOC markup and link lifecycle.
 - `PostReactions.astro`: high-churn reaction UI and its `data-*` interface.
+- `chat/PostAskPanel.astro`: article-only "Ask this note" trigger, panel and vanilla module script; `data-post-ask*` hooks and the `html[data-post-ask]` margin reservation are its interface (ADR-0004).
 - `blog/`: eleven React explainer components; imports are all from React.
 - `OptimizedImage.astro`: shared image rendering entry.
 

@@ -1,0 +1,194 @@
+---
+import { getCollection } from 'astro:content';
+import { labDemos, labOgImage, labPath } from '../../data/lab';
+import Layout from '../../layouts/Layout.astro';
+import { toPostSlug } from '../../utils/social-card-manifest';
+
+export const prerender = true;
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const postTitles = new Map(posts.map((post) => [toPostSlug(post.id), post.data.title]));
+const demos = labDemos.filter((demo) => postTitles.has(demo.postSlug));
+---
+
+<Layout
+  title="Lab - Piyush Mehta"
+  description="Interactive demos from the articles, each on its own page with a share link and an iframe embed."
+  type="website"
+  ogTemplate="tech"
+  ogTheme="dark"
+  image={labOgImage('index')}
+>
+  <header class="lab-index__header">
+    <p class="lab-index__eyebrow">Lab</p>
+    <h1>Demos you can open on their own.</h1>
+    <p class="lab-index__lede">
+      Each of these started inside an article. Here they get a page, a link you can share, and an
+      iframe snippet for your own docs or slides. Every page says what is a model and what is
+      measured.
+    </p>
+  </header>
+
+  <section class="lab-index__list" aria-label="Demos">
+    {
+      demos.length === 0 ? (
+        <p class="lab-index__empty" data-lab-empty>
+          No demos are published right now. The <a href="/blog">writing index</a> has the articles.
+        </p>
+      ) : (
+        <ol data-lab-list>
+          {demos.map((demo) => (
+            <li class="lab-index__item" data-lab-item={demo.slug}>
+              <div class="lab-index__body">
+                <h2>
+                  <a href={labPath(demo.slug)}>{demo.title}</a>
+                </h2>
+                <p>{demo.description}</p>
+                <p class="lab-index__meta">
+                  From <a href={`/blog/${demo.postSlug}`}>{postTitles.get(demo.postSlug)}</a>
+                </p>
+              </div>
+              <ul class="lab-index__tags" aria-label="Topics">
+                {demo.tags.map((tag) => (
+                  <li>{tag}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+  </section>
+</Layout>
+
+<style>
+  .lab-index__header,
+  .lab-index__list {
+    width: min(920px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .lab-index__header {
+    padding-block: clamp(3.5rem, 7vw, 5.5rem) clamp(2rem, 4vw, 3rem);
+  }
+
+  .lab-index__eyebrow {
+    margin: 0 0 1rem;
+    color: var(--color-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 16ch;
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: clamp(2.6rem, 6vw, 4.4rem);
+    line-height: 1;
+    text-wrap: balance;
+  }
+
+  .lab-index__lede {
+    max-width: 60ch;
+    margin: 1.25rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  .lab-index__list {
+    padding-bottom: clamp(3rem, 8vw, 6rem);
+  }
+
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .lab-index__item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 14rem);
+    gap: 1rem 2rem;
+    padding-block: 1.6rem;
+    border-bottom: 1px solid var(--color-card-border);
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  h2 a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    color: var(--color-text-primary);
+    text-decoration: none;
+  }
+
+  h2 a:hover {
+    color: var(--color-accent);
+  }
+
+  .lab-index__body p {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+
+  .lab-index__body .lab-index__meta {
+    margin-top: 0.6rem;
+    color: var(--color-text-muted, var(--color-text-secondary));
+    font-size: 0.9rem;
+  }
+
+  .lab-index__meta a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .lab-index__tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: start;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lab-index__tags li {
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 999px;
+    color: var(--color-text-secondary);
+    font-size: 0.78rem;
+  }
+
+  .lab-index__empty {
+    padding-block: 2rem;
+    color: var(--color-text-secondary);
+  }
+
+  .lab-index__empty a {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .lab-index__item {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lab-index__tags {
+      justify-content: flex-start;
+    }
+  }
+</style>

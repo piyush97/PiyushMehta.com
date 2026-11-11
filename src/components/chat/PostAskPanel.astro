@@ -1,0 +1,972 @@
+---
+/**
+ * "Ask this note": post-scoped assistant for rendered articles (ADR-0004).
+ * Mount once per article page. The trigger is a real link to /ask until the module script upgrades it.
+ * Layout contract: while open on a wide viewport the script sets `data-post-ask="open"` on <html> and the
+ * rule below pads the right of `.blog-post-page`, so the panel never covers prose.
+ */
+interface Props {
+  slug: string;
+  title: string;
+  description?: string;
+  readingTime: number;
+  /** Section headings, in article order (the same depth 2 and 3 list the table of contents uses). */
+  headings: string[];
+}
+
+const { slug, title, description, readingTime, headings } = Astro.props;
+const fallbackQuestion = `Summarize the post: ${title}`;
+const fallbackHref = `/ask#q=${encodeURIComponent(fallbackQuestion)}`;
+const sectionLabel = `${headings.length} ${headings.length === 1 ? 'section' : 'sections'}`;
+---
+
+<div class="post-ask" data-post-ask data-slug={slug} data-title={title} data-pagefind-ignore>
+  <a
+    class="post-ask__trigger"
+    href={fallbackHref}
+    data-post-ask-trigger
+    aria-label="Ask this note"
+  >
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M10 3.5l1.9 5.1 5.1 1.9-5.1 1.9L10 17.5l-1.9-5.1L3 10.5l5.1-1.9z"></path>
+      <path d="M18 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"></path>
+    </svg>
+    <span>Ask</span>
+  </a>
+
+  <aside
+    class="post-ask__panel"
+    id="post-ask-panel"
+    aria-labelledby="post-ask-title"
+    data-post-ask-panel
+    tabindex="-1"
+    hidden
+  >
+    <header class="post-ask__head">
+      <div class="post-ask__heading">
+        <p class="post-ask__eyebrow">Ask this note</p>
+        <h2 class="post-ask__title" id="post-ask-title">{title}</h2>
+      </div>
+      <button type="button" class="post-ask__close" data-post-ask-close aria-label="Close Ask this note">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+    </header>
+
+    <div class="post-ask__body" data-post-ask-body>
+      {description && <p class="post-ask__description">{description}</p>}
+      <p class="post-ask__facts">{readingTime} min read{headings.length > 0 && <> · {sectionLabel}</>}</p>
+
+      <section class="post-ask__block" aria-labelledby="post-ask-brief-title">
+        <h3 class="post-ask__label" id="post-ask-brief-title">In brief</h3>
+        <p class="post-ask__muted" data-post-ask-brief-status role="status">Preparing the summary…</p>
+        <div class="post-ask__prose" data-post-ask-brief></div>
+        <button type="button" class="post-ask__retry" data-post-ask-retry hidden>Retry summary</button>
+      </section>
+
+      {
+        headings.length > 0 && (
+          <section class="post-ask__block" aria-labelledby="post-ask-sections-title">
+            <h3 class="post-ask__label" id="post-ask-sections-title">Sections</h3>
+            <ul class="post-ask__sections">
+              {headings.map((heading) => (
+                <li>
+                  <button
+                    type="button"
+                    class="post-ask__section"
+                    data-post-ask-section={heading}
+                    aria-label={`Ask about the section: ${heading}`}
+                  >
+                    <span>{heading}</span>
+                    <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12h14M13 6l6 6-6 6"></path>
+                    </svg>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      <section class="post-ask__block post-ask__exchange" aria-label="Your question and the answer" data-post-ask-exchange hidden>
+        <p class="post-ask__question" data-post-ask-question></p>
+        <div class="post-ask__prose" data-post-ask-answer></div>
+        <ul class="post-ask__sources" data-post-ask-sources aria-label="Sources"></ul>
+        <p class="post-ask__trace" data-post-ask-trace></p>
+      </section>
+    </div>
+
+    <p class="post-ask__error" role="alert" data-post-ask-error hidden></p>
+
+    <form class="post-ask__composer" data-post-ask-form>
+      <label class="post-ask__sr" for="post-ask-input">Ask about this note</label>
+      <textarea
+        id="post-ask-input"
+        class="post-ask__input"
+        rows="2"
+        maxlength="500"
+        placeholder="Ask about this note…"
+        data-post-ask-input></textarea>
+      <button type="submit" class="post-ask__send" data-post-ask-send>Send</button>
+    </form>
+
+    <a class="post-ask__alt" href="/ask">Ask Piyush instead</a>
+
+    <div class="post-ask__turnstile" data-post-ask-turnstile aria-hidden="true"></div>
+    <p class="post-ask__sr" role="status" aria-live="polite" data-post-ask-live></p>
+  </aside>
+</div>
+
+<style is:global>
+  /* Layout reservation (D12). Wide viewports only: the article wrapper gives up the panel's width on the
+     right and the centred shell reflows into what is left, so the panel never covers prose. Below 1280px
+     the panel is a bottom sheet instead: the 13rem table-of-contents rail plus a 400px panel would leave
+     the prose column too narrow to read. Keep this breakpoint in sync with `.post-ask__panel` below.
+     Hooks onto the existing `.blog-post-page` wrapper in blog/[slug].astro; no extra class is needed. */
+  @media (min-width: 1280px) {
+    html[data-post-ask='open'] .blog-post-page {
+      padding-right: calc(400px + 2.5rem);
+    }
+  }
+  @media (min-width: 1280px) and (prefers-reduced-motion: no-preference) {
+    .blog-post-page {
+      transition: padding-right 240ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+  }
+  @media print {
+    .post-ask {
+      display: none !important;
+    }
+  }
+
+  /* Panel styles. Global because the script builds answer nodes (p, ul, li, a) after render; every
+     class is `post-ask__` prefixed. */
+  .post-ask__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .post-ask :is(a, button, textarea):focus-visible,
+  .post-ask__panel:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .post-ask__panel:focus-visible {
+    outline-offset: -2px;
+  }
+
+  /* Trigger: hairline, tonal, amber only on hover, focus and while the panel is open. */
+  .post-ask__trigger {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 44;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 0.95rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 999px;
+    background: var(--color-surface-raised);
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    font-weight: 800;
+    line-height: 1;
+    text-decoration: none;
+    transition:
+      color 160ms ease-out,
+      border-color 160ms ease-out;
+  }
+  .post-ask__trigger:hover,
+  .post-ask__trigger[aria-expanded='true'] {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+  .post-ask__trigger[hidden] {
+    display: none;
+  }
+
+  /* Panel: bottom sheet by default. */
+  .post-ask__panel {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 45;
+    display: flex;
+    flex-direction: column;
+    height: 85dvh;
+    border: 1px solid var(--color-card-border);
+    border-bottom: 0;
+    border-radius: 12px 12px 0 0;
+    background: var(--color-surface-raised);
+    color: var(--color-text-primary);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    transform: translateY(100%);
+    transition:
+      opacity 180ms ease-out,
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .post-ask__panel[hidden] {
+    display: none;
+  }
+  .post-ask__panel[data-open] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Wide viewport: anchored to the viewport's bottom-right, inside the margin the article reserves. */
+  @media (min-width: 1280px) {
+    .post-ask__panel {
+      inset: auto 1rem 1rem auto;
+      width: 400px;
+      height: auto;
+      max-height: min(46rem, calc(100dvh - 6rem));
+      border: 1px solid var(--color-card-border);
+      border-radius: 12px;
+      transform: translateY(12px);
+    }
+  }
+
+  .post-ask__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1rem 1rem 0.75rem;
+    border-bottom: 1px solid var(--color-card-border);
+  }
+  .post-ask__heading {
+    min-width: 0;
+  }
+  .post-ask__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .post-ask__title {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-family: Muli, var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.25;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+  .post-ask__close {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin: -0.4rem -0.4rem 0 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+  .post-ask__close:hover {
+    color: var(--color-accent);
+  }
+
+  .post-ask__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-card-border) transparent;
+  }
+  .post-ask__description {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+  .post-ask__facts {
+    margin: 0.5rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+  }
+  .post-ask__block {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-card-border);
+  }
+  .post-ask__label {
+    margin: 0 0 0.5rem;
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .post-ask__muted {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+  }
+  .post-ask__muted[hidden] {
+    display: none;
+  }
+
+  .post-ask__prose {
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+  .post-ask__prose p {
+    margin: 0 0 0.75em;
+  }
+  .post-ask__prose p:last-child,
+  .post-ask__prose ul:last-child {
+    margin-bottom: 0;
+  }
+  .post-ask__prose ul {
+    margin: 0 0 0.75em;
+    padding-left: 1.2rem;
+  }
+  .post-ask__prose li {
+    margin-bottom: 0.4em;
+  }
+  .post-ask__prose code {
+    padding: 0.05em 0.3em;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--color-card-border) 55%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+  }
+  .post-ask__prose a {
+    color: var(--color-accent);
+    text-underline-offset: 0.18em;
+  }
+
+  .post-ask__retry {
+    min-height: 44px;
+    margin-top: 0.5rem;
+    padding: 0 0.75rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-primary);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .post-ask__retry:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+  .post-ask__retry[hidden] {
+    display: none;
+  }
+
+  .post-ask__sections {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 13rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-card-border) transparent;
+  }
+  .post-ask__sections li {
+    border-bottom: 1px solid var(--color-card-border);
+  }
+  .post-ask__section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.5rem 0.25rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-primary);
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.3;
+    text-align: left;
+    cursor: pointer;
+    transition: color 160ms ease-out;
+  }
+  .post-ask__section svg {
+    flex: none;
+    color: var(--color-accent);
+  }
+  .post-ask__section:hover,
+  .post-ask__section[aria-disabled='true'] {
+    color: var(--color-accent);
+  }
+  .post-ask__section[aria-disabled='true'] {
+    cursor: progress;
+  }
+
+  .post-ask__exchange[hidden] {
+    display: none;
+  }
+  .post-ask__question {
+    margin: 0 0 0.75rem;
+    color: var(--color-text-primary);
+    font-weight: 800;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+  .post-ask__sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .post-ask__sources:empty {
+    display: none;
+  }
+  .post-ask__sources a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.7rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 999px;
+    color: var(--color-text-primary);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .post-ask__sources a:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+  .post-ask__trace {
+    margin: 0.6rem 0 0;
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+  .post-ask__trace:empty {
+    display: none;
+  }
+
+  .post-ask__error {
+    margin: 0;
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--color-card-border);
+    background: var(--color-danger-surface, transparent);
+    color: var(--color-text-primary);
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+  .post-ask__error[hidden] {
+    display: none;
+  }
+
+  .post-ask__composer {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--color-card-border);
+  }
+  .post-ask__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 44px;
+    max-height: 8rem;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-primary);
+    font: inherit;
+    font-size: 1rem;
+    line-height: 1.4;
+    resize: none;
+    caret-color: var(--color-accent);
+  }
+  .post-ask__input::placeholder {
+    color: var(--color-text-secondary);
+  }
+  .post-ask__input:focus-visible {
+    border-color: var(--color-accent);
+  }
+  .post-ask__send {
+    flex: none;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 1rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 8px;
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .post-ask__send[aria-disabled='true'] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .post-ask__alt {
+    display: block;
+    padding: 0.2rem 1rem 0.9rem;
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-underline-offset: 0.18em;
+  }
+  .post-ask__alt:hover {
+    color: var(--color-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-ask__panel,
+    .post-ask__trigger,
+    .post-ask__section {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { parseAnswer, type Inline } from '../../utils/chat/answer-text';
+  import { isAllowedUrl } from '../../utils/chat/guard';
+  // Type-only: a value import would pull the AI SDK pipeline into the browser bundle.
+  import type { ChatTrace } from '../../utils/chat/pipeline';
+  import { requestTurnstileToken } from '../../utils/turnstile';
+
+  const SESSION_KEY = 'post-ask:session:v1';
+  const SESSION_REFRESH_MS = 25 * 60 * 1000;
+  const MAX_QUESTION = 500;
+
+  class HttpError extends Error {
+    constructor(readonly status: number) {
+      super(String(status));
+    }
+  }
+
+  const COPY = {
+    rate: 'Too many questions in a short time, or today’s free capacity is used up. Try again in a bit.',
+    session: 'Your session expired. Send the message again.',
+    offline: 'The assistant is offline right now. The full note is still above.',
+    verify: 'Could not verify your browser. Reload the page and try again.',
+    other: 'Something went wrong on my side. Your question was not answered; try again.',
+    summaryDown: 'No summary right now. The description above is still accurate.',
+  } as const;
+
+  const errorCopy = (e: unknown): string => {
+    const status = e instanceof HttpError ? e.status : 0;
+    if (status === 429) return COPY.rate;
+    if (status === 401 || status === 403) return COPY.session;
+    if (status === 503) return COPY.offline;
+    if (e instanceof Error && e.message === 'verify') return COPY.verify;
+    return COPY.other;
+  };
+
+  let siteKey: Promise<string> | undefined;
+  const getSiteKey = () =>
+    (siteKey ??= (async () => {
+      const res = await fetch('/api/chat/config', { signal: AbortSignal.timeout(10_000) });
+      if (!res.ok) throw new HttpError(res.status);
+      const data = (await res.json()) as { siteKey?: unknown };
+      if (typeof data.siteKey !== 'string' || !data.siteKey) throw new Error('verify');
+      return data.siteKey;
+    })().catch((e) => {
+      siteKey = undefined;
+      throw e;
+    }));
+
+  const readStored = (): string | null => {
+    try {
+      const v = JSON.parse(sessionStorage.getItem(SESSION_KEY) ?? 'null') as { token?: string; at?: number } | null;
+      return v?.token && v.at && Date.now() - v.at < SESSION_REFRESH_MS ? v.token : null;
+    } catch {
+      return null;
+    }
+  };
+  const store = (token: string | null) => {
+    try {
+      if (token) sessionStorage.setItem(SESSION_KEY, JSON.stringify({ token, at: Date.now() }));
+      else sessionStorage.removeItem(SESSION_KEY);
+    } catch {
+      /* storage unavailable: the session just is not shared between articles */
+    }
+  };
+
+  let pendingSession: Promise<string> | undefined;
+  async function getSession(host: HTMLElement): Promise<string> {
+    const cached = readStored();
+    if (cached) return cached;
+    pendingSession ??= (async () => {
+      try {
+        const key = await getSiteKey();
+        const token = await requestTurnstileToken(host, key, 'chat-session');
+        const res = await fetch('/api/chat/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+          signal: AbortSignal.timeout(20_000),
+        });
+        if (!res.ok) throw new HttpError(res.status);
+        const { session } = (await res.json()) as { session: string };
+        store(session);
+        return session;
+      } catch (e) {
+        // A 503 means chat is not configured; everything else is a failed browser check.
+        throw e instanceof HttpError && e.status === 503 ? e : new Error('verify');
+      } finally {
+        pendingSession = undefined;
+      }
+    })();
+    return pendingSession;
+  }
+
+  type StreamEvent = {
+    type: string;
+    delta?: string;
+    data?: ChatTrace;
+    url?: string;
+    title?: string;
+    errorText?: string;
+  };
+
+  async function readStream(res: Response, on: (event: StreamEvent) => void) {
+    if (!res.body) throw new Error('empty');
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true }).replaceAll('\r\n', '\n');
+      let at: number;
+      while ((at = buffer.indexOf('\n\n')) >= 0) {
+        const chunk = buffer.slice(0, at);
+        buffer = buffer.slice(at + 2);
+        for (const line of chunk.split('\n')) {
+          if (!line.startsWith('data: ') || line === 'data: [DONE]') continue;
+          try {
+            on(JSON.parse(line.slice(6)) as StreamEvent);
+          } catch {
+            /* keepalive or partial line */
+          }
+        }
+      }
+    }
+  }
+
+  function renderInline(parent: Node, parts: Inline[]) {
+    for (const part of parts) {
+      if (part.type === 'text') parent.appendChild(document.createTextNode(part.text));
+      else if (part.type === 'bold' || part.type === 'code') {
+        const el = document.createElement(part.type === 'bold' ? 'strong' : 'code');
+        el.textContent = part.text;
+        parent.appendChild(el);
+      } else if (isAllowedUrl(part.href)) {
+        const a = document.createElement('a');
+        a.textContent = part.text;
+        const url = new URL(part.href);
+        if (/^(www\.)?piyushmehta\.com$/.test(url.hostname)) a.href = url.pathname + url.search + url.hash;
+        else {
+          a.href = part.href;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+        }
+        parent.appendChild(a);
+      } else parent.appendChild(document.createTextNode(part.text));
+    }
+  }
+
+  /** DOM nodes only, never innerHTML. */
+  function renderAnswer(target: HTMLElement, text: string) {
+    const nodes = parseAnswer(text).map((block) => {
+      if (block.type === 'paragraph') {
+        const p = document.createElement('p');
+        renderInline(p, block.inline);
+        return p;
+      }
+      const ul = document.createElement('ul');
+      for (const item of block.items) {
+        const li = document.createElement('li');
+        renderInline(li, item);
+        ul.appendChild(li);
+      }
+      return ul;
+    });
+    target.replaceChildren(...nodes);
+  }
+
+  function traceText(t: ChatTrace): string {
+    const parts = [t.scope === 'post' ? 'Scope: this note' : `Scope: ${t.scope}`];
+    parts.push(
+      t.verdict === 'refused'
+        ? 'Refused: outside this note and Piyush’s work'
+        : t.verdict === 'answered'
+          ? 'Answered'
+          : t.verdict === 'interrupted'
+            ? 'Interrupted'
+            : 'Unavailable',
+    );
+    if (t.provider) parts.push(`Provider: ${t.provider === 'cache' ? 'cached summary' : t.provider}`);
+    if (t.guard) parts.push(`Guard: ${t.guard}`);
+    return parts.join(' · ');
+  }
+
+  function initPostAsk() {
+    const root = document.querySelector<HTMLElement>('[data-post-ask]');
+    if (!root || root.dataset.initialized === 'true') return;
+    root.dataset.initialized = 'true';
+
+    const slug = root.dataset.slug ?? '';
+    const q = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+    const trigger = q<HTMLAnchorElement>('[data-post-ask-trigger]');
+    const panel = q('[data-post-ask-panel]');
+    const body = q('[data-post-ask-body]');
+    const briefStatus = q('[data-post-ask-brief-status]');
+    const brief = q('[data-post-ask-brief]');
+    const retry = q<HTMLButtonElement>('[data-post-ask-retry]');
+    const exchange = q('[data-post-ask-exchange]');
+    const question = q('[data-post-ask-question]');
+    const answer = q('[data-post-ask-answer]');
+    const sources = q('[data-post-ask-sources]');
+    const trace = q('[data-post-ask-trace]');
+    const error = q('[data-post-ask-error]');
+    const form = q<HTMLFormElement>('[data-post-ask-form]');
+    const input = q<HTMLTextAreaElement>('[data-post-ask-input]');
+    const send = q<HTMLButtonElement>('[data-post-ask-send]');
+    const turnstileHost = q('[data-post-ask-turnstile]');
+    const live = q('[data-post-ask-live]');
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const controller = new AbortController();
+    const { signal } = controller;
+    let busy = false;
+    let summaryState: 'idle' | 'loading' | 'done' | 'failed' = 'idle';
+    let isOpen = false;
+    let hideTimer = 0;
+
+    // The link is the no-JS path; with JS it becomes the disclosure button for the panel.
+    trigger.setAttribute('role', 'button');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('aria-controls', panel.id);
+
+    const showError = (message: string) => {
+      error.textContent = message;
+      error.hidden = !message;
+    };
+    const setBusy = (value: boolean) => {
+      busy = value;
+      for (const el of [send, ...root.querySelectorAll<HTMLElement>('[data-post-ask-section]')])
+        el.setAttribute('aria-disabled', String(value));
+      send.textContent = value ? 'Answering…' : 'Send';
+      answer.setAttribute('aria-busy', String(value));
+    };
+
+    /** One POST with a single retry when the IP-bound session has gone stale. */
+    async function post(payload: Record<string, unknown>): Promise<Response> {
+      const send1 = async () =>
+        fetch('/api/chat/post', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-chat-session': await getSession(turnstileHost) },
+          body: JSON.stringify({ post: slug, ...payload }),
+          signal,
+        });
+      let res = await send1();
+      if (res.status === 401) {
+        store(null);
+        res = await send1();
+      }
+      if (!res.ok) throw new HttpError(res.status);
+      return res;
+    }
+
+    async function loadSummary() {
+      if (summaryState === 'loading' || summaryState === 'done') return;
+      summaryState = 'loading';
+      retry.hidden = true;
+      briefStatus.hidden = false;
+      briefStatus.textContent = 'Preparing the summary…';
+      let text = '';
+      let failed = false;
+      let frame = 0;
+      try {
+        const res = await post({ mode: 'summary' });
+        await readStream(res, (ev) => {
+          if (ev.type === 'text-delta') {
+            text += ev.delta ?? '';
+            briefStatus.hidden = true;
+            cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(() => renderAnswer(brief, text));
+          } else if (ev.type === 'error') failed = true;
+          else if (ev.type === 'data-trace' && ev.data?.verdict === 'unavailable') failed = true;
+        });
+        cancelAnimationFrame(frame);
+        if (failed || !text.trim()) throw new Error('summary');
+        renderAnswer(brief, text);
+        summaryState = 'done';
+        live.textContent = 'Summary ready.';
+      } catch (e) {
+        if (signal.aborted) return;
+        summaryState = 'failed';
+        brief.replaceChildren();
+        briefStatus.hidden = false;
+        briefStatus.textContent = e instanceof HttpError || (e as Error).message === 'verify' ? errorCopy(e) : COPY.summaryDown;
+        retry.hidden = false;
+      }
+    }
+
+    async function ask(raw: string) {
+      const text = raw.trim().slice(0, MAX_QUESTION);
+      if (!text || busy) return;
+      setBusy(true);
+      showError('');
+      exchange.hidden = false;
+      question.textContent = text;
+      answer.replaceChildren();
+      sources.replaceChildren();
+      trace.textContent = '';
+      let output = '';
+      let frame = 0;
+      try {
+        const res = await post({ mode: 'ask', question: text });
+        await readStream(res, (ev) => {
+          if (ev.type === 'text-delta') {
+            output += ev.delta ?? '';
+            cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(() => renderAnswer(answer, output));
+          } else if (ev.type === 'data-trace' && ev.data) trace.textContent = traceText(ev.data);
+          else if (ev.type === 'source-url' && ev.url && isAllowedUrl(ev.url)) {
+            const path = new URL(ev.url).pathname;
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = path;
+            a.textContent = path === `/blog/${slug}` ? 'This note' : `Related: ${ev.title ?? path}`;
+            li.appendChild(a);
+            sources.appendChild(li);
+          } else if (ev.type === 'error') throw new Error('stream');
+        });
+        cancelAnimationFrame(frame);
+        renderAnswer(answer, output);
+        live.textContent = 'Answer ready.';
+        input.value = '';
+      } catch (e) {
+        if (signal.aborted) return;
+        cancelAnimationFrame(frame);
+        if (!output) exchange.hidden = true;
+        showError(errorCopy(e));
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    const finishClose = () => {
+      panel.hidden = true;
+      trigger.hidden = false;
+    };
+
+    function open() {
+      if (isOpen) return;
+      isOpen = true;
+      window.clearTimeout(hideTimer);
+      panel.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      trigger.hidden = true;
+      document.documentElement.dataset.postAsk = 'open';
+      void panel.offsetHeight; // commit the closed state so the slide runs
+      requestAnimationFrame(() => {
+        panel.dataset.open = '';
+        panel.focus({ preventScroll: true });
+      });
+      void loadSummary();
+    }
+
+    function close() {
+      if (!isOpen) return;
+      isOpen = false;
+      delete panel.dataset.open;
+      delete document.documentElement.dataset.postAsk;
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.hidden = false;
+      trigger.focus();
+      if (reduceMotion.matches) finishClose();
+      else hideTimer = window.setTimeout(finishClose, 260);
+    }
+
+    trigger.addEventListener('click', (event) => {
+      event.preventDefault();
+      open();
+    });
+    trigger.addEventListener('keydown', (event) => {
+      if (event.key === ' ') {
+        event.preventDefault();
+        open();
+      }
+    });
+    q('[data-post-ask-close]').addEventListener('click', close);
+    // Non-modal: Escape closes from anywhere on the page while the panel is open.
+    document.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key === 'Escape' && isOpen && !event.defaultPrevented) close();
+      },
+      { signal },
+    );
+    retry.addEventListener('click', () => {
+      summaryState = 'idle';
+      void loadSummary();
+    });
+    for (const button of root.querySelectorAll<HTMLButtonElement>('[data-post-ask-section]'))
+      button.addEventListener('click', () => {
+        const heading = (button.dataset.postAskSection ?? '').slice(0, 120);
+        void ask(`Explain the section "${heading}" of this note.`);
+        body.scrollTo({ top: body.scrollHeight, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+      });
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      void ask(input.value);
+    });
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        controller.abort();
+        window.clearTimeout(hideTimer);
+        delete document.documentElement.dataset.postAsk;
+      },
+      { once: true },
+    );
+  }
+
+  document.addEventListener('astro:page-load', initPostAsk);
+  initPostAsk();
+</script>

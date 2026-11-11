@@ -18,6 +18,7 @@ export default defineConfig({
       'node_modules/**',
       'public/**',
       'playwright-report/**',
+      'src/data/post-sections.json',
       'test-build/**',
       'test-results/**',
       'tests/**',

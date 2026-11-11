@@ -21,7 +21,12 @@ export interface ChatEnv {
   groqKey?: string;
 }
 
-type ScopeClassifier = (question: string, pageTitles: string[]) => Promise<ScopeVerdict>;
+/** `state` replaces the default classifier input (post scope); criteria and threshold never change. */
+type ScopeClassifier = (
+  question: string,
+  pageTitles: string[],
+  state?: string,
+) => Promise<ScopeVerdict>;
 
 const probability = z.number().min(0).max(1);
 const clefAnswer = z.object({
@@ -64,12 +69,12 @@ export function chatModels(
     out.push({
       name: 'workers-ai',
       model: workers(MODELS.primary),
-      classifier: async (question, pageTitles) => {
+      classifier: async (question, pageTitles, state) => {
         const result = await ai.run(
           MODELS.classifier,
           {
             model: 'clef-flash',
-            state: classifierInput(question, pageTitles),
+            state: state ?? classifierInput(question, pageTitles),
             questions: { scope: CLEF_SCOPE },
           },
           { signal: AbortSignal.timeout(8000) },
@@ -108,14 +113,15 @@ export async function classifyScope(
   models: { model: LanguageModel; classifier?: ScopeClassifier }[],
   question: string,
   pageTitles: string[] = [],
+  state?: string,
 ): Promise<ScopeVerdict> {
   for (const { model, classifier } of models) {
     try {
-      if (classifier) return await classifier(question, pageTitles);
+      if (classifier) return await classifier(question, pageTitles, state);
       const { text } = await generateText({
         model,
         system: CLASSIFIER_PROMPT,
-        messages: [{ role: 'user', content: classifierInput(question, pageTitles) }],
+        messages: [{ role: 'user', content: state ?? classifierInput(question, pageTitles) }],
         // Small buffer: some models emit a short reasoning prefix even with thinking off.
         maxOutputTokens: 32,
         temperature: 0,

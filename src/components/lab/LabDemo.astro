@@ -1,0 +1,22 @@
+---
+import AgentGateSimulator from '../blog/AgentGateSimulator.astro';
+import AsteriskChain from '../blog/AsteriskChain.tsx';
+import { BloomFilterDemo } from '../blog/BloomFilterDemo.tsx';
+import CacheChannelSimulator from '../blog/CacheChannelSimulator.tsx';
+import { InteractiveQuiz } from '../blog/InteractiveQuiz.tsx';
+import LunaDecisionsDemo from '../blog/LunaDecisionsDemo.astro';
+import type { LabComponent } from '../../data/lab';
+
+interface Props {
+  name: LabComponent;
+}
+
+const { name } = Astro.props;
+---
+
+{name === 'BloomFilterDemo' && <BloomFilterDemo client:visible />}
+{name === 'InteractiveQuiz' && <InteractiveQuiz client:visible />}
+{name === 'CacheChannelSimulator' && <CacheChannelSimulator client:visible />}
+{name === 'AsteriskChain' && <AsteriskChain client:visible />}
+{name === 'AgentGateSimulator' && <AgentGateSimulator />}
+{name === 'LunaDecisionsDemo' && <LunaDecisionsDemo />}

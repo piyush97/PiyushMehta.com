@@ -8,6 +8,7 @@ Astro page and endpoint routes compose the site's rendered views; score 9 (25 fi
 - `blog/[slug].astro`: post path generation, MDX rendering, and related article assembly.
 - `api/contact.ts`: contact submission validation and delivery.
 - `api/reactions.ts`: reaction read/write endpoint.
+- `api/chat/post.ts`, `api/chat/config.ts`: post-scoped Ask this note (session, caps, memoized summary) and the runtime Turnstile site key (ADR-0004).
 - `rss.xml.ts`, `sitemap.xml.ts`, `robots.txt.ts`: crawler-facing output.
 
 ## CONVENTIONS

@@ -3,6 +3,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { gzipSync } from 'node:zlib';
 
 const REQUIRED_CLIENT_FILES = [
   'index.html',
@@ -10,6 +11,7 @@ const REQUIRED_CLIENT_FILES = [
   'rss.xml',
   'sitemap.xml',
   'robots.txt',
+  'llms.txt',
   '.well-known/security.txt',
   'search/index.html',
   'pagefind/pagefind-entry.json',
@@ -40,6 +42,18 @@ function collectSourceMaps(directory, root = directory) {
   return maps;
 }
 
+/** Workers Free allows 3MB compressed; keep headroom for the post-sections corpus (ADR-0004). */
+export const MAX_SERVER_GZIP_BYTES = 2.5 * 1024 * 1024;
+
+function gzippedServerBytes(directory) {
+  let total = 0;
+  for (const entry of readdirSync(directory, { recursive: true, withFileTypes: true })) {
+    if (entry.isFile() && /\.(?:m?js|wasm)$/.test(entry.name))
+      total += gzipSync(readFileSync(join(entry.parentPath, entry.name))).length;
+  }
+  return total;
+}
+
 function isDirectory(path) {
   try {
     return readdirSync(path).length >= 0;
@@ -68,6 +82,21 @@ function verifyHeaders(clientDir, errors) {
     if (!headers.includes(header)) {
       addError(errors, `Static asset headers are missing ${header}`);
     }
+  }
+
+  // /lab/embed/* re-declares the site CSP so it can be framed. Fail if that copy drifts from /*.
+  const policies = headers.match(/^\s*Content-Security-Policy:.*$/gm) ?? [];
+  const normalized = new Set(
+    policies.map((line) => line.trim().replace(/frame-ancestors [^;]*/, 'frame-ancestors')),
+  );
+  if (normalized.size > 1) {
+    addError(
+      errors,
+      'Static asset headers declare Content-Security-Policy values that differ beyond frame-ancestors',
+    );
+  }
+  if (policies.filter((line) => line.includes('frame-ancestors *')).length > 1) {
+    addError(errors, 'Static asset headers relax frame-ancestors for more than one route');
   }
 
   if (!headers.includes('/_astro/*') || !headers.includes('immutable')) {
@@ -160,6 +189,16 @@ export function verifyRelease(root = process.cwd()) {
     addError(errors, 'Retired newsletter route is still present in sitemap.xml');
   }
 
+  const llmsPath = join(clientDir, 'llms.txt');
+  if (existsSync(llmsPath)) {
+    const llms = readFileSync(llmsPath, 'utf8');
+    if (!/^# \S/.test(llms)) addError(errors, 'llms.txt must start with an H1 site name');
+    const targets = [...llms.matchAll(/\]\(([^)\s]*)\)/g)].map((match) => match[1]);
+    if (targets.some((target) => !/^https:\/\/piyushmehta\.com\/(?!\/)/.test(target))) {
+      addError(errors, 'llms.txt contains a non-production or malformed URL');
+    }
+  }
+
   const resumePath = join(clientDir, 'resume.pdf');
   if (existsSync(resumePath)) {
     const resume = readFileSync(resumePath);
@@ -204,6 +243,15 @@ export function verifyRelease(root = process.cwd()) {
   }
 
   verifyHeaders(clientDir, errors);
+
+  if (isDirectory(serverDir)) {
+    const bytes = gzippedServerBytes(serverDir);
+    if (bytes > MAX_SERVER_GZIP_BYTES)
+      addError(
+        errors,
+        `Gzipped Worker bundle is ${(bytes / 1024 / 1024).toFixed(2)}MB, over the ${(MAX_SERVER_GZIP_BYTES / 1024 / 1024).toFixed(1)}MB ceiling`,
+      );
+  }
 
   const redirectsPath = join(clientDir, '_redirects');
   if (existsSync(redirectsPath)) {

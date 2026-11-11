@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { labDemos, labPath } from '../data/lab';
 import { generateCanonicalUrl } from '../utils/og-generator';
 import { toPostSlug } from '../utils/social-card-manifest';
 import { escapeXml } from '../utils/xml';
@@ -19,11 +20,18 @@ export async function GET(context) {
     '/resume',
     '/videos',
     '/uses',
+    '/lab',
   ];
+
+  const publishedSlugs = new Set(posts.map((post) => toPostSlug(post.id)));
+  const labPages = labDemos
+    .filter((demo) => publishedSlugs.has(demo.postSlug))
+    .map((demo) => labPath(demo.slug));
 
   // Request/build time is not evidence of an editorial change. Omit unknown dates.
   const entries = [
     ...staticPages.map((pathname) => ({ url: generateCanonicalUrl(pathname, site) })),
+    ...labPages.map((pathname) => ({ url: generateCanonicalUrl(pathname, site) })),
     ...posts.map((post) => ({
       url: generateCanonicalUrl(`/blog/${toPostSlug(post.id)}`, site),
       lastmod: (post.data.updatedDate || post.data.date).toISOString(),
