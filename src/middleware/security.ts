@@ -50,6 +50,14 @@ export const onRequest: MiddlewareHandler = async ({ request, url }, next) => {
     }
   }
 
+  if (url.pathname.startsWith('/lab/embed/')) {
+    newHeaders.delete('X-Frame-Options');
+    for (const name of ['Content-Security-Policy', 'Content-Security-Policy-Report-Only']) {
+      const csp = newHeaders.get(name);
+      if (csp) newHeaders.set(name, csp.replace("frame-ancestors 'none'", 'frame-ancestors *'));
+    }
+  }
+
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,

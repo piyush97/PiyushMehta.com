@@ -1,0 +1,110 @@
+---
+import { getCollection } from 'astro:content';
+import LabDemo from '../../../components/lab/LabDemo.astro';
+import SEO from '../../../components/SEO.astro';
+import { type LabDemo as LabDemoEntry, labDemos, labOgImage, labPath } from '../../../data/lab';
+import { toPostSlug } from '../../../utils/social-card-manifest';
+import '../../../styles/global.css';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const published = new Set(posts.map((post) => toPostSlug(post.id)));
+  return labDemos
+    .filter((demo) => published.has(demo.postSlug))
+    .map((demo) => ({ params: { demo: demo.slug }, props: { demo } }));
+}
+
+const { demo } = Astro.props as { demo: LabDemoEntry };
+const origin = (Astro.site?.toString() || 'https://piyushmehta.com').replace(/\/$/, '');
+const fullPage = `${origin}${labPath(demo.slug)}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="generator" content={Astro.generator} />
+    <SEO
+      title={`${demo.title} - embed - Piyush Mehta`}
+      description={demo.description}
+      canonical={fullPage}
+      image={labOgImage(demo.slug)}
+      noindex
+    />
+    <script is:inline>
+      (() => {
+        const asked = new URLSearchParams(location.search).get('theme');
+        const light =
+          asked === 'light' || (asked !== 'dark' && matchMedia('(prefers-color-scheme: light)').matches);
+        const root = document.documentElement;
+        root.classList.add(light ? 'professional-light' : 'professional-dark');
+        if (light) root.classList.add('light');
+        root.style.colorScheme = light ? 'light' : 'dark';
+      })();
+    </script>
+  </head>
+  <body class="lab-embed">
+    <main class="lab-embed__main" data-lab-embed>
+      <h1 class="lab-embed__title">{demo.title}</h1>
+      <LabDemo name={demo.component} />
+      <p class="lab-embed__limits">{demo.caveat}</p>
+    </main>
+    <footer class="lab-embed__footer">
+      <a href={fullPage} target="_blank" rel="noopener">from piyushmehta.com</a>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  body.lab-embed {
+    min-height: 0;
+    margin: 0;
+  }
+
+  .lab-embed__main {
+    min-height: 0;
+    padding: 1rem 1rem 0.5rem;
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .lab-embed__main > :where(section, figure, div, article) {
+    margin-block: 0;
+  }
+
+  .lab-embed__title {
+    margin: 0 0 0.75rem;
+    color: var(--color-text-primary);
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  .lab-embed__limits {
+    margin: 0.75rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .lab-embed__footer {
+    max-width: 760px;
+    margin-inline: auto;
+    padding: 0 1rem 1rem;
+    text-align: right;
+  }
+
+  .lab-embed__footer a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>
