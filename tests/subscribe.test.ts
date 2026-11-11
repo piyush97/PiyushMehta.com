@@ -173,7 +173,7 @@ describe('subscribe handlers', () => {
       TURNSTILE_SECRET_KEY: 'turnstile-secret',
       NEWSLETTER_SIGNING_SECRET: SECRET,
     };
-    let limiter: 'allow' | 'deny' | 'throw' | 'global' = 'throw';
+    let limiter: 'allow' | 'deny' | 'throw' | 'global' | 'email' = 'throw';
     let proof = true;
     let proofAction = 'newsletter-signup';
     const sent: Array<Record<string, unknown>> = [];
@@ -187,7 +187,8 @@ describe('subscribe handlers', () => {
         limit: async () => {
           if (limiter === 'throw') throw new Error('offline');
           return {
-            success: limiter !== 'deny' && !(limiter === 'global' && prefix.endsWith(':global')),
+            success: limiter !== 'deny' && !(limiter === 'global' && prefix.endsWith(':global')) &&
+            !(limiter === 'email' && prefix.endsWith(':email')),
             limit: 3,
             remaining: 0,
             reset: Date.now() + 30_000,
@@ -209,7 +210,7 @@ describe('subscribe handlers', () => {
 
     try {
       const subscribe = (await import('../src/pages/api/subscribe')).POST;
-      const confirm = (await import('../src/pages/api/subscribe/confirm')).GET;
+      const confirm = await import('../src/pages/api/subscribe/confirm');
       const unsub = await import('../src/pages/api/subscribe/unsubscribe');
 
       const invoke = async (body: unknown, headers: Record<string, string> = {}) => {
@@ -291,10 +292,17 @@ describe('subscribe handlers', () => {
       const call = (handler: unknown, url: URL, method = 'GET') =>
         (handler as (ctx: unknown) => Promise<Response>)({ url, request: new Request(url, { method }), locals: {} });
 
-      assert.equal((await call(confirm, confirmUrl(null))).status, 400);
-      assert.equal((await call(confirm, confirmUrl('garbage'))).status, 400);
-      assert.equal(store.set.size, 0);
-      assert.equal((await call(confirm, confirmUrl(token))).status, 200);
+      limiter = 'email';
+      assert.deepEqual(await (await invoke(valid)).json(), { ok: true });
+      assert.equal(sent.length, 1, 'a throttled address gets no second email');
+      limiter = 'allow';
+
+      assert.equal((await call(confirm.GET, confirmUrl(null))).status, 400);
+      assert.equal((await call(confirm.GET, confirmUrl('garbage'))).status, 400);
+      assert.equal((await call(confirm.POST, confirmUrl('garbage'), 'POST')).status, 400);
+      assert.equal((await call(confirm.GET, confirmUrl(token))).status, 200);
+      assert.equal(store.set.size, 0, 'GET never subscribes');
+      assert.equal((await call(confirm.POST, confirmUrl(token), 'POST')).status, 200);
       assert.deepEqual([...store.set], ['reader@example.com']);
 
       const unsubToken = await signToken(SECRET, 'unsubscribe', 'reader@example.com');

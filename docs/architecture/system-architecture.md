@@ -132,7 +132,7 @@ The environment schema still contains legacy database, mail, and CMS variables. 
 | `/api/chat`                  | Site-scope Ask Piyush: session-gated, classifier-gated streaming answer                                | Workers AI or Groq, Upstash Redis |
 | `/api/chat/session`          | `GET` public Turnstile site key; `POST` exchanges a Turnstile token for an IP-bound 30 minute session  | Turnstile, Upstash Redis          |
 | `/api/subscribe`             | Origin-checked, Turnstile-gated double opt-in signup; sends a signed confirm link                      | Upstash Redis, Turnstile, Resend  |
-| `/api/subscribe/confirm`     | `GET` verifies the signed token and adds the address to `newsletter:subscribers`                       | Upstash Redis                     |
+| `/api/subscribe/confirm`     | `GET` shows a confirm button; `POST` adds the address to `newsletter:subscribers`                      | Upstash Redis                     |
 | `/api/subscribe/unsubscribe` | `GET` shows a button; `POST` (also one-click `List-Unsubscribe`) removes the address                   | Upstash Redis                     |
 | `/api/chat/config`           | `GET` public Turnstile site key for prerendered article pages (cached 5 minutes)                       | None                              |
 | `/api/chat/post`             | Post-scope Ask this note: session required for `summary` and `ask`; summary memoized by content digest | Workers AI or Groq, Upstash Redis |

@@ -29,6 +29,7 @@ import {
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://piyushmehta.com';
 const SEND_DELAY_MS = 600;
+const SENT_TTL_SECONDS = 30 * 24 * 60 * 60;
 
 const args = process.argv.slice(2);
 const send = args.includes('--send');
@@ -130,6 +131,8 @@ async function main() {
         }),
       );
       await redisCommand(['SADD', sentKey, email]);
+      // The sent list only exists to make reruns safe; do not keep addresses past that.
+      await redisCommand(['EXPIRE', sentKey, String(SENT_TTL_SECONDS)]);
       delivered += 1;
     } catch (error) {
       failed += 1;

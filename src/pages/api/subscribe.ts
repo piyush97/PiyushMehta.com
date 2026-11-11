@@ -16,6 +16,8 @@ export const prerender = false;
 
 const ratelimit = createRatelimit('ratelimit:subscribe', 3, '1 h');
 const globalDay = createRatelimit('ratelimit:subscribe:global', 50, '1 d');
+// Caps confirmation mail to one address, so rotating IPs cannot mail-bomb a third party.
+const perEmailDay = createRatelimit('ratelimit:subscribe:email', 2, '1 d');
 const MAX_BODY_BYTES = 4 * 1024;
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
@@ -80,6 +82,20 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       ))
     )
       return json({ error: 'Verification failed.' }, 403);
+    const emailDigest = new Uint8Array(
+      await crypto.subtle.digest('SHA-256', new TextEncoder().encode(cleanEmail)),
+    );
+    const emailError = await limitOrUnavailable(
+      perEmailDay,
+      Array.from(emailDigest, (byte) => byte.toString(16).padStart(2, '0')).join(''),
+    );
+    // Same answer as a fresh signup, so the limit does not reveal earlier requests.
+    if (emailError) {
+      return emailError.status === 429
+        ? json({ ok: true })
+        : json({ error: 'Subscription service unavailable.' }, 503, { 'Retry-After': '30' });
+    }
+
     const capError = await limitOrUnavailable(globalDay, 'all');
     if (capError)
       return json({ error: 'Subscription service unavailable.' }, 503, { 'Retry-After': '30' });
