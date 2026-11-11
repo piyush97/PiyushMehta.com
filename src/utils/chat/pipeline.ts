@@ -110,6 +110,7 @@ function streamAnswer(
         );
         let started = false;
         let shown = '';
+        let finishReason: string | undefined;
         const providerSignal = AbortSignal.any([
           ...(abortSignal ? [abortSignal] : []),
           AbortSignal.timeout(deps.providerTimeoutMs ?? 30_000),
@@ -140,6 +141,8 @@ function streamAnswer(
               const out = guard.push(part.text);
               if (out) emit(out);
               if (guard.tripped) break;
+            } else if (part.type === 'finish') {
+              finishReason = part.finishReason;
             } else if (part.type === 'error') {
               throw part.error;
             }
@@ -164,7 +167,10 @@ function streamAnswer(
             sources: guard.tripped ? 0 : sourceCount,
           });
           onEvent?.('answered', { provider: name, chunks: chunks.length });
-          if (!guard.tripped) await plan.onAnswered?.(shown);
+          // Only a complete answer may be memoized: an aborted, timed-out, truncated or blank
+          // stream would otherwise be replayed to every reader until the cache expires.
+          if (!guard.tripped && finishReason === 'stop' && shown.trim())
+            await plan.onAnswered?.(shown);
           return;
         } catch (err) {
           onEvent?.('provider_error', {

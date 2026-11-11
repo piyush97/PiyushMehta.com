@@ -10,7 +10,7 @@ const usage = { inputTokens: { total: 1 }, outputTokens: { total: 1 } };
 const finish = { unified: 'stop', raw: 'stop' } as const;
 
 /** A model that classifies with `verdict` and streams `deltas` (or throws `fail`). */
-function model(opts: { verdict?: string; classifyFail?: unknown; deltas?: string[]; streamFail?: unknown }) {
+function model(opts: { verdict?: string; classifyFail?: unknown; deltas?: string[]; streamFail?: unknown; finish?: string; stall?: boolean }) {
   let streams = 0;
   const m = new MockLanguageModelV4({
     doGenerate: async () => {
@@ -26,8 +26,13 @@ function model(opts: { verdict?: string; classifyFail?: unknown; deltas?: string
             c.enqueue({ type: 'stream-start', warnings: [] });
             c.enqueue({ type: 'text-start', id: '1' });
             for (const d of opts.deltas ?? []) c.enqueue({ type: 'text-delta', id: '1', delta: d });
+            if (opts.stall) return;
             c.enqueue({ type: 'text-end', id: '1' });
-            c.enqueue({ type: 'finish', finishReason: finish, usage });
+            c.enqueue({
+              type: 'finish',
+              finishReason: opts.finish ? { unified: opts.finish, raw: opts.finish } : finish,
+              usage,
+            });
             c.close();
           },
         }),
@@ -338,6 +343,26 @@ describe('post scope', () => {
     assert.equal(r.trace?.guard, 'blocked');
     assert.equal(stored, undefined);
     assert.ok(!r.raw.includes('evil'));
+  });
+
+  it('never offers an incomplete or blank summary to the cache', async () => {
+    const run = async (opts: Parameters<typeof model>[0], deps: { providerTimeoutMs?: number } = {}, signal?: AbortSignal) => {
+      let stored: string | undefined;
+      const res = await runPostChat(
+        { mode: 'summary', note, onSummary: async (t) => { stored = t; } },
+        { models: [{ name: 'm', model: model(opts) }], ...deps },
+        signal,
+      );
+      await read(res);
+      return stored;
+    };
+    assert.equal(await run({ deltas: ['The note covers half of'], finish: 'length' }), undefined, 'truncated');
+    assert.equal(await run({ deltas: ['\n\n'] }), undefined, 'whitespace only');
+    assert.equal(await run({ deltas: ['The note covers half of '], stall: true }, { providerTimeoutMs: 50 }), undefined, 'provider timeout');
+    const abort = new AbortController();
+    setTimeout(() => abort.abort(), 50);
+    assert.equal(await run({ deltas: ['The note covers half of '], stall: true }, {}, abort.signal), undefined, 'client abort');
+    assert.equal(await run({ deltas: ['The note covers X.'] }), 'The note covers X.', 'complete');
   });
 
   it('the guard still blocks a canary leak on the post path', async () => {

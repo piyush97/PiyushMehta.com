@@ -39,7 +39,7 @@ export async function writeSummary(
   text: string,
   store: SummaryStore | null,
 ): Promise<boolean> {
-  if (!store || text.length === 0 || text.length > MAX_SUMMARY_CHARS) return false;
+  if (!store || text.trim().length === 0 || text.length > MAX_SUMMARY_CHARS) return false;
   try {
     await store.set(key, text, { ex: SUMMARY_TTL_SECONDS });
     return true;
