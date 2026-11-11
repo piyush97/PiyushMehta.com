@@ -2342,6 +2342,18 @@
       "text": "Piyush Mehta: canonical facts Source of truth for the Ask Piyush assistant. Only facts verifiable on piyushmehta.com belong here. Do not add claims, clients, or metrics that are not published on the site. Identity Piyush Mehta is a senior software engineer based in Canada. His focus is AI workflows, web platforms, and system design. Website: https://piyushmehta.com Current role Senior Software Engineer at Tundra Technical Solutions (remote), July 2025 to present. He leads architecture and delivery of enterprise software and AI agent workflows for a major Ontario energy client, builds LLM-powered systems (RAG, MCP tools, agentic pipelines), and coaches teams on secure, durable engineering. Contact and links - Contact form: https://piyushmehta.com/contact-me - GitHub: https://github.com/piyush97 - LinkedIn: https://linkedin.com/in/piyush24 - Resume: https://piyushmehta.com/resume What this assistant is Ask Piyush is an AI assistant that answers questions about Piyush Mehta using his published site content: field notes, case studies, résumé, and services. It runs on free models, can be wrong, and always links its sources. It cannot answer questions unrelated to Piyush."
     },
     {
+      "id": "case:Understory:0",
+      "title": "Case study: Understory",
+      "url": "/projects",
+      "text": "title : Understory , eyebrow : Cloudflare Workers, Workers AI, open source , role : Product Engineer , timeframe : 2026 , summary : Built a reading layer that turns new engineering blog posts into reviewed explainers with context, mechanism, a diagram, an ELI5, trade-offs, and a source behind every claim. , problem : Engineering blog posts announce results but skip the mechanism and trade-offs. Summary bots compress the announcement and invent details; readers still have to open three more articles to understand one. , approach : Split discovery, extraction, generation, and validation into leased queue jobs so a failed step stays in D1 and never reaches the public index. , Validated model output with a Zod schema plus reference checks: every citation, source URL, and diagram edge must resolve before a draft enters review. , Rendered diagrams deterministically from a small validated graph instead of letting the model draw SVG. , Reserved the Workers AI neuron budget with one conditional SQL statement and invalidated the edge cache by bumping a publication version on approval. , outcomes : Launched with eleven reviewed explainers across thirty sources, running entirely on the Cloudflare free plan. , Kept readers off the inference path: every page is server-rendered from approved, immutable revisions. , Published the code under MIT and the explainers under CC BY"
+    },
+    {
+      "id": "case:Understory:1",
+      "title": "Case study: Understory",
+      "url": "/projects",
+      "text": "4.0. , stack : Cloudflare Workers , Workers AI , D1 , Queues , Hono , TypeScript , links : label : Live site , href : https://understory.piyushmehta.com/ , label : Technical article , href : /blog/understory-engineering-blogs-explained , label : GitHub , href : https://github.com/piyush97/understory"
+    },
+    {
       "id": "case:FocusTube:0",
       "title": "Case study: FocusTube",
       "url": "/projects",
@@ -2364,18 +2376,6 @@
       "title": "Case study: RoastTube",
       "url": "/projects",
       "text": "the model’s self-reported score, so the model only ever writes prose. , Rationed the paid model with a three-per-hour per-IP limit, a fifteen-per-day site budget, and error copy a person can act on instead of bare status codes. , outcomes : Shipped to production on Cloudflare Workers with the live OAuth flow, a permanent report link per visitor, and a per-report Open Graph card. , Answered the login-wall finding by making the no-account path the primary one, then resubmitted verification with all three reviewer findings addressed directly. , Fixed two production-only failures the local build never showed: a share card that crashed the runtime’s CSS parser, and a deploy wizard that double-wrapped the OAuth client secret. , stack : Next.js , Cloudflare Workers , Workers KV , Google OAuth , YouTube Data API , Gemini , Turnstile , links : label : Technical article , href : /blog/roasttube-ai-roast-youtube-history , label : Live site , href : https://roasttube.piyushmehta.com"
-    },
-    {
-      "id": "case:Understory:0",
-      "title": "Case study: Understory",
-      "url": "/projects",
-      "text": "title : Understory , eyebrow : Cloudflare Workers, Workers AI, open source , role : Product Engineer , timeframe : 2026 , summary : Built a reading layer that turns new engineering blog posts into reviewed explainers with context, mechanism, a diagram, an ELI5, trade-offs, and a source behind every claim. , problem : Engineering blog posts announce results but skip the mechanism and trade-offs. Summary bots compress the announcement and invent details; readers still have to open three more articles to understand one. , approach : Split discovery, extraction, generation, and validation into leased queue jobs so a failed step stays in D1 and never reaches the public index. , Validated model output with a Zod schema plus reference checks: every citation, source URL, and diagram edge must resolve before a draft enters review. , Rendered diagrams deterministically from a small validated graph instead of letting the model draw SVG. , Reserved the Workers AI neuron budget with one conditional SQL statement and invalidated the edge cache by bumping a publication version on approval. , outcomes : Launched with eleven reviewed explainers across thirty sources, running entirely on the Cloudflare free plan. , Kept readers off the inference path: every page is server-rendered from approved, immutable revisions. , Published the code under MIT and the explainers under CC BY"
-    },
-    {
-      "id": "case:Understory:1",
-      "title": "Case study: Understory",
-      "url": "/projects",
-      "text": "4.0. , stack : Cloudflare Workers , Workers AI , D1 , Queues , Hono , TypeScript , links : label : Live site , href : https://understory.piyushmehta.com/ , label : Technical article , href : /blog/understory-engineering-blogs-explained , label : GitHub , href : https://github.com/piyush97/understory"
     },
     {
       "id": "case:Enterprise AI Workflows:0",

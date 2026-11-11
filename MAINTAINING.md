@@ -92,6 +92,11 @@ before and after the build. Git command failures also block it. Do not bypass th
 guard or upload `dist/server/` as public static assets. GitHub Actions does not need
 a production deployment token; Workers Builds uses its installed GitHub App.
 
+## Post email
+
+Run the `Newsletter` workflow with `slug` (the post directory) and `send` on. Dry run
+locally with `bunx varlock run -- bun scripts/send-new-post.mjs <post-slug>`.
+
 ## Ownership
 
 Maintainer: Piyush Mehta (`piyush97`). Use the contributing guide and PR template

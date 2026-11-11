@@ -6,7 +6,9 @@ export type LabComponent =
   | 'CacheChannelSimulator'
   | 'AsteriskChain'
   | 'AgentGateSimulator'
-  | 'LunaDecisionsDemo';
+  | 'LunaDecisionsDemo'
+  | 'MoEDecodeBudget'
+  | 'RiskAssessmentMatrix';
 
 export interface LabDemo {
   slug: string;
@@ -108,6 +110,32 @@ export const labDemos: readonly LabDemo[] = [
     component: 'LunaDecisionsDemo',
     tags: ['AI', 'Routing', 'Thresholds'],
     embedHeight: 860,
+  },
+  {
+    slug: 'moe-decode-budget',
+    title: 'MoE decode budget',
+    description:
+      'Compare Mixture-of-Experts presets against RAM and memory bandwidth to see whether decode fits; token rates come from measured llama.cpp runs, not a live benchmark.',
+    context:
+      'Each preset pins a model file, RAM ceiling, and bandwidth figure from the article, so moving a slider shows which limit the decode loop actually hits.',
+    caveat: 'Arithmetic model over three measured presets, not a benchmark harness.',
+    postSlug: 'moe-decode-memory-budget',
+    component: 'MoEDecodeBudget',
+    tags: ['AI', 'Inference', 'Memory bandwidth'],
+    embedHeight: 1180,
+  },
+  {
+    slug: 'migration-risk-matrix',
+    title: 'Migration risk matrix',
+    description:
+      'Read the nine migration risks from the article by probability, impact, and status; open one to see the mitigation and contingency the team committed to.',
+    context:
+      'The matrix is a planning artefact: it separates risks that were avoided or mitigated from the ones still open at cutover.',
+    caveat: 'Qualitative assessment recorded for one migration. Not incident data.',
+    postSlug: 'zero-downtime-database-migration-at-scale',
+    component: 'RiskAssessmentMatrix',
+    tags: ['Databases', 'Migration', 'Risk'],
+    embedHeight: 1240,
   },
 ];
 

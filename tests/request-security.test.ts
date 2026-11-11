@@ -277,3 +277,79 @@ describe('POST request boundaries', () => {
     }
   });
 });
+
+describe('content security policy', () => {
+  it('keeps one tightened enforced policy', async () => {
+    const { CONTENT_SECURITY_POLICY } = await import('../src/utils/request-security');
+    assert.match(CONTENT_SECURITY_POLICY, /^default-src 'self';/);
+    assert.ok(!CONTENT_SECURITY_POLICY.includes("'unsafe-eval'"));
+    for (const origin of ['googletagmanager', 'google-analytics', 'gstatic', 'cdnjs', 'jsdelivr']) {
+      assert.ok(!CONTENT_SECURITY_POLICY.includes(origin), origin);
+    }
+    assert.match(CONTENT_SECURITY_POLICY, /frame-src 'self' https:\/\/challenges\.cloudflare\.com/);
+    assert.match(CONTENT_SECURITY_POLICY, /frame-ancestors 'none'/);
+  });
+});
+
+describe('reaction visitor dedupe', () => {
+  it('counts once per visitor and never goes negative', async () => {
+    const mock = await import('bun:test');
+    const voters = new Set<string>();
+    const originalRedis = { ...(await import('../src/utils/redis')) };
+    let count = 0;
+    mock.mock.module('../src/utils/redis', () => ({
+      reactionRedis: {
+        hget: async () => String(count),
+        hincrby: async (_key: string, _field: string, by: number) => {
+          count += by;
+          return count;
+        },
+        hset: async () => 'OK',
+        expire: async () => 1,
+        sadd: async (_key: string, member: string) => {
+          if (voters.has(member)) return 0;
+          voters.add(member);
+          return 1;
+        },
+        srem: async (_key: string, member: string) => (voters.delete(member) ? 1 : 0),
+      },
+      redis: null,
+      createRatelimit: () => null,
+      getClientIp: () => '203.0.113.9',
+      limitOrUnavailable: async () => null,
+    }));
+
+    const { POST } = await import('../src/pages/api/reactions');
+    const slugs = (await import('../src/data/published-post-slugs.json')).default as string[];
+    const visitor = '6f1c2f7e-8b1d-4a3e-9c2d-1e2f3a4b5c6d';
+    const call = async (action: 'add' | 'remove', cookie: string | null = `pm_vid=${visitor}`) => {
+      const headers: Record<string, string> = {
+        Origin: 'https://piyushmehta.com',
+        'Content-Type': 'application/json',
+        'CF-Connecting-IP': '203.0.113.9',
+      };
+      if (cookie) headers.Cookie = cookie;
+      return POST({
+        request: new Request('https://piyushmehta.com/api/reactions', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ postId: slugs[0], reaction: 'like', action }),
+        }),
+        clientAddress: '203.0.113.9',
+      } as unknown as Parameters<typeof POST>[0]) as Promise<Response>;
+    };
+
+    assert.equal((await (await call('add')).json()).count, 1);
+    assert.equal((await (await call('add')).json()).count, 1);
+    assert.equal((await (await call('remove')).json()).count, 0);
+    assert.equal((await (await call('remove')).json()).count, 0);
+    assert.equal(count, 0);
+
+    const fresh = await call('add', null);
+    assert.equal((await fresh.json()).count, 1);
+    assert.match(fresh.headers.get('set-cookie') ?? '', /^pm_vid=[0-9a-f-]{36};/);
+    assert.match(fresh.headers.get('set-cookie') ?? '', /HttpOnly/);
+    // mock.module is process-wide in bun; restore it or later test files inherit the stub.
+    mock.mock.module('../src/utils/redis', () => originalRedis);
+  });
+});

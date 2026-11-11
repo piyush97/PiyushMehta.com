@@ -55,10 +55,10 @@ returns to the trigger.
 
 **Two actions, two cost profiles.**
 
-| Action | Model calls | Cost | Gate |
-|---|---|---|---|
-| Open the panel → **Summary** | 1, and only on a cache miss | one generation per note per cache window, then free | session, per-IP limits, global generation cap |
-| Reader types a question → **Answer** | 2 (scope check + answer) | one reader action | session, per-IP limits, global question cap |
+| Action                               | Model calls                 | Cost                                                | Gate                                          |
+| ------------------------------------ | --------------------------- | --------------------------------------------------- | --------------------------------------------- |
+| Open the panel → **Summary**         | 1, and only on a cache miss | one generation per note per cache window, then free | session, per-IP limits, global generation cap |
+| Reader types a question → **Answer** | 2 (scope check + answer)    | one reader action                                   | session, per-IP limits, global question cap   |
 
 **The summary cache is what makes the feature affordable.** A note's summary is a function
 of (note content, prompt version) and nothing else — no reader input, no query. So it is
@@ -89,7 +89,7 @@ These are the builder's instructions, not a menu.
 **D1 — Post scope retrieves the whole note, section by section.**
 The published notes are long and half technical: 700 section headings and 215 fenced code
 blocks across 51 notes, and the flat index drops all code (14.8% of raw body characters) and
-all section boundaries. A summary written from that is a summary of prose *about* code, and
+all section boundaries. A summary written from that is a summary of prose _about_ code, and
 it cannot say "the section on the queue" because no section exists in the corpus.
 
 So the build emits a second, structured artifact: `src/data/post-sections.json`, one entry
@@ -120,7 +120,7 @@ expressed in his articles", so a question like "what does this note argue?" is a
 scope for `/ask` today. Nothing needs to widen, and nothing is narrowed: **the criteria
 payload is not modified at all.**
 
-What changes is only the *input*. Site scope passes `classifierInput(question, pageTitles)`
+What changes is only the _input_. Site scope passes `classifierInput(question, pageTitles)`
 as it does today. Post scope passes a different state that names the note the reader is on
 and its headings, so the classifier can tell that a bare "why?" refers to that note. Same
 system prompt, same Clef criteria, same 0.6 confidence threshold, same fail-closed
@@ -156,15 +156,15 @@ it. No React, no hydration, no island.
 
 **D7 — The Turnstile site key is fetched at runtime, and it must be.**
 `PUBLIC_TURNSTILE_SITE_KEY` is `@dynamic` in `.env.schema`, and varlock's build-time guard
-*throws* if a dynamic public value is read during prerender. The blog route is
+_throws_ if a dynamic public value is read during prerender. The blog route is
 `prerender = true`, so it cannot inline the key — the panel would fail the build if it
 tried. The key is therefore read at runtime from a new public endpoint,
-`GET /api/chat/config`, and cached in memory for the page. A Turnstile *site* key is
+`GET /api/chat/config`, and cached in memory for the page. A Turnstile _site_ key is
 public by design — it is rendered into the page for every visitor — so exposing it via a
-cached GET is safe. The *secret* key is never exposed and never leaves the Worker.
+cached GET is safe. The _secret_ key is never exposed and never leaves the Worker.
 
 **D8 — Both modes require a session; only the summary skips the classifier.**
-The classifier exists to judge *user* requests, and ADR-0003 requires scope to be enforced
+The classifier exists to judge _user_ requests, and ADR-0003 requires scope to be enforced
 before the model. A summary of a note the server itself selected is not a user request, so
 it skips the classifier: 1 model call instead of 2. But it is still a public model call, so
 it still requires the session token, the per-IP limits, and the global generation cap —
@@ -190,12 +190,12 @@ tokens through granite, plus a small clef call). A post-scope question costs rou
 because the whole-note context is larger than the site context; a post summary about 6–8.
 Against the current 600 questions/day, that is ≈4,800 neurons/day.
 
-| Surface | Limit | Neurons/day |
-|---|---|---|
-| Site scope, existing | 600 questions/day | ≈ 4,800 |
-| Post scope, questions (new) | 100 questions/day | ≈ 900–1,300 |
-| Post scope, summary generations (new) | 60 generations/day, cache misses only | ≈ 400 |
-| | **ceiling** | **≈ 6,100–6,500 of 10,000** |
+| Surface                               | Limit                                 | Neurons/day                 |
+| ------------------------------------- | ------------------------------------- | --------------------------- |
+| Site scope, existing                  | 600 questions/day                     | ≈ 4,800                     |
+| Post scope, questions (new)           | 100 questions/day                     | ≈ 900–1,300                 |
+| Post scope, summary generations (new) | 60 generations/day, cache misses only | ≈ 400                       |
+|                                       | **ceiling**                           | **≈ 6,100–6,500 of 10,000** |
 
 Steady state is far below the ceiling: summaries cost ≈1.7 generations/day ≈ 13 neurons, so
 the realistic total is ≈4,850 neurons/day, essentially unchanged. The one-time cost of
@@ -218,7 +218,7 @@ every summary when the prompt changes. The digest is computed at build time, so
 invalidation needs no runtime hashing and no second artifact to keep in sync.
 
 **D11 — Summary mode has no site fallback; question mode does.**
-A summary is of *this note*. Pulling other notes' content into it would make it a summary
+A summary is of _this note_. Pulling other notes' content into it would make it a summary
 of the wrong thing, and it would make the cached value depend on a query that does not
 exist in summary mode. So summary context is the note and nothing else, its single source
 is the note itself, and the cached value is self-contained.
@@ -228,15 +228,15 @@ note's own chunks, top 2 hits, plus the facts chunk, appended after the note.
 
 **D12 — The panel anchors to the viewport's right margin, and the article reserves that
 margin.**
-A viewport-right-anchored panel *does* overlap the prose at every realistic width. Measured
+A viewport-right-anchored panel _does_ overlap the prose at every realistic width. Measured
 on the built site against `.blog-post-content` (`dist/client`, Chromium):
 
-| viewport | prose column | 400px right-anchored panel | overlap |
-|---|---|---|---|
-| 768 | 31 → 737 | 368 → 768 | 337px (48%) |
-| 1280 | 294 → 1232 | 880 → 1280 | 352px (37%) |
-| 1440 | 371 → 1320 | 1040 → 1440 | 280px (30%) |
-| 1920 | 616 → 1560 | 1520 → 1920 | 40px (4%) |
+| viewport | prose column | 400px right-anchored panel | overlap     |
+| -------- | ------------ | -------------------------- | ----------- |
+| 768      | 31 → 737     | 368 → 768                  | 337px (48%) |
+| 1280     | 294 → 1232   | 880 → 1280                 | 352px (37%) |
+| 1440     | 371 → 1320   | 1040 → 1440                | 280px (30%) |
+| 1920     | 616 → 1560   | 1520 → 1920                | 40px (4%)   |
 
 The article shell is `min(100%, 1200px)` and the prose fills its column, so the viewport's
 right margin is only ≈48px at 1280. An overlay cannot avoid the prose. Therefore the
@@ -246,23 +246,23 @@ left of the panel; nothing is ever covered. Below 1024px there is no room to res
 the panel is a bottom sheet at 85dvh that overlays the page, and the reader can still
 scroll the article above it.
 
-This means the panel is a *layout participant*, not an overlay, on desktop. That is a real
+This means the panel is a _layout participant_, not an overlay, on desktop. That is a real
 constraint and it is the price of not covering the prose.
 
 ---
 
 ## 4. Non-negotiables mapped to design
 
-| Requirement | How it is met |
-|---|---|
-| The article stays readable with JS off | The panel is additive. The existing `AskLink` doorway to `/ask?q=…` stays in the closing ledger and is the no-JS path. The trigger is a real link to `/ask?q=…` that JS upgrades. |
-| Every answer is grounded and cited | Post scope puts the whole note in context; sources are emitted as `source-url` parts and rendered as links. |
-| Scope is enforced before the model | Same classifier, same criteria, same threshold, same fail-closed path (D3). A refusal costs no answer call. |
-| Output cannot leak or mislead | Same `createStreamGuard` — canary, prompt-leak phrases, URL allowlist, no HTML, no images — on both the summary and the answer path. |
-| Free models only | Same `chatModels()` chain: Workers AI primary, Groq fallback, polite unavailable state. |
-| No database | Redis holds rate-limit counters and a TTL'd memoized summary. No schema, no migrations, no durable content. The published-post manifest is the only allowlist. |
-| Fail closed | Missing session secret, Turnstile secret, rate limiter, or Redis ⇒ 503 for the affected path. The article itself is unaffected. |
-| No reader text is stored | Nothing about a reader is written anywhere. The summary cache holds a per-note string keyed by content digest, not by reader. |
+| Requirement                               | How it is met                                                                                                                                                                                                    |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The article stays readable with JS off    | The panel is additive. The existing `AskLink` doorway to `/ask?q=…` stays in the closing ledger and is the no-JS path. The trigger is a real link to `/ask?q=…` that JS upgrades.                                |
+| Every answer is grounded and cited        | Post scope puts the whole note in context; sources are emitted as `source-url` parts and rendered as links.                                                                                                      |
+| Scope is enforced before the model        | Same classifier, same criteria, same threshold, same fail-closed path (D3). A refusal costs no answer call.                                                                                                      |
+| Output cannot leak or mislead             | Same `createStreamGuard` — canary, prompt-leak phrases, URL allowlist, no HTML, no images — on both the summary and the answer path.                                                                             |
+| Free models only                          | Same `chatModels()` chain: Workers AI primary, Groq fallback, polite unavailable state.                                                                                                                          |
+| No database                               | Redis holds rate-limit counters and a TTL'd memoized summary. No schema, no migrations, no durable content. The published-post manifest is the only allowlist.                                                   |
+| Fail closed                               | Missing session secret, Turnstile secret, rate limiter, or Redis ⇒ 503 for the affected path. The article itself is unaffected.                                                                                  |
+| No reader text is stored                  | Nothing about a reader is written anywhere. The summary cache holds a per-note string keyed by content digest, not by reader.                                                                                    |
 | Theme, keyboard, reduced motion, contrast | Trigger and panel use the existing Evidence Ledger tokens; 44px trigger target; visible 2px accent focus ring; one authored slide/fade motion, disabled under `prefers-reduced-motion`; text tokens keep ≥4.5:1. |
 
 ---
@@ -363,7 +363,7 @@ still above.").
 - `scripts/chat-live-eval.ts` — add post-scope cases (see §8).
 - `docs/architecture/system-architecture.md` — add the two routes to the runtime route
   inventory and the new Redis responsibility to the concerns table. The inventory currently
-  omits the *existing* `/api/chat` and `/api/chat/session`; add those too while there.
+  omits the _existing_ `/api/chat` and `/api/chat/session`; add those too while there.
 - `docs/adr/0004-blog-ask-panel.md` — the ADR (see §9).
 - `src/pages/AGENTS.md`, `src/components/AGENTS.md` — note the new route, component, and
   utility if those files are hand-maintained.
@@ -392,7 +392,7 @@ the 3MB compressed limit for the Workers Free plan.
 
 - `post` — required. Normalized with `toPublishedPostSlug`, then checked against the
   published-post manifest with `isPublishedPostSlug`. Unknown or draft slug ⇒ 422. The
-  slug never selects text; it selects *from the server's own artifacts*.
+  slug never selects text; it selects _from the server's own artifacts_.
 - `mode` — `summary` or `ask`.
 - `question` — required for `ask`, ignored for `summary`; ≤500 chars, sanitized with the
   existing `sanitizeUserText`.
@@ -439,7 +439,7 @@ it.
 21 articles in a day would hit a 20/day request cap on summaries that were already cached
 and cost nothing. The per-IP cap is therefore **30/day** for summary requests — above the
 51-note worst case is still possible, so the cap is set at 60/day, comfortably above any
-realistic browsing session, and the *generation* pressure is bounded separately by the
+realistic browsing session, and the _generation_ pressure is bounded separately by the
 global 60/day miss cap. A summary request that is rate-limited returns the same
 rate-limit copy as a question; the reader still gets the static orientation and the
 composer.
@@ -496,7 +496,7 @@ before the caps in D9 are raised.
 `docs/adr/0004-blog-ask-panel.md` records: post scope as a second routing mode on the
 existing assistant; full-note, section-aware context with bounded site fallback; the
 unchanged classifier criteria with a second input shape; the summary cache as Redis
-operational state with a content-digest key, and the explicit statement that Redis is *not*
+operational state with a content-digest key, and the explicit statement that Redis is _not_
 becoming a content store — the note text stays in the build artifact and the cache holds a
 TTL'd memoized answer; the runtime site-key endpoint and the reason the build cannot inline
 it; the layout reservation that keeps the panel off the prose; and the neuron-denominated
@@ -507,17 +507,17 @@ reaction counters".
 
 ## 10. Risks, and what happens if they land
 
-| Risk | Mitigation |
-|---|---|
-| A viral post drains the free tier | The budget is stated in neurons against a measured 10,000/day allowance; per-IP and global caps; the summary is cached, so only the first reader of a note per window pays; `/ask` keeps its own bucket. |
-| The classifier refuses legitimate note questions | The criteria already cover "views expressed in his articles"; the post-scope input names the note so a bare "why?" is judged in context; a refusal is visible in the trace, not silent. |
-| The summary is stale | The cache key contains a build-time digest of the note's content; editing the note changes the digest and the summary is regenerated. |
-| Redis is down | Summary and questions fail closed with an honest message. The article is unaffected. |
-| The panel covers the prose | On desktop the article reserves the margin and the prose reflows (D12); below 1024px it is a bottom sheet the reader can scroll past. Verified at 375 / 768 / 1024 / 1280 / 1440 / 1920. |
-| The panel drifts from `/ask` | One pipeline, one guard, one classifier, one session model, one trace shape. The panel has no prompt of its own — only a mode. |
-| A reader asks something the note does not cover | The prompt requires saying so; the trace shows whether fallback pages were used; sources name the page. |
-| The bundle grows | The new corpus is additive and measured at 194KB gzipped; the release check asserts a 2.5MB gzipped ceiling. |
-| Prompt injection through the reader's question | The question is sanitized, the scope check runs before the model, the context is untrusted data, the canary and the guard are unchanged. |
+| Risk                                                 | Mitigation                                                                                                                                                                                                                   |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A viral post drains the free tier                    | The budget is stated in neurons against a measured 10,000/day allowance; per-IP and global caps; the summary is cached, so only the first reader of a note per window pays; `/ask` keeps its own bucket.                     |
+| The classifier refuses legitimate note questions     | The criteria already cover "views expressed in his articles"; the post-scope input names the note so a bare "why?" is judged in context; a refusal is visible in the trace, not silent.                                      |
+| The summary is stale                                 | The cache key contains a build-time digest of the note's content; editing the note changes the digest and the summary is regenerated.                                                                                        |
+| Redis is down                                        | Summary and questions fail closed with an honest message. The article is unaffected.                                                                                                                                         |
+| The panel covers the prose                           | On desktop the article reserves the margin and the prose reflows (D12); below 1024px it is a bottom sheet the reader can scroll past. Verified at 375 / 768 / 1024 / 1280 / 1440 / 1920.                                     |
+| The panel drifts from `/ask`                         | One pipeline, one guard, one classifier, one session model, one trace shape. The panel has no prompt of its own — only a mode.                                                                                               |
+| A reader asks something the note does not cover      | The prompt requires saying so; the trace shows whether fallback pages were used; sources name the page.                                                                                                                      |
+| The bundle grows                                     | The new corpus is additive and measured at 194KB gzipped; the release check asserts a 2.5MB gzipped ceiling.                                                                                                                 |
+| Prompt injection through the reader's question       | The question is sanitized, the scope check runs before the model, the context is untrusted data, the canary and the guard are unchanged.                                                                                     |
 | A note's MDX components are missing from the context | 10 of 51 notes embed MDX components whose rendered content a text extractor cannot see. The artifact preserves prose, headings, and code; component-rendered output is not recoverable from source and is not claimed to be. |
 
 ---
@@ -568,7 +568,7 @@ and against Cloudflare's published pricing. Seven findings changed it.
 5. **The file inventory was incomplete.** `tests/chat-pipeline.test.ts`,
    `tests/chat-evals.test.ts`, and `scripts/chat-live-eval.ts` are now named in §6, and §8
    states which tier gates the scope change. `evals/datasets/scope.json` is explicitly
-   *not* modified, because the criteria do not change.
+   _not_ modified, because the criteria do not change.
 6. **The right-anchored panel covers the prose, and the stated mitigation was false.** The
    reviewer measured the built site and found a 400px right-anchored panel overlapping 48%
    of the prose at 768px and 30% at 1440px, contradicting the document's own anti-goal.

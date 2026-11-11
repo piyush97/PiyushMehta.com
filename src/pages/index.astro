@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { socialLinks } from '../data/portfolio';
+import { caseStudies, socialLinks } from '../data/portfolio';
 import AskLink from '../components/AskLink.astro';
 import speakerPhoto from '../images/piyush-devfest.jpg';
 import speakerPhotoAvif320 from '../images/responsive/piyush-devfest-320.avif';
@@ -14,14 +14,24 @@ import speakerPhotoWebp1280 from '../images/responsive/piyush-devfest-1280.webp'
 import speakerPhotoJpg320 from '../images/responsive/piyush-devfest-320.jpg';
 import speakerPhotoJpg640 from '../images/responsive/piyush-devfest-640.jpg';
 import speakerPhotoJpg960 from '../images/responsive/piyush-devfest-960.jpg';
+import SubscribeForm from '../components/SubscribeForm.astro';
 import UnderstoryFeature from '../components/UnderstoryFeature.astro';
 import Layout from '../layouts/Layout.astro';
+import { labDemos, labPath } from '../data/lab';
+import { toPostSlug } from '../utils/social-card-manifest';
 
 export const prerender = true;
 
 const latestPosts = (await getCollection('blog', ({ data }) => data.draft !== true))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
+const published = await getCollection('blog', ({ data }) => data.draft !== true);
+const publishedTitles = new Map(published.map((post) => [toPostSlug(post.id), post.data.title]));
+const homeDemos = labDemos.filter((demo) => publishedTitles.has(demo.postSlug)).slice(0, 3);
+const caseHref = (title: string) => {
+  const index = caseStudies.findIndex((study) => study.title === title);
+  return index >= 0 ? `/projects#case-${index + 1}` : '/projects';
+};
 const toPostHref = (id: string) =>
   `/blog/${id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '')}`;
 ---
@@ -106,7 +116,7 @@ const toPostHref = (id: string) =>
             <p><strong>Decision</strong> — workflow-first AI with security guardrails</p>
             <p><strong>Outcome</strong> — 30% greater workflow efficiency</p>
           </div>
-          <a href="/projects">
+          <a href={caseHref('Enterprise AI Workflows')}>
             View case study
             <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
               <path d="M5 12h14M13 6l6 6-6 6"></path>
@@ -115,12 +125,13 @@ const toPostHref = (id: string) =>
         </article>
 
         <div class="ledger__actions" data-home-section="actions" aria-label="Primary actions">
-          <a class="ledger__primary" href="/blog">
-            Read recent writing
+          <a class="ledger__primary" href="/contact-me">
+            Start conversation
             <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
               <path d="M5 12h14M13 6l6 6-6 6"></path>
             </svg>
           </a>
+          <a class="ledger__secondary" href="/blog">Read recent writing</a>
           <a class="ledger__secondary" href="/resume">Read Résumé</a>
           <div class="ledger__ask" data-home-section="ask">
             <AskLink label="Or ask about my work" q="What does Piyush do?" />
@@ -137,18 +148,29 @@ const toPostHref = (id: string) =>
           <strong data-count-up>30%</strong>
           <h2>workflow efficiency</h2>
           <p>Enterprise AI workflow delivery</p>
+          <p class="ledger__metric-source">
+            <a href={caseHref('Enterprise AI Workflows')}>Enterprise AI Workflows case study</a>
+          </p>
         </article>
         <article data-reveal data-reveal-stagger="60">
           <span class="ledger__metric-index">02</span>
           <strong data-count-up>35–40%</strong>
           <h2>fewer vulnerabilities</h2>
           <p>Secure engineering and review programs</p>
+          <p class="ledger__metric-source">
+            <a href={caseHref('Enterprise AI Workflows')}>Enterprise AI Workflows</a> (35%) and
+            <a href={caseHref('Scalable Product Platform')}>Scalable Product Platform</a> (40%)
+          </p>
         </article>
         <article data-reveal data-reveal-stagger="120">
           <span class="ledger__metric-index">03</span>
           <strong data-count-up>1,500+</strong>
           <h2>developers mentored</h2>
           <p>Workshops, community, and technical education</p>
+          <p class="ledger__metric-source">
+            <a href={caseHref('Developer Education and Talks')}>Developer education case study</a> and
+            <a href="/resume">résumé</a>
+          </p>
         </article>
       </div>
 
@@ -194,8 +216,38 @@ const toPostHref = (id: string) =>
       )}
     </section>
 
+    <div class="notebook">
+      <SubscribeForm />
+    </div>
+
+    {homeDemos.length > 0 && (
+      <section class="notebook" aria-labelledby="lab-title">
+        <header class="section-intro" data-reveal>
+          <p class="folio">04 / Lab</p>
+          <h2 id="lab-title">Demos you can open on their own</h2>
+          <p>Interactive explainers pulled out of the writing, each with a shareable page.</p>
+        </header>
+        <div class="notebook__grid">
+          {homeDemos.map((demo, index) => (
+            <article class="note" data-reveal data-reveal-stagger={String(index * 70)}>
+              <div class="note__meta">
+                <span>{demo.tags[0] ?? 'Lab'}</span>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+              </div>
+              <h3><a href={labPath(demo.slug)}>{demo.title}</a></h3>
+              <p>{demo.description}</p>
+              <a class="note__link" href={labPath(demo.slug)} aria-label={`Open demo: ${demo.title}`}>
+                Open demo <span aria-hidden="true">↗</span>
+              </a>
+            </article>
+          ))}
+        </div>
+        <p class="lab-strip__more"><a href="/lab">All demos <span aria-hidden="true">↗</span></a></p>
+      </section>
+    )}
+
     <section class="contact" data-reveal aria-labelledby="contact-title">
-      <p class="folio">04 / Next chapter</p>
+      <p class="folio">{homeDemos.length > 0 ? '05' : '04'} / Next chapter</p>
       <div>
         <h2 id="contact-title">Good systems begin with a precise conversation.</h2>
         <p>
@@ -1129,5 +1181,23 @@ const toPostHref = (id: string) =>
     .note h3 a {
       transition: none;
     }
+  }
+
+  .ledger__metric-source {
+    margin: 0.55rem 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.02em;
+    color: var(--home-muted);
+  }
+
+  .ledger__metric-source a {
+    color: inherit;
+    text-underline-offset: 0.2em;
+  }
+
+  .lab-strip__more {
+    margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
+    text-align: right;
   }
 </style>
