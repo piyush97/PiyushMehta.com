@@ -11,6 +11,7 @@ const REQUIRED_CLIENT_FILES = [
   'rss.xml',
   'sitemap.xml',
   'robots.txt',
+  'llms.txt',
   '.well-known/security.txt',
   'search/index.html',
   'pagefind/pagefind-entry.json',
@@ -81,6 +82,21 @@ function verifyHeaders(clientDir, errors) {
     if (!headers.includes(header)) {
       addError(errors, `Static asset headers are missing ${header}`);
     }
+  }
+
+  // /lab/embed/* re-declares the site CSP so it can be framed. Fail if that copy drifts from /*.
+  const policies = headers.match(/^\s*Content-Security-Policy:.*$/gm) ?? [];
+  const normalized = new Set(
+    policies.map((line) => line.trim().replace(/frame-ancestors [^;]*/, 'frame-ancestors')),
+  );
+  if (normalized.size > 1) {
+    addError(
+      errors,
+      'Static asset headers declare Content-Security-Policy values that differ beyond frame-ancestors',
+    );
+  }
+  if (policies.filter((line) => line.includes('frame-ancestors *')).length > 1) {
+    addError(errors, 'Static asset headers relax frame-ancestors for more than one route');
   }
 
   if (!headers.includes('/_astro/*') || !headers.includes('immutable')) {
@@ -177,7 +193,8 @@ export function verifyRelease(root = process.cwd()) {
   if (existsSync(llmsPath)) {
     const llms = readFileSync(llmsPath, 'utf8');
     if (!/^# \S/.test(llms)) addError(errors, 'llms.txt must start with an H1 site name');
-    if (/localhost|127\.0\.0\.1|0\.0\.0\.0|\/\/blog\//i.test(llms)) {
+    const targets = [...llms.matchAll(/\]\(([^)\s]*)\)/g)].map((match) => match[1]);
+    if (targets.some((target) => !/^https:\/\/piyushmehta\.com\/(?!\/)/.test(target))) {
       addError(errors, 'llms.txt contains a non-production or malformed URL');
     }
   }

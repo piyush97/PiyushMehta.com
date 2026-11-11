@@ -28,6 +28,7 @@ function makeFixture(): string {
     'rss.xml',
     'sitemap.xml',
     'robots.txt',
+    'llms.txt',
     '.well-known/security.txt',
     '_redirects',
     'og/default.png',
@@ -38,6 +39,7 @@ function makeFixture(): string {
   ]) {
     writeFileSync(join(client, file), file === 'resume.pdf' ? '%PDF-fixture' : 'fixture');
   }
+  writeFileSync(join(client, 'llms.txt'), '# Piyush Mehta\n\n- [About](https://piyushmehta.com/about): Background.\n');
   writeFileSync(join(client, '.well-known/security.txt'), 'Contact: mailto:security@example.com\nExpires: 2099-01-01T00:00:00.000Z\n');
   writeFileSync(
     join(client, '_redirects'),
@@ -95,6 +97,31 @@ describe('verifyRelease', () => {
     const result = verifyRelease(makeFixture());
     assert.deepEqual(result.errors, []);
     assert.equal(result.ok, true);
+  });
+
+  it('rejects an embed CSP that drifts from the site CSP', () => {
+    const root = makeFixture();
+    const path = join(root, 'dist', 'client', '_headers');
+    const site = "default-src 'self'; frame-ancestors 'none';";
+    const withEmbed = (csp: string) =>
+      `${readFileSync(path, 'utf8').replace("default-src 'self';", site)}\n/lab/embed/*\n  ! Content-Security-Policy\n  Content-Security-Policy: ${csp}\n`;
+    const original = readFileSync(path, 'utf8');
+    writeFileSync(path, withEmbed("default-src 'self'; frame-ancestors *;"));
+    assert.deepEqual(verifyRelease(root).errors, []);
+    writeFileSync(path, original);
+    writeFileSync(path, withEmbed("default-src 'self' 'unsafe-eval'; frame-ancestors *;"));
+    assert.ok(verifyRelease(root).errors.some((error) => error.includes('differ beyond frame-ancestors')));
+  });
+
+  it('rejects llms.txt links that are missing or not on the production origin', () => {
+    const root = makeFixture();
+    const path = join(root, 'dist', 'client', 'llms.txt');
+    writeFileSync(path, '# Piyush Mehta\n\n- [Post about localhost](https://piyushmehta.com/blog/localhost): Fine.\n');
+    assert.deepEqual(verifyRelease(root).errors, []);
+    writeFileSync(path, '# Piyush Mehta\n\n- [Post](http://localhost:4321/blog/post)\n');
+    assert.ok(verifyRelease(root).errors.some((error) => error.includes('llms.txt contains')));
+    rmSync(path);
+    assert.ok(verifyRelease(root).errors.some((error) => error.includes('llms.txt')));
   });
 
   it('rejects a gzipped Worker bundle over the 2.5MB ceiling', () => {

@@ -20,7 +20,7 @@ const pages: Array<[path: string, title: string, description: string]> = [
 ];
 
 const oneLine = (value: string) => value.replace(/\s+/g, ' ').trim();
-const escapeLinkText = (value: string) => oneLine(value).replace(/([[\]])/g, '\\$1');
+const escapeLinkText = (value: string) => oneLine(value).replace(/([\\[\]])/g, '\\$1');
 
 export async function GET(context: { site?: URL }) {
   const site = context.site?.toString() || 'https://piyushmehta.com';

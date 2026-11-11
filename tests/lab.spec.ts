@@ -32,7 +32,8 @@ test.describe('lab', () => {
     const response = await page.goto('/lab/agent-gate', { waitUntil: 'networkidle' });
     expect(response?.ok()).toBeTruthy();
     // Non-frameable: the full page keeps DENY.
-    expect(response?.headers()['x-frame-options'] ?? 'DENY').toBe('DENY');
+    expect(response?.headers()['x-frame-options']).toBe('DENY');
+    expect(response?.headers()['content-security-policy']).toContain("frame-ancestors 'none'");
 
     await expect(page.locator('main h1')).toHaveText('Agent PR gate simulator');
     await expect(page.locator('[data-gate-sim]')).toBeVisible();
@@ -114,6 +115,11 @@ test.describe('lab', () => {
     const headers = (await request.get('/lab/embed/agent-gate')).headers();
     expect(headers['x-frame-options']).toBeUndefined();
     expect(headers['content-security-policy'] ?? '').toContain('frame-ancestors *');
+
+    // The 404 under the embed prefix is not an embed and must stay non-frameable.
+    const missing = await request.get('/lab/embed/not-a-demo');
+    expect(missing.status()).toBe(404);
+    expect(missing.headers()['x-frame-options']).toBe('DENY');
   });
 
   test('the embed renders inside an iframe', async ({ page, baseURL }) => {

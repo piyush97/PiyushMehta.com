@@ -50,7 +50,8 @@ export const onRequest: MiddlewareHandler = async ({ request, url }, next) => {
     }
   }
 
-  if (url.pathname.startsWith('/lab/embed/')) {
+  // Only a real embed page may be framed; the 404 shell under this prefix keeps DENY.
+  if (response.status === 200 && url.pathname.startsWith('/lab/embed/')) {
     newHeaders.delete('X-Frame-Options');
     for (const name of ['Content-Security-Policy', 'Content-Security-Policy-Report-Only']) {
       const csp = newHeaders.get(name);
