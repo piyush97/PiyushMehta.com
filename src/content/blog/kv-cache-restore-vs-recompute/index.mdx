@@ -1,0 +1,123 @@
+---
+title: 'The Median Agent Request Is 142K Tokens. Only 1.7K Need Computing.'
+description: "Where the KV cache lives decides whether a coding agent's next turn costs 1.7K tokens of prefill or 142K. The restore-versus-recompute arithmetic, five measured storage tiers, and the systems that shipped this fortnight."
+date: 2026-11-11T11:00:00-05:00
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'KV Cache'
+  - 'LLM Inference'
+  - 'GPU Memory'
+  - 'Agent Infrastructure'
+  - 'Serving'
+image:
+  url: '/blog/kv-cache-restore-vs-recompute/images/cover.svg'
+  width: 1200
+  height: 630
+  alt: 'Five storage tiers ranked by the time to make 6.4 GiB of KV cache available again, from 0.45 seconds on an RDMA NVMe cluster to 33.9 seconds on CephFS, against 47.3 seconds to recompute the prefix'
+draft: false
+---
+
+import KvRestoreBudget from '../../../components/blog/KvRestoreBudget.tsx';
+
+A coding agent sends its 65th request of the session. The prompt is 142,000 tokens: system instructions, tool schemas, every file it has read, every test failure it has caused. Only 1,700 of those tokens are new.
+
+Those two numbers are the whole serving problem. On a cache hit the server prefills 1,700 tokens and the turn feels instant. On a miss it prefills 142,000, and at the effective prefill rate [Red Hat measured](https://developers.redhat.com/articles/2026/11/02/benchmarking-tiered-kv-cache-offloading-h100-gpus-openshift-ai-3-5) for a 253B model on H100, that is roughly three minutes of GPU time before the first output token exists.
+
+The trace numbers are from the public `cc-traces-weka-062126` corpus, replayed by the [Mooncake/ATOM writeup](https://kvcache.ai/blog/atom-meets-mooncake/) published November 8. Median request: 142K input tokens. Median _new_ tokens on a perfect prefix cache: 1.7K. GLM-5.3 with an FP8 KV cache stores 48,672 bytes per token, so that one session's history is 6.4 GiB of state that must survive between turns.
+
+That state is the KV cache, and this fortnight two inference-platform releases and two papers all attacked the same question from different angles: not how to make attention faster, but where the cache should live and who decides.
+
+## The cache is the workload now
+
+Prefill is compute bound. Every prompt token runs through every weight, and causal attention makes each token attend to all the tokens before it. Decode is bandwidth bound: one token per step, reading weights and the whole cache. The KV cache is what turns the first pass into reusable state, and its size is not a rounding error:
+
+```text
+bytes/token = 2 · attention_layers · (kv_heads / TP) · head_dim · bytes_per_element
+```
+
+Red Hat publishes that formula and four worked block sizes for a 16-token vLLM block: 1.20 MB for gpt-oss-120B, 2.25 MB for Qwen3-8B, 4.00 MB for Qwen3-32B-AWQ, 5.00 MB for Llama 3.1 70B in FP8. The last one is 0.3 MB per token, which makes a single 128K-token context about 40 GB before any other request shares the GPU.
+
+Two independent capacity checks agree. [Solidigm and Lightbits](https://www.lightbitslabs.com/blog/llm-inference-at-long-context-breaking-the-gpu-memory-wall/) measure one 100K-token gpt-oss-120B conversation at 7.08 GB of KV cache, and point out that an eight-GPU B200 node with 1.46 TB of HBM holds about 206 such conversations before a single weight is loaded. Mooncake estimates a live agent session at roughly 10 GiB counting its subagents, so about a hundred concurrent sessions need a terabyte of state that later turns will reuse.
+
+Weights are a fixed cost per token. This state is per session, per turn, and it is the thing that actually runs out.
+
+<p>
+  <strong>A capacity number worth internalizing.</strong> A 70 GiB budget for KV, roughly one 80 GiB
+  H100 after a small model's weights, holds 10 sessions of GLM-5.3 at 142K tokens, 7 of
+  gpt-oss-120B, 3 of Qwen3-8B, and exactly 1 of Llama 3.1 70B. Concurrency targets and context
+  targets are the same knob.
+</p>
+
+## Restore or recompute: one inequality
+
+When the cache no longer fits, a serving engine has two options for a prefix that has been evicted. Put it somewhere cheaper and load it back, or throw it away and prefill it again. The decision reduces to a per-token comparison:
+
+```text
+restore   = bytes_per_token / tier_bandwidth
+recompute = 1 / prefill_tokens_per_second
+```
+
+Restore wins when `bytes_per_token < tier_bandwidth / prefill_rate`. That is it. No queueing model, no vendor claims. Everything interesting is in what the two sides actually cost.
+
+The table below applies the rule to a 142K-token GLM-5.3 request at 3,000 prefill tokens a second. Bandwidths are derived from published measurements, not from datasheets: 16 concurrent jobs times a 5 MB block divided by each p50 in Red Hat's FIO table gives 6.6 GB/s for local NVMe and 755 MB/s for network block storage, and the second reproduces their stated 762 MB/s ceiling almost exactly.
+
+| Tier                   | Effective bandwidth | Restore 6.9 GB | Recompute same prefix | Restore saving |
+| ---------------------- | ------------------- | -------------- | --------------------- | -------------- |
+| NVMe cluster over RDMA | 15.2 GB/s           | 0.45 s         | 47.3 s                | 104×           |
+| Local NVMe (16 jobs)   | 6.6 GB/s            | 1.05 s         | 47.3 s                | 45×            |
+| Network block          | 755 MB/s            | 9.2 s          | 47.3 s                | 5.2×           |
+| Object store (p50)     | 383 MB/s            | 18.1 s         | 47.3 s                | 2.6×           |
+| Object store (p99)     | 71 MB/s             | 97.9 s         | 47.3 s                | 0.5×           |
+| Shared CephFS          | 204 MB/s            | 33.9 s         | 47.3 s                | 1.4×           |
+
+Two readings of that table matter more than the ranking.
+
+First, the crossover is not about storage being fast in absolute terms. CephFS at 204 MB/s wins here (33.9 s against 47.3 s) and loses badly for Llama 3.1 70B FP8, whose 0.3 MB per token needs 41 GiB restored for the same 142K tokens: 218 s against 47.3 s. The rule depends on model architecture times prefill speed, so the same tier is correct for one deployment and wrong for the next.
+
+Second, tail latency decides the object-store row. Red Hat's FIO run shows a p50 of 209 ms for a 5 MB block against a p99 of 1,133 ms, a 5.4× tail. Multiply that through and a tier that looks 2.6× faster than recompute becomes 2× slower at the tail, which is the part users feel.
+
+<figure>
+  <KvRestoreBudget client:visible />
+</figure>
+
+## What the tier actually has to do
+
+Offloading is not a filesystem mount. In the OpenShift AI 3.5 implementation Red Hat benchmarked, only the CPU tier touches GPU memory, so it acts as a mandatory gateway: GPU ↔ pinned host DRAM ↔ secondary tiers, with a hit in a secondary tier promoted into CPU memory before it can reach the GPU. That design detail explains a result people misread. CPU offload alone gave 3.3× throughput; adding NVMe or CephFS nearly doubled it to 5.8×, because once the working set exceeded CPU capacity, the secondary tier was stopping wholesale recomputation rather than shaving a few milliseconds.
+
+The measured end-to-end numbers on 50K-token agentic workloads with Nemotron-Ultra-253B on H100:
+
+- throughput 0.13 → 0.44 req/s with CPU offload, 0.77 req/s with a secondary tier
+- mean time to first token 59.7 s → 9.6 s
+- mean end-to-end latency 228.7 s → under 26 s
+
+The Solidigm/Lightbits study pushes the same idea to 4.8M tokens, where reloading from a PCIe 5.0 NVMe cluster over RoCEv2 took 15.39 s against 332.77 s of recompute, a 21.6× gap that widens as context grows: across a 6.2× increase in context length, recompute time rose 27.5× while reload rose 5.8×. They also check the property that most offload benchmarks skip, reporting byte-identical output from restored cache with zero fetch errors. That check should be table stakes. A cache that returns different logits is a quality regression wearing a latency win.
+
+## Two releases, two papers, nine days
+
+They landed within nine days of each other, and they are not variations on one theme. They are four layers of the same decision.
+
+**The memory layer.** [TPU Sync](https://cloud.google.com/blog/topics/ai-infrastructure/introducing-tpu-sync-fast-kv-cache-and-weight-transfer-on-tpu), open sourced November 9, treats TPU HBM, host DRAM, shared storage, and the datacenter network as one hierarchy with a global KV registry. It hits 223 GB/s of aggregate device-to-host and host-to-device DMA per Ironwood host out of a 256 GB/s PCIe Gen5 ceiling, and cuts median KV transfer latency for a Qwen3 235B prefix from several seconds to about 230 ms. Reported TTFT reductions: 60% for 235B, 90% for 480B, up to 90% on 64K-context prefix caching.
+
+**The router layer.** [Kinference](https://vllm.ai/blog/2026-11-04-introducing-kinference), from Buoyant on November 4, makes cache contents a load-balancing signal. Sending a request to the vLLM worker that already holds its prefix cut median TTFT by 95% and median end-to-end latency by 45% against standard Kubernetes service balancing, and served 7.4× the goodput on shared-prefix traffic. Routing to the machine that already did the work is cheaper than moving the work.
+
+**The eviction layer.** [Penelope](https://arxiv.org/abs/2611.00391) argues that vLLM and SGLang evict from the tail of a sequence, which is exactly backwards for agents. Under causal attention, tokens near the end cost the most to recompute because their attention spans the longest history. Evicting 30% of cached tokens from position 2K instead of the tail made the next request 1.14× faster at 8K context and 2.93× faster at 128K. Across real Claude Code traces, head-first eviction cut mean TTFT by 60% and job completion time by 37% with a GPU-only cache, and 76%/60% with GPU plus CPU tiers. The paper's trace numbers are the same shape as Mooncake's: median request 132K input tokens, 79% above 64K.
+
+**The compression layer.** [VerKV](https://arxiv.org/abs/2611.11319) keeps only 6.25% of the cache resident on the GPU, retains the full cache in host memory, and fetches the missing 2–23% of entries per token only when an error bound says the approximation is not good enough. At 8× compression it holds 96% of dense quality; at 32×, 86%. In a vLLM implementation it decodes 1.6× faster than full offloading while moving 47× less data.
+
+Line them up and the architecture is obvious in hindsight. The cache used to be an implementation detail inside one process. Now it has a placement policy, a routing policy, an eviction policy, and a quality contract. That is a storage system, and it is being built by inference teams because no storage vendor can see the attention pattern.
+
+## What to measure before you copy any of it
+
+Five checks, in the order that will save you money.
+
+1. **Cache hit rate, not tokens per second.** Red Hat's 5.8× came from avoiding recomputation, not from faster math. If your hit rate is low, faster decode buys nothing.
+2. **Prefill rate for _your_ model at _your_ concurrency.** The restore-vs-recompute rule flips sign between an 837 tok/s effective rate and 14,000 tok/s. Measure the one you actually run.
+3. **p99 restore latency, at your block size, under mixed read/write.** A p50 win with a 5.4× tail is a p99 loss, and p99 is what triggers retries.
+4. **Output equivalence after restore.** Byte-identical or it is a different model. The Lightbits study checks this; most offload blog posts do not.
+5. **Where the cache is allowed to be lost.** Penelope's result is that _which_ tokens you evict matters as much as how many. If you evict from the tail because that is the default, you are choosing to recompute the most expensive tokens in the sequence.
+
+The uncomfortable conclusion is that the 1.7K-versus-142K gap is not a caching trick you can bolt on. It is the difference between a serving stack that treats context as state with a location and one that treats it as input it hopes to see again.
+
+If you want the surrounding arithmetic, [the 284B-in-64GB post](/blog/moe-decode-memory-budget/) covers bytes per weight and decode bandwidth on one machine, and [the sandbox cache-timing post](/blog/agent-sandbox-shared-cache/) covers why memory isolation does not bound timing. This post is the serving-side counterpart: once the model is fast enough, the cache is what you are actually operating.

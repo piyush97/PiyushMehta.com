@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">A 142,000-token agent request where only 1,700 tokens are new</title>
+  <desc id="description">Five storage tiers shown by the time needed to restore 6.4 GiB of KV cache, against 47.3 seconds to recompute the same prefix on the GPU.</desc>
+  <rect width="1200" height="630" fill="#0b1220"/>
+
+  <text x="80" y="88" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="21" letter-spacing="2">142,000 IN · 1,700 COMPUTED · 6.4 GiB KV</text>
+  <text x="80" y="152" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="50" font-weight="700">The cache is the workload.</text>
+
+  <g font-family="ui-monospace, monospace" font-size="19" fill="#cbd5e1">
+    <text x="80" y="216">time to make the prefix available again</text>
+  </g>
+
+  <!-- bars: max 47.3s maps to 760px -->
+  <g font-family="system-ui, sans-serif" font-size="20">
+    <text x="80" y="272" fill="#94a3b8">NVMe cluster</text>
+    <rect x="300" y="252" width="8" height="26" rx="2" fill="#38bdf8"/>
+    <text x="320" y="272" fill="#e2e8f0" font-family="ui-monospace, monospace" font-size="19">0.45 s</text>
+
+    <text x="80" y="322" fill="#94a3b8">Local NVMe</text>
+    <rect x="300" y="302" width="17" height="26" rx="2" fill="#38bdf8"/>
+    <text x="329" y="322" fill="#e2e8f0" font-family="ui-monospace, monospace" font-size="19">1.05 s</text>
+
+    <text x="80" y="372" fill="#94a3b8">Network block</text>
+    <rect x="300" y="352" width="147" height="26" rx="2" fill="#38bdf8"/>
+    <text x="459" y="372" fill="#e2e8f0" font-family="ui-monospace, monospace" font-size="19">9.2 s</text>
+
+    <text x="80" y="422" fill="#94a3b8">Shared CephFS</text>
+    <rect x="300" y="402" width="544" height="26" rx="2" fill="#38bdf8"/>
+    <text x="856" y="422" fill="#e2e8f0" font-family="ui-monospace, monospace" font-size="19">33.9 s</text>
+
+    <text x="80" y="472" fill="#94a3b8">Recompute</text>
+    <rect x="300" y="452" width="760" height="26" rx="2" fill="#f43f5e"/>
+    <text x="1072" y="472" fill="#e2e8f0" font-family="ui-monospace, monospace" font-size="19">47.3 s</text>
+  </g>
+
+  <text x="80" y="556" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="21">restore wins while bytes/token &lt; bandwidth ÷ prefill rate</text>
+  <text x="80" y="592" fill="#64748b" font-family="ui-monospace, monospace" font-size="17">GLM-5.3 FP8 at 142K tokens · 3,000 prefill tok/s · bandwidths from published FIO and RDMA runs</text>
+</svg>
