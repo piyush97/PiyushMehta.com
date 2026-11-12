@@ -224,6 +224,7 @@ pre code {
 
 :root.professional-light,
 :root.light {
+  --color-danger: #b42318;
   --color-bg: #f6f3ea;
   --color-bg-rgb: 246, 243, 234;
   --color-surface-raised: #fffaf0;
@@ -276,12 +277,12 @@ main {
    Motion only opts offscreen elements into a reveal after the observer is ready. */
 [data-reveal] {
   opacity: 1;
-  transform: translate3d(0, var(--parallax-offset, 0px), 0);
+  transform: none;
 }
 
 [data-reveal].reveal-pending:not(.is-visible) {
   opacity: 0;
-  transform: translate3d(0, calc(0.6rem + var(--parallax-offset, 0px)), 0) scale(0.992);
+  transform: translate3d(0, 0.6rem, 0) scale(0.992);
   transition:
     opacity var(--motion-base, 240ms) var(--motion-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
     transform calc(var(--motion-base, 240ms) + 40ms)
@@ -296,7 +297,26 @@ main {
     transform var(--motion-base, 240ms) var(--motion-ease-out);
   transition-delay: var(--reveal-delay, 0ms);
   opacity: 1;
-  transform: translate3d(0, var(--parallax-offset, 0px), 0) scale(1);
+  transform: none;
+}
+
+/* Portrait parallax: scroll-driven, decorative, so no fallback. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    @keyframes parallax-drift {
+      from {
+        translate: 0 -2.6rem;
+      }
+      to {
+        translate: 0 2.6rem;
+      }
+    }
+
+    [data-parallax] {
+      animation: parallax-drift linear both;
+      animation-timeline: view();
+    }
+  }
 }
 
 /* Route transitions: nav and page background hold still; only <main> moves.
@@ -943,10 +963,6 @@ html {
     transition: none;
   }
 
-  [data-parallax] {
-    --parallax-offset: 0px;
-  }
-
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
@@ -960,28 +976,30 @@ html {
   scrollbar-color: var(--color-accent) var(--color-bg-secondary);
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 
-::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
-}
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+  }
 
-::-webkit-scrollbar-thumb {
-  background-color: var(--color-accent);
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background-clip: content-box;
-}
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-accent);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-accent-darker, var(--color-accent));
-}
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-accent-darker, var(--color-accent));
+  }
 
-::-webkit-scrollbar-corner {
-  background: var(--color-bg-secondary);
+  ::-webkit-scrollbar-corner {
+    background: var(--color-bg-secondary);
+  }
 }
 
 /* Theme Variables */

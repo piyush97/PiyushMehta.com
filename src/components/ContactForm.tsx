@@ -169,7 +169,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
             aria-describedby={errors.name ? 'cf-name-err' : undefined}
           />
           {errors.name && (
-            <span id="cf-name-err" className="contact-form__error" role="alert">
+            <span id="cf-name-err" className="contact-form__error">
               {errors.name}
             </span>
           )}
@@ -191,7 +191,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
             aria-describedby={errors.email ? 'cf-email-err' : undefined}
           />
           {errors.email && (
-            <span id="cf-email-err" className="contact-form__error" role="alert">
+            <span id="cf-email-err" className="contact-form__error">
               {errors.email}
             </span>
           )}
@@ -213,7 +213,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           aria-describedby={errors.subject ? 'cf-subject-err' : undefined}
         />
         {errors.subject && (
-          <span id="cf-subject-err" className="contact-form__error" role="alert">
+          <span id="cf-subject-err" className="contact-form__error">
             {errors.subject}
           </span>
         )}
@@ -234,7 +234,7 @@ export default function ContactForm({ className = '' }: { className?: string }) 
           aria-describedby={errors.message ? 'cf-message-err' : undefined}
         />
         {errors.message && (
-          <span id="cf-message-err" className="contact-form__error" role="alert">
+          <span id="cf-message-err" className="contact-form__error">
             {errors.message}
           </span>
         )}
