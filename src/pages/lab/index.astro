@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { labDemos, labOgImage, labPath } from '../../data/lab';
+import SubscribeForm from '../../components/SubscribeForm.astro';
 import Layout from '../../layouts/Layout.astro';
 import { toPostSlug } from '../../utils/social-card-manifest';
 
@@ -59,13 +60,22 @@ const demos = labDemos.filter((demo) => postTitles.has(demo.postSlug));
       )
     }
   </section>
+
+  <div class="lab-index__newsletter">
+    <SubscribeForm />
+  </div>
 </Layout>
 
 <style>
   .lab-index__header,
-  .lab-index__list {
+  .lab-index__list,
+  .lab-index__newsletter {
     width: min(920px, calc(100% - 2rem));
     margin-inline: auto;
+  }
+
+  .lab-index__newsletter {
+    padding-bottom: clamp(3rem, 8vw, 6rem);
   }
 
   .lab-index__header {

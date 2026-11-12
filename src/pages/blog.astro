@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BlogFilter from '../components/BlogFilter.astro';
 import EditorialHeader from '../components/EditorialHeader.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import SubscribeForm from '../components/SubscribeForm.astro';
 import { writingHighlights } from '../data/portfolio';
 import Layout from '../layouts/Layout.astro';
 
@@ -291,6 +292,10 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
     </div>
   </section>
 
+  <div class="newsletter">
+    <SubscribeForm />
+  </div>
+
 </Layout>
 
 <style>
@@ -318,7 +323,8 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
 
   .writing-featured,
   .reading-paths,
-  .writing-index {
+  .writing-index,
+  .newsletter {
     width: min(1120px, calc(100% - 2rem));
     margin-inline: auto;
   }
@@ -352,7 +358,8 @@ const uniqueThemes = new Set(postsForFilter.flatMap((post) => post.categories)).
 
   .writing-featured,
   .reading-paths,
-  .writing-index {
+  .writing-index,
+  .newsletter {
     padding-block: clamp(2.5rem, 6vw, 5rem);
   }
 

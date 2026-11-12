@@ -6,8 +6,10 @@ import {
   WINDOW_DAYS,
   checkBasicPassword,
   readConversionTotals,
+  readPostViewTotals,
   type ConversionEvent,
   type ConversionTotals,
+  type PostViewTotals,
 } from '../utils/conversions';
 import { createRatelimit, getClientIp, limitOrUnavailable, redis } from '../utils/redis';
 
@@ -47,6 +49,15 @@ if (redis) {
     totals = await readConversionTotals(redis);
   } catch (err) {
     console.error('[stats] read failed:', (err as Error)?.name);
+  }
+}
+
+let postViews: PostViewTotals[] | null = null;
+if (redis) {
+  try {
+    postViews = await readPostViewTotals(redis);
+  } catch (err) {
+    console.error('[stats] post view read failed:', (err as Error)?.name);
   }
 }
 
@@ -99,6 +110,39 @@ const change = ({ current, previous }: ConversionTotals) => {
         </p>
       )
     }
+    <h2>Post views</h2>
+    <p class="stats__note">
+      Anonymous daily counts in UTC. Last {WINDOW_DAYS} days, including today, compared with the {WINDOW_DAYS} days
+      before. The top 10 posts by views are shown.
+    </p>
+    {
+      postViews ? (
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Post</th>
+              <th scope="col">Last {WINDOW_DAYS} days</th>
+              <th scope="col">Previous {WINDOW_DAYS} days</th>
+            </tr>
+          </thead>
+          <tbody>
+            {postViews.slice(0, 10).map((p) => (
+              <tr>
+                <th scope="row">
+                  <a href={`/blog/${p.slug}`}>{p.slug}</a>
+                </th>
+                <td>{p.current}</td>
+                <td>{p.previous}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p class="stats__error" role="alert">
+          Post views are unavailable because the counter store could not be read. Reload to try again.
+        </p>
+      )
+    }
   </section>
 </Layout>
 
@@ -116,6 +160,14 @@ const change = ({ current, previous }: ConversionTotals) => {
     margin: 0 0 1.5rem;
     max-width: 65ch;
     color: var(--color-text-secondary);
+  }
+  .stats h2 {
+    margin: 2.5rem 0 0.5rem;
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    color: var(--color-text-primary);
+  }
+  .stats tbody th a {
+    color: inherit;
   }
   .stats table {
     width: 100%;

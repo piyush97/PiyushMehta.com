@@ -90,3 +90,10 @@ export function isAllowedFormOrigin(request: Request): boolean {
     return false;
   }
 }
+
+// Single source of truth for the enforced CSP. Origins are limited to what the
+// Worker renders: Sentry ingest (connect), Turnstile (script/connect/frame),
+// YouTube embeds, and the canonical site iframe. 'unsafe-inline' stays until
+// inline scripts can be served with hashes.
+export const CONTENT_SECURITY_POLICY =
+  "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://*.ingest.sentry.io https://sentry.io https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://piyushmehta.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;";
