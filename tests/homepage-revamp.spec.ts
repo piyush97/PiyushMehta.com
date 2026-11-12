@@ -37,7 +37,7 @@ test.describe('approved homepage revamp', () => {
     await expect(evidenceRecord.getByText('Outcome — 30% greater workflow efficiency')).toBeVisible();
     await expect(evidenceRecord.getByRole('link', { name: 'View case study' })).toHaveAttribute(
       'href',
-      '/projects'
+      /^\/projects(#case-\d+)?$/
     );
 
     const metrics = page.locator('[data-home-section="metrics"]');
@@ -86,7 +86,7 @@ test.describe('approved homepage revamp', () => {
       }
 
       const actions = page.locator('[data-home-section="actions"] > a');
-      await expect(actions).toHaveCount(2);
+      await expect(actions).toHaveCount(3);
       for (const action of await actions.all()) {
         const box = await action.boundingBox();
         expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);

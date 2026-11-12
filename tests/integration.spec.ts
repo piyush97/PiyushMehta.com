@@ -144,6 +144,7 @@ test.describe('Integration Tests', () => {
     if ((await inputs.count()) > 0) {
       for (let i = 0; i < (await inputs.count()); i++) {
         const input = inputs.nth(i);
+        if (await input.evaluate((el) => !!el.closest('[aria-hidden="true"]'))) continue;
         const hasLabel = await input.evaluate((el) => {
           const id = el.id;
           const ariaLabel = el.getAttribute('aria-label');

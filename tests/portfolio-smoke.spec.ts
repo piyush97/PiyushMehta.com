@@ -51,6 +51,7 @@ test.describe('portfolio smoke', () => {
   }
 
   test('home presents evidence and recent writing', async ({ page, request }) => {
+    await page.route('**/api/conversions', (route) => route.fulfill({ status: 204 }));
     await page.route('**/api/reactions*', (route) =>
       route.fulfill({
         status: 200,
