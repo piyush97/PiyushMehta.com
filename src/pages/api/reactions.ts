@@ -15,6 +15,37 @@ export const prerender = false;
 
 const VALID_REACTIONS = ['like', 'helpful', 'insightful', 'bookmark'] as const;
 const MAX_BODY_BYTES = 8 * 1024;
+const VISITOR_COOKIE = 'pm_vid';
+const VISITOR_MAX_AGE = 60 * 60 * 24 * 30;
+const VOTER_TTL_SECONDS = 60 * 60 * 24 * 90;
+
+function readVisitorId(request: Request): string | null {
+  const match = request.headers
+    .get('cookie')
+    ?.match(
+      /(?:^|;\s*)pm_vid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:;|$)/i,
+    );
+  return match ? match[1] : null;
+}
+
+async function visitorHash(visitorId: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(visitorId));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function withVisitorCookie(response: Response, visitorId: string, setCookie: boolean): Response {
+  if (!setCookie) return response;
+  const headers = new Headers(response.headers);
+  headers.append(
+    'Set-Cookie',
+    `${VISITOR_COOKIE}=${visitorId}; Path=/; Max-Age=${VISITOR_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
+  );
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
 
 // Counts are a vanity metric: a few seconds of edge staleness is invisible to
 // readers but collapses repeat reads onto one Redis round-trip per PoP.
@@ -143,24 +174,40 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const limitError = await limitOrUnavailable(ratelimit, ip);
   if (limitError) return limitError;
 
+  const existingVisitor = readVisitorId(request);
+  const visitorId = existingVisitor ?? crypto.randomUUID();
+  const setCookie = existingVisitor === null;
+  const voter = await visitorHash(visitorId);
+
   try {
     const key = `reactions:v1:${postId}`;
+    const voterKey = `reactions:v1:${postId}:${reaction}:voters`;
+    // Only the request that actually changes set membership may move the count.
+    const changed =
+      action === 'add'
+        ? await reactionRedis.sadd(voterKey, voter)
+        : await reactionRedis.srem(voterKey, voter);
+    // Voter sets are per post and reaction; expire them so they cannot grow forever.
+    if (changed === 1) await reactionRedis.expire(voterKey, VOTER_TTL_SECONDS);
     let newCount: number;
 
-    if (action === 'add') {
-      newCount = await reactionRedis.hincrby(key, reaction, 1);
+    if (changed === 0) {
+      newCount = safeCount(await reactionRedis.hget(key, reaction));
     } else {
-      // Use atomic hincrby(-1) to avoid the read-modify-write race of hget+hset.
-      // If the result goes negative (e.g. duplicate removes), clamp back to 0.
-      newCount = await reactionRedis.hincrby(key, reaction, -1);
+      newCount = await reactionRedis.hincrby(key, reaction, action === 'add' ? 1 : -1);
+      // Clamp when a stale voter set lets the counter drop below zero.
       if (newCount < 0) {
         await reactionRedis.hset(key, { [reaction]: 0 });
         newCount = 0;
       }
     }
 
-    return json({ count: newCount });
+    return withVisitorCookie(json({ count: newCount }), visitorId, setCookie);
   } catch {
-    return json({ error: 'Reaction service unavailable' }, 503);
+    return withVisitorCookie(
+      json({ error: 'Reaction service unavailable' }, 503),
+      visitorId,
+      setCookie,
+    );
   }
 };

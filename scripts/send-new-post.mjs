@@ -3,6 +3,7 @@
 /**
  * Manual: email confirmed newsletter subscribers about one published post.
  * Never runs on deploy. Dry-run by default; pass --send to deliver.
+ * GitHub Actions: run the "Newsletter" workflow with slug and send=true.
  *
  *   bunx varlock run -- bun scripts/send-new-post.mjs <post-slug>          # dry run
  *   bunx varlock run -- bun scripts/send-new-post.mjs <post-slug> --send   # deliver

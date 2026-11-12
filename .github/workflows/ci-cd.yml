@@ -87,8 +87,6 @@ jobs:
     name: E2E Smoke (Chromium)
     runs-on: ubuntu-latest
     needs: build
-    # Advisory until the job has a stable record on CI. Remove this line to make it a required gate.
-    continue-on-error: true
 
     steps:
       - name: Harden Runner
@@ -168,3 +166,19 @@ jobs:
           grep -q "Referrer-Policy" src/middleware/security.ts \
             && echo "Referrer-Policy configured" \
             || echo "Warning: Referrer-Policy missing"
+
+      - name: Enforce tightened CSP
+        run: |
+          csp=src/utils/request-security.ts
+          grep -q "default-src" "$csp"
+          for token in "'unsafe-eval'" googletagmanager google-analytics gstatic cdnjs jsdelivr; do
+            if grep -q "$token" "$csp"; then
+              echo "Forbidden CSP token: $token"
+              exit 1
+            fi
+          done
+          mapfile -t files < <(grep -rl --include=*.ts "default-src" src/)
+          if [ "${#files[@]}" -ne 1 ] || [ "${files[0]}" != "$csp" ]; then
+            echo "CSP literal must live only in $csp"
+            exit 1
+          fi
