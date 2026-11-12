@@ -216,7 +216,7 @@ const toPostHref = (id: string) =>
       )}
     </section>
 
-    <div class="notebook">
+    <div class="subscribe-band">
       <SubscribeForm />
     </div>
 
@@ -1199,5 +1199,11 @@ const toPostHref = (id: string) =>
   .lab-strip__more {
     margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
     text-align: right;
+  }
+  .subscribe-band {
+    width: min(1240px, calc(100% - clamp(2rem, 5vw, 3rem)));
+    margin-inline: auto;
+    padding-block: clamp(3rem, 6vw, 4.5rem);
+    border-top: 1px solid var(--home-rule);
   }
 </style>
