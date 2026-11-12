@@ -1422,22 +1422,6 @@ html {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   }
 
-  .blog-card {
-    background: var(--color-light-800);
-    border: 1px solid var(--color-card-border);
-    border-radius: 0.5rem;
-    transition:
-      transform 200ms ease-in-out,
-      box-shadow 200ms ease-in-out,
-      border-color 200ms ease-in-out;
-    overflow: hidden;
-  }
-
-  .blog-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  }
-
   .project-card {
     background: var(--color-light-800);
     border: 1px solid var(--color-card-border);
@@ -1484,139 +1468,17 @@ html {
 
   /* Enhanced Navbar Links */
 
-  @media (min-width: 1280px) {
-  }
-
   /* Light theme navbar link adjustments */
 
   /* Animated underline for navbar links */
 
   /* Responsive improvements */
-  @media (max-width: 1023px) {
-  }
-
-  @media (max-width: 640px) {
-  }
-
   /* Logo responsiveness */
-  @media (max-width: 480px) {
-  }
-
-  /* Mobile Navbar Styles */
-  .mobile-menu-enhanced {
-    position: fixed;
-    top: 73px;
-    left: 0;
-    right: 0;
-    z-index: 40;
-    background: linear-gradient(180deg, var(--color-navbar-bg) 0%, rgba(26, 26, 46, 0.95) 100%);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Theme-specific mobile menu */
-  :root.professional-light .mobile-menu-enhanced {
-    background: var(--color-bg);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  }
-
-  :root.retro-tech .mobile-menu-enhanced {
-    background: var(--color-bg);
-    box-shadow: 0 8px 32px var(--color-shadow);
-  }
-
-  :root.minimalist .mobile-menu-enhanced {
-    background: var(--color-bg);
-    box-shadow: 0 8px 32px var(--color-shadow);
-  }
-
-  :root.high-contrast .mobile-menu-enhanced {
-    background: var(--color-bg);
-    box-shadow: 0 8px 32px var(--color-shadow);
-  }
-
-  :root.custom-theme .mobile-menu-enhanced {
-    background: var(--color-bg);
-    box-shadow: 0 8px 32px var(--color-shadow);
-  }
-
-  /* Mobile menu hamburger icon */
-  .mobile-menu-icon {
-    position: relative;
-    width: 1.5rem;
-    height: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 51;
-  }
-
-  .mobile-menu-line {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 0.125rem;
-    background: var(--color-text-primary);
-    border-radius: 2px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center;
-  }
-
-  .mobile-menu-line:nth-child(1) {
-    top: 0.25rem;
-  }
-
-  .mobile-menu-line:nth-child(2) {
-    top: 0.625rem;
-  }
-
-  .mobile-menu-line:nth-child(3) {
-    top: 1rem;
-  }
-
-  #mobile-menu-button.active .mobile-menu-line:nth-child(1) {
-    top: 0.625rem;
-    transform: rotate(45deg);
-  }
-
-  #mobile-menu-button.active .mobile-menu-line:nth-child(2) {
-    opacity: 0;
-    transform: scale(0);
-  }
-
-  #mobile-menu-button.active .mobile-menu-line:nth-child(3) {
-    top: 0.625rem;
-    transform: rotate(-45deg);
-  }
-
-  /* Mobile nav item animation */
-  .mobile-nav-item {
-    transform: translateY(1rem);
-    opacity: 0;
-    animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
   @keyframes slideInUp {
     to {
       transform: translateY(0);
       opacity: 1;
     }
-  }
-
-  /* Mobile menu enhanced styles */
-  .mobile-menu-enhanced {
-    max-height: calc(100vh - 73px);
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .mobile-menu-enhanced::-webkit-scrollbar {
-    display: none;
   }
 
   /* Mobile navigation link improvements */
@@ -1656,17 +1518,6 @@ html {
     box-shadow: 0 4px 12px rgba(181, 73, 9, 0.15);
   }
 
-  /* Search Modal Styles */
-  .search-modal {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-
-  /* Search input focus styles */
-  #search-input:focus {
-    outline: none;
-  }
-
   /* Keyboard shortcuts styling */
   kbd {
     font-family:
@@ -1676,117 +1527,6 @@ html {
   }
 
   /* Search modal responsiveness */
-  @media (max-width: 640px) {
-    #search-modal .max-w-2xl {
-      max-width: calc(100vw - 2rem);
-      margin: 0 1rem;
-    }
-
-    #search-modal .pt-16 {
-      padding-top: 2rem;
-    }
-  }
-
-  /* Theme-specific search modal styles */
-  :root.professional-light #search-modal {
-    background: rgba(239, 239, 245, 0.8);
-  }
-
-  :root.retro-tech #search-modal {
-    background: rgba(0, 24, 48, 0.9);
-  }
-
-  :root.minimalist #search-modal {
-    background: rgba(255, 255, 255, 0.8);
-  }
-
-  :root.high-contrast #search-modal {
-    background: rgba(0, 0, 0, 0.95);
-  }
-
-  /* Mobile Navigation Styles */
-  .mobile-navbar-link {
-    color: var(--color-text-secondary);
-    transition: all 0.2s ease;
-  }
-
-  .mobile-navbar-link:hover {
-    color: var(--color-text-primary);
-    background: var(--color-light-800);
-  }
-
-  .mobile-navbar-link.active {
-    background: var(--color-accent);
-    color: var(--color-darker);
-    font-weight: 500;
-  }
-
-  .mobile-navbar-link.active svg {
-    color: var(--color-darker);
-  }
-
-  .mobile-menu {
-    background-color: var(--color-navbar-bg);
-    backdrop-filter: blur(8px);
-  }
-
-  /* Enhanced Mobile Menu Styles */
-  .mobile-menu-enhanced.open {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .mobile-menu-icon {
-    position: relative;
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  .mobile-menu-line {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 0.125rem;
-    background: var(--color-text-primary);
-    transition: all 0.3s ease;
-    transform-origin: center;
-  }
-
-  .mobile-menu-line:nth-child(1) {
-    top: 0.25rem;
-  }
-
-  .mobile-menu-line:nth-child(2) {
-    top: 0.625rem;
-  }
-
-  .mobile-menu-line:nth-child(3) {
-    top: 1rem;
-  }
-
-  /* Mobile menu button active state */
-  #mobile-menu-button.active .mobile-menu-line:nth-child(1) {
-    top: 0.625rem;
-    transform: rotate(45deg);
-  }
-
-  #mobile-menu-button.active .mobile-menu-line:nth-child(2) {
-    opacity: 0;
-  }
-
-  #mobile-menu-button.active .mobile-menu-line:nth-child(3) {
-    top: 0.625rem;
-    transform: rotate(-45deg);
-  }
-
-  /* Mobile navigation items */
-  .mobile-nav-item {
-    transform: translateY(1rem);
-    opacity: 0;
-    animation: slideInUp 0.4s ease-out forwards;
-  }
-
   .mobile-nav-link {
     display: block;
     padding: 0.75rem 1rem;
@@ -1821,9 +1561,6 @@ html {
   }
 
   /* Backdrop blur fallback */
-  @supports not (backdrop-filter: blur()) {
-  }
-
   /* Button styles */
   .btn {
     padding: 0.5rem 1rem;

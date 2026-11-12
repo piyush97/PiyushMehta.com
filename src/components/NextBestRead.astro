@@ -52,7 +52,7 @@ const href = `/blog/${nextRead.slug}`;
     {nextRead.description && <p class="next-best-read__description" data-next-best-description>{nextRead.description}</p>}
     <div class="next-best-read__meta">
       <time datetime={nextRead.date.toISOString()}>
-        {nextRead.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+        {nextRead.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}
       </time>
       <span aria-hidden="true">·</span>
       <span data-next-best-reading-time>{nextRead.readingTime} min read</span>
