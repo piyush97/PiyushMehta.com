@@ -46,9 +46,14 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Email subscribers
-        run: bun scripts/send-new-post.mjs "$SLUG" ${{ inputs.send && '--send' || '' }}
+        # Inputs land in env, never interpolated into the shell line.
+        run: |
+          args=()
+          if [ "$SEND" = "true" ]; then args+=(--send); fi
+          bun scripts/send-new-post.mjs "$SLUG" "${args[@]}"
         env:
           SLUG: ${{ inputs.slug }}
+          SEND: ${{ inputs.send }}
           UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
           NEWSLETTER_SIGNING_SECRET: ${{ secrets.NEWSLETTER_SIGNING_SECRET }}
