@@ -42,6 +42,9 @@ jobs:
       - name: Run code quality checks
         run: bun run check
 
+      - name: Production audit
+        run: bun audit --prod --audit-level=high
+
       - name: Run unit tests
         run: bun run test:unit
 
