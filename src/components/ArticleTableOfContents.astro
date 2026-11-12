@@ -142,8 +142,21 @@ const { headings } = Astro.props;
 
       root.dataset.tocActiveInitialized = 'true';
       updateActiveLink();
-      window.addEventListener('scroll', updateActiveLink, { passive: true, signal });
-      window.addEventListener('resize', updateActiveLink, { signal });
+      // Recompute only when a heading crosses the activation line, not on every scroll frame.
+      let observer: IntersectionObserver | undefined;
+      const observeSections = (): void => {
+        observer?.disconnect();
+        const activationLine = Math.min(window.innerHeight * 0.28, 220);
+        observer = new IntersectionObserver(updateActiveLink, {
+          rootMargin: `0px 0px -${Math.max(window.innerHeight - activationLine, 0)}px 0px`,
+        });
+        sections.forEach((section) => observer?.observe(section));
+      };
+      observeSections();
+      window.addEventListener('resize', observeSections, { signal });
+      // Jumps (End key, find-in-page) can skip the band entirely; settle once per gesture.
+      if ('onscrollend' in window) window.addEventListener('scrollend', updateActiveLink, { signal });
+      signal.addEventListener('abort', () => observer?.disconnect());
     });
   };
 
@@ -267,7 +280,7 @@ const { headings } = Astro.props;
       position: sticky;
       top: 6.5rem;
       display: block;
-      max-height: calc(100vh - 8rem);
+      max-height: calc(100dvh - 8rem);
       overflow-y: auto;
       overscroll-behavior: contain;
       scrollbar-width: thin;

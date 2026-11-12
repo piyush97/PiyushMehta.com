@@ -21,13 +21,7 @@ test.describe('Integration Tests', () => {
       await expect(progressBar).toBeVisible();
     }
 
-    // 3. Code blocks should be enhanced
-    const copyButtons = page.locator('.copy-code-btn');
-    if ((await copyButtons.count()) > 0) {
-      expect(await copyButtons.count()).toBeGreaterThan(0);
-    }
-
-    // 4. Related posts should be shown
+    // 3. Related posts should be shown
     const relatedPosts = page.locator('.related-posts-section, .related-post-card');
     if ((await relatedPosts.count()) > 0) {
       await expect(relatedPosts.first()).toBeVisible();

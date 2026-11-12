@@ -56,10 +56,13 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname =
   </div>
 </nav>
 
-<div class="mobile-overlay" data-mobile-overlay hidden></div>
-
-<div class="mobile-panel" id="mobile-panel" data-mobile-panel hidden>
+<dialog class="mobile-panel" id="mobile-panel" data-mobile-panel closedby="any" aria-label="Site menu">
   <div class="mobile-panel__inner">
+    <form method="dialog" class="mobile-panel__close-row">
+      <button class="mobile-panel__close" type="submit" aria-label="Close menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </form>
     <a class={`mobile-nav-link${pathname.startsWith('/ask') ? ' active' : ''}`} href="/ask" aria-current={pathname.startsWith('/ask') ? 'page' : undefined} data-mobile-link><span aria-hidden="true">✦</span> Ask Piyush</a>
     {
       navItems.map((item) => (
@@ -80,116 +83,96 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname =
       <span>Toggle theme</span>
     </button>
   </div>
-</div>
+</dialog>
 
 <script is:inline>
   (() => {
     if (document.documentElement.dataset.mobileMenuBound === 'true') return;
     document.documentElement.dataset.mobileMenuBound = 'true';
 
-    let previousFocus = null;
-    let hideTimer = 0;
-
+    // Native modal <dialog>: the browser makes the page inert, traps focus,
+    // handles Escape and returns focus to the toggle on close.
     const getElements = () => {
       const toggle = document.querySelector('[data-mobile-toggle]');
       const panel = document.querySelector('[data-mobile-panel]');
-      const overlay = document.querySelector('[data-mobile-overlay]');
-
-      if (!(toggle instanceof HTMLButtonElement) || !(panel instanceof HTMLElement) || !(overlay instanceof HTMLElement)) {
-        return null;
-      }
-
-      return { toggle, panel, overlay };
+      if (!(toggle instanceof HTMLButtonElement) || !(panel instanceof HTMLDialogElement)) return null;
+      return { toggle, panel };
     };
 
-    const getFocusable = (panel) =>
-      Array.from(panel.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter(
-        (element) => !element.hasAttribute('hidden') && element.getClientRects().length > 0
-      );
-
-    function show(toggle, panel, overlay) {
-      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
-      window.clearTimeout(hideTimer);
-      panel.removeAttribute('hidden');
-      overlay.removeAttribute('hidden');
-      toggle.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
-      void panel.offsetHeight;
-      panel.classList.add('visible');
-      overlay.classList.add('visible');
-      window.requestAnimationFrame(() => getFocusable(panel)[0]?.focus());
-    }
-
-    function hide(toggle, panel, overlay, { restoreFocus = true } = {}) {
-      if (toggle.getAttribute('aria-expanded') !== 'true' && panel.hasAttribute('hidden')) return;
-
-      panel.classList.remove('visible');
-      overlay.classList.remove('visible');
-      toggle.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-      window.clearTimeout(hideTimer);
-      hideTimer = window.setTimeout(() => {
-        if (toggle.getAttribute('aria-expanded') !== 'true') {
-          panel.setAttribute('hidden', '');
-          overlay.setAttribute('hidden', '');
+    // Exit animation needs `overlay` + discrete display transitions (Chromium only);
+    // elsewhere, play the exit via [data-closing] before calling close().
+    const nativeExit = () => CSS.supports('overlay', 'auto');
+    const closePanel = async (panel) => {
+      if (!panel.open) return;
+      if (!nativeExit()) {
+        panel.setAttribute('data-closing', '');
+        const animations = panel.getAnimations({ subtree: true });
+        if (animations.length) {
+          await Promise.race([
+            Promise.allSettled(animations.map((animation) => animation.finished)),
+            new Promise((resolve) => setTimeout(resolve, 600)),
+          ]);
         }
-      }, 300);
+        panel.removeAttribute('data-closing');
+      }
+      panel.close();
+    };
 
-      if (restoreFocus) previousFocus?.focus();
-    }
+    // closedby="any" fallback (Safari): close on a press and release outside the panel.
+    const outside = (event, panel) => {
+      const rect = panel.getBoundingClientRect();
+      return event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
+    };
+    let pressedOutside = false;
 
     document.addEventListener('click', (event) => {
       if (!(event.target instanceof Element)) return;
       const elements = getElements();
       if (!elements) return;
+      const { toggle, panel } = elements;
 
-      const { toggle, panel, overlay } = elements;
       if (event.target.closest('[data-mobile-toggle]') === toggle) {
-        const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-        if (isOpen) hide(toggle, panel, overlay);
-        else show(toggle, panel, overlay);
+        panel.showModal();
+        toggle.setAttribute('aria-expanded', 'true');
         return;
       }
-
-      if (event.target.closest('[data-mobile-overlay]') === overlay) {
-        hide(toggle, panel, overlay);
+      if (event.target.closest('[data-mobile-panel] form[method="dialog"] button')) {
+        event.preventDefault();
+        closePanel(panel);
         return;
       }
-
-      if (event.target.closest('[data-mobile-panel] a[href]')) {
-        hide(toggle, panel, overlay, { restoreFocus: false });
-      }
+      if (event.target.closest('[data-mobile-panel] a[href]')) panel.close();
     });
 
-    document.addEventListener('keydown', (event) => {
-      const elements = getElements();
-      if (!elements) return;
-
-      const { toggle, panel, overlay } = elements;
-      if (toggle.getAttribute('aria-expanded') !== 'true') return;
-      if (event.key === 'Escape') {
+    // Escape and light dismiss fire `cancel`; route them through the animated close.
+    document.addEventListener('cancel', (event) => {
+      if (!(event.target instanceof HTMLDialogElement) || !event.target.matches('[data-mobile-panel]')) return;
+      if (event.cancelable) {
         event.preventDefault();
-        hide(toggle, panel, overlay);
-        return;
+        closePanel(event.target);
       }
-      if (event.key !== 'Tab') return;
+    }, true);
 
-      const focusable = getFocusable(panel);
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    });
+    document.addEventListener('close', (event) => {
+      if (!(event.target instanceof Element) || !event.target.matches('[data-mobile-panel]')) return;
+      getElements()?.toggle.setAttribute('aria-expanded', 'false');
+    }, true);
+
+    if (!('closedBy' in HTMLDialogElement.prototype)) {
+      document.addEventListener('pointerdown', (event) => {
+        const panel = getElements()?.panel;
+        pressedOutside = !!panel?.open && event.target === panel && outside(event, panel);
+      });
+      document.addEventListener('pointerup', (event) => {
+        const panel = getElements()?.panel;
+        if (panel?.open && pressedOutside && event.target === panel && outside(event, panel)) closePanel(panel);
+        pressedOutside = false;
+      });
+    }
 
     window.addEventListener('resize', () => {
-      const elements = getElements();
-      if (elements && window.innerWidth >= 768) hide(elements.toggle, elements.panel, elements.overlay);
+      const panel = getElements()?.panel;
+      if (panel?.open && window.innerWidth >= 768) panel.close();
     });
   })();
 </script>
@@ -366,31 +349,98 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname =
   .hamburger[aria-expanded='true'] .hamburger__line:nth-child(2) { opacity: 0; }
   .hamburger[aria-expanded='true'] .hamburger__line:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-  .mobile-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 48;
-    background: rgba(0, 0, 0, 0.4);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  .mobile-overlay.visible { opacity: 1; }
-
+  /* Native modal <dialog>: page is inert, focus trapped, Escape + focus return built in. */
   .mobile-panel {
-    position: fixed;
-    top: 4rem;
-    left: 0;
-    right: 0;
-    z-index: 49;
-    background: var(--color-bg);
+    inset: 4rem 0 auto 0;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
     border-bottom: 1px solid var(--color-card-border);
-    transform: translateY(-100%);
-    opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
     max-height: calc(100dvh - 4rem);
     overflow-y: auto;
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    opacity: 0;
+    transition-property: opacity, transform, display, overlay;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+    transition-behavior: allow-discrete;
   }
-  .mobile-panel.visible { transform: translateY(0); opacity: 1; }
+
+  .mobile-panel:is([open]):where(:not([data-closing])) {
+    opacity: 1;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mobile-panel {
+      transform: translateY(-1rem);
+    }
+
+    .mobile-panel:is([open]):where(:not([data-closing])) {
+      transform: translateY(0);
+
+      @starting-style {
+        transform: translateY(-1rem);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-panel {
+      transition-duration: 0.1s;
+    }
+  }
+
+  .mobile-panel:modal {
+    overscroll-behavior: contain;
+  }
+
+  .mobile-panel::backdrop {
+    background-color: rgb(0 0 0 / 0);
+    overflow: hidden;
+    overscroll-behavior: contain;
+    transition-property: background-color, display, overlay;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+    transition-behavior: allow-discrete;
+  }
+
+  .mobile-panel:is([open]):where(:not([data-closing]))::backdrop {
+    background-color: rgb(0 0 0 / 0.4);
+
+    @starting-style {
+      background-color: rgb(0 0 0 / 0);
+    }
+  }
+
+  .mobile-panel__close-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .mobile-panel__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 6px;
+    background: var(--color-surface-raised);
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+
+  .mobile-panel__close:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
 
   .mobile-panel__inner {
     display: flex;
