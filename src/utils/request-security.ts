@@ -2,12 +2,16 @@ import { isIP } from 'node:net';
 import { fromHtml } from 'hast-util-from-html';
 import { visit } from 'unist-util-visit';
 
-const CSP =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googletagmanager.com https://*.google-analytics.com https://www.google.com https://www.gstatic.com https://challenges.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io https://*.googletagmanager.com https://*.google-analytics.com https://sentry.io; frame-src https://challenges.cloudflare.com https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com https://piyushmehta.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;";
+// Single source of truth for the enforced CSP. Origins are limited to what the
+// Worker renders: Sentry ingest (connect), Turnstile (script/connect/frame),
+// YouTube embeds, and the canonical site iframe. 'unsafe-inline' stays until
+// inline scripts can be served with hashes.
+export const CONTENT_SECURITY_POLICY =
+  "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://*.ingest.sentry.io https://sentry.io https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://piyushmehta.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;";
 
 export function securityHeaders(hashes: readonly string[] = []): Record<string, string> {
   return {
-    'Content-Security-Policy': CSP,
+    'Content-Security-Policy': CONTENT_SECURITY_POLICY,
     'Content-Security-Policy-Report-Only': `default-src 'self'; script-src 'self' ${hashes.join(' ')} https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io; frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp;`,
     'Reporting-Endpoints': 'csp="/api/csp-report"',
     'X-Frame-Options': 'DENY',
@@ -139,10 +143,3 @@ export function isAllowedFormOrigin(request: Request): boolean {
     return false;
   }
 }
-
-// Single source of truth for the enforced CSP. Origins are limited to what the
-// Worker renders: Sentry ingest (connect), Turnstile (script/connect/frame),
-// YouTube embeds, and the canonical site iframe. 'unsafe-inline' stays until
-// inline scripts can be served with hashes.
-export const CONTENT_SECURITY_POLICY =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://*.ingest.sentry.io https://sentry.io https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://piyushmehta.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;";
