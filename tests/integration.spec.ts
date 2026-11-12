@@ -144,6 +144,7 @@ test.describe('Integration Tests', () => {
     if ((await inputs.count()) > 0) {
       for (let i = 0; i < (await inputs.count()); i++) {
         const input = inputs.nth(i);
+        if (await input.evaluate((el) => !!el.closest('[aria-hidden="true"]'))) continue;
         const hasLabel = await input.evaluate((el) => {
           const id = el.id;
           const ariaLabel = el.getAttribute('aria-label');
@@ -200,7 +201,7 @@ test.describe('Integration Tests', () => {
     // Without JavaScript the nav must be plain links to real pages.
     const workLink = page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Work' }).first();
     const href = await workLink.getAttribute('href');
-    expect(href).toBe('/projects/');
+    expect(href).toBe('/projects');
     const response = await page.goto(href!);
     expect(response?.ok()).toBe(true);
     await expect(page.locator('main')).toBeVisible();

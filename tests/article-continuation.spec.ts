@@ -42,7 +42,7 @@ test.describe('article continuation', () => {
 
     const link = continuation.getByRole('link');
     const href = await link.getAttribute('href');
-    expect(href).toMatch(/^\/blog\/[^/]+\/$/);
+    expect(href).toMatch(/^\/blog\/[^/]+$/);
     expect(href).not.toBe(articlePath);
 
     const order = await page.locator('.blog-post-after').evaluate((container) => {

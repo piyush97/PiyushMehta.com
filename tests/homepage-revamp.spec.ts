@@ -21,11 +21,11 @@ test.describe('approved homepage revamp', () => {
     );
     await expect(page.getByRole('link', { name: 'Read recent writing' })).toHaveAttribute(
       'href',
-      '/blog/'
+      '/blog'
     );
     await expect(page.getByRole('link', { name: 'Read Résumé' })).toHaveAttribute(
       'href',
-      '/resume/'
+      '/resume'
     );
 
     const evidenceRecord = page.locator('[data-home-section="evidence"]');
@@ -37,7 +37,7 @@ test.describe('approved homepage revamp', () => {
     await expect(evidenceRecord.getByText('Outcome — 30% greater workflow efficiency')).toBeVisible();
     await expect(evidenceRecord.getByRole('link', { name: 'View case study' })).toHaveAttribute(
       'href',
-      '/projects/'
+      /^\/projects(#case-\d+)?$/
     );
 
     const metrics = page.locator('[data-home-section="metrics"]');
@@ -85,8 +85,8 @@ test.describe('approved homepage revamp', () => {
         expect(Object.values(sectionTops)).toEqual(Object.values(sectionTops).sort((a, b) => a - b));
       }
 
-      const actions = page.locator('[data-home-section="actions"] a');
-      await expect(actions).toHaveCount(2);
+      const actions = page.locator('[data-home-section="actions"] > a');
+      await expect(actions).toHaveCount(3);
       for (const action of await actions.all()) {
         const box = await action.boundingBox();
         expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);

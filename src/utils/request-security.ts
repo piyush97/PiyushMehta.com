@@ -1,4 +1,57 @@
 import { isIP } from 'node:net';
+import { fromHtml } from 'hast-util-from-html';
+import { visit } from 'unist-util-visit';
+
+// Single source of truth for the enforced CSP. Origins are limited to what the
+// Worker renders: Sentry ingest (connect), Turnstile (script/connect/frame),
+// YouTube embeds, and the canonical site iframe. 'unsafe-inline' stays until
+// inline scripts can be served with hashes.
+export const CONTENT_SECURITY_POLICY =
+  "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://*.ingest.sentry.io https://sentry.io https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://piyushmehta.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;";
+
+export function securityHeaders(hashes: readonly string[] = []): Record<string, string> {
+  return {
+    'Content-Security-Policy': CONTENT_SECURITY_POLICY,
+    'Content-Security-Policy-Report-Only': `default-src 'self'; script-src 'self' ${hashes.join(' ')} https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io; frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp;`,
+    'Reporting-Endpoints': 'csp="/api/csp-report"',
+    'X-Frame-Options': 'DENY',
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+    'Permissions-Policy':
+      'camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()',
+  };
+}
+
+export const SECURITY_HEADERS = securityHeaders();
+
+export async function hashInlineScripts(html: string): Promise<string[]> {
+  const scripts: string[] = [];
+  visit(fromHtml(html), 'element', (node) => {
+    if (
+      node.tagName !== 'script' ||
+      node.properties.src ||
+      !['', 'module', 'text/javascript', 'application/javascript'].includes(
+        String(node.properties.type ?? '').toLowerCase(),
+      )
+    )
+      return;
+    scripts.push(node.children.map((child) => (child.type === 'text' ? child.value : '')).join(''));
+  });
+  return [
+    ...new Set(
+      await Promise.all(
+        scripts.map(async (script) => {
+          const bytes = new Uint8Array(
+            await crypto.subtle.digest('SHA-256', new TextEncoder().encode(script)),
+          );
+          return `'sha256-${btoa(String.fromCharCode(...bytes))}'`;
+        }),
+      ),
+    ),
+  ].sort();
+}
 
 export function json(data: unknown, status = 200, headers: Readonly<Record<string, string>> = {}) {
   return Response.json(data, { status, headers: { 'Cache-Control': 'no-store', ...headers } });
@@ -90,10 +143,3 @@ export function isAllowedFormOrigin(request: Request): boolean {
     return false;
   }
 }
-
-// Single source of truth for the enforced CSP. Origins are limited to what the
-// Worker renders: Sentry ingest (connect), Turnstile (script/connect/frame),
-// YouTube embeds, and the canonical site iframe. 'unsafe-inline' stays until
-// inline scripts can be served with hashes.
-export const CONTENT_SECURITY_POLICY =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://*.ingest.sentry.io https://sentry.io https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://piyushmehta.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;";

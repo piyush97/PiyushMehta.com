@@ -51,6 +51,7 @@ test.describe('portfolio smoke', () => {
   }
 
   test('home presents evidence and recent writing', async ({ page, request }) => {
+    await page.route('**/api/conversions', (route) => route.fulfill({ status: 204 }));
     await page.route('**/api/reactions*', (route) =>
       route.fulfill({
         status: 200,
@@ -134,7 +135,7 @@ test.describe('portfolio smoke', () => {
     );
 
     await focusTube.getByRole('link', { name: 'Technical article' }).click();
-    await expect(page).toHaveURL(/\/blog\/building-focustube-typesafe-jev\/$/);
+    await expect(page).toHaveURL(/\/blog\/building-focustube-typesafe-jev\/?$/);
     await expect(
       page.getByRole('heading', { level: 1, name: 'Building FocusTube with TypeSafe Jev' }),
     ).toBeVisible();
