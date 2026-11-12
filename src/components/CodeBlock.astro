@@ -391,22 +391,29 @@ const {
   }
 
   /* Scrollbar styling */
-  .code-content::-webkit-scrollbar {
-    height: 8px;
+  .code-content {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-card-border) var(--code-header);
   }
 
-  .code-content::-webkit-scrollbar-track {
-    background: var(--code-header);
-    border-radius: 4px;
-  }
+  @supports not (scrollbar-color: auto) {
+    .code-content::-webkit-scrollbar {
+      height: 8px;
+    }
 
-  .code-content::-webkit-scrollbar-thumb {
-    background: var(--color-card-border);
-    border-radius: 4px;
-  }
+    .code-content::-webkit-scrollbar-track {
+      background: var(--code-header);
+      border-radius: 4px;
+    }
 
-  .code-content::-webkit-scrollbar-thumb:hover {
-    background: var(--color-card-border-hover);
+    .code-content::-webkit-scrollbar-thumb {
+      background: var(--color-card-border);
+      border-radius: 4px;
+    }
+
+    .code-content::-webkit-scrollbar-thumb:hover {
+      background: var(--color-card-border-hover);
+    }
   }
 
   /* High contrast mode */
