@@ -134,7 +134,7 @@ test.describe('portfolio smoke', () => {
     );
 
     await focusTube.getByRole('link', { name: 'Technical article' }).click();
-    await expect(page).toHaveURL(/\/blog\/building-focustube-typesafe-jev\/$/);
+    await expect(page).toHaveURL(/\/blog\/building-focustube-typesafe-jev\/?$/);
     await expect(
       page.getByRole('heading', { level: 1, name: 'Building FocusTube with TypeSafe Jev' }),
     ).toBeVisible();

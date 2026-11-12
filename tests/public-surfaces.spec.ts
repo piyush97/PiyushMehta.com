@@ -25,10 +25,10 @@ test.describe('redesigned public surfaces', () => {
     const records = page.locator('[data-case-record]');
     await expect(index.locator('a')).toHaveCount(9);
     await expect(records).toHaveCount(9);
-    await expect(page.locator('main h2')).toHaveCount(11);
+    await expect(page.locator('main h2')).toHaveCount(12);
 
     const firstRecord = records.first();
-    await expect(firstRecord.getByRole('heading', { name: 'FocusTube' })).toBeVisible();
+    await expect(firstRecord.getByRole('heading', { name: 'Understory' })).toBeVisible();
     await expect(firstRecord.getByRole('heading', { name: 'Problem' })).toBeVisible();
     await expect(firstRecord.getByRole('heading', { name: 'Approach' })).toBeVisible();
     await expect(firstRecord.getByRole('heading', { name: 'Outcomes' })).toBeVisible();

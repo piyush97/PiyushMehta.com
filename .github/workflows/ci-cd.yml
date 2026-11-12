@@ -119,7 +119,7 @@ jobs:
         run: bunx playwright install --with-deps chromium
 
       - name: Run smoke tests
-        run: bunx playwright test tests/article-orientation.spec.ts tests/lab.spec.ts tests/post-ask.spec.ts --project=chromium
+        run: bunx playwright test tests/*.spec.ts --project=chromium
         env:
           CI: true
 
