@@ -1657,6 +1657,71 @@
     }
    ]
   },
+  "cve-2026-119618-mod-http2-race": {
+   "title": "The Clone Was One Line Above the Bug: CVE-2026-119618",
+   "description": "mod_http2 copied the request headers into the request record, then wrote Content-Length into the connection's copy. One wrong argument, reachable without authentication, CVSS 9.8, fixed in 2.4.71 on November 11.",
+   "digest": "343bec717ef39e92",
+   "sections": [
+    {
+     "level": 0,
+     "heading": null,
+     "text": "Apache HTTP Server 2.4.71 shipped on November 11 with three CVEs. The critical one, CVE-2026-119618, is a heap corruption and remote code execution bug in mod_http2. Its fix is one line, and the line it replaced was not missing a bounds check or a length validation. It named the wrong table.\n\nThe function is assign_headers() in modules/http2/h2_request.c. It already clones the parsed request headers onto the request's own pool. Then, for a bodyless request that carries a Content-Type and no Content-Length, it writes Content-Length: 0 into the original instead.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "What shipped, and how fast",
+     "text": "The affected range is every 2.4.x release from 2.4.55 (January 17, 2023) through 2.4.70. Standalone builds of the module from GitHub are affected from mod_h2 2.0.8 through 2.0.42, and that repository was archived in June 2026, so there is no patch coming from it. Keep using the module bundled with httpd.\n\nThe bug was found twice, independently. Anthropic's OSS Scanner reported it on October 26 as ANT-2026-MAPKT6MZ; Anthony Weems and Simon Scannell of Google Cloud's Vulnerability Research team reported it on November 3. The fix landed in trunk as commit 5ed3928 and was merged to 2.4.x as 824beab. Sixteen days from the first report to a release.\n\nRed Hat rates it 9.8: network reachable, low complexity, no privileges, no user interaction. Their statement adds the sentence that matters for scheduling: public research has demonstrated a reliable exploit against a default-configured server with mod_http2 enabled.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "The diff",
+     "text": "req is the parsed HTTP/2 request: the header block after HPACK decoding, plus the pseudo-headers. r is the request_rec that the rest of httpd sees, with its own pool.\n\nThe telling detail is that the same function already writes to the clone twice: Host at line 340 and Transfer-Encoding at line 368. Only this one write reaches back into the source. If you were reviewing the function for ownership rules, the odd line is visible once you know which identifier is which, and it is invisible if you read req->headers and r->headers_in as two names for the same headers.",
+     "code": [
+      " static void assign_headers(request_rec *r, const h2_request *req,\n                            int no_body, int is_connect)\n {\n     ...\n     r->headers_in = apr_table_clone(r->pool, req->headers);   /* line 324 */\n     ...\n     if (no_body) {\n         if (!cl && apr_table_get(req->headers, \"Content-Type\")) {\n-            apr_table_setn(req->headers, \"Content-Length\", \"0\");\n+            apr_table_setn(r->headers_in, \"Content-Length\", \"0\");\n         }\n     }"
+     ]
+    },
+    {
+     "level": 2,
+     "heading": "const does not mean what it looks like",
+     "text": "The signature says const h2_request req, so how does the buggy line compile? const applies to the struct. Read the member access carefully: req->headers has type apr_table_t const. That is a const pointer to a mutable table. apr_table_setn() takes apr_table_t , so passing it is legal and warning-free, and the call mutates the table without touching a single const-qualified field of the struct.\n\nThe qualifier stops you from reassigning req->headers. It stops nothing else. A table API that took const apr_table_t for reads and required an explicit cast or a non-const handle for writes would have made this a compile error. That is the deeper convention httpd relies on here: treat the parsed request as immutable once it exists, because other threads can be looking at it.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "When the write runs",
+     "text": "Four conditions have to hold, and all four are visible in the source:\n\n1. HTTP/2 is negotiated for the server or virtual host (h2 or h2c in an applicable Protocols directive).\n2. The stream has no body (no_body).\n3. The parsed request carries a Content-Type.\n4. It does not carry a Content-Length.\n\n \n\nThen the guard is the shape of a request an attacker can send directly. HTTP/2 lets a client put any header field it likes in the HEADERS frame, and nothing requires a bodyless request to omit Content-Type. There is no authentication check in this path, and no application code has run yet.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "Why the connection's table is not the request's table",
+     "text": "HTTP/2 multiplexes many streams over one connection, and mod_http2 processes stream work on worker threads while the connection thread keeps reading frames. A request that is bodyless and has a content type therefore reaches, from a worker thread, a apr_table_setn() on a table that belongs to the connection side. Red Hat's analysis describes the consequence plainly: a worker thread writes into memory owned by the connection thread through a shared, lock-free allocator.\n\napr_table_setn() is not a read. When the key is absent, as Content-Length is here, it appends an element to the table's array, and an append can grow that array. Two streams racing through the same append can lose an entry, or can leave the allocator's bookkeeping describing memory it no longer owns. The first is a wrong header. The second is the primitive for arbitrary code execution with the web server's privileges, and turning that primitive into control of the instruction pointer depends on allocator state an attacker can try to shape.\n\nThis is also why the same CVE has two severities in one vendor's catalogue. Red Hat scores the base 9.8 but rates it Important rather than Critical for RHEL 9 and RHEL 10, because the mod_http2 packages there allocate each stream from a separate allocator, which substantially raises exploitation complexity. Servers before 2.4.55 and mod_h2 before 2.0.8 do not contain the affected code, and RHEL 8 and earlier are not affected.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "Exposure, with the caveat attached",
+     "text": "Wiz reports that 64% of cloud environments contain a resource vulnerable to this CVE and that 51% of cloud environments have a publicly exposed instance. Their own note is the one to keep: the figures do not take configuration into account. HTTP/2 has to be enabled.\n\nUpstream's default is Protocols http/1.1, per the core documentation, but distro packages, container images and control panels frequently enable h2 for you, and Apache is estimated to serve roughly one in five websites. Treat \"we probably do not have it on\" as a claim to verify, not a fact.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "Check the effective config, then patch",
+     "text": "The grep has to cover every virtual host, because a Protocols directive inside a replaces the server-wide value rather than adding to it, and the module config is often wrapped in . The curl line tells you what the outside actually negotiates: HTTP/2 200 means h2 is live on that hostname.\n\nIf any applicable directive lists h2 or h2c and the binary is in range, you are exposed. Upgrade to 2.4.71 or the vendor build that carries the backport: mod_http2-2.0.26-7.el9_9.1 via RHSA-2026:98981 on RHEL 9, mod_http2-2.0.29-5.el10_3.1 via RHSA-2026:98978 on RHEL 10, or 2.4.71-1~deb12u1 / 2.4.71-1~deb13u1 through DSA-6620-1 on Debian bookworm and trixie.\n\nWhen patching has to wait, Wiz's mitigation is to remove h2 and h2c from every applicable Protocols line, leaving Protocols http/1.1. Clients fall back to HTTP/1.1 and the multiplexing goes away. What does not help is a WAF rule or a WordPress update: the defect is in the server's header handling, below anything a request filter can see, which is the point Defiant made when it warned WordPress users that patching the CMS cannot fix this.",
+     "code": [
+      "apache2 -v                     # or httpd -v; anything below 2.4.71 needs a decision\napache2ctl -M 2>/dev/null | grep -i http2\ngrep -RIn --include='*.conf' -E '^\\s*Protocols' /etc/apache2 /etc/httpd\ncurl -sI --http2 https://your.host | head -1   # needs a curl built with HTTP/2"
+     ]
+    },
+    {
+     "level": 2,
+     "heading": "The same module, two months earlier",
+     "text": "2.4.69, released October 1, fixed CVE-2026-57941: a use-after-free and wild write in mod_http2 through shared session->bbtmp re-entrancy, affecting 2.4.17 through 2.4.68. Two bugs in the same module, two months apart, both shared mutable state across a concurrency boundary. The 2.4.55 release notes describe the change that created that boundary: a partial rewrite of how connections and streams are handled, with an APR pollset monitoring the connection and reacting to IO.\n\nThat architecture buys real throughput. It also means every field reachable from a connection is a concurrency surface, and the cheap discipline is the one this function nearly followed: copy once at the boundary, then never write to the thing you copied from. The clone was already there, on line 324. The fix was one argument, pointing the last write at it.\n\nPatch to 2.4.71, or turn h2 off today and do it this week.",
+     "code": []
+    }
+   ]
+  },
   "deepseek-v4-flash-0731": {
    "title": "Running a Coding Agent on DeepSeek V4 Flash: The 1M-Context Cheap Workhorse",
    "description": "DeepSeek V4 Flash runs a coding agent on 1M tokens of context with prefix caching at a sub-cent per run. A practical field note, not a benchmark.",
