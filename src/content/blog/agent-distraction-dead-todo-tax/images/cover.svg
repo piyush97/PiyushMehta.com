@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">A TODO comment that points at a closed issue, seen two ways: by an agent as a task, and by a scanner as one of the 2.7 percent of markers that carry any reference</title>
+  <desc id="description">Left panel: the comment FIXME #10804 marked TASK in red, because the agent has no signal that the issue closed in 2019. Right panel: the same comment marked RESOLVABLE, inside a census bar where 97.3 percent of 3,937 marker lines carry no ticket at all. Caption: of 56 resolvable references sampled across 14 public repositories, 37 pointed at closed issues.</desc>
+  <rect width="1200" height="630" fill="#0b1220"/>
+
+  <text x="80" y="72" fill="#f43f5e" font-family="ui-monospace, monospace" font-size="20" letter-spacing="2">AGENT DISTRACTION · TODO CENSUS</text>
+  <text x="80" y="146" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="46" font-weight="700">The comment outlives the fix.</text>
+  <text x="80" y="188" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="19">no recency signal reaches the agent; the tracker holds the only truth</text>
+
+  <!-- left: as the agent reads it -->
+  <rect x="80" y="228" width="500" height="212" rx="10" fill="#111a2e" stroke="#f43f5e" stroke-opacity="0.6"/>
+  <text x="104" y="266" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="15">test/functional/ui/cmdline_spec.lua</text>
+  <rect x="444" y="244" width="112" height="30" rx="4" fill="#f43f5e" fill-opacity="0.18"/>
+  <text x="472" y="264" fill="#fda4af" font-family="ui-monospace, monospace" font-size="16">TASK</text>
+  <text x="104" y="322" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="18">pending('FIXME #10804')</text>
+  <text x="104" y="364" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="16">resolves to an issue, then a search, then a read</text>
+  <text x="104" y="392" fill="#fda4af" font-family="system-ui, sans-serif" font-size="16">closed 2019-09-02; nothing in the file says so</text>
+  <text x="104" y="420" fill="#64748b" font-family="ui-monospace, monospace" font-size="14">the cheapest available tool call is the detour</text>
+
+  <!-- right: as the scanner sees it -->
+  <rect x="620" y="228" width="500" height="212" rx="10" fill="#111a2e" stroke="#38bdf8" stroke-opacity="0.5"/>
+  <text x="644" y="266" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="15">same line, after classification</text>
+  <rect x="988" y="244" width="108" height="30" rx="4" fill="#38bdf8" fill-opacity="0.15"/>
+  <text x="1004" y="264" fill="#7dd3fc" font-family="ui-monospace, monospace" font-size="16">RESOLVABLE</text>
+  <text x="644" y="304" fill="#e2e8f0" font-family="ui-monospace, monospace" font-size="16">3,937 marker lines · 14 repos</text>
+
+  <!-- census bar -->
+  <rect x="644" y="326" width="452" height="34" rx="4" fill="#1e293b"/>
+  <rect x="1084" y="326" width="12" height="34" rx="2" fill="#38bdf8"/>
+  <text x="644" y="382" fill="#7dd3fc" font-family="ui-monospace, monospace" font-size="15">107 carry any reference · 2.7%</text>
+  <text x="900" y="382" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="15">3,830 bare · 97.3%</text>
+  <text x="644" y="414" fill="#64748b" font-family="ui-monospace, monospace" font-size="14">the Google metric can only see the blue sliver</text>
+
+  <!-- verdict strip -->
+  <text x="80" y="500" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="20">56 references sampled · 37 closed · 19 open · 1 deleted</text>
+  <text x="80" y="536" fill="#64748b" font-family="system-ui, sans-serif" font-size="16">median closure year 2023; the oldest still in tree last closed in 2014</text>
+  <text x="80" y="578" fill="#64748b" font-family="ui-monospace, monospace" font-size="14">census: shallow clones at 2026-11-16 · markers TODO|FIXME|XXX|HACK · github issue state via API</text>
+</svg>

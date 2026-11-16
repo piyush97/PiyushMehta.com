@@ -1,0 +1,274 @@
+---
+title: 'The Dead TODO Tax: What Google Measured, and What Its Instrument Misses'
+description: 'Google found coding agents chase stale TODO(bug/) references, costing 77% more tokens per affected session. The per-session number is real. The portfolio number is 0.5%, and the instrument only sees 2.7% of the comments in public code. I cloned 14 repos and counted.'
+date: 2026-11-16T11:00:00-05:00
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'AI Agents'
+  - 'Coding Agents'
+  - 'Technical Debt'
+  - 'Software Engineering'
+  - 'Measurement'
+  - 'Developer Productivity'
+image:
+  url: '/blog/agent-distraction-dead-todo-tax/images/cover.svg'
+  width: 1200
+  height: 630
+  alt: 'The neovim comment pending(FIXME #10804) marked TASK for an agent beside the same line marked RESOLVABLE by a scanner, above a census bar showing 107 of 3,937 marker lines carry any reference and the caption 37 closed, 19 open, 1 deleted'
+draft: false
+---
+
+import TodoTriage from '../../../components/blog/TodoTriage.tsx';
+
+On November 6, Google published [Agent Distraction](https://developers.googleblog.com/en/agent-distraction/), a measurement of what stale code comments cost when the reader is a coding agent instead of a human. Sam Saccone and Madhuri Garikapati used `TODO(bug/...)` comments as the instrument: cross-reference every TODO an agent encounters against the linked bug's live status, and you can separate real work from detours at scale, across "thousands of engineers and hundreds of millions of individual agent steps."
+
+The headline numbers have been repeated everywhere since: 70% more steps, 77% more tokens, 105% more wait time. Those are correct, and they are conditional. They describe sessions where a detour already happened, not sessions in general.
+
+This post does three things the coverage did not: divides the conditional number back out to a portfolio cost, checks whether the instrument can see the comments in public code, and ships the scanner so you can run the second check on your own repo.
+
+## What Google published
+
+| Measurement                                                            | Value                                                     |
+| ---------------------------------------------------------------------- | --------------------------------------------------------- |
+| Sessions where the agent read a `TODO(bug/...)` or `FIXME(bug/...)`    | 13%                                                       |
+| Of exposed encounters, sessions where the agent then acted on that bug | 6% (94% ignored it)                                       |
+| Of those actions, share the developer never asked for                  | 83%                                                       |
+| Unprompted detours chasing already-closed tickets                      | 41% (32% fixed, 9% won't-fix, 2% duplicate or restricted) |
+| Unprompted detours chasing open bugs outside the prompt                | 57% (61% lookup only, 39% edited code)                    |
+| Overhead per detour session, controls applied                          | +70% steps, +77% tokens, +105% wait, p < 0.0001           |
+
+The controls are the serious part: developer, codebase complexity, task type, model tier, number of files read, prompt length, and the step where the reference appeared, with developer-clustered standard errors. [InfoQ covered it](https://www.infoq.com/news/2026/11/google-agent-distraction/) as a finding about technical debt. It is also a finding about what a comment _is_ to a model.
+
+> What is easy for humans to skim past in code, agents see as a call to action.
+
+A human reading `// XXX: workaround libuv implicit LF => CRLF conversion. #10558` in 2026 brings a fact the file does not contain: this is old. That knowledge comes from memory of the project, from the shape of surrounding code, from having been burned before. An agent reads the same bytes with none of it. The comment names an identifier, the identifier resolves through a cheap tool call, and nothing in the harness says "this one closed seven years ago."
+
+## Divide the 77% back out
+
+If 13% of sessions expose the agent to a bug-referencing comment, and 6% of those produce an action, and 83% of the actions are unprompted, then the unprompted-detour rate per session is:
+
+```
+0.13 × 0.06 × 0.83 = 0.0065   → one session in 154 (0.65%)
+```
+
+Multiply by the per-session overhead and the portfolio cost appears:
+
+```
+tokens: 0.0065 × 0.77 = 0.50%
+wait:   0.0065 × 1.05 = 0.68%
+```
+
+At 100,000 agent sessions a month, that is about 650 detour sessions, and the tokens they burn are worth roughly 500 extra sessions. Not 77% more. Five tenths of a percent more, across the fleet.
+
+That is the honest reading of the published numbers, and it changes the decision. A 0.5% token tax is not a reason to launch a cleanup program on its own. Two things make it worth engineering time anyway, and neither is in that arithmetic.
+
+First, the conditional case is bad. When a detour happens, the session costs 1.77x the tokens and 2.05x the wait, and it is a single developer sitting in front of a stalled run. The distribution is what hurts, not the mean.
+
+Second, at 39% of the open-bug detours the agent _edited code_. Chasing a closed ticket wastes an afternoon. Editing a live module nobody asked about puts an unrequested diff in front of a reviewer who now has to reconstruct why. That is a correctness cost, and 0.5% of tokens does not measure it.
+
+## Does the instrument see the comments?
+
+Google had one advantage no public repo gives you: a single tracker, and a comment convention, `TODO(bug/12345)`, that maps into it. Their exposure number is therefore measured over comments that are _already_ machine-resolvable. The obvious next question is what share of comments in the wild that is.
+
+I cloned 14 repositories at shallow depth on November 16, 2026, walked every text file outside vendored and generated directories, and counted lines containing `TODO`, `FIXME`, `XXX`, or `HACK`. Then I classified each line by whether it carries anything an agent could resolve: a GitHub issue URL, a bare `#123`, a `bug/123` path, or a tracker key like `ABC-123`.
+
+The scan is a single Python file, no dependencies beyond `git` and the standard library. The classification is the same four regexes the widget below uses:
+
+```python
+REF_PATTERNS = [
+    ("url",        re.compile(r"https?://\S+")),
+    ("hash",       re.compile(r"(?<![\w&])#(\d{1,7})\b")),
+    ("bugpath",    re.compile(r"\bbug/(\d{1,7})\b", re.I)),
+    ("bugword",    re.compile(r"\b(?:bug|issue|iss|gh|pr|bz|jira)\s*[-_/ ]?\s*(\d{3,7})\b", re.I)),
+    ("trackerkey", re.compile(r"\b([A-Z][A-Z0-9]{1,9}-\d{1,6})\b")),
+]
+```
+
+Across 14 repositories, 1,764 files carried at least one marker, and the marker lines totalled **3,937**. Of those, **107 (2.7%) carried any reference at all**. The other **3,830 (97.3%) are bare**: `// TODO: this is weird`, `// FIXME: unify these`, `-- XXX: remove after 0.12`.
+
+| Repository | Markers | Refs | Share |
+| ---------- | ------- | ---- | ----- |
+| neovim     | 1,949   | 50   | 2.6%  |
+| ansible    | 550     | 5    | 0.9%  |
+| prometheus | 356     | 20   | 5.6%  |
+| nushell    | 313     | 14   | 4.5%  |
+| sqlalchemy | 284     | 1    | 0.4%  |
+| redis      | 129     | 1    | 0.8%  |
+| tokio      | 85      | 8    | 9.4%  |
+| pytest     | 80      | 1    | 1.2%  |
+| curl       | 59      | 3    | 5.1%  |
+| django     | 55      | 3    | 5.5%  |
+| fzf        | 29      | 0    | 0.0%  |
+| fastapi    | 27      | 1    | 3.7%  |
+| tmux       | 21      | 0    | 0.0%  |
+| flask      | 0       | 0    | 0.0%  |
+
+Commits at scan time, for reproduction: neovim `42d164b`, ansible `b4b2b1e`, prometheus `05bbd30`, nushell `0eb9f51`, sqlalchemy `fe8e677`, redis `1a9eb05`, tokio `f3e855f`, pytest `50234b4`, curl `307f084`, django `03158f2`, fzf `4499615`, fastapi `a1b3be0`, tmux `ac7e727`, flask `49943b5`.
+
+Read that column as a ceiling on what a tracker-based instrument can attribute, not as a measure of staleness. The 97.3% of comments that name no ticket are not necessarily stale. They are unmeasurable by this method, and every one of them is still read by the agent as text.
+
+The per-repo spread is the interesting part. tokio resolves 9.4% of its markers to something, prometheus 5.6%, sqlalchemy 0.4%. A study that sampled repos like sqlalchemy would conclude the problem is negligible, and a study that sampled tokio would conclude it is everywhere. Google measured one codebase with an enforced convention, and 13% is a number about Google, not a constant.
+
+## Resolving what is resolvable
+
+Then I looked up the references. For every reference I could map to `owner/repo` plus a number, I called the GitHub issues API, up to 60 per repository, deduplicated: 57 lookups, 56 of which returned an object.
+
+| Result                                      | Count                            |
+| ------------------------------------------- | -------------------------------- |
+| Closed                                      | 37 of 56 (66%, 95% CI 53 to 77%) |
+| Open                                        | 19                               |
+| Deleted (404)                               | 1                                |
+| Of the 56, pull requests rather than issues | 18 (16 of them closed)           |
+| Issues only: closed                         | 21 of 38 (55%, 95% CI 40 to 70%) |
+| Closed before 2024                          | 19                               |
+
+The oldest closure still carrying a comment in HEAD is `neovim/neovim#36`, closed 2014-02-26. The comment sits in `runtime/lua/vim/async/_core.lua` and reads `TODO(#36): Defer task control until setup returns its cleanup handle`.
+
+Two-thirds of resolvable references point at something closed. This is not a like-for-like comparison with Google's 41%, which counts unprompted detours by the status of the ticket they chased; mine counts closed state among references that resolve at all. The direction is still informative: public code is older, and nobody is running a cleaner over it.
+
+But there is a second problem, and it is worse than staleness. Look up `neovim/neovim#36` and you get a pull request titled "Clean up README.md". The comment is about deferring task control. In `nushell/nushell`, a comment reading `FIXME (#9639): How do we handle non-utf8 filenames?` resolves to a PR titled "Bump strum from 0.24.1 to 0.25.0". In `django/django`, `TODO: Autodetection of multigeometry types (see #7218)` points at a Django ticket that predates the GitHub mirror.
+
+Whether the number was written against a tracker the project later left, or the comment cited the wrong issue, the effect is the same: the reference does not resolve to the work it describes. So a bare `#N` is not a resolvable reference. It is a number that looks resolvable, and an agent that follows it lands on an unrelated ticket with full confidence. That is the failure mode Google described, one level deeper: not a detour into obsolete work, a detour into the _wrong_ work.
+
+Only 49 of the 107 references in the census are URLs, which are unambiguous by construction. 53 are bare numbers, and 5 are tracker keys that no public agent has credentials for.
+
+## Triage what you are pasting
+
+The widget below runs the census classifier on any comment lines you paste, then hands you the three-way switch that the comment itself cannot provide. The classification is regex, the ticket state is whatever you set, and the gap between the two is the whole argument.
+
+<TodoTriage client:visible />
+
+Watch the verdict flip as you change a ticket from open to closed. The comment's text is identical in both states. Nothing in the file changes. The difference lives in a tracker the agent has to query, one tool call at a time, for every reference it meets.
+
+## What to do, cheapest first
+
+1. **Reference by URL or not at all.** `TODO(https://github.com/org/repo/issues/1790)` survives a tracker migration. `TODO(#1790)` does not, and it costs the agent a lookup that returns a stranger's pull request. This is a lint rule, not a culture change.
+2. **Delete the comment when the ticket closes.** This is the entire fix, and it needs a presubmit hook, because humans will not remember. A rule that fails when a `TODO` references an issue in state CLOSED is a presubmit hook, not a research project.
+3. **Stop treating a TODO as an assignment.** The prompt sets scope. If a scan of the files turns up a live ticket outside the prompt, the correct action is to report it, not to fix it. Write that sentence in `AGENTS.md`; the [repository context file](/blog/agents-md-repository-context/) is where scope rules actually reach the model.
+4. **Then, and only then, the cleaner agent.** Google's approach is the interesting one because of what it refuses to do: it checks bug history, file history, and code changes, sometimes years deep, and proposes deletion only when it can show the TODO _and its intent_ are obsolete. That is why the acceptance rate is above 95% on thousands of removals. A scanner that deletes every TODO with a closed ticket nearby would be reverted within a day.
+
+The ordering matters. Steps 1 and 2 prevent new dead references for near zero cost. Step 3 limits the damage of the ones already in the tree. Step 4 pays a model to do archaeology, which is worth it only on the residue.
+
+## Run it yourself
+
+The whole measurement is one file. Put shallow clones in `repos/`, run it with a GitHub token, and it writes `census.json`. Same classifier as the widget, same resolution calls, so your numbers are comparable to mine.
+
+<details>
+<summary>The script (Python 3, standard library plus git)</summary>
+
+```python
+import json, os, re, subprocess, time, urllib.request
+from collections import Counter
+from pathlib import Path
+
+SKIP = {".git", "node_modules", "vendor", "dist", "build", "target",
+        "third_party", "__pycache__", ".venv"}
+BINARY = {".png", ".jpg", ".jpeg", ".gif", ".ico", ".pdf", ".zip", ".gz",
+          ".xz", ".so", ".o", ".a", ".class", ".jar", ".woff2", ".ttf",
+          ".mp4", ".webm", ".pyc", ".rlib"}
+MAX_BYTES = 2_000_000
+MARKER = re.compile(r"\b(TODO|FIXME|XXX|HACK)\b")
+PATTERNS = [
+    ("url", re.compile(r"https?://\S+")),
+    ("hash", re.compile(r"(?<![\w&])#(\d{1,7})\b")),
+    ("bugpath", re.compile(r"\bbug/(\d{1,7})\b", re.I)),
+    ("bugword", re.compile(r"\b(?:bug|issue|iss|gh|pr|bz|jira)\s*[-_/ ]?\s*(\d{3,7})\b", re.I)),
+    ("trackerkey", re.compile(r"\b([A-Z][A-Z0-9]{1,9}-\d{1,6})\b")),
+]
+GH_ISSUE = re.compile(r"github\.com/([\w.-]+)/([\w.-]+)/issues/(\d+)")
+
+def readable(path):
+    if path.suffix.lower() in BINARY or path.stat().st_size > MAX_BYTES:
+        return False
+    with path.open("rb") as fh:
+        return b"\0" not in fh.read(4096)
+
+def resolve(line):
+    for kind, pat in PATTERNS:
+        m = pat.search(line)
+        if m:
+            return kind, m.group(0)
+    return None
+
+def census(repo):
+    rows = []
+    for path in repo.rglob("*"):
+        if not path.is_file() or set(path.parts) & SKIP or not readable(path):
+            continue
+        try:
+            text = path.read_text("utf-8", errors="ignore")
+        except OSError:
+            continue
+        for n, line in enumerate(text.splitlines(), 1):
+            if MARKER.search(line):
+                hit = resolve(line)
+                rows.append({"path": str(path.relative_to(repo)), "line": n,
+                             "kind": hit[0] if hit else "none",
+                             "raw": hit[1] if hit else None})
+    return rows
+
+def git(repo, *args):
+    return subprocess.run(["git", "-C", str(repo), *args],
+                          capture_output=True, text=True).stdout.strip()
+
+def state(owner, repo, number, token):
+    req = urllib.request.Request(
+        f"https://api.github.com/repos/{owner}/{repo}/issues/{number}",
+        headers={"Authorization": f"Bearer {token}",
+                 "Accept": "application/vnd.github+json"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            d = json.load(r)
+            return {"state": d["state"], "closed_at": d["closed_at"],
+                    "is_pr": "pull_request" in d, "title": d["title"]}
+    except urllib.error.HTTPError as e:
+        return {"state": f"error:{e.code}"}
+
+out = {}
+for repo in sorted(Path("repos").iterdir()):
+    url = git(repo, "remote", "get-url", "origin")
+    m = re.search(r"github\.com[:/]([\w.-]+)/([\w.-]+?)(?:\.git)?$", url)
+    if not m:
+        continue
+    owner, name = m.groups()
+    rows = census(repo)
+    seen, lookups = set(), []
+    for row in rows:
+        if row["kind"] == "url":
+            hit = GH_ISSUE.search(row["raw"])
+            key = hit.groups() if hit else None
+        elif row["kind"] == "hash":
+            key = (owner, name, row["raw"].lstrip("#"))
+        else:
+            key = None
+        if key and key not in seen and len(lookups) < 60:
+            seen.add(key)
+            lookups.append({**row, "issue": key})
+    for row in lookups:
+        row.update(state(*row["issue"], os.environ["GH_TOKEN"]))
+        time.sleep(0.15)
+    out[repo.name] = {"head": git(repo, "rev-parse", "--short", "HEAD"),
+                      "markers": len(rows),
+                      "with_reference": sum(r["kind"] != "none" for r in rows),
+                      "lookups": lookups}
+    counts = Counter(r.get("state") for r in lookups)
+    print(repo.name, len(rows), counts)
+
+Path("census.json").write_text(json.dumps(out, indent=1))
+```
+
+</details>
+
+Marker counting includes `XXX` and `HACK`; Google's study counted `TODO` and `FIXME` with bug references. Both counts are in `census.json` so you can recompute either way.
+
+## Limits
+
+Google's numbers are one company's codebase, one tracker, one internal harness, and an observational regression. The paper says correlation; it does not claim that deleting a TODO removes exactly 77% of anything. The 95% figure measures reviewer acceptance of deletions, not agent performance afterwards.
+
+My census is 14 repositories chosen by me, most of them large and old, all on GitHub, all shallow-cloned, with a regex for the marker set rather than a parser. Marker counts include `XXX` and `HACK`, which Google did not measure. The 2.7% share describes this sample, not public code in general, and the resolution sample is 56 objects, wide enough for the 53 to 77% interval and not wide enough to rank repositories. Reproduce it with the script and you will get your own numbers, which are the only ones that should decide your budget.
+
+What survives both datasets is the mechanism, and it is cheap to act on. The comment is context. Context is instruction. A comment that names a closed ticket is an instruction to do work that has already been done, and the model has no way to know that unless something tells it.
+
+Related: [why agents drift on long tasks](/blog/context-management-agents/) covers context decay inside a session; this is the same decay sitting in the repository, waiting to be read.
