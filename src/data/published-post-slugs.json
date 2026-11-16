@@ -1,4 +1,5 @@
 [
+  "agent-distraction-dead-todo-tax",
   "agent-sandbox-boundary",
   "agent-sandbox-shared-cache",
   "agentgate-block-agent-prs-that-weaken-tests",
