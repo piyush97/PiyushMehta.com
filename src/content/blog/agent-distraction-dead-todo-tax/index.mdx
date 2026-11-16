@@ -1,6 +1,6 @@
 ---
 title: 'The Dead TODO Tax: What Google Measured, and What Its Instrument Misses'
-description: 'Google found coding agents chase stale TODO(bug/) references, costing 77% more tokens per affected session. The per-session number is real. The portfolio number is 0.5%, and the instrument only sees 2.7% of the comments in public code. I cloned 14 repos and counted.'
+description: 'Google found stale TODO comments cost agents 77% more tokens in affected sessions. Fleet-wide that is 0.5%. A 14-repo census: just 2.7% name a ticket.'
 date: 2026-11-16T11:00:00-05:00
 author: 'Piyush Mehta'
 ogTemplate: 'tech'
@@ -30,14 +30,16 @@ This post does three things the coverage did not: divides the conditional number
 
 ## What Google published
 
-| Measurement                                                            | Value                                                     |
-| ---------------------------------------------------------------------- | --------------------------------------------------------- |
-| Sessions where the agent read a `TODO(bug/...)` or `FIXME(bug/...)`    | 13%                                                       |
-| Of exposed encounters, sessions where the agent then acted on that bug | 6% (94% ignored it)                                       |
-| Of those actions, share the developer never asked for                  | 83%                                                       |
-| Unprompted detours chasing already-closed tickets                      | 41% (32% fixed, 9% won't-fix, 2% duplicate or restricted) |
-| Unprompted detours chasing open bugs outside the prompt                | 57% (61% lookup only, 39% edited code)                    |
-| Overhead per detour session, controls applied                          | +70% steps, +77% tokens, +105% wait, p < 0.0001           |
+| Measurement                                                         | Value                                           |
+| ------------------------------------------------------------------- | ----------------------------------------------- |
+| Sessions where the agent read a `TODO(bug/...)` or `FIXME(bug/...)` | 13%                                             |
+| Of encounters, share where the agent then acted on that bug         | 6% (94% ignored it)                             |
+| Of those actions, share the developer never asked for               | 83%                                             |
+| Unprompted detours chasing already-closed tickets                   | 41% (32% fixed, 9% won't-fix)                   |
+| Unprompted detours chasing open bugs outside the prompt             | 57% (61% lookup only, 39% edited code)          |
+| Overhead per detour session, controls applied                       | +70% steps, +77% tokens, +105% wait, p < 0.0001 |
+
+A further 2% of detours hit restricted-access tickets, counted separately from the 41%.
 
 The controls are the serious part: developer, codebase complexity, task type, model tier, number of files read, prompt length, and the step where the reference appeared, with developer-clustered standard errors. [InfoQ covered it](https://www.infoq.com/news/2026/11/google-agent-distraction/) as a finding about technical debt. It is also a finding about what a comment _is_ to a model.
 
@@ -52,6 +54,8 @@ If 13% of sessions expose the agent to a bug-referencing comment, and 6% of thos
 ```
 0.13 × 0.06 × 0.83 = 0.0065   → one session in 154 (0.65%)
 ```
+
+The 6% is per encounter, so this treats each exposed session as one encounter; sessions with several encounters would push the real rate slightly higher.
 
 Multiply by the per-session overhead and the portfolio cost appears:
 
@@ -128,7 +132,7 @@ The oldest closure still carrying a comment in HEAD is `neovim/neovim#36`, close
 
 Two-thirds of resolvable references point at something closed. This is not a like-for-like comparison with Google's 41%, which counts unprompted detours by the status of the ticket they chased; mine counts closed state among references that resolve at all. The direction is still informative: public code is older, and nobody is running a cleaner over it.
 
-But there is a second problem, and it is worse than staleness. Look up `neovim/neovim#36` and you get a pull request titled "Clean up README.md". The comment is about deferring task control. In `nushell/nushell`, a comment reading `FIXME (#9639): How do we handle non-utf8 filenames?` resolves to a PR titled "Bump strum from 0.24.1 to 0.25.0". In `django/django`, `TODO: Autodetection of multigeometry types (see #7218)` points at a Django ticket that predates the GitHub mirror.
+But there is a second problem, and it is worse than staleness. Look up `neovim/neovim#36` and you get a pull request titled "Clean up README.md". The comment is about deferring task control. In `nushell/nushell`, a comment reading `FIXME (#9639): How do we handle non-utf8 filenames?` resolves to a PR titled "Bump strum from 0.24.1 to 0.25.0". In `django/django`, `TODO: Autodetection of multigeometry types (see #7218)` cites a number from Django's own Trac tracker, and the same number on GitHub is an unrelated pull request (`django/django#7218`, closed 2016-09-08).
 
 Whether the number was written against a tracker the project later left, or the comment cited the wrong issue, the effect is the same: the reference does not resolve to the work it describes. So a bare `#N` is not a resolvable reference. It is a number that looks resolvable, and an agent that follows it lands on an unrelated ticket with full confidence. That is the failure mode Google described, one level deeper: not a detour into obsolete work, a detour into the _wrong_ work.
 
