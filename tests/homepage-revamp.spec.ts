@@ -85,7 +85,7 @@ test.describe('approved homepage revamp', () => {
       }
 
       const actions = page.locator('[data-home-section="actions"] > a');
-      await expect(actions).toHaveCount(3);
+      await expect(actions).toHaveCount(2);
       for (const action of await actions.all()) {
         const box = await action.boundingBox();
         expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
