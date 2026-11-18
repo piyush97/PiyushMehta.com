@@ -111,6 +111,32 @@ export const portfolioMetrics: PortfolioMetric[] = [
 
 export const caseStudies: CaseStudy[] = [
   {
+    title: 'Indian Food Recommends',
+    eyebrow: 'Next.js, Postgres, open source',
+    role: 'Product Engineer',
+    timeframe: '2026',
+    summary:
+      'Built a site that ranks where Indian food vloggers say to eat by how many different creators picked each place, with the exact video moment behind every pick.',
+    problem:
+      'After living in Canada since 2021, a trip back to India left me unsure where to eat after five years away. Google reviews felt unreliable, some biased, some paid. Food creators already film honest visits, but their picks are scattered across hours of video.',
+    approach: [
+      'An ingest worker pulls creator uploads, uses an LLM to extract place and dish picks, and only publishes a pick when the video text supports it; unsupported picks are rejected with a recorded reason.',
+      'Ranking counts distinct creators per place with documented tie-breaks, never payment or anonymous ratings.',
+      'Places are geocoded with PostGIS and OpenStreetMap Nominatim, deduplicated, and grouped into city, dish, neighbourhood and food-walk pages with typo-tolerant search.',
+      'Every worker command logs a row to worker_runs; a run still marked running after two hours is closed as failed.',
+    ],
+    outcomes: [
+      'Shipped on Vercel with city, dish-in-city, place, creator and search pages, each pick linked to its source timestamp.',
+      'CI proves every pull request migrates an empty database and blocks unsafe migrations.',
+      'Published the code under MIT with a creator opt-out path.',
+    ],
+    stack: ['Next.js', 'TypeScript', 'Postgres', 'PostGIS', 'Drizzle', 'MapLibre', 'Vercel'],
+    links: [
+      { label: 'Live site', href: 'https://indian-food-recommends.vercel.app' },
+      { label: 'GitHub', href: 'https://github.com/piyush97/IndianFoodRecommends' },
+    ],
+  },
+  {
     title: 'Understory',
     eyebrow: 'Cloudflare Workers, Workers AI, open source',
     role: 'Product Engineer',
