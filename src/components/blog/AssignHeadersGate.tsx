@@ -165,7 +165,8 @@ export default function AssignHeadersGate() {
             </span>
           </div>
           <p className="mb-2 text-[11px] text-text-secondary">
-            parsed request, connection side. Shared by the connection and every stream worker on it.
+            parsed request for this stream, held in memory owned by the connection. A stream worker
+            thread writes into it without synchronization.
           </p>
           <ul className="space-y-1 font-mono text-[11px] text-slate-300">
             <li>content-type: text/plain</li>
@@ -216,8 +217,8 @@ export default function AssignHeadersGate() {
           : !open
             ? 'Path closed: this request shape never reaches the write.'
             : patched
-              ? 'Path open, but the write lands in the per-request clone. The shared table is only read.'
-              : 'Path open: a bodyless request with a content-type mutates the table the connection owns, while sibling stream workers on the same connection are reading it.'}
+              ? 'Path open, but the write lands in the per-request clone. Nothing writes into connection-owned memory.'
+              : 'Path open: a bodyless request with a content-type has a stream worker thread writing into connection-owned memory without synchronization.'}
       </p>
 
       <p className="mt-3 text-[11px] text-text-secondary">
