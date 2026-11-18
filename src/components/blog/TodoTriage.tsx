@@ -1,8 +1,10 @@
 import React, { useMemo, useState } from 'react';
 
 /**
- * Heuristic TODO triage. The classifier is the same regex set the census
- * script in the post uses; the issue state is whatever you, the reader, say
+ * Heuristic TODO triage. The classifier is a simplified version of the regex
+ * set the census script in the post uses: it only recognizes GitHub issue URLs,
+ * orders the patterns differently and omits the census's `bugword` pattern;
+ * the issue state is whatever you, the reader, say
  * it is. Nothing here calls a tracker. The point of the widget is the gap
  * between "the comment exists" and "the comment is resolvable".
  */
@@ -102,7 +104,9 @@ export default function TodoTriage() {
         <span>
           {resolvable} resolvable ({share.toFixed(1)}%)
         </span>
-        <span className="text-slate-500">census of 14 public repos: 2.7%</span>
+        <span className="text-slate-500">
+          census of 14 public repos: 2.7% (simplified classifier; not directly comparable)
+        </span>
       </div>
 
       <ul className="mt-4 space-y-3">

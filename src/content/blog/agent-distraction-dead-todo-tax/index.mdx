@@ -78,7 +78,7 @@ Google had one advantage no public repo gives you: a single tracker, and a comme
 
 I cloned 14 repositories at shallow depth on November 16, 2026, walked every text file outside vendored and generated directories, and counted lines containing `TODO`, `FIXME`, `XXX`, or `HACK`. Then I classified each line by whether it carries anything an agent could resolve: a GitHub issue URL, a bare `#123`, a `bug/123` path, or a tracker key like `ABC-123`.
 
-The scan is a single Python file, no dependencies beyond `git` and the standard library. The classification is the same four regexes the widget below uses:
+The scan is a single Python file, no dependencies beyond `git` and the standard library. The classifier is five regex patterns; the widget below uses a simplified version of it:
 
 ```python
 REF_PATTERNS = [
@@ -136,7 +136,7 @@ But there is a second problem, and it is worse than staleness. Look up `neovim/n
 
 Whether the number was written against a tracker the project later left, or the comment cited the wrong issue, the effect is the same: the reference does not resolve to the work it describes. So a bare `#N` is not a resolvable reference. It is a number that looks resolvable, and an agent that follows it lands on an unrelated ticket with full confidence. That is the failure mode Google described, one level deeper: not a detour into obsolete work, a detour into the _wrong_ work.
 
-Only 49 of the 107 references in the census are URLs, which are unambiguous by construction. 53 are bare numbers, and 5 are tracker keys that no public agent has credentials for.
+Only 49 of the 107 references in the census are any URL in the comment, which may point at a documentation link rather than a tracker ticket, so 49 is an upper bound on tracker references. 53 are bare numbers, and 5 are tracker keys that no public agent has credentials for.
 
 ## Triage what you are pasting
 
@@ -157,7 +157,7 @@ The ordering matters. Steps 1 and 2 prevent new dead references for near zero co
 
 ## Run it yourself
 
-The whole measurement is one file. Put shallow clones in `repos/`, run it with a GitHub token, and it writes `census.json`. Same classifier as the widget, same resolution calls, so your numbers are comparable to mine.
+The whole measurement is one file. Put shallow clones in `repos/`, run it with a GitHub token, and it writes `census.json`. The widget below is a simplified version of this classifier; the script's resolution calls are the ones behind the census, so your numbers will be comparable to mine.
 
 <details>
 <summary>The script (Python 3, standard library plus git)</summary>
@@ -269,7 +269,7 @@ Marker counting includes `XXX` and `HACK`; Google's study counted `TODO` and `FI
 
 ## Limits
 
-Google's numbers are one company's codebase, one tracker, one internal harness, and an observational regression. The paper says correlation; it does not claim that deleting a TODO removes exactly 77% of anything. The 95% figure measures reviewer acceptance of deletions, not agent performance afterwards.
+Google's numbers are one company's codebase, one tracker, one internal harness, and an observational regression. The post says correlation; it does not claim that deleting a TODO removes exactly 77% of anything. The 95% figure measures reviewer acceptance of deletions, not agent performance afterwards.
 
 My census is 14 repositories chosen by me, most of them large and old, all on GitHub, all shallow-cloned, with a regex for the marker set rather than a parser. Marker counts include `XXX` and `HACK`, which Google did not measure. The 2.7% share describes this sample, not public code in general, and the resolution sample is 56 objects, wide enough for the 53 to 77% interval and not wide enough to rank repositories. Reproduce it with the script and you will get your own numbers, which are the only ones that should decide your budget.
 
