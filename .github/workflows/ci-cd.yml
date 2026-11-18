@@ -43,7 +43,8 @@ jobs:
         run: bun run check
 
       - name: Production audit
-        run: bun audit --prod --audit-level=high
+        # GHSA-fc5q-39xc-vjpf: picomatch <=4.0.7 ReDoS via astro/vite-plus; no patched release yet. Drop when one ships.
+        run: bun audit --prod --audit-level=high --ignore=GHSA-fc5q-39xc-vjpf
 
       - name: Run unit tests
         run: bun run test:unit
