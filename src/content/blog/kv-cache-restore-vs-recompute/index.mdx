@@ -1,6 +1,6 @@
 ---
 title: 'The Median Agent Request Is 142K Tokens. Only 1.7K Need Computing.'
-description: "Where the KV cache lives decides whether a coding agent's next turn costs 1.7K tokens of prefill or 142K. The restore-versus-recompute arithmetic, five measured storage tiers, and the systems that shipped this fortnight."
+description: "Where the KV cache lives decides whether a coding agent's next turn costs 1.7K tokens of prefill or 142K. The restore-versus-recompute arithmetic, five storage tiers with bandwidths from published measurements, and the systems that shipped this fortnight."
 date: 2026-11-11T11:00:00-05:00
 author: 'Piyush Mehta'
 ogTemplate: 'tech'
@@ -61,7 +61,7 @@ recompute = 1 / prefill_tokens_per_second
 
 Restore wins when `bytes_per_token < tier_bandwidth / prefill_rate`. That is it. No queueing model, no vendor claims. Everything interesting is in what the two sides actually cost.
 
-The table below applies the rule to a 142K-token GLM-5.3 request at 3,000 prefill tokens a second. Bandwidths are derived from published measurements, not from datasheets: 16 concurrent jobs times a 5 MB block divided by each p50 in Red Hat's FIO table gives 6.6 GB/s for local NVMe and 755 MB/s for network block storage, and the second reproduces their stated 762 MB/s ceiling almost exactly.
+The table below applies the rule to a 142K-token GLM-5.3 request at an assumed 3,000 prefill tokens a second. Bandwidths are derived from published measurements, not from datasheets: 16 concurrent jobs times a 5 MB block divided by each p50 in Red Hat's FIO table gives 6.6 GB/s for local NVMe and 755 MB/s for network block storage, and the second reproduces their stated 762 MB/s ceiling almost exactly.
 
 | Tier                   | Effective bandwidth | Restore 6.9 GB | Recompute same prefix | Restore saving |
 | ---------------------- | ------------------- | -------------- | --------------------- | -------------- |
@@ -84,7 +84,7 @@ Second, tail latency decides the object-store row. Red Hat's FIO run shows a p50
 
 ## What the tier actually has to do
 
-Offloading is not a filesystem mount. In the OpenShift AI 3.5 implementation Red Hat benchmarked, only the CPU tier touches GPU memory, so it acts as a mandatory gateway: GPU ↔ pinned host DRAM ↔ secondary tiers, with a hit in a secondary tier promoted into CPU memory before it can reach the GPU. That design detail explains a result people misread. CPU offload alone gave 3.3× throughput; adding NVMe or CephFS nearly doubled it to 5.8×, because once the working set exceeded CPU capacity, the secondary tier was stopping wholesale recomputation rather than shaving a few milliseconds.
+Offloading is not a filesystem mount. In the OpenShift AI 3.5 implementation Red Hat benchmarked, only the CPU tier touches GPU memory, so it acts as a mandatory gateway: GPU ↔ pinned host DRAM ↔ secondary tiers, with a hit in a secondary tier promoted into CPU memory before it can reach the GPU. That design detail explains a result people misread. CPU offload alone gave 3.3× throughput; adding NVMe or CephFS nearly doubled it to 5.9×, because once the working set exceeded CPU capacity, the secondary tier was stopping wholesale recomputation rather than shaving a few milliseconds.
 
 The measured end-to-end numbers on 50K-token agentic workloads with Nemotron-Ultra-253B on H100:
 
@@ -112,7 +112,7 @@ Line them up and the architecture is obvious in hindsight. The cache used to be 
 
 Five checks, in the order that will save you money.
 
-1. **Cache hit rate, not tokens per second.** Red Hat's 5.8× came from avoiding recomputation, not from faster math. If your hit rate is low, faster decode buys nothing.
+1. **Cache hit rate, not tokens per second.** Red Hat's 5.9× came from avoiding recomputation, not from faster math. If your hit rate is low, faster decode buys nothing.
 2. **Prefill rate for _your_ model at _your_ concurrency.** The restore-vs-recompute rule flips sign between an 837 tok/s effective rate and 14,000 tok/s. Measure the one you actually run.
 3. **p99 restore latency, at your block size, under mixed read/write.** A p50 win with a 5.4× tail is a p99 loss, and p99 is what triggers retries.
 4. **Output equivalence after restore.** Byte-identical or it is a different model. The Lightbits study checks this; most offload blog posts do not.

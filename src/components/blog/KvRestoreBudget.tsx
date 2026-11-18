@@ -270,7 +270,8 @@ export default function KvRestoreBudget() {
           <p className="text-xs uppercase tracking-wide text-text-secondary">Restore</p>
           <p className="mt-1 font-mono text-2xl text-text-primary">{fmtSeconds(restore)}</p>
           <p className="mt-1 text-xs text-text-secondary">
-            {fmtSeconds(restoreTail)} at the tier's p99 ratio ({tier.tailRatio.toFixed(1)}×)
+            {fmtSeconds(restoreTail)} at the {tier.id === 'rdma' ? 'assumed' : "tier's"} p99 ratio (
+            {tier.tailRatio.toFixed(1)}×)
           </p>
         </div>
 
@@ -285,16 +286,22 @@ export default function KvRestoreBudget() {
 
       <div className="mt-4 space-y-2">
         <div>
-          <div className="mb-1 flex justify-between text-[11px] text-text-secondary">
+          <div className="mb-1 text-[11px] text-text-secondary">
             <span>Restore {fmtSeconds(restore)}</span>
-            <span>Recompute {fmtSeconds(recompute)}</span>
           </div>
-          <div className="flex h-3 overflow-hidden rounded-full bg-surface-200">
+          <div className="h-3 overflow-hidden rounded-full bg-surface-200">
             <div
               className="h-full bg-sky-400"
               style={{ width: `${restorePct}%` }}
               aria-hidden="true"
             />
+          </div>
+        </div>
+        <div>
+          <div className="mb-1 text-[11px] text-text-secondary">
+            <span>Recompute {fmtSeconds(recompute)}</span>
+          </div>
+          <div className="h-3 overflow-hidden rounded-full bg-surface-200">
             <div
               className="h-full bg-amber-400"
               style={{ width: `${recomputePct}%` }}
