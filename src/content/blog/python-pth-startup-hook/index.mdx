@@ -95,7 +95,7 @@ Two rows are the whole finding.
 
 `-s`, `-E`, `-B`, `PYTHONNOUSERSITE` and `PYTHONSAFEPATH` do not touch this code path. `PYTHONSAFEPATH` is the one that sounds like it should; it stops Python from prepending the script's directory, which has nothing to do with `site`.
 
-One case where the flags do help: if the wheel was installed with `--user`, the hook lives in `~/.local/lib/pythonX.Y/site-packages`, and the user site is what `-s` and `-I` disable. Measured, with a `.pth` planted in a `PYTHONPATH` directory instead, the hook still fired, because `site` only scans `.pth` files in _site_ directories and `PYTHONPATH` entries are neither.
+One case where the flags do help: if the wheel was installed with `--user`, the hook lives in `~/.local/lib/pythonX.Y/site-packages`, and the user site is what `-s` and `-I` disable. Measured, with a `.pth` planted in a `PYTHONPATH` directory instead, the hook still fired: `-s` and `-I` disable the user site, not the other directories the interpreter searches.
 
 <PthStartupLedger client:visible />
 
@@ -106,11 +106,11 @@ Cheap. I ran 40 starts of `python -c pass` per configuration and took medians:
 | `.pth` contents           | Median start | Delta |
 | ------------------------- | ------------ | ----- |
 | no `.pth`                 | 28.8 ms      |       |
-| path line only            | 29.7 ms      | +0.8  |
-| `import` that sets a var  | 29.7 ms      | +0.8  |
+| path line only            | 29.7 ms      | +0.9  |
+| `import` that sets a var  | 29.7 ms      | +0.9  |
 | `import` that writes file | 29.9 ms      | +1.1  |
 
-Under a millisecond for a hook that imports a three-line module and appends to a file. Latency is not the signal, and you should not expect to find this in a startup benchmark.
+About a millisecond for a hook that imports a three-line module and appends to a file. Latency is not the signal, and you should not expect to find this in a startup benchmark.
 
 The real payload does not even pay that. It calls `os.fork()` and `os.setsid()` to detach into its own session, with a daemon-thread fallback where fork is unavailable, and guards itself with `_AF_TEL=1` so children do not repeat the collection. The interpreter that starts your tests returns in normal time while a detached process reads `/proc/*/environ` and the Azure CLI token cache behind it.
 
@@ -148,6 +148,7 @@ What is usable is narrower and still worth having: diff the _set_ of `.pth` file
 
 ```python
 import site
+import sys
 from pathlib import Path
 
 dirs = site.getsitepackages()
@@ -159,7 +160,8 @@ for d in dict.fromkeys(dirs):
         for n, line in enumerate(pth.read_text(errors="replace").splitlines(), 1):
             if line.startswith(("import ", "import\t")):
                 start = pth.with_suffix(".start")
-                state = "DEAD (matching .start)" if start.exists() else "EXECUTES"
+                dead = start.exists() and sys.version_info >= (3, 15)
+                state = "DEAD (matching .start)" if dead else "EXECUTES"
                 print(f"{state:24} {pth}:{n}  {line[:90]}")
 ```
 
@@ -173,7 +175,7 @@ The deprecation schedule, from the [3.15 docs](https://docs.python.org/3/library
 - 3.18, 3.19: `import` lines are silently ignored.
 - 3.20 and later: a warning is produced for their mere presence.
 
-Two consequences. A `.pth` with an `import` line and a matching `.start` file is a line that will never run on 3.18+, which means the scanner should report it as dead rather than as a hit. And the mechanism is on a removal path, not gone: everything shipped today that depends on `import` lines has three years, and the malware that shipped on November 17 uses a feature that works on every Python you are likely to run until 2030.
+Two consequences. A `.pth` with an `import` line and a matching `.start` file is a line that will never run on 3.15+, which means the scanner should report it as dead rather than as a hit. And the mechanism is on a removal path, not gone: everything shipped today that depends on `import` lines has three years, and the malware that shipped on November 17 uses a feature that works on every Python you are likely to run until 2030.
 
 If you maintain a package that ships a `.pth`, the migration is mechanical: keep the path lines, move the code after the semicolon into a zero-argument callable, and add `name.start` with `pkg.mod:callable`. For the straddle period, `import pkg.mod; pkg.mod.callable()` works on both, because older interpreters run the line and newer ones ignore it in favour of the `.start`.
 
@@ -197,7 +199,7 @@ Where the credentials came from. Wiz's working theory, based on the attacker's t
 
 How many installs happened. SafeDep flagged 1.26.1 at 20:57 and it was off the index minutes later, but a wheel-only release of a package with roughly 41,000 weekly downloads has a window, and the two analyses disagree on exact removal minutes (Wiz: gone by 21:30 UTC, JFrog: both removed by 21:16).
 
-My measurements are one host, one Python version, one trivial hook. The census numbers are 27 directories on a machine that runs a lot of virtualenvs; a container image with three packages will show a smaller ratio, and a data science image will show a larger one. The mechanism is the portable part: `site.py` reads `import` lines and `exec`s them, before `sitecustomize`, before you. Reproduce it with the probe script and you will get your own numbers, which are the only ones that should change your defaults.
+My measurements are one host, one Python version, one trivial hook. The census numbers are 27 directories on a machine that runs a lot of virtualenvs; a container image with three packages will show a smaller ratio, and a data science image will show a larger one. The mechanism is the portable part: `site.py` reads `import` lines and `exec`s them, before `sitecustomize`, before you. The probe script reproduces the basic hook behaviour, so you can get your own numbers, which are the only ones that should change your defaults.
 
 Related: [the MCP security crisis](/blog/ai-agents-mcp-security-crisis/) is the same problem one layer up, in the tools an agent calls; [the npm trusted-publishing post](/blog/npm-oidc-dist-tags-release-gate/) covers the analogous move on the JavaScript side, where the publish credential was the weak point rather than the artefact.
 
