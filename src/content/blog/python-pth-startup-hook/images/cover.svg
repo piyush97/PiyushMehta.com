@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">One line, import agent_framework_meta, sitting in site-packages, and the interpreter startup order that executes it before the first line of user code</title>
+  <desc id="description">Left panel: a 28-byte file agent_framework_meta.pth whose only line reads import agent_framework_meta, marked as executed by site.py at every interpreter start. Right panel: the startup ledger, where the .pth hook sits above sitecustomize and above your first line. Bottom caption: 48 of 52 .pth files on the machine this was measured on execute code at startup, and every one of them is legitimate packaging tooling.</desc>
+  <rect width="1200" height="630" fill="#0b1220"/>
+
+  <text x="80" y="72" fill="#f43f5e" font-family="ui-monospace, monospace" font-size="20" letter-spacing="2">AGENT-FRAMEWORK · PyPI · 2026-11-17</text>
+  <text x="80" y="146" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="46" font-weight="700">Nothing imported. Code ran anyway.</text>
+  <text x="80" y="188" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="19">site-packages/agent_framework_meta.pth · 28 bytes · one line</text>
+
+  <!-- left: the file -->
+  <rect x="80" y="228" width="500" height="200" rx="10" fill="#111a2e" stroke="#f43f5e" stroke-opacity="0.6"/>
+  <text x="104" y="266" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="15">agent_framework_meta.pth</text>
+  <rect x="452" y="244" width="104" height="30" rx="4" fill="#f43f5e" fill-opacity="0.18"/>
+  <text x="466" y="264" fill="#fda4af" font-family="ui-monospace, monospace" font-size="15">EXECUTED</text>
+  <text x="104" y="322" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="20">import agent_framework_meta</text>
+  <text x="104" y="364" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="16">you never import agent_framework_meta</text>
+  <text x="104" y="392" fill="#fda4af" font-family="system-ui, sans-serif" font-size="16">site.py exec()s the line at every start</text>
+  <text x="104" y="418" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="14">even `pip --version` is enough</text>
+
+  <!-- right: ledger -->
+  <rect x="620" y="228" width="500" height="200" rx="10" fill="#111a2e" stroke="#38bdf8" stroke-opacity="0.5"/>
+  <text x="644" y="262" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="14">startup order, measured</text>
+  <text x="644" y="296" fill="#fda4af" font-family="ui-monospace, monospace" font-size="16">.pth import lines</text>
+  <text x="644" y="326" fill="#cbd5e1" font-family="ui-monospace, monospace" font-size="16">sitecustomize</text>
+  <text x="644" y="356" fill="#cbd5e1" font-family="ui-monospace, monospace" font-size="16">usercustomize</text>
+  <text x="644" y="386" fill="#7dd3fc" font-family="ui-monospace, monospace" font-size="16">your first line</text>
+  <text x="644" y="414" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="13">-I does not stop it; -S does, by breaking imports</text>
+
+  <!-- census strip -->
+  <rect x="80" y="468" width="1040" height="76" rx="8" fill="#0e1729" stroke="#1e293b"/>
+  <text x="104" y="500" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="15">.pth CENSUS ON ONE HOST</text>
+  <rect x="104" y="514" width="880" height="10" rx="3" fill="#1e293b"/>
+  <rect x="104" y="514" width="812" height="10" rx="3" fill="#38bdf8"/>
+  <text x="1000" y="505" fill="#7dd3fc" font-family="ui-monospace, monospace" font-size="17">48 / 52 execute</text>
+  <text x="1000" y="527" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="12">all legitimate</text>
+
+  <text x="80" y="590" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="16">editable installs, setuptools, virtualenv: the mechanism is load-bearing, which is why the malware used it</text>
+</svg>
