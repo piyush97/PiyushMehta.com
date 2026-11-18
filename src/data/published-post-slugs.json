@@ -41,6 +41,7 @@
   "openssh-musl-asterisk-bypass",
   "proto-buf",
   "python-310-end-of-life-upgrade-guide",
+  "python-pth-startup-hook",
   "rabbit-mq",
   "rag-vs-long-context",
   "roasttube-ai-roast-youtube-history",
