@@ -23,10 +23,9 @@ test.describe('approved homepage revamp', () => {
       'href',
       '/blog'
     );
-    await expect(page.getByRole('link', { name: 'Read Résumé' })).toHaveAttribute(
-      'href',
-      '/resume'
-    );
+    await expect(
+      page.locator('[data-home-section="actions"]').getByRole('link', { name: 'Read Résumé' })
+    ).toHaveCount(0);
 
     const evidenceRecord = page.locator('[data-home-section="evidence"]');
     await expect(evidenceRecord.getByRole('heading', { name: 'Enterprise AI Workflows' })).toBeVisible();
