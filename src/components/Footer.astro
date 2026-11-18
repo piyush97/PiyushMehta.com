@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import footerPhoto from '../images/piyush-devfest.jpg';
 import { socialLinks } from '../data/portfolio';
 
 const year = new Date().getFullYear();
@@ -10,104 +12,220 @@ const links = [
   { href: '/resume', label: 'Resume' },
   { href: '/uses', label: 'Uses' },
   { href: '/contact-me', label: 'Contact' },
-  { href: 'https://understory.piyushmehta.com/', label: 'Understory ↗' },
+  { href: 'https://understory.piyushmehta.com/', label: 'Understory', external: true },
 ];
 
 const social = [...socialLinks, { href: '/rss.xml', label: 'RSS' }];
 ---
 
 <footer class="site-footer" data-reveal>
-  <div>
-    <p class="site-footer__eyebrow">Piyush Mehta</p>
-    <h2>Senior software engineer for durable product systems.</h2>
-    <p>
-      Built with Astro, TypeScript, Tailwind, MDX, and a bias toward evidence over noise.
-    </p>
+  <div class="site-footer__photo">
+    <Image
+      src={footerPhoto}
+      alt="Piyush Mehta speaking on stage with a headset microphone"
+      widths={[480, 800, 1200]}
+      sizes="(min-width: 768px) 50vw, 100vw"
+      format="webp"
+      loading="lazy"
+      decoding="async"
+    />
   </div>
 
-  <nav aria-label="Footer navigation">
-    {links.map((link) => <a href={link.href}>{link.label}</a>)}
-  </nav>
+  <div class="site-footer__panel">
+    <a class="site-footer__wordmark" href="/" aria-label="Piyush Mehta home">Piyush Mehta</a>
 
-  <div class="site-footer__bottom">
-    <span>&copy; {year} Piyush Mehta.</span>
-    <div>
-      {social.map((link) => <a href={link.href}>{link.label}</a>)}
+    <nav class="site-footer__menu" aria-label="Footer navigation">
+      {
+        links.map((link) => (
+          <a href={link.href}>
+            {link.label}
+            {link.external && <span aria-hidden="true"> ↗</span>}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="site-footer__small">
+      <div>
+        <p>Contact</p>
+        <a href="/contact-me">Send a message</a>
+        <a href="/ask">Ask Piyush</a>
+      </div>
+      <div>
+        <p>Elsewhere</p>
+        {social.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
     </div>
+
+    <p class="site-footer__legal">
+      <span>&copy; {year} Piyush Mehta.</span>
+      <a href="/privacy-policy">Privacy</a>
+      <a href="/terms-of-service">Terms</a>
+    </p>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    width: min(1120px, calc(100% - 2rem));
-    margin: 0 auto;
-    padding-block: clamp(3rem, 8vw, 5rem);
-    border-top: 1px solid var(--color-card-border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100svh;
+    background: var(--surface);
+    color: var(--ink);
   }
 
-  .site-footer__eyebrow {
-    margin: 0 0 0.8rem;
-    color: var(--color-accent);
-    font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+  .site-footer__photo {
+    position: relative;
+    min-height: 100%;
+    overflow: hidden;
+    background: var(--bg);
   }
 
-  .site-footer h2 {
-    max-width: 16ch;
-    margin: 0;
-    color: var(--color-text-primary);
-    font-size: 3.25rem;
-    line-height: 1.05;
+  .site-footer__photo :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 52% 30%;
   }
 
-  .site-footer p {
-    max-width: 40rem;
-    color: var(--color-text-secondary);
-    line-height: 1.7;
-  }
-
-  .site-footer nav,
-  .site-footer__bottom,
-  .site-footer__bottom div {
+  .site-footer__panel {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.85rem;
-  }
-
-  .site-footer nav {
-    margin-top: 2rem;
+    flex-direction: column;
+    padding: 2.5rem clamp(2rem, 5vw, 5rem) 2rem clamp(2rem, 6vw, 5.5rem);
   }
 
   .site-footer a {
     display: inline-flex;
-    min-height: 2.75rem;
     align-items: center;
-    color: var(--color-text-secondary);
-    font-weight: 800;
+    min-height: 2.75rem;
+    color: var(--ink);
     text-decoration: none;
+  }
+
+  .site-footer__wordmark {
+    align-self: flex-start;
+    font-family: var(--font-display);
+    font-size: var(--step-lead);
+    font-weight: 800;
+    letter-spacing: -0.005em;
+    line-height: 0.88;
+    text-transform: uppercase;
+  }
+
+  .site-footer__menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(0.5rem, 1.6svh, 1.75rem);
+    margin-top: clamp(2.5rem, 7svh, 5rem);
+  }
+
+  .site-footer__menu a {
+    font-family: var(--font-display);
+    font-size: var(--step-head);
+    font-weight: 800;
+    letter-spacing: -0.005em;
+    line-height: 0.88;
+    text-transform: uppercase;
     transition:
-      color var(--motion-fast, 150ms) ease,
-      transform var(--motion-fast, 150ms) ease;
+      transform var(--motion-base, 240ms) ease,
+      opacity var(--motion-base, 240ms) ease;
   }
 
-  .site-footer a:hover {
-    color: var(--color-accent);
-    transform: translateX(2px);
+  .site-footer__menu:hover a:not(:hover),
+  .site-footer__menu:focus-within a:not(:focus-visible) {
+    opacity: 0.78;
   }
 
-  .site-footer__bottom {
-    justify-content: space-between;
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-card-border);
-    color: var(--color-text-muted);
+  @media (prefers-reduced-motion: no-preference) {
+    .site-footer__menu a:hover,
+    .site-footer__menu a:focus-visible {
+      transform: translateX(12px);
+    }
   }
 
-  @media (max-width: 720px) {
-    .site-footer h2 {
-      font-size: 2.25rem;
+  .site-footer a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .site-footer__small {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem 4rem;
+    margin-top: clamp(2rem, 6svh, 4rem);
+  }
+
+  .site-footer__small div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-footer__small p {
+    margin: 0 0 0.25rem;
+    font-size: var(--step-body);
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .site-footer__small a {
+    font-size: var(--step-body);
+    font-weight: 400;
+  }
+
+  .site-footer__small a:hover,
+  .site-footer__legal a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 0.1em;
+    text-underline-offset: 0.25em;
+  }
+
+  .site-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 1.5rem;
+    margin: auto 0 0;
+    padding-top: 2rem;
+    font-size: var(--step-small);
+    line-height: 1.5;
+  }
+
+  .site-footer__legal a {
+    font-size: var(--step-small);
+  }
+
+  @media (max-width: 767px) {
+    .site-footer {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .site-footer__photo {
+      height: 50svh;
+      min-height: 0;
+    }
+
+    .site-footer__panel {
+      padding: 2rem 1.5rem 1.5rem;
+    }
+
+    .site-footer__menu {
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    .site-footer__menu a {
+      font-size: var(--step-head);
+    }
+
+    .site-footer__small {
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
     }
   }
 </style>

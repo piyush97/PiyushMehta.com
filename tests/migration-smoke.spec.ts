@@ -92,7 +92,7 @@ test.describe('astro v6 migration smoke', () => {
     const visibleRows = page.locator('.writing-list article:not([hidden])');
     await expect(visibleRows).not.toHaveCount(0);
     await expect(page.locator('.writing-list')).toHaveCSS('border-bottom-width', '0px');
-    await expect(visibleRows.last()).toHaveCSS('border-bottom-width', '1px');
+    await expect(visibleRows.last()).toHaveCSS('border-bottom-width', '0px');
 
     const search = page.locator('#blog-search');
     await search.focus();
@@ -101,7 +101,7 @@ test.describe('astro v6 migration smoke', () => {
 
   test('blog filter reinitializes after client-side navigation', async ({ page }) => {
     const navigateViaNav = async (href: '/' | '/blog/') => {
-      const desktopLink = page.locator(`.site-nav__links a[href="${href}"]:visible`).first();
+      const desktopLink = page.locator(`.site-nav a[href="${href}"]:visible`).first();
 
       if (await desktopLink.count()) {
         await desktopLink.click();

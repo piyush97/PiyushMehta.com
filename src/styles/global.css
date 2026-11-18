@@ -1,15 +1,25 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
-/* Self-hosted Mulish (the open successor to Muli, which is what DESIGN.md names).
-   Without this the stack silently fell back to DejaVu/SF/Arial, so headline
-   metrics changed per OS. */
+/* Self-hosted faces only (CSP allows font-src 'self'; no Google Fonts).
+   Big Shoulders is the display face (800 only, set uppercase); Public Sans is the text face. */
 @font-face {
-  font-family: 'Muli';
+  font-family: 'Big Shoulders';
   font-style: normal;
-  font-weight: 400 900;
+  font-weight: 800;
   font-display: swap;
-  src: url('/fonts/mulish-latin-var.woff2') format('woff2');
+  src: url('/fonts/big-shoulders-800-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/public-sans-latin-var.woff2') format('woff2');
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
@@ -18,11 +28,11 @@
 /* ─── Design Tokens (migrated from tailwind.config.mjs) ─── */
 @theme {
   --font-sans:
-    Muli, 'San Francisco', 'SF Pro Text', -apple-system, system-ui, BlinkMacSystemFont, Roboto,
-    'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
+    'Public Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Big Shoulders', 'Arial Narrow', Impact, sans-serif;
   --font-serif: Georgia, serif;
-  --font-mono:
-    'Source Code Pro', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'Lucida Console', Monaco, monospace;
+  --font-mono: 'Source Code Pro', 'Lucida Console', Monaco, monospace; /* taste-skill-ignore */
 
   --color-black: #000;
   --color-white: #fff;
@@ -113,10 +123,9 @@
    faint yellow on light, so the chip is recognizable across themes. Code
    blocks (`pre code`) override this via the rule below. */
 code {
-  background: rgba(255, 204, 104, 0.15);
+  background: var(--color-surface-raised);
   color: var(--color-accent);
-  border: 1px solid rgba(255, 204, 104, 0.3);
-  border-radius: 0.3rem;
+  border-radius: 0;
   padding: 0.12rem 0.32rem;
   font-family: var(--font-mono);
   font-size: 0.88em;
@@ -197,76 +206,71 @@ pre code {
   --motion-slow: 560ms;
   --motion-page: 420ms;
   --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --color-bg: #171a2f;
-  --color-bg-rgb: 23, 26, 47;
-  --color-surface-raised: #222640;
-  --color-text: #c8cbe8;
-  --color-text-primary: #f6f7ff;
-  --color-text-secondary: #b4bad8;
-  --color-text-muted: #8f96ba;
-  --color-card-border: #343a5f;
-  --color-accent: #ffcc68;
-  --color-accent-rgb: 255, 204, 104;
+  --color-bg: var(--bg);
+  --color-bg-rgb: 19, 54, 33;
+  --color-surface-raised: var(--surface);
+  --color-text: var(--ink);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--ink);
+  --color-text-muted: #b9ab63; /* --muted lifted slightly: #b3a55e is 4.45:1 on --surface */
+  --color-card-border: #2c5b3a;
+  --color-accent: var(--accent);
+  --color-accent-rgb: 244, 217, 108;
   --color-success: #a8e6b8;
   --color-success-rgb: 168, 230, 184;
-  --color-accent-foreground: #171a2f;
-  --color-darker: #0f1221;
-  --color-darker-rgb: 15, 18, 33;
-  --color-navbar-bg: rgba(23, 26, 47, 0.9);
-  --color-shadow: rgba(255, 204, 104, 0.25);
+  --color-accent-foreground: var(--accent-ink);
+  --color-darker: var(--surface);
+  --color-darker-rgb: 26, 68, 41;
+  --color-navbar-bg: var(--bg);
+  --color-shadow: rgba(0, 0, 0, 0.25);
   --color-shadow-dark: rgba(0, 0, 0, 0.25);
-  /* RGB triples for legacy component styles (rgb(var(--surface) / …)) */
-  --text: 246, 247, 255; /* --color-text-primary */
-  --surface: 34, 38, 64; /* --color-surface-raised */
-  --border: 52, 58, 95; /* --color-card-border */
-  --accent: 255, 204, 104; /* --color-accent */
+  --bg: #133621;
+  --surface: #1a4429;
+  --ink: #f4d96c;
+  --muted: #b3a55e;
+  --accent: #f4d96c;
+  --accent-ink: #133621;
+  --font-display: 'Big Shoulders', 'Arial Narrow', Impact, sans-serif;
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --step-head: clamp(2.5rem, 4.8vw, 4.5rem);
+  --step-display: clamp(3.5rem, 10vw, 9rem);
 }
 
 :root.professional-light,
 :root.light {
   --color-danger: #b42318;
-  --color-bg: #f6f3ea;
-  --color-bg-rgb: 246, 243, 234;
-  --color-surface-raised: #fffaf0;
-  --color-text: #364057;
-  --color-text-primary: #121827;
-  --color-text-secondary: #4b5871;
-  --color-text-muted: #656d80;
-  --color-card-border: #ddd3c2;
-  --color-accent: #8d3d1f;
-  --color-accent-rgb: 141, 61, 31;
+  --color-bg: var(--bg);
+  --color-bg-rgb: 238, 240, 230;
+  --color-surface-raised: var(--surface);
+  --color-text: var(--ink);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--ink);
+  --color-text-muted: var(--muted);
+  --color-card-border: #c5cdb3;
+  --color-accent: var(--accent);
+  --color-accent-rgb: 19, 54, 33;
   --color-success: #176b3a;
   --color-success-rgb: 23, 107, 58;
-  --color-accent-foreground: #fffaf0;
-  --color-darker: #fffaf0;
-  --color-darker-rgb: 255, 250, 240;
-  --color-navbar-bg: rgba(246, 243, 234, 0.9);
-  --color-shadow: rgba(141, 61, 31, 0.25);
+  --color-accent-foreground: var(--accent-ink);
+  --color-darker: var(--surface);
+  --color-darker-rgb: 226, 230, 214;
+  --color-navbar-bg: var(--bg);
+  --color-shadow: rgba(19, 54, 33, 0.2);
   --color-shadow-dark: rgba(0, 0, 0, 0.25);
-  /* RGB triples for legacy component styles */
-  --text: 18, 24, 39; /* --color-text-primary */
-  --surface: 255, 250, 240; /* --color-surface-raised */
-  --border: 221, 211, 194; /* --color-card-border */
-  --accent: 141, 61, 31; /* --color-accent */
+  --bg: #eef0e6;
+  --surface: #e2e6d6;
+  --ink: #133621;
+  --muted: #3d5a45;
+  --accent: #133621;
+  --accent-ink: #f4d96c;
 }
 
 body {
   min-width: 320px;
-  background:
-    linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.05), transparent 26rem), var(--color-bg);
+  background: var(--color-bg);
   color: var(--color-text-primary);
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  background-image:
-    radial-gradient(circle at 12% 20%, rgba(var(--color-accent-rgb), 0.12), transparent 32%),
-    radial-gradient(circle at 84% 14%, rgba(var(--color-accent-rgb), 0.08), transparent 34%),
-    radial-gradient(circle at 48% 78%, rgba(var(--color-accent-rgb), 0.06), transparent 36%);
 }
 
 main {
@@ -459,8 +463,9 @@ html {
   padding: 0.75rem 1.5rem;
   background: var(--color-accent);
   color: var(--color-accent-foreground);
+  font-size: var(--step-body);
   font-weight: 700;
-  border-radius: 0.375rem;
+  border-radius: 0;
   text-decoration: none;
 }
 
@@ -475,7 +480,7 @@ html {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 0.375rem;
+  border-radius: 0;
   padding: 0.78rem 1.05rem;
   font-weight: 800;
   line-height: 1.1;
@@ -488,7 +493,7 @@ html {
 }
 
 .btn-primary {
-  border: 1px solid var(--color-accent);
+  border: 0;
   background: var(--color-accent);
   color: var(--color-accent-foreground);
 }
@@ -500,14 +505,14 @@ html {
 }
 
 .btn-secondary {
-  border: 1px solid var(--color-card-border);
+  border: 0;
   background: var(--color-surface-raised);
   color: var(--color-text-primary);
 }
 
 .btn-secondary:hover {
   transform: translateY(-1px);
-  border-color: rgba(var(--color-accent-rgb), 0.55);
+  background: var(--color-bg);
   color: var(--color-accent);
 }
 
@@ -539,9 +544,9 @@ html {
 .blog-filter .filter-panel {
   display: grid;
   grid-template-columns: minmax(260px, 1.4fr) repeat(3, minmax(150px, 0.7fr)) auto;
-  gap: 1px;
-  border: 1px solid var(--color-card-border);
-  background: var(--color-card-border);
+  gap: 0.25rem;
+  border: 0;
+  background: var(--color-bg);
 }
 
 .blog-filter .filter-panel label,
@@ -597,7 +602,6 @@ html {
 .blog-filter .filter-panel button {
   min-height: 100%;
   border: 0;
-  border-left: 1px solid var(--color-card-border);
   background: var(--color-bg);
   color: var(--color-text-secondary);
   cursor: pointer;
@@ -634,7 +638,6 @@ html {
   gap: 0.8rem;
   color: var(--color-text-secondary);
   padding-block: 0.25rem 0.4rem;
-  border-bottom: 1px solid var(--color-card-border);
 }
 
 .blog-filter .results-bar p {
@@ -644,7 +647,6 @@ html {
 
 .blog-filter .results-bar strong {
   color: var(--color-text-primary);
-  font-family: var(--font-mono);
 }
 
 .blog-filter .results-bar div {
@@ -655,8 +657,7 @@ html {
 
 .blog-filter .results-bar span {
   display: inline-flex;
-  border: 1px solid color-mix(in srgb, var(--color-accent) 42%, var(--color-card-border));
-  background: color-mix(in srgb, var(--color-accent) 7%, transparent);
+  background: var(--color-surface-raised);
   color: var(--color-accent);
   font-size: 0.75rem;
   font-weight: 800;
@@ -666,8 +667,7 @@ html {
 
 .blog-filter .writing-list__footer span {
   display: inline-flex;
-  border: 1px solid var(--color-card-border);
-  background: transparent;
+  background: var(--color-surface-raised);
   color: var(--color-text-secondary);
   font-size: 0.75rem;
   font-weight: 800;
@@ -679,7 +679,6 @@ html {
   display: grid;
   gap: 0;
   border: 0;
-  border-top: 1px solid var(--color-card-border);
   background: transparent;
 }
 
@@ -687,7 +686,6 @@ html {
   display: flex;
   justify-content: center;
   padding-block: 1.5rem;
-  border-bottom: 1px solid var(--color-card-border);
   background: color-mix(in srgb, var(--color-surface-raised) 38%, var(--color-bg));
 }
 
@@ -700,19 +698,15 @@ html {
   min-height: 2.75rem;
   align-items: center;
   padding: 0.7rem 1.4rem;
-  border: 1px solid var(--color-card-border);
-  border-radius: 0.35rem;
-  background: transparent;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-surface-raised);
   color: var(--color-text-primary);
   font: inherit;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   cursor: pointer;
-  transition:
-    border-color var(--motion-fast, 150ms) ease,
-    color var(--motion-fast, 150ms) ease;
+  transition: color var(--motion-fast, 150ms) ease;
 }
 
 .load-more:hover,
@@ -734,13 +728,10 @@ html {
 .blog-filter .writing-list article {
   display: grid;
   gap: 0.9rem;
-  border-bottom: 1px solid var(--color-card-border);
   transition: background 180ms ease;
 }
 
 .blog-filter .writing-list article:hover {
-  transform: none;
-  box-shadow: none;
   background: color-mix(in srgb, var(--color-accent) 4%, var(--color-bg));
 }
 
@@ -806,8 +797,6 @@ html {
 }
 
 .blog-filter .writing-list .editorial-article-row:hover {
-  transform: none;
-  box-shadow: none;
   background: color-mix(in srgb, var(--color-accent) 4%, var(--color-bg));
 }
 
@@ -817,11 +806,8 @@ html {
   justify-content: flex-start;
   gap: 0.45rem;
   color: var(--color-text-secondary);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
+  font-size: 0.875rem;
   line-height: 1.4;
-  text-transform: uppercase;
 }
 
 .blog-filter .writing-list .editorial-article-row__body {
@@ -871,8 +857,7 @@ html {
 
 .blog-filter .writing-list .editorial-article-row__footer span {
   display: inline-flex;
-  border: 1px solid var(--color-card-border);
-  background: transparent;
+  background: var(--color-surface-raised);
   color: var(--color-text-secondary);
   font-size: 0.75rem;
   font-weight: 800;
@@ -929,8 +914,6 @@ html {
 
   .blog-filter .filter-panel button {
     min-height: 3rem;
-    border-top: 1px solid var(--color-card-border);
-    border-left: 0;
   }
 
   .blog-filter .writing-list .editorial-article-row {
@@ -1005,17 +988,17 @@ html {
 /* Theme Variables */
 :root {
   /* Compatibility palette for legacy text-light utilities */
-  --color-lighter: #fff;
-  --color-light-100: #dcdff7;
-  --color-light-200: #c8cbe8;
-  --color-light-300: #adb2dc;
-  --color-light-400: #6870af;
-  --color-light-500: #343c7a;
-  --color-light-600: #2f3568;
-  --color-light-700: #2e3360;
-  --color-light-800: #282e5e;
-  --color-light-900: #22264a;
-  --color-light-950: #1f2347;
+  --color-lighter: #fff2b0;
+  --color-light-100: #f4d96c;
+  --color-light-200: #dcc566;
+  --color-light-300: #c4b160;
+  --color-light-400: #b3a55e;
+  --color-light-500: #3a6b46;
+  --color-light-600: #2f5c3a;
+  --color-light-700: #25502f;
+  --color-light-800: #1a4429;
+  --color-light-900: #153b26;
+  --color-light-950: #133621;
   --color-success: #a8e6b8;
 
   /* Shared semantic fallbacks for legacy utility names */
@@ -1048,32 +1031,32 @@ html {
 
 /* Compatibility palettes for legacy text-light utilities */
 :root.professional-light {
-  --color-lighter: #100f4d;
-  --color-light-100: #363b65;
-  --color-light-200: #445b8d;
-  --color-light-300: #535988;
-  --color-light-400: #4b547d;
-  --color-light-500: #d8d8e5;
-  --color-light-600: #e0e0ea;
-  --color-light-700: #e6e8f5;
-  --color-light-800: #f5f5f5;
-  --color-light-900: #efeff5;
-  --color-light-950: #f6f6f6;
+  --color-lighter: #0b2314;
+  --color-light-100: #133621;
+  --color-light-200: #24472f;
+  --color-light-300: #3d5a45;
+  --color-light-400: #4f6b57;
+  --color-light-500: #cfd6bf;
+  --color-light-600: #d9dec9;
+  --color-light-700: #e2e6d6;
+  --color-light-800: #e8ebdd;
+  --color-light-900: #eceee3;
+  --color-light-950: #eef0e6;
 }
 
 /* Compatibility palette for legacy text-light utilities */
 :root.professional-dark {
-  --color-lighter: #fff;
-  --color-light-100: #dcdff7;
-  --color-light-200: #c8cbe8;
-  --color-light-300: #adb2dc;
-  --color-light-400: #6870af;
-  --color-light-500: #343c7a;
-  --color-light-600: #2f3568;
-  --color-light-700: #2e3360;
-  --color-light-800: #282e5e;
-  --color-light-900: #22264a;
-  --color-light-950: #1f2347;
+  --color-lighter: #fff2b0;
+  --color-light-100: #f4d96c;
+  --color-light-200: #dcc566;
+  --color-light-300: #c4b160;
+  --color-light-400: #b3a55e;
+  --color-light-500: #3a6b46;
+  --color-light-600: #2f5c3a;
+  --color-light-700: #25502f;
+  --color-light-800: #1a4429;
+  --color-light-900: #153b26;
+  --color-light-950: #133621;
 }
 
 /* Retro Tech Theme (90s inspired) */
@@ -1328,10 +1311,10 @@ html {
   /* Code blocks — the inline code chip is set in the un-layered `code` rule
      above (line 91). The `pre` block style below applies to fenced blocks. */
   pre {
-    @apply bg-light-950 border border-card-border rounded-lg p-4 overflow-x-auto;
+    @apply bg-light-800 rounded-none p-4 overflow-x-auto;
   }
   hr {
-    @apply border-0 h-px bg-light-500 my-6;
+    @apply border-0 h-1 bg-light-500 my-6;
   }
 
   /* Images */
@@ -1341,49 +1324,18 @@ html {
 
   /* Blockquotes */
   blockquote {
-    @apply border border-accent/40 px-4 italic text-light-200 my-4 rounded-lg;
+    @apply bg-light-800 px-4 py-3 italic text-light-200 my-4 rounded-none;
   }
 }
 
 /* Component Styles */
 @layer components {
   /* Card Component */
-  .card {
-    background: linear-gradient(
-      340deg,
-      var(--color-card-gradient-light) 0%,
-      var(--color-card-gradient-dark) 100%
-    );
-    @apply border border-card-border rounded-lg p-6 shadow-card;
-    transition:
-      transform 200ms ease,
-      box-shadow 200ms ease;
-  }
-  .card:hover {
-    @apply border-card-border-hover;
-  }
 
-  .card h4 {
-    @apply text-light-100 font-bold my-2;
-  }
 
-  .card hr {
-    @apply border-0 h-px bg-light-500 my-4;
-  }
 
-  .card ul {
-    @apply pl-0;
-  }
 
-  .card li {
-    @apply list-none p-0 relative pl-6;
-  }
 
-  .card li::before {
-    content: '★';
-    @apply inline-block text-accent text-xs mr-2 absolute left-0 animate-star-move;
-    vertical-align: 15%;
-  }
 
   /* Container Component */
   .container-base {
@@ -1395,7 +1347,7 @@ html {
   }
 
   .page-container {
-    min-height: 100vh;
+    min-height: 100svh;
     padding: 4rem 1rem;
   }
 
@@ -1406,63 +1358,13 @@ html {
   }
 
   /* Card Components */
-  .card-base {
-    background: var(--color-light-800);
-    border: 1px solid var(--color-card-border);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    transition:
-      transform 200ms ease-in-out,
-      box-shadow 200ms ease-in-out,
-      border-color 200ms ease-in-out;
-  }
 
-  .card-hover:hover {
-    transform: scale(1.02);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  }
 
-  .project-card {
-    background: var(--color-light-800);
-    border: 1px solid var(--color-card-border);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    transition:
-      transform 200ms ease-in-out,
-      box-shadow 200ms ease-in-out,
-      border-color 200ms ease-in-out;
-    overflow: hidden;
-  }
 
-  .project-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  }
 
-  .contact-card {
-    background: var(--color-light-800);
-    border: 1px solid var(--color-card-border);
-    border-radius: 0.75rem;
-    padding: 2rem;
-    text-align: center;
-    transition:
-      transform 200ms ease-in-out,
-      box-shadow 200ms ease-in-out,
-      border-color 200ms ease-in-out;
-  }
 
-  .contact-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 204, 104, 0.3);
-  }
 
   /* Enhanced Navigation */
-  .navbar {
-    background-color: var(--color-navbar-bg);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--color-card-border);
-  }
 
   /* Theme-specific navbar adjustments */
 
@@ -1481,43 +1383,6 @@ html {
     }
   }
 
-  /* Mobile navigation link improvements */
-  .mobile-nav-link {
-    display: block;
-    border-radius: 0.75rem;
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .mobile-nav-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s ease;
-  }
-
-  .mobile-nav-link:hover::before {
-    left: 100%;
-  }
-
-  .mobile-nav-link.active {
-    background: linear-gradient(135deg, rgba(255, 204, 104, 0.2), rgba(255, 204, 104, 0.1));
-    border: 1px solid rgba(255, 204, 104, 0.3);
-    box-shadow: 0 4px 12px rgba(255, 204, 104, 0.15);
-  }
-
-  /* Light theme mobile menu adjustments */
-  :root.professional-light .mobile-nav-link.active {
-    background: linear-gradient(135deg, rgba(181, 73, 9, 0.2), rgba(181, 73, 9, 0.1));
-    border: 1px solid rgba(181, 73, 9, 0.3);
-    box-shadow: 0 4px 12px rgba(181, 73, 9, 0.15);
-  }
-
   /* Keyboard shortcuts styling */
   kbd {
     font-family:
@@ -1527,31 +1392,6 @@ html {
   }
 
   /* Search modal responsiveness */
-  .mobile-nav-link {
-    display: block;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--color-text-primary);
-    transition: all 0.3s ease;
-    border-radius: 0.5rem;
-  }
-
-  .mobile-nav-link:hover {
-    color: var(--color-accent);
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .mobile-nav-link:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(var(--color-accent-rgb), 0.5);
-  }
-
-  .mobile-nav-link.active {
-    color: var(--color-accent);
-    background: rgba(var(--color-accent-rgb), 0.1);
-  }
-
   /* Animations */
   @keyframes slideInUp {
     to {
@@ -1593,11 +1433,11 @@ html {
     display: inline-flex;
     align-items: center;
     padding: 0.75rem 1.5rem;
-    background: var(--color-light-800);
-    color: var(--color-light-100);
-    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
+    color: var(--color-text-primary);
+    border: 0;
     font-weight: 500;
-    border-radius: 0.5rem;
+    border-radius: 0;
     transition:
       background-color 200ms ease-in-out,
       color 200ms ease-in-out,
@@ -1629,31 +1469,29 @@ html {
     display: inline-flex;
     align-items: center;
     padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
+    border-radius: 0;
     font-size: 0.875rem;
     font-weight: 500;
-    background: rgba(255, 204, 104, 0.1);
+    background: var(--color-surface-raised);
     color: var(--color-accent);
-    border: 1px solid rgba(255, 204, 104, 0.2);
     transition:
       background-color 200ms ease-in-out,
       border-color 200ms ease-in-out;
   }
 
   .tag:hover {
-    background: rgba(255, 204, 104, 0.2);
+    background: var(--color-bg);
   }
 
   .tag-secondary {
     display: inline-flex;
     align-items: center;
     padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
+    border-radius: 0;
     font-size: 0.875rem;
     font-weight: 500;
-    background: var(--color-light-700);
-    color: var(--color-light-300);
-    border: 1px solid var(--color-card-border);
+    background: var(--color-surface-raised);
+    color: var(--color-text-secondary);
     transition:
       background-color 200ms ease-in-out,
       border-color 200ms ease-in-out;
@@ -1720,20 +1558,8 @@ html {
     background-color: var(--color-bg);
   }
 
-  .bg-gradient-card {
-    background: linear-gradient(
-      340deg,
-      var(--color-card-gradient-light) 0%,
-      var(--color-card-gradient-dark) 100%
-    );
-  }
-
-  .shadow-glow {
-    box-shadow: var(--shadow-glow);
-  }
-
-  .backdrop-blur-navbar {
-    backdrop-filter: blur(8px);
+  .bg-gradient-card { /* taste-skill-ignore: legacy class name used by blog MDX, now a flat fill */
+    background: var(--color-surface-raised);
   }
 
   /* Enhanced responsive utilities */
@@ -2030,8 +1856,8 @@ html {
 
   .contact-form__honeypot {
     position: absolute;
-    width: 1px;
-    height: 1px;
+    width: 1px; /* taste-skill-ignore: visually hidden honeypot */
+    height: 1px; /* taste-skill-ignore: visually hidden honeypot */
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
@@ -2090,9 +1916,9 @@ html {
 
   .contact-form__field input:focus,
   .contact-form__field textarea:focus {
-    outline: none;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
     border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.18);
   }
 
   .contact-form__field input[aria-invalid='true'],
@@ -2114,9 +1940,8 @@ html {
   .contact-form__server-error {
     font-size: 0.875rem;
     color: #e05252;
-    background: rgba(224, 82, 82, 0.08);
-    border: 1px solid rgba(224, 82, 82, 0.25);
-    border-radius: 6px;
+    background: rgba(224, 82, 82, 0.12);
+    border-radius: 0;
     padding: 0.65rem 0.9rem;
     margin: 0;
   }

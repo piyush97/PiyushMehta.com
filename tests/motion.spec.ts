@@ -1,34 +1,33 @@
 import { expect, test } from '@playwright/test';
 
-const METRICS = ['30%', '35–40%', '1,500+'];
-
 test.describe('site motion', () => {
-  test('home metrics settle on their exact final text', async ({ page }) => {
+  test('home entrances settle to visible once scrolled into view', async ({ page }) => {
     // Given the homepage is opened
     await page.goto('/', { waitUntil: 'networkidle' });
 
-    // When the metric rail scrolls into view and the count-up finishes
-    const metrics = page.locator('[data-count-up]');
-    await metrics.first().scrollIntoViewIfNeeded();
+    // When the writing list scrolls into view
+    const rows = page.locator('[data-writing] [data-row]');
+    await rows.first().scrollIntoViewIfNeeded();
 
-    // Then each metric ends at its authored value
-    for (const [index, text] of METRICS.entries()) {
-      await expect(metrics.nth(index)).toHaveText(text, { timeout: 4000 });
+    // Then each row has finished its entrance and is fully visible
+    for (const row of await rows.all()) {
+      await row.scrollIntoViewIfNeeded();
+      await expect(row).toHaveClass(/is-visible/, { timeout: 4000 });
+      await expect(row).toHaveCSS('opacity', '1');
     }
   });
 
-  test('reduced motion shows final metrics immediately', async ({ page }) => {
+  test('reduced motion shows the homepage content immediately', async ({ page }) => {
     // Given the visitor prefers reduced motion
     await page.emulateMedia({ reducedMotion: 'reduce' });
 
     // When the homepage loads
     await page.goto('/', { waitUntil: 'networkidle' });
 
-    // Then metrics are final with no tween
-    const metrics = page.locator('[data-count-up]');
-    for (const [index, text] of METRICS.entries()) {
-      await expect(metrics.nth(index)).toHaveText(text);
-    }
+    // Then every entrance is already final, with no pending state and no hero zoom
+    await expect(page.locator('[data-reveal].reveal-pending')).toHaveCount(0);
+    await expect(page.locator('[data-hero] .half').first()).toHaveCSS('opacity', '1');
+    await expect(page.locator('[data-reel] .frame.is-current img')).toHaveCSS('transform', 'none');
   });
 
   test('only the clicked title morphs into the article h1', async ({ page }) => {

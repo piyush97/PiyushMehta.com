@@ -12,38 +12,33 @@ const navItems = [
   { href: 'https://understory.piyushmehta.com/', label: 'Understory', external: true, title: 'Understory: engineering blogs, explained' },
 ];
 
+// Desktop bar: five plain links. Home is the wordmark; Resume and Understory live in the mobile panel and the footer.
+const primaryItems = navItems.filter((item) => ['/projects', '/blog', '/lab', '/about', '/contact-me'].includes(item.href));
+
 const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`));
 ---
 
 <nav class="site-nav" aria-label="Primary navigation" data-reveal>
   <a class="site-nav__brand" href="/" aria-label="Piyush Mehta home">
-    <span>PM</span>
-    <strong>Piyush Mehta</strong>
+    Piyush Mehta
   </a>
-
-  {pathname === '/' && (
-    <span class="site-nav__edition">
-      Piyush Mehta / Engineer’s Portfolio / 2026
-    </span>
-  )}
 
   <div class="site-nav__links" id="desktop-nav-links">
     {
-      navItems.map((item) => (
+      primaryItems.map((item) => (
         <a
           href={item.href}
           aria-current={isActive(item.href) ? 'page' : undefined}
           title={item.title}
         >
           {item.label}
-          {item.external && <span aria-hidden="true"> ↗</span>}
         </a>
       ))
     }
   </div>
 
   <div class="site-nav__actions">
-    <a class="ask-button" href="/ask" aria-current={pathname.startsWith('/ask') ? 'page' : undefined}><span aria-hidden="true">✦</span> Ask</a>
+    <a class="ask-button" href="/ask" aria-current={pathname.startsWith('/ask') ? 'page' : undefined}>Ask</a>
     <button class="theme-button" type="button" id="theme-toggle-btn" aria-label="Toggle theme" aria-pressed="false">
       <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -64,7 +59,7 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname =
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
     </form>
-    <a class={`mobile-nav-link${pathname.startsWith('/ask') ? ' active' : ''}`} href="/ask" aria-current={pathname.startsWith('/ask') ? 'page' : undefined} data-mobile-link><span aria-hidden="true">✦</span> Ask Piyush</a>
+    <a class="mobile-nav-link mobile-nav-link--ask" href="/ask" aria-current={pathname.startsWith('/ask') ? 'page' : undefined} data-mobile-link>Ask Piyush</a>
     {
       navItems.map((item) => (
         <a
@@ -234,90 +229,100 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname =
     grid-template-columns: auto 1fr auto;
     gap: 1rem;
     align-items: center;
-    min-height: 4rem;
-    padding: 0.65rem max(1rem, calc((100vw - 1120px) / 2));
-    border-bottom: 1px solid var(--color-card-border);
-    background: rgba(var(--color-bg-rgb), 0.86);
-    backdrop-filter: blur(16px);
-    animation: nav-slide-in var(--motion-slow, 560ms) var(--motion-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+    min-height: 4.5rem;
+    padding: 0.5rem clamp(1.25rem, 4vw, 3.5rem);
+    background: var(--bg);
+    color: var(--ink);
   }
 
-  .site-nav__brand, .site-nav__links, .site-nav__actions { display: flex; align-items: center; }
+  .site-nav__brand,
+  .site-nav__links,
+  .site-nav__actions {
+    display: flex;
+    align-items: center;
+  }
 
-  .site-nav__edition {
-    display: none;
-    justify-self: center;
-    color: var(--color-text-secondary);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+  .site-nav__brand {
+    min-height: 2.75rem;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: var(--step-lead);
+    font-weight: 800;
+    letter-spacing: -0.005em;
+    line-height: 0.88;
+    text-decoration: none;
     text-transform: uppercase;
     white-space: nowrap;
   }
 
-  .site-nav__brand {
-    gap: 0.75rem;
-    min-height: 2.75rem;
-    color: var(--color-text-primary);
-    text-decoration: none;
+  .site-nav__links {
+    justify-content: center;
+    gap: 0.25rem;
   }
-
-  .site-nav__brand span {
-    display: grid;
-    width: 2.35rem;
-    height: 2.35rem;
-    place-items: center;
-    border: 1px solid var(--color-card-border);
-    background: var(--color-surface-raised);
-    color: var(--color-accent);
-    font-size: 0.8rem;
-    font-weight: 900;
-  }
-
-  .site-nav__brand strong { font-size: 0.95rem; }
-
-  .site-nav__links { justify-content: center; gap: 0.35rem; }
 
   .site-nav__links a {
-    padding: 0.55rem 0.75rem;
-    color: var(--color-text-secondary);
-    font-size: 0.92rem;
-    font-weight: 800;
-    text-decoration: none;
-    border-radius: 0.35rem;
-    transition: color var(--motion-fast, 150ms) ease, background-color var(--motion-fast, 150ms) ease, transform var(--motion-fast, 150ms) ease;
-  }
-
-  .site-nav__links a:hover,
-  .site-nav__links a[aria-current='page'] {
-    color: var(--color-accent);
-    background: rgba(var(--color-accent-rgb), 0.08);
-    transform: translateY(-1px);
-  }
-
-  .site-nav__actions { gap: 0.5rem; }
-
-  .theme-button {
-    display: flex;
-    justify-content: center;
+    display: inline-flex;
     align-items: center;
+    min-height: 2.75rem;
+    padding: 0 0.85rem;
+    color: var(--ink);
+    font-size: var(--step-body);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color var(--motion-fast, 150ms) ease;
+  }
+
+  .site-nav__links a:hover {
+    background: var(--surface);
+  }
+
+  .site-nav__links a[aria-current='page'],
+  .mobile-nav-link[aria-current='page'],
+  .ask-button[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.3em;
+  }
+
+  .site-nav__actions {
+    gap: 0.5rem;
+  }
+
+  .ask-button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0 1.25rem;
+    border-radius: 0;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: var(--step-body);
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform var(--motion-fast, 150ms) ease;
+  }
+
+  .theme-button,
+  .hamburger,
+  .mobile-panel__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 2.75rem;
     height: 2.75rem;
-    border: 1px solid var(--color-card-border);
-    background: var(--color-surface-raised);
-    color: var(--color-text-primary);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--surface);
+    color: var(--ink);
     cursor: pointer;
-    border-radius: 0.35rem;
-    transition: color var(--motion-fast, 150ms) ease, border-color var(--motion-fast, 150ms) ease, transform var(--motion-fast, 150ms) ease;
+    transition: transform var(--motion-fast, 150ms) ease;
   }
-  .theme-button:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-  }
+
   .theme-button svg {
     position: absolute;
   }
+
   .theme-icon-sun.hidden,
   .theme-icon-moon.hidden {
     opacity: 0;
@@ -327,43 +332,43 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname =
   .hamburger {
     display: none;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     gap: 4px;
-    width: 2.75rem;
-    height: 2.75rem;
-    border: 1px solid var(--color-card-border);
-    background: var(--color-surface-raised);
-    cursor: pointer;
-    padding: 6px;
   }
 
   .hamburger__line {
     display: block;
-    width: 18px;
-    height: 2px;
-    background: var(--color-text-primary);
-    border-radius: 1px;
-    transition: transform 0.25s ease, opacity 0.25s ease;
+    width: 20px;
+    height: 3px;
+    background: var(--ink);
+    transition:
+      transform 0.25s ease,
+      opacity 0.25s ease;
   }
 
-  .hamburger[aria-expanded='true'] .hamburger__line:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .hamburger[aria-expanded='true'] .hamburger__line:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .hamburger[aria-expanded='true'] .hamburger__line:nth-child(2) { opacity: 0; }
-  .hamburger[aria-expanded='true'] .hamburger__line:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .hamburger[aria-expanded='true'] .hamburger__line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .site-nav a:focus-visible,
+  .site-nav button:focus-visible,
+  .mobile-panel a:focus-visible,
+  .mobile-panel button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 
   /* Native modal <dialog>: page is inert, focus trapped, Escape + focus return built in. */
   .mobile-panel {
-    inset: 4rem 0 auto 0;
+    inset: 4.5rem 0 auto 0;
     width: auto;
     max-width: none;
     margin: 0;
     padding: 0;
     border: 0;
-    border-bottom: 1px solid var(--color-card-border);
-    max-height: calc(100dvh - 4rem);
+    max-height: calc(100svh - 4.5rem);
     overflow-y: auto;
-    background: var(--color-bg);
-    color: var(--color-text-primary);
+    background: var(--surface);
+    color: var(--ink);
     opacity: 0;
     transition-property: opacity, transform, display, overlay;
     transition-duration: 0.3s;
@@ -390,6 +395,16 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname =
       @starting-style {
         transform: translateY(-1rem);
       }
+    }
+
+    .site-nav {
+      animation: nav-slide-in var(--motion-slow, 560ms) var(--motion-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+    }
+
+    .ask-button:hover,
+    .theme-button:hover,
+    .hamburger:hover {
+      transform: translateY(-2px);
     }
   }
 
@@ -427,48 +442,44 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname =
   }
 
   .mobile-panel__close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border: 1px solid var(--color-card-border);
-    border-radius: 6px;
-    background: var(--color-surface-raised);
-    color: var(--color-text-primary);
-    cursor: pointer;
-  }
-
-  .mobile-panel__close:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    background: var(--bg);
   }
 
   .mobile-panel__inner {
     display: flex;
     flex-direction: column;
-    padding: 0.75rem;
+    padding: 0.75rem clamp(1.25rem, 4vw, 3.5rem) 1.5rem;
     gap: 0.25rem;
   }
 
   .mobile-nav-link {
     display: block;
-    padding: 0.85rem 1rem;
-    color: var(--color-text-secondary);
-    font-size: 1.05rem;
-    font-weight: 700;
+    padding: 0.6rem 0.85rem;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: var(--step-head);
+    font-weight: 800;
+    letter-spacing: -0.005em;
+    line-height: 0.88;
     text-decoration: none;
-    border-radius: 0.5rem;
+    text-transform: uppercase;
     transition: background-color var(--motion-fast, 150ms) ease;
   }
 
   .mobile-nav-link:hover,
   .mobile-nav-link.active {
-    color: var(--color-accent);
-    background: rgba(var(--color-accent-rgb), 0.08);
+    background: var(--bg);
   }
 
-  .mobile-theme-button { display: none; }
+  .mobile-nav-link--ask,
+  .mobile-nav-link--ask:hover {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .mobile-theme-button {
+    display: none;
+  }
 
   :global(html[data-navigated]) .site-nav {
     animation: none;
@@ -479,89 +490,36 @@ const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname =
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Tablet: all eight links need ~700px, so drop the wordmark (PM mark stays)
-     and tighten links to keep the theme button inside the viewport. */
   @media (min-width: 768px) and (max-width: 1039px) {
-    .site-nav__brand strong { display: none; }
     .site-nav__links { gap: 0; }
-    .site-nav__links a { padding-inline: 0.4rem; font-size: 0.8rem; }
-  }
-
-  .site-nav__links a[aria-current='page'],
-  .mobile-nav-link[aria-current='page'],
-  .ask-button[aria-current='page'] {
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-  }
-
-  .ask-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    min-height: 44px;
-    padding: 0 0.9rem;
-    border: 1px solid rgba(var(--color-accent-rgb), 0.55);
-    border-radius: 0.375rem;
-    color: var(--color-accent);
-    font-weight: 800;
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: background-color 160ms ease-out;
-  }
-  .ask-button:hover,
-  .ask-button[aria-current='page'] {
-    background: rgba(var(--color-accent-rgb), 0.12);
-  }
-  .ask-button:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-  .site-nav__actions { gap: 0.5rem; }
-  @media (min-width: 768px) and (max-width: 1039px) {
-    .ask-button { padding-inline: 0.6rem; }
+    .site-nav__links a { padding-inline: 0.55rem; }
+    .ask-button { padding-inline: 0.9rem; }
   }
 
   @media (max-width: 767px) {
-    .ask-button { display: none; }
-    .site-nav { grid-template-columns: auto 1fr auto; }
-    .site-nav__links { display: none; }
-    .site-nav__actions { justify-self: end; }
-    .site-nav__edition {
-      display: block;
-      max-width: 11rem;
-      overflow: visible;
-      font-size: 0.5rem;
-      line-height: 1.1;
-      letter-spacing: 0.03em;
-      text-align: center;
-      white-space: normal;
-    }
-    .site-nav__brand strong,
+    .site-nav__links,
     .site-nav .theme-button { display: none; }
-    .site-nav__brand span {
-      width: 2.75rem;
-      height: 2.75rem;
-      border-color: var(--color-accent);
-      font-size: 1rem;
-    }
-    .hamburger {
-      width: 2.75rem;
-      height: 2.75rem;
-      border: 0;
-      background: transparent;
-    }
-    .mobile-theme-button {
-      display: block;
-      margin-top: 0.5rem;
-      padding: 0.85rem 1rem;
-      border: 1px solid var(--color-card-border);
-      background: var(--color-surface-raised);
-      color: var(--color-text-primary);
-      font: inherit;
-      text-align: left;
-    }
-    .mobile-theme-button:not([hidden]) { display: flex; align-items: center; gap: 0.6rem; width: 100%; }
-    .mobile-theme-button svg.hidden { display: none; }
+    .site-nav__actions { grid-column: 3; }
+    .site-nav__brand { font-size: var(--step-lead); }
     .hamburger { display: flex; }
+    .mobile-theme-button {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      width: 100%;
+      min-height: 2.75rem;
+      margin-top: 0.5rem;
+      padding: 0.6rem 0.85rem;
+      border: 0;
+      border-radius: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: inherit;
+      font-size: var(--step-body);
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mobile-theme-button svg.hidden { display: none; }
   }
 </style>

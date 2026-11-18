@@ -69,7 +69,7 @@ test.describe('portfolio smoke', () => {
 
     await page.goto('/', { waitUntil: 'networkidle' });
 
-    await expect(page.getByRole('heading', { name: /holds up after the demo/i })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Piyush Mehta ships AI tools.');
     await expect(
       page.getByRole('heading', { level: 2, name: 'Enterprise AI Workflows' })
     ).toBeVisible();
@@ -88,11 +88,13 @@ test.describe('portfolio smoke', () => {
       times.map((time) => Date.parse(time.getAttribute('datetime') ?? ''))
     );
 
-    await expect(articles).toHaveCount(3);
-    await expect(articleLinks).toHaveCount(3);
-    expect(new Set(hrefs).size).toBe(3);
+    const articleCount = await articles.count();
+    expect(articleCount).toBeGreaterThanOrEqual(5);
+    expect(articleCount).toBeLessThanOrEqual(7);
+    await expect(articleLinks).toHaveCount(articleCount);
+    expect(new Set(hrefs).size).toBe(articleCount);
     expect(hrefs.every((href) => href.startsWith('/blog/'))).toBeTruthy();
-    expect(timestamps).toHaveLength(3);
+    expect(timestamps).toHaveLength(articleCount);
     expect(timestamps.every((timestamp) => Number.isFinite(timestamp))).toBeTruthy();
     expect(timestamps).toEqual([...timestamps].sort((a, b) => b - a));
 
