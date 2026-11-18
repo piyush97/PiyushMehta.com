@@ -1332,11 +1332,6 @@ html {
 @layer components {
   /* Card Component */
 
-
-
-
-
-
   /* Container Component */
   .container-base {
     @apply max-w-container-base px-4 mx-auto;
@@ -1358,11 +1353,6 @@ html {
   }
 
   /* Card Components */
-
-
-
-
-
 
   /* Enhanced Navigation */
 
@@ -1558,7 +1548,8 @@ html {
     background-color: var(--color-bg);
   }
 
-  .bg-gradient-card { /* taste-skill-ignore: legacy class name used by blog MDX, now a flat fill */
+  .bg-gradient-card {
+    /* taste-skill-ignore: legacy class name used by blog MDX, now a flat fill */
     background: var(--color-surface-raised);
   }
 

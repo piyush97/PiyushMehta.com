@@ -152,7 +152,8 @@ test.describe('pinned-poster homepage', () => {
       elements.map((element, index) => ({ index, cover: (element as HTMLElement).dataset.cover ?? '' }))
     );
     const next = targets.find((target) => target.index > 0 && target.cover !== '' && target.cover !== '0');
-    test.skip(!next, 'no second cover available to crossfade to');
+    expect(next, 'a second post with a cover to crossfade to').toBeTruthy();
+    if (!next) return;
     if (!next) return;
     await rows.nth(next.index).scrollIntoViewIfNeeded();
     await rows.nth(next.index).hover();
@@ -189,8 +190,8 @@ test.describe('pinned-poster homepage', () => {
       'href',
       '/contact-me'
     );
-    await expect(contact.getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', /github\.com/);
-    await expect(contact.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', /linkedin\.com/);
+    await expect(contact.getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', /^https:\/\/github\.com\//);
+    await expect(contact.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', /^https:\/\/(www\.)?linkedin\.com\//);
     await expect(contact.locator('form')).toHaveCount(0);
   });
 
