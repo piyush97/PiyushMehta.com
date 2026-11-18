@@ -1,0 +1,255 @@
+---
+title: 'One Line in site-packages: The Python Startup Hook Nobody Audits'
+description: 'Two hijacked agent-framework wheels ran a credential stealer at every interpreter start without anyone importing the package. The mechanism is one import line in a .pth file. I measured which interpreter flags stop it (-I does not), what it costs, and how many .pth files on this host already execute code.'
+date: 2026-11-18T11:00:00-05:00
+author: 'Piyush Mehta'
+tags:
+  ['Python', 'Supply Chain Security', 'AI Agents', 'Packaging', 'Software Engineering', 'Security']
+ogTemplate: 'tech'
+ogTheme: 'dark'
+image:
+  url: '/blog/python-pth-startup-hook/images/cover.svg'
+  width: 1200
+  height: 630
+  alt: 'A 28-byte agent_framework_meta.pth whose only line reads import agent_framework_meta marked EXECUTED, beside a measured startup ledger where .pth import lines run above sitecustomize above your first line, above a census strip reading 48 of 52 .pth files execute code at startup and all are legitimate'
+draft: false
+---
+
+import PthStartupLedger from '../../../components/blog/PthStartupLedger.tsx';
+
+On November 17, 2026 at 20:35 UTC, a wheel for `agent-framework`, Microsoft's Python metapackage for its Agent Framework, was uploaded to PyPI. A second one followed at 21:08. Both were gone from the index within the hour, quarantined after [SafeDep flagged 1.26.1 twenty-two minutes after upload](https://safedep.io/blog/microsoft-agent-framework-pypi-compromise) and [JFrog flagged the repack](https://research.jfrog.com/post/agent-framework-hijack/).
+
+Both wheels contained a credential stealer. Neither was reachable through `import agent_framework`. That is the part worth an hour of your time: the payload did not need your code to touch the package, because a 28-byte file in the root of `site-packages` runs at interpreter startup whether or not anything imports it.
+
+```
+site-packages/agent_framework_meta.pth
+import agent_framework_meta
+```
+
+That is the entire persistence mechanism. [Wiz published the forensic timeline](https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi), [OSV has it as PYSEC-2026-4388](https://osv.dev/vulnerability/PYSEC-2026-4388), and the [GitHub advisory](https://github.com/advisories/GHSA-764m-3ppc-5m73) tracks both versions. Microsoft has acknowledged the incident and says an investigation is underway, [per SecurityWeek](https://www.securityweek.com/microsoft-agent-framework-releases-poisoned-with-credential-stealer/).
+
+The coverage explains what the malware collected, which is a long list: environment variables matching `TOKEN`, `SECRET`, `KEY`, `AZURE`, `AWS`, `GITHUB`, `OPENAI`; other processes' `/proc/*/environ`; up to 80 credential files including `~/.azure`, `.npmrc`, `.git-credentials` and the Hugging Face token; Azure managed identity tokens from IMDS; and in 1.26.2, GitHub Actions OIDC tokens. [OX Security has the payload breakdown](https://www.ox.security/blog/breaking-hijacked-releases-of-microsofts-official-agent-framework-steals-azure-and-ci-credentials/).
+
+This post is about the mechanism and the three things coverage skipped: which interpreter flags actually block it, what it costs per process, and whether "look for a `.pth` file" is a usable detection rule. I ran all three against a throwaway venv on this machine.
+
+## The four lines of site.py that make it work
+
+`site.py` is imported before your code, unless the interpreter was started with `-S`. It walks each site-packages directory, reads every `*.pth` file in alphabetical order, and for each line decides: path entry, or code.
+
+```python
+for n, line in enumerate(pth_content.splitlines(), 1):
+    if line.startswith("#"):
+        continue
+    if line.strip() == "":
+        continue
+    try:
+        if line.startswith(("import ", "import\t")):
+            exec(line)
+            continue
+        line = line.rstrip()
+        dir, dircase = makepath(sitedir, line)
+        ...
+```
+
+That is `Lib/site.py` in CPython, near line 212, quoted verbatim. The behaviour is documented too: lines starting with `import` followed by a space or tab [are executed with `exec()` for backward compatibility](https://docs.python.org/3/library/site.html).
+
+Two details matter for the attack. First, `exec` means the whole line runs, so a single line can be `import x; x.start()`. Second, the line is scanned before `sitecustomize` and before your `__main__`, so nothing in your program has had a chance to run, log, or fail.
+
+Here is that order as measured, with a `.pth` hook and a `sitecustomize.py` both writing a line to the same file:
+
+```
+1795017727199475385 1843086 import-line
+sitecustomize 1843086
+__main__ 1843086
+```
+
+The hook wins. Your `sitecustomize`, the file your platform team thinks is the first code to run, is third.
+
+Why the metapackage needed this trick at all is the amusing part, and [JFrog explains it](https://research.jfrog.com/post/agent-framework-hijack/): `agent-framework` is a stub that pins `agent-framework-core[all]==1.26.0` and exposes `__version__`. Applications import `agent_framework`, never `agent_framework_meta`. Putting the payload in a module nobody imports would have been inert. So the attacker put it in a `.pth` and let `site.py` do the importing.
+
+## Which flags stop it, measured
+
+The intuitive defence is "start Python in a restricted mode". I built a venv, planted `zz_probe_hook.py` plus `zz_probe.pth` containing `import zz_probe_hook`, and ran a no-op command under every relevant flag. The hook appends a line to a marker file, so "fired" is a filesystem fact, not an inference.
+
+| Command                             | Hook fired | Third-party import      |
+| ----------------------------------- | ---------- | ----------------------- |
+| `python -c pass`                    | yes        | works                   |
+| `python noop.py`                    | yes        | works                   |
+| `python -S -c pass`                 | **no**     | **ModuleNotFoundError** |
+| `python -I -c pass`                 | **yes**    | works                   |
+| `python -s -c pass`                 | yes        | works                   |
+| `python -E -c pass`                 | yes        | works                   |
+| `python -B -c pass`                 | yes        | works                   |
+| `PYTHONNOUSERSITE=1 python -c pass` | yes        | works                   |
+| `PYTHONSAFEPATH=1 python -c pass`   | yes        | works                   |
+| `pip --version`                     | yes        | n/a                     |
+| `python -I -S -c pass`              | no         | broken, same as `-S`    |
+
+Python 3.14.9, Linux x86-64, venv built from the same interpreter. `pip --version` is in the table because pip is a console script with a Python shebang: running it starts an interpreter, so it triggers the hook. Any tool written that way does.
+
+Two rows are the whole finding.
+
+`-I` is the flag people reach for. Isolated mode ignores `PYTHON*` environment variables, drops the script directory, and disables the user site, and it [still imports `site`](https://docs.python.org/3/using/cmdline.html#cmdoption-I), so the environment's `.pth` files run normally. It is isolation from your shell and your `PYTHONPATH`, not from installed packages. Measured: the hook fired.
+
+`-S` works, and the price is in the last column. Without `site`, nothing adds `site-packages` to `sys.path`, so `import dummypkg` failed with `ModuleNotFoundError` in the same environment where it works without the flag. You cannot run a real application with `-S` unless you rebuild the path yourself, and `site.addsitedir()` processes `.pth` files, so rebuilding the path with the standard helper re-arms the hook.
+
+`-s`, `-E`, `-B`, `PYTHONNOUSERSITE` and `PYTHONSAFEPATH` do not touch this code path. `PYTHONSAFEPATH` is the one that sounds like it should; it stops Python from prepending the script's directory, which has nothing to do with `site`.
+
+One case where the flags do help: if the wheel was installed with `--user`, the hook lives in `~/.local/lib/pythonX.Y/site-packages`, and the user site is what `-s` and `-I` disable. Measured, with a `.pth` planted in a `PYTHONPATH` directory instead, the hook still fired: `-s` and `-I` disable the user site, not the other directories the interpreter searches.
+
+<PthStartupLedger client:visible />
+
+## What it costs per process
+
+Cheap. I ran 40 starts of `python -c pass` per configuration and took medians:
+
+| `.pth` contents           | Median start | Delta |
+| ------------------------- | ------------ | ----- |
+| no `.pth`                 | 28.8 ms      |       |
+| path line only            | 29.7 ms      | +0.9  |
+| `import` that sets a var  | 29.7 ms      | +0.9  |
+| `import` that writes file | 29.9 ms      | +1.1  |
+
+About a millisecond for a hook that imports a three-line module and appends to a file. Latency is not the signal, and you should not expect to find this in a startup benchmark.
+
+The real payload does not even pay that. It calls `os.fork()` and `os.setsid()` to detach into its own session, with a daemon-thread fallback where fork is unavailable, and guards itself with `_AF_TEL=1` so children do not repeat the collection. The interpreter that starts your tests returns in normal time while a detached process reads `/proc/*/environ` and the Azure CLI token cache behind it.
+
+That inversion is the useful mental model: **the cost of a startup hook is paid once per process, but the reach is paid once per machine.** A `.pth` does not need to run 400 times to matter. It needs to run once, in the environment where `AZURE_CLIENT_SECRET` is set.
+
+Wiz's own analysis of the exfiltration endpoint suggests the blast radius was small: `webhook.site` on the free tier accepts 100 requests and logs nothing after that, and of the 50 requests captured, most appear to be sandbox and vendor scans. Three cases were real victim data. Small impact, correct mechanism. The next operator ships it to a private endpoint.
+
+## Is "look for a .pth file" a detection rule
+
+No, and this is the part I did not expect. I scanned every site-packages and dist-packages directory under `~/.local`, `~/.hermes`, `/usr/lib`, `/usr/local/lib` and `/opt` on this host, and classified each `.pth` by whether it contains a line starting with `import`.
+
+| Quantity                                          | Count |
+| ------------------------------------------------- | ----- |
+| Site directories scanned                          | 27    |
+| `.pth` files found                                | 52    |
+| Files with executable `import` lines              | 48    |
+| Of those, pip editable-install hooks              | 39    |
+| Of those, `distutils-precedence.pth` (setuptools) | 4     |
+| Of those, `_virtualenv.pth` (virtualenv)          | 3     |
+| Of those, planted by this post's probe            | 2     |
+
+Forty-six of the forty-eight are artefacts of tools you installed on purpose. PEP 660 editable installs write `__editable__.pkg-version.pth` with a line like:
+
+```
+import __editable___hermes_agent_0_0_0_finder; __editable___hermes_agent_0_0_0_finder.install()
+```
+
+That is an `import` line, executed at every startup, that installs a path finder. setuptools uses `distutils-precedence.pth` for `SETUPTOOLS_USE_DISTUTILS`. virtualenv uses `_virtualenv.pth` inside every venv it creates.
+
+So the directory the malware abused is, on a developer machine, roughly 90% executable-by-design. A rule that alerts on "`.pth` with an import line" fires on every editable install and every fresh venv, which is how such rules get switched off in week two. A rule that alerts on new `.pth` files is closer, but the hook only needs to exist during the window between `pip install` and your next `git status`.
+
+What is usable is narrower and still worth having: diff the _set_ of `.pth` files and their hashes across an install, and treat any new executable `.pth` outside the editable-install naming convention as a finding. The scanner in the next section does the first half.
+
+## The detector, and its one interesting case
+
+```python
+import site
+import sys
+from pathlib import Path
+
+dirs = site.getsitepackages()
+if site.ENABLE_USER_SITE:
+    dirs.append(site.getusersitepackages())
+
+for d in dict.fromkeys(dirs):
+    for pth in sorted(Path(d).glob("*.pth")):
+        for n, line in enumerate(pth.read_text(errors="replace").splitlines(), 1):
+            if line.startswith(("import ", "import\t")):
+                start = pth.with_suffix(".start")
+                dead = start.exists() and sys.version_info >= (3, 15)
+                state = "DEAD (matching .start)" if dead else "EXECUTES"
+                print(f"{state:24} {pth}:{n}  {line[:90]}")
+```
+
+Run it in the environment you care about, not on your laptop's default interpreter: `site.getsitepackages()` answers for the running interpreter, which is why a hook can be invisible to `python -m pip list` and visible to the `python` your Makefile uses.
+
+The `DEAD` branch is the one that only exists on new Pythons. [PEP 829](https://peps.python.org/pep-0829/) is Final for Python 3.15 and introduces `.start` files: a `name.start` file listing entry points as `pkg.mod:callable`, resolved with `pkgutil.resolve_name(strict=True)`, processed after all `.pth` path extensions are applied. If a `name.start` file exists next to `name.pth`, any `import` lines in the `.pth` are ignored in favour of the entry points.
+
+The deprecation schedule, from the [3.15 docs](https://docs.python.org/3/library/site.html):
+
+- 3.15, 3.16, 3.17: `import` lines still run, except when a matching `.start` file exists.
+- 3.18, 3.19: `import` lines are silently ignored.
+- 3.20 and later: a warning is produced for their mere presence.
+
+Two consequences. A `.pth` with an `import` line and a matching `.start` file is a line that will never run on 3.15+, which means the scanner should report it as dead rather than as a hit. And the mechanism is on a removal path, not gone: everything shipped today that depends on `import` lines has three years, and the malware that shipped on November 17 uses a feature that works on every Python you are likely to run until 2030.
+
+If you maintain a package that ships a `.pth`, the migration is mechanical: keep the path lines, move the code after the semicolon into a zero-argument callable, and add `name.start` with `pkg.mod:callable`. For the straddle period, `import pkg.mod; pkg.mod.callable()` works on both, because older interpreters run the line and newer ones ignore it in favour of the `.start`.
+
+## What actually reduces the exposure
+
+Ranked by whether the control survives the mechanism above, not by how good it sounds:
+
+1. **Pin, and install with `--require-hashes`.** The malicious 1.26.1 wheel is 10,402 bytes where 1.26.0 was 6,681, and its SHA-256 is `d27fa344...`; hash checking compares against the lockfile, not the version string. No hash in the lock, no install.
+2. **Set a release cooldown.** [JFrog observed automated dependency bots opening upgrade PRs within six minutes](https://research.jfrog.com/post/agent-framework-hijack/) of 1.26.1 landing. A 24 to 72 hour minimum release age in Renovate or Dependabot means your PR opens after quarantine, not before it.
+3. **Ephemeral runners, and no long-lived cloud credentials in the environment.** 1.26.2 went after GitHub Actions OIDC specifically, so short-lived tokens are not a free pass: the fix is scoping the Entra federated credential's subject to the branch and workflow that need it, and treating any job that installed the bad wheel in a `id-token: write` workflow as having minted tokens for the attacker.
+4. **Egress you can enumerate.** The exfil endpoint was a hardcoded `webhook.site` URL with no fallback, and the operator's own tooling reported its progress to the same inbox. A CI runner that cannot reach arbitrary hosts turns that exfil into a failed POST and, if you log DNS, into an alert.
+5. **Rebuild, do not repair, an exposed environment.** A `.pth` runs at every start, so `pip uninstall` stops future runs but does not undo the `.pth` window, and rotating credentials from inside a shell that the hook is still watching is theatre. New container, new venv, rotate everything reachable.
+
+The thing that does not help: `-I`, `-s`, `-E`, `PYTHONSAFEPATH`, and containerising "for hygiene" while mounting the host credential directory into it. All measured above.
+
+One honest gap. PyPI had no attestation for `agent-framework` 1.26.0 either, [SafeDep notes](https://safedep.io/blog/microsoft-agent-framework-pypi-compromise), so a consumer had no cryptographic way to tell Microsoft's upload from the attacker's. Worse, the same analysis found `vibiret`, an account created on the day of the attack, still listed as able to publish to `agent-framework` and five related projects on November 18. While that access stands, `pip install agent-framework==1.26.0` can pull a fresh release of four dependencies the metapackage pulls in. Pinning the version without pinning the transitive set leaves the same door open.
+
+## What is still unknown
+
+Where the credentials came from. Wiz's working theory, based on the attacker's tooling being visible in the same webhook, is a compromised client certificate and private key for Microsoft's ESRP release service, with the first publish attempt rejected by IP filtering and a second attempt from Microsoft-owned address space succeeding. Microsoft has not confirmed it, and the repository did not contain the malicious code.
+
+How many installs happened. SafeDep flagged 1.26.1 at 20:57 and it was off the index minutes later, but a wheel-only release of a package with roughly 41,000 weekly downloads has a window, and the two analyses disagree on exact removal minutes (Wiz: gone by 21:30 UTC, JFrog: both removed by 21:16).
+
+My measurements are one host, one Python version, one trivial hook. The census numbers are 27 directories on a machine that runs a lot of virtualenvs; a container image with three packages will show a smaller ratio, and a data science image will show a larger one. The mechanism is the portable part: `site.py` reads `import` lines and `exec`s them, before `sitecustomize`, before you. The probe script reproduces the basic hook behaviour, so you can get your own numbers, which are the only ones that should change your defaults.
+
+Related: [the MCP security crisis](/blog/ai-agents-mcp-security-crisis/) is the same problem one layer up, in the tools an agent calls; [the npm trusted-publishing post](/blog/npm-oidc-dist-tags-release-gate/) covers the analogous move on the JavaScript side, where the publish credential was the weak point rather than the artefact.
+
+<details>
+<summary>The probe script, verbatim</summary>
+
+```python
+"""Does a .pth import line fire, and what turns it off?"""
+import os
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+VENV = ROOT / "venv"
+HOOK = "zz_probe_hook"
+MARKER = ROOT / "marker.txt"
+
+subprocess.run([sys.executable, "-m", "venv", str(VENV)], check=True)
+sp = next(VENV.glob("lib/python*/site-packages"))
+(sp / f"{HOOK}.py").write_text(
+    "import os\n"
+    "open(os.environ['PROBE_MARKER'], 'a').write('import-line\\n')\n"
+)
+(sp / "zz_probe.pth").write_text(f"import {HOOK}\n")
+
+CASES = {
+    "plain": ([], {}),
+    "-S": (["-S"], {}),
+    "-I": (["-I"], {}),
+    "-s": (["-s"], {}),
+    "-E": (["-E"], {}),
+    "-B": (["-B"], {}),
+    "NOUSERSITE": ([], {"PYTHONNOUSERSITE": "1"}),
+    "SAFEPATH": ([], {"PYTHONSAFEPATH": "1"}),
+}
+
+for name, (flags, extra) in CASES.items():
+    env = {k: v for k, v in os.environ.items()
+           if not k.startswith("PYTHON")}
+    env |= {"PROBE_MARKER": str(MARKER)} | extra
+    if MARKER.exists():
+        MARKER.unlink()
+    t0 = time.perf_counter()
+    subprocess.run([str(VENV / "bin" / "python"), *flags, "-c", "pass"],
+                   env=env, capture_output=True)
+    print(f"{name:12} fired={MARKER.exists()}  {(time.perf_counter()-t0)*1000:.1f} ms")
+```
+
+Swap `-c pass` for `-c "import json, hashlib"` and pass `-S` to see the import failure that makes `-S` unusable in practice.
+
+</details>
