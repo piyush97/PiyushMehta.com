@@ -263,7 +263,7 @@ test.describe('Ask Piyush doorways', () => {
   });
 
   for (const [path, name] of [
-    ['/', /ask about my work/i],
+    ['/', /^ask$/i],
     ['/contact-me/', /ask before you write/i],
     ['/resume/', /ask about anything not on the résumé/i],
   ] as const) {

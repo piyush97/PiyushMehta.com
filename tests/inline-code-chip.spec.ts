@@ -34,7 +34,7 @@ test.describe('Inline code chips in blog posts', () => {
     });
   }
 
-  test('renders inline code as an accent-tinted chip without literal backticks', async ({
+  test('renders inline code as a tinted chip without literal backticks', async ({
     page,
   }) => {
     await page.goto('/blog/herdr-terminal-multiplexer-coding-agents');
@@ -59,12 +59,12 @@ test.describe('Inline code chips in blog posts', () => {
     const bg = await inlineCode.evaluate((el) => getComputedStyle(el).backgroundColor);
     const m = bg.match(/[\d.]+/g);
     expect(m, `could not parse background-color: ${bg}`).not.toBeNull();
-    const [r, g, b, a] = (m as RegExpMatchArray).map(Number);
+    const [, , , a] = (m as RegExpMatchArray).map(Number);
     if (a !== undefined) {
       expect(a, `background alpha is too transparent: ${bg}`).toBeGreaterThanOrEqual(0.05);
     }
-    expect(Math.abs(r - 255), `red channel off: ${bg}`).toBeLessThanOrEqual(5);
-    expect(Math.abs(g - 204), `green channel off: ${bg}`).toBeLessThanOrEqual(5);
-    expect(Math.abs(b - 104), `blue channel off: ${bg}`).toBeLessThanOrEqual(5);
+    // The chip sits on a tone step, so it must differ from the page ground.
+    const pageBg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    expect(bg, `chip background matches page ground: ${bg}`).not.toBe(pageBg);
   });
 });
