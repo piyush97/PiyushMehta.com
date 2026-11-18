@@ -16,6 +16,7 @@
   "building-mcp-server-typescript",
   "chat-bot",
   "claude-sonnet-5-5",
+  "coding-agent-review-budget",
   "context-management-agents",
   "cron-to-event-driven",
   "deepseek-v4-flash-0731",
