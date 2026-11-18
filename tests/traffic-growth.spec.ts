@@ -22,15 +22,18 @@ test('crawler discovery URLs agree with canonical HTML', async ({ request }) => 
   expect(await robots.text()).toContain('Sitemap: https://piyushmehta.com/sitemap.xml');
   expect(await robots.text()).not.toContain('piyushmehta.com//');
 
-  const sitemapAlias = await request.get(`${preview}/sitemap-index.xml`, { maxRedirects: 0 });
-  expect(sitemapAlias.status()).toBe(301);
-  expect(sitemapAlias.headers().location).toBe('/sitemap.xml');
+  // `public/_redirects` only applies to deployed Workers assets, not `astro dev`.
+  if (!/localhost|127\.0\.0\.1/.test(preview)) {
+    const sitemapAlias = await request.get(`${preview}/sitemap-index.xml`, { maxRedirects: 0 });
+    expect(sitemapAlias.status()).toBe(301);
+    expect(sitemapAlias.headers().location).toBe('/sitemap.xml');
+  }
 });
 
 test('readers can reach consulting and recruiting information from an article', async ({ page }) => {
   await page.goto(`${preview}/blog/testing-ai-agent-actions/`);
   const career = page.getByRole('complementary', { name: /I’m Piyush/ });
-  await expect(career.getByRole('link', { name: 'Read my résumé' })).toHaveAttribute('href', '/resume/');
+  await expect(career.getByRole('link', { name: 'Read my résumé' })).toHaveAttribute('href', '/resume');
   await career.getByRole('link', { name: 'Consulting services' }).click();
   await expect(page).toHaveURL(/\/services\/?$/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Technical clarity');

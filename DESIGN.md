@@ -173,7 +173,7 @@ The system uses tonal layering with restrained elevation. Raised surfaces change
 
 ### Motion & Interaction
 
-Homepage motion follows the existing reveal and parallax mechanisms rather than introducing a new runtime: the ledger enters with opacity and short upward transforms, the portrait uses a restrained opacity/blur settle, and its `data-parallax-speed="0.06"` movement is disabled by the global reduced-motion path. Action arrows translate `0.22rem` on hover or keyboard focus to reinforce the destination. The sequence uses the homepage tokens `--home-motion-enter: 560ms`, `--home-motion-portrait: 900ms`, and `--home-motion-rule: 420ms`; no layout properties are animated.
+Homepage motion follows the existing reveal and parallax mechanisms rather than introducing a new runtime: the ledger enters with opacity and short upward transforms, the portrait uses a restrained opacity/blur settle, and its CSS scroll-driven `data-parallax` movement is disabled by the global reduced-motion path. Action arrows translate `0.22rem` on hover or keyboard focus to reinforce the destination. The sequence uses the homepage tokens `--home-motion-enter: 560ms`, `--home-motion-portrait: 900ms`, and `--home-motion-rule: 420ms`; no layout properties are animated.
 
 ## Shapes
 

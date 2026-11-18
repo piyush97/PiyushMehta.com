@@ -51,3 +51,27 @@ export function parseChatRequest(
     turnstileToken: parsed.data.turnstileToken,
   };
 }
+
+/** `POST /api/chat/post`. The slug only selects from the server's own artifacts. */
+export const postChatRequestSchema = z
+  .object({
+    post: z.string().min(1).max(120),
+    mode: z.enum(['ask', 'summary']),
+    question: z
+      .string()
+      .max(MAX_MESSAGE_CHARS * 2)
+      .optional(),
+  })
+  .strict();
+
+export type PostChatRequest = z.infer<typeof postChatRequestSchema>;
+
+export function parsePostChatRequest(
+  raw: unknown,
+): { ok: true; value: PostChatRequest } | { ok: false; reason: string } {
+  const parsed = postChatRequestSchema.safeParse(raw);
+  if (!parsed.success) return { ok: false, reason: 'invalid_shape' };
+  if (parsed.data.mode === 'ask' && !parsed.data.question?.trim())
+    return { ok: false, reason: 'empty' };
+  return { ok: true, value: parsed.data };
+}

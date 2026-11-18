@@ -66,6 +66,6 @@ Rejected because implementation modules, generated configuration, and source map
 
 - Public article content remains build-time MDX under [ADR-0001](0001-keep-public-content-build-time.md).
 - Giscus comments remain disabled until real identifiers and matching CSP origins are separately approved.
-- The newsletter surface is retired; the writing archive and RSS are the reader distribution paths.
-- Old newsletter URLs redirect to the writing archive, and no newsletter API or social-card entry ships.
+- The original newsletter surface stays retired: old newsletter URLs redirect to the writing archive and no `/newsletter` page or social-card entry ships.
+- Amended 2026-11-11: a minimal double opt-in email signup returns as `/api/subscribe` and the end-of-post `SubscribeForm`. It stores confirmed addresses in an Upstash Redis set, sends mail only through a manual script, and fails closed without `NEWSLETTER_SIGNING_SECRET`. RSS and the writing archive remain distribution paths.
 - Reactions remain anonymous, eventually consistent counters bounded to a build-generated published-post manifest.

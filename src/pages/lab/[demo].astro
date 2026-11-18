@@ -1,0 +1,169 @@
+---
+import { getCollection } from 'astro:content';
+import LabDemo from '../../components/lab/LabDemo.astro';
+import LabShare from '../../components/lab/LabShare.astro';
+import {
+  type LabDemo as LabDemoEntry,
+  labDemos,
+  labEmbedPath,
+  labOgImage,
+  labPath,
+} from '../../data/lab';
+import Layout from '../../layouts/Layout.astro';
+import { toPostSlug } from '../../utils/social-card-manifest';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const published = new Map(posts.map((post) => [toPostSlug(post.id), post.data.title]));
+  return labDemos
+    .filter((demo) => published.has(demo.postSlug))
+    .map((demo) => ({
+      params: { demo: demo.slug },
+      props: { demo, postTitle: published.get(demo.postSlug) as string },
+    }));
+}
+
+const { demo, postTitle } = Astro.props as { demo: LabDemoEntry; postTitle: string };
+const origin = (Astro.site?.toString() || 'https://piyushmehta.com').replace(/\/$/, '');
+const pageUrl = `${origin}${labPath(demo.slug)}`;
+const embedUrl = `${origin}${labEmbedPath(demo.slug)}`;
+const postHref = `/blog/${demo.postSlug}`;
+---
+
+<Layout
+  title={`${demo.title} - Lab - Piyush Mehta`}
+  description={demo.description}
+  type="website"
+  ogTemplate="tech"
+  ogTheme="dark"
+  canonical={pageUrl}
+  image={labOgImage(demo.slug)}
+  tags={demo.tags}
+>
+  <article class="lab-demo">
+    <nav class="lab-demo__crumbs" aria-label="Breadcrumb">
+      <a href="/lab">Lab</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{demo.title}</span>
+    </nav>
+
+    <header class="lab-demo__header">
+      <p class="lab-demo__eyebrow">Interactive demo</p>
+      <h1>{demo.title}</h1>
+      <p class="lab-demo__lede">{demo.description}</p>
+    </header>
+
+    <section class="lab-demo__stage" aria-label={demo.title}>
+      <LabDemo name={demo.component} />
+    </section>
+
+    <section class="lab-demo__context" aria-labelledby="lab-context-title">
+      <h2 id="lab-context-title">What you are looking at</h2>
+      <p>{demo.context}</p>
+      <p class="lab-demo__caveat"><strong>Limits.</strong> {demo.caveat}</p>
+      <p>
+        Written for <a href={postHref}>{postTitle}</a>. The article has the sources and the full
+        argument.
+      </p>
+    </section>
+
+    <LabShare
+      title={demo.title}
+      pageUrl={pageUrl}
+      embedUrl={embedUrl}
+      embedHeight={demo.embedHeight}
+    />
+  </article>
+</Layout>
+
+<style>
+  .lab-demo {
+    display: grid;
+    width: min(840px, calc(100% - 2rem));
+    gap: 2rem;
+    margin-inline: auto;
+    padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 8vw, 6rem);
+  }
+
+  .lab-demo__crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .lab-demo__crumbs a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    color: var(--color-accent);
+    font-weight: 800;
+  }
+
+  .lab-demo__eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--color-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  .lab-demo__lede {
+    max-width: 62ch;
+    margin: 1rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  .lab-demo__stage {
+    min-width: 0;
+  }
+
+  .lab-demo__stage :global(> *) {
+    margin-block: 0;
+  }
+
+  .lab-demo__context {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 68ch;
+  }
+
+  .lab-demo__context h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .lab-demo__context p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .lab-demo__context a {
+    color: var(--color-accent);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .lab-demo__caveat strong {
+    color: var(--color-text-primary);
+  }
+</style>

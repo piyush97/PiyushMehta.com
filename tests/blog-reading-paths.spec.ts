@@ -57,12 +57,12 @@ test.describe('blog intent reading paths', () => {
         await expect(step.getByText(expectedPath.steps[stepIndex])).toBeVisible();
 
         const link = step.getByRole('link');
-        await expect(link).toHaveAttribute('href', `/blog/${slug}/`);
+        await expect(link).toHaveAttribute('href', `/blog/${slug}`);
         await expect(link).not.toHaveAttribute('href', /\/projects\//);
         await expect(link).not.toHaveText('');
 
         const href = await link.getAttribute('href');
-        expect(href).toBe(`/blog/${slug}/`);
+        expect(href).toBe(`/blog/${slug}`);
         linkedSlugs.push(slug);
 
         const response = await request.get(href ?? '');
@@ -92,7 +92,7 @@ test.describe('blog intent reading paths', () => {
       await link.click();
 
       // Then: the destination article preserves the clicked collection title.
-      await expect(page).toHaveURL(`/blog/${expectedPath.slugs[1]}/`);
+      await expect(page).toHaveURL(`/blog/${expectedPath.slugs[1]}`);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(title ?? '');
     }
   });

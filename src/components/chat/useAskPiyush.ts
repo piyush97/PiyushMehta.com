@@ -28,7 +28,7 @@ const savedMessages = z.array(
             type: z.literal('data-trace'),
             id: z.string().optional(),
             data: z.object({
-              scope: z.enum(['meta', 'classifier', 'unavailable']),
+              scope: z.enum(['meta', 'classifier', 'unavailable', 'post']),
               verdict: z.enum(['answered', 'refused', 'unavailable', 'interrupted']),
               sources: z.number().int().min(0),
               provider: z.string().optional(),

@@ -8,8 +8,6 @@ type MotionState = {
   revealObserver: IntersectionObserver | null;
   revealScrollHandler: (() => void) | null;
   revealScrollTimer: number;
-  parallaxFrame: number;
-  parallaxHandler: (() => void) | null;
   routeDirectionHandler: ((event: Event) => void) | null;
   countObserver: IntersectionObserver | null;
   countFrames: Set<number>;
@@ -27,8 +25,6 @@ const getMotionState = (): MotionState => {
       revealObserver: null,
       revealScrollHandler: null,
       revealScrollTimer: 0,
-      parallaxFrame: 0,
-      parallaxHandler: null,
       routeDirectionHandler: null,
       countObserver: null,
       countFrames: new Set(),
@@ -176,43 +172,6 @@ const initReveal = (reducedMotion: boolean, state: MotionState): void => {
   });
 };
 
-const initParallax = (reducedMotion: boolean, state: MotionState): void => {
-  if (state.parallaxHandler) {
-    window.removeEventListener('scroll', state.parallaxHandler);
-    window.removeEventListener('resize', state.parallaxHandler);
-    cancelAnimationFrame(state.parallaxFrame);
-  }
-
-  const parallaxElements = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
-  if (reducedMotion || parallaxElements.length === 0) {
-    parallaxElements.forEach((element) => {
-      element.style.removeProperty('--parallax-offset');
-    });
-    return;
-  }
-
-  const updateParallax = (): void => {
-    const viewportHeight = window.innerHeight;
-    for (const element of parallaxElements) {
-      const rect = element.getBoundingClientRect();
-      const speed = Number(element.getAttribute('data-parallax-speed') || '0.12');
-      const progress = (viewportHeight * 0.5 - (rect.top + rect.height * 0.5)) * speed;
-      element.style.setProperty('--parallax-offset', `${progress.toFixed(2)}px`);
-    }
-    state.parallaxFrame = 0;
-  };
-
-  const onScroll = (): void => {
-    if (state.parallaxFrame) return;
-    state.parallaxFrame = requestAnimationFrame(updateParallax);
-  };
-
-  state.parallaxHandler = onScroll;
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
-  onScroll();
-};
-
 const COUNT_DURATION_MS = 900;
 
 // Animates each number in the element's own text (30%, 35–40%, 1,500+) and keeps
@@ -270,6 +229,5 @@ export const initSiteMotion = (): void => {
   const state = getMotionState();
   initRouteDirection(state);
   initReveal(reducedMotion, state);
-  initParallax(reducedMotion, state);
   initCountUp(reducedMotion, state);
 };

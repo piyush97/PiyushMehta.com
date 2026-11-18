@@ -12,6 +12,8 @@ const blog = defineCollection({
     author: z.string().default('Piyush Mehta'),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    series: z.string().optional(),
+    seriesOrder: z.number().int().positive().optional(),
     image: z
       .object({
         url: z.string(),

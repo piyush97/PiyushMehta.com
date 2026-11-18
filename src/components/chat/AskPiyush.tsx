@@ -68,6 +68,7 @@ const SCOPE_LABEL: Record<ChatTrace['scope'], string> = {
   meta: 'Greeting',
   classifier: 'Classifier: about Piyush',
   unavailable: 'Model unavailable',
+  post: 'Article note',
 };
 
 const STATE_TEXT = {

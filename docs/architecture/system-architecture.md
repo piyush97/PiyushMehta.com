@@ -21,8 +21,8 @@ The accepted target is not a database-backed blog. It is a build-time content sy
 - Astro produces public pages, feeds, social cards, and search assets at build time; only API routes execute Worker code.
 - Cloudflare Workers Static Assets serves public content from the edge.
 - Workers execute only routes that require runtime behavior.
-- Upstash Redis holds explicitly owned operational state, including rate limits and reaction counters.
-- Resend owns contact delivery; no newsletter audience is retained.
+- Upstash Redis holds explicitly owned operational state, including rate limits, reaction counters, and TTL'd memoized post summaries (ADR-0004).
+- Resend owns contact and newsletter email delivery. Confirmed newsletter addresses live in the Redis set `newsletter:subscribers` (double opt-in, signed unsubscribe links); no Resend audience is retained.
 - No application database is introduced until a named feature requires durable, queryable state.
 - The target release uses the Astro-generated `dist/server/wrangler.json` as the canonical deployment configuration, with `dist/client/` as the public asset directory.
 - The target release treats shipped generated artifacts as requirements; missing search, feed, OG, redirect, or discovery output fails the build.
@@ -114,6 +114,8 @@ The runtime dependency graph is intentionally narrow. A Redis or Resend outage c
 | Search                          | Required Pagefind static index                           | None after deployment    |
 | Reactions                       | API route and Upstash Redis                              | Redis                    |
 | Contact submission              | API route and Resend                                     | Resend; Redis for limits |
+| Ask Piyush (site scope)         | `/ask` page, `/api/chat`, build-time BM25 index          | Workers AI, Groq, Redis  |
+| Ask this note (post scope)      | Article panel, `/api/chat/post`, `post-sections.json`    | Workers AI, Groq, Redis  |
 | Social-card rendering           | Prerendered Astro route using Satori and Resvg           | Build-time only          |
 | Comments                        | Disabled; no comment provider is shipped                 | None                     |
 | Monitoring                      | Sentry, Workers logs, traces, and optional Web Analytics | Monitoring providers     |
@@ -123,10 +125,17 @@ The environment schema still contains legacy database, mail, and CMS variables. 
 
 ### 5.4 Runtime route inventory
 
-| Route            | Current behavior                                    | Current external dependency |
-| ---------------- | --------------------------------------------------- | --------------------------- |
-| `/api/reactions` | Public cached reads and rate-limited counter writes | Upstash Redis               |
-| `/api/contact`   | Origin-checked, rate-limited email submission       | Upstash Redis and Resend    |
+| Route                        | Current behavior                                                                                       | Current external dependency       |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| `/api/reactions`             | Public cached reads and rate-limited counter writes                                                    | Upstash Redis                     |
+| `/api/contact`               | Origin-checked, rate-limited email submission                                                          | Upstash Redis and Resend          |
+| `/api/chat`                  | Site-scope Ask Piyush: session-gated, classifier-gated streaming answer                                | Workers AI or Groq, Upstash Redis |
+| `/api/chat/session`          | `GET` public Turnstile site key; `POST` exchanges a Turnstile token for an IP-bound 30 minute session  | Turnstile, Upstash Redis          |
+| `/api/subscribe`             | Origin-checked, Turnstile-gated double opt-in signup; sends a signed confirm link                      | Upstash Redis, Turnstile, Resend  |
+| `/api/subscribe/confirm`     | `GET` shows a confirm button; `POST` adds the address to `newsletter:subscribers`                      | Upstash Redis                     |
+| `/api/subscribe/unsubscribe` | `GET` shows a button; `POST` (also one-click `List-Unsubscribe`) removes the address                   | Upstash Redis                     |
+| `/api/chat/config`           | `GET` public Turnstile site key for prerendered article pages (cached 5 minutes)                       | None                              |
+| `/api/chat/post`             | Post-scope Ask this note: session required for `summary` and `ask`; summary memoized by content digest | Workers AI or Groq, Upstash Redis |
 
 All other current public routes, including the parameterized OG route, are prerendered.
 
@@ -226,20 +235,22 @@ The control plane is kept separate from the visitor request path. A monitoring-p
 
 ## 7. Data ownership
 
-| Data                         | Source of truth                                                           | Runtime store            | Consistency requirement             |
-| ---------------------------- | ------------------------------------------------------------------------- | ------------------------ | ----------------------------------- |
-| Article body and frontmatter | Git/MDX                                                                   | Static deployment output | Atomic per deployment               |
-| Portfolio entries            | Typed source files                                                        | Static deployment output | Atomic per deployment               |
-| Latest-article ordering      | Build-time content query                                                  | Static deployment output | Same snapshot as article pages      |
-| Search documents             | Generated from published content                                          | Pagefind assets          | Same content release                |
-| Rate-limit windows           | Upstash Redis                                                             | Upstash Redis            | Short-lived and operational         |
-| Reaction totals              | Upstash Redis while this feature remains ephemeral                        | Upstash Redis            | Eventual is acceptable              |
-| Conversion totals            | Upstash Redis, daily anonymous counters with 60-day expiry                | Upstash Redis            | Best effort; undercount acceptable  |
-| Contact delivery status      | Resend                                                                    | Resend                   | Provider-managed                    |
-| Contact messages             | Resend delivery path                                                      | No local copy            | No application database requirement |
-| Comments                     | Disabled in the baseline; Giscus remains an unapproved future integration | None                     | Not applicable                      |
-| Secrets                      | Cloudflare deployment configuration                                       | Worker bindings          | Never public                        |
-| Operational telemetry        | Sentry and Cloudflare                                                     | Monitoring systems       | Best effort, access controlled      |
+| Data                         | Source of truth                                                           | Runtime store                                          | Consistency requirement             |
+| ---------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------ | ----------------------------------- |
+| Article body and frontmatter | Git/MDX                                                                   | Static deployment output                               | Atomic per deployment               |
+| Portfolio entries            | Typed source files                                                        | Static deployment output                               | Atomic per deployment               |
+| Latest-article ordering      | Build-time content query                                                  | Static deployment output                               | Same snapshot as article pages      |
+| Search documents             | Generated from published content                                          | Pagefind assets                                        | Same content release                |
+| Rate-limit windows           | Upstash Redis                                                             | Upstash Redis                                          | Short-lived and operational         |
+| Note sections for post Ask   | Git/MDX, built into `src/data/post-sections.json`                         | Worker bundle                                          | Atomic per deployment               |
+| Post summaries               | Derived from the note; never authoritative                                | Upstash Redis, 30-day TTL, key includes content digest | Best effort; a miss regenerates     |
+| Reaction totals              | Upstash Redis while this feature remains ephemeral                        | Upstash Redis                                          | Eventual is acceptable              |
+| Conversion totals            | Upstash Redis, daily anonymous counters with 60-day expiry                | Upstash Redis                                          | Best effort; undercount acceptable  |
+| Contact delivery status      | Resend                                                                    | Resend                                                 | Provider-managed                    |
+| Contact messages             | Resend delivery path                                                      | No local copy                                          | No application database requirement |
+| Comments                     | Disabled in the baseline; Giscus remains an unapproved future integration | None                                                   | Not applicable                      |
+| Secrets                      | Cloudflare deployment configuration                                       | Worker bindings                                        | Never public                        |
+| Operational telemetry        | Sentry and Cloudflare                                                     | Monitoring systems                                     | Best effort, access controlled      |
 
 Do not duplicate a value in Redis or a future database unless a documented feature reads that copy and defines how divergence is repaired.
 

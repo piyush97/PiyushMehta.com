@@ -112,7 +112,7 @@ test.describe('astro v6 migration smoke', () => {
     };
 
     await page.goto('/');
-    await navigateViaNav('/blog/');
+    await navigateViaNav('/blog');
     await expect(page).toHaveURL(/\/blog\/?$/);
     const search = page.locator('#blog-search');
     await search.fill('zzzz-no-match');
@@ -120,7 +120,7 @@ test.describe('astro v6 migration smoke', () => {
 
     await navigateViaNav('/');
     await expect(page).toHaveURL(/\/$/);
-    await navigateViaNav('/blog/');
+    await navigateViaNav('/blog');
     await expect(page).toHaveURL(/\/blog\/?$/);
 
     await page.locator('#blog-search').fill('zzzz-no-match');
@@ -171,8 +171,12 @@ test.describe('astro v6 migration smoke', () => {
       ['/blog/tag/microservice', 'microservice'],
     ]) {
       const tag = await request.get(path, { maxRedirects: 0 });
-      expect(tag.status(), `${path} should redirect`).toBe(301);
-      expect(tag.headers().location).toBe(`/blog/?theme=${theme}`);
+      // `public/_redirects` is served by Workers assets only; astro dev answers 404.
+      const assetsServed = !/localhost|127\.0\.0\.1/.test(String(test.info().project.use.baseURL));
+      if (assetsServed) {
+        expect(tag.status(), `${path} should redirect`).toBe(301);
+        expect(tag.headers().location).toBe(`/blog?theme=${theme}`);
+      }
     }
   });
 

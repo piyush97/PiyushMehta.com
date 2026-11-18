@@ -21,13 +21,7 @@ test.describe('Integration Tests', () => {
       await expect(progressBar).toBeVisible();
     }
 
-    // 3. Code blocks should be enhanced
-    const copyButtons = page.locator('.copy-code-btn');
-    if ((await copyButtons.count()) > 0) {
-      expect(await copyButtons.count()).toBeGreaterThan(0);
-    }
-
-    // 4. Related posts should be shown
+    // 3. Related posts should be shown
     const relatedPosts = page.locator('.related-posts-section, .related-post-card');
     if ((await relatedPosts.count()) > 0) {
       await expect(relatedPosts.first()).toBeVisible();
@@ -150,6 +144,7 @@ test.describe('Integration Tests', () => {
     if ((await inputs.count()) > 0) {
       for (let i = 0; i < (await inputs.count()); i++) {
         const input = inputs.nth(i);
+        if (await input.evaluate((el) => !!el.closest('[aria-hidden="true"]'))) continue;
         const hasLabel = await input.evaluate((el) => {
           const id = el.id;
           const ariaLabel = el.getAttribute('aria-label');
@@ -206,7 +201,7 @@ test.describe('Integration Tests', () => {
     // Without JavaScript the nav must be plain links to real pages.
     const workLink = page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Work' }).first();
     const href = await workLink.getAttribute('href');
-    expect(href).toBe('/projects/');
+    expect(href).toBe('/projects');
     const response = await page.goto(href!);
     expect(response?.ok()).toBe(true);
     await expect(page.locator('main')).toBeVisible();

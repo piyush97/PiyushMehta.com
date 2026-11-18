@@ -1,0 +1,241 @@
+---
+interface UnderstoryItem {
+  title: string;
+  dek: string;
+  url: string;
+  topic: string;
+  readingMinutes: number;
+  source: { name: string; url: string };
+}
+
+interface UnderstoryStats {
+  explained: string;
+  publishers: string;
+  revision: string;
+}
+
+interface Props {
+  eyebrow?: string;
+}
+
+const { eyebrow = 'Currently building' } = Astro.props;
+
+const API = 'https://understory.piyushmehta.com/api/articles';
+const HOME = 'https://understory.piyushmehta.com/';
+
+let items: UnderstoryItem[] = [];
+let stats: UnderstoryStats | null = null;
+
+try {
+  const response = await fetch(API, { signal: AbortSignal.timeout(5000) });
+  if (response.ok) {
+    const payload = (await response.json()) as { items?: UnderstoryItem[] };
+    items = (payload.items ?? []).slice(0, 3);
+  }
+} catch {
+  // A build must not fail because Understory is unreachable.
+}
+
+try {
+  const response = await fetch(HOME, { signal: AbortSignal.timeout(5000) });
+  if (response.ok) {
+    const match = (await response.text()).match(
+      /masthead__meta[^>]*><span>(\d+)<\/span> explained[\s\S]*?<span>(\d+)<\/span> sources[\s\S]*?rev <span>(\d+)<\/span>/,
+    );
+    if (match) stats = { explained: match[1], publishers: match[2], revision: match[3] };
+  }
+} catch {
+  // Counts are optional; the latest explainers still render without them.
+}
+---
+
+{
+  items.length > 0 && (
+    <section class="understory-band" aria-labelledby="understory-band-title">
+      <div class="understory-band__inner">
+        <header class="understory-band__head">
+          <p class="understory-band__folio">{eyebrow}</p>
+          <div class="understory-band__intro">
+            <h2 id="understory-band-title">Understory</h2>
+            <p>
+              Engineering blogs, explained. Reviewed explainers with context, mechanism, diagrams,
+              trade-offs, and a source behind every claim.
+            </p>
+          </div>
+          <div class="understory-band__aside">
+            {stats && (
+              <p class="understory-band__stats">
+                {stats.explained} explainers
+                <br />
+                {stats.publishers} publishers · rev {stats.revision}
+              </p>
+            )}
+            <a class="understory-band__cta" href={HOME}>
+              Open Understory <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </header>
+
+        <ol class="understory-band__list">
+          {items.map((item) => (
+            <li>
+              <a href={item.url}>
+                <span class="understory-band__topic">{item.topic}</span>
+                <span class="understory-band__title">{item.title}</span>
+                <span class="understory-band__meta">
+                  {item.source.name} · {item.readingMinutes} min
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .understory-band {
+    --band-ink: var(--home-ink, var(--color-text-primary));
+    --band-muted: var(--home-muted, var(--color-text-secondary));
+    --band-rule: var(--home-rule, var(--color-card-border));
+    --band-accent: var(--home-wine, var(--color-accent));
+    width: min(1240px, calc(100% - 3rem));
+    margin-inline: auto;
+    padding-block: clamp(4rem, 7vw, 6rem);
+    border-top: 1px solid var(--band-rule);
+    color: var(--band-ink);
+  }
+
+  .understory-band__head {
+    display: grid;
+    grid-template-columns: 0.65fr 1.5fr 1fr;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: start;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .understory-band__folio {
+    margin: 0;
+    color: var(--band-accent);
+    font-family: var(--font-mono, monospace);
+    font-size: var(--text-xs, 0.75rem);
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .understory-band h2 {
+    margin: 0;
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+  }
+
+  .understory-band__intro p {
+    max-width: 34rem;
+    margin: 0.75rem 0 0;
+    color: var(--band-muted);
+    line-height: 1.7;
+  }
+
+  .understory-band__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .understory-band__stats {
+    margin: 0;
+    color: var(--band-muted);
+    font-family: var(--font-mono, monospace);
+    font-size: var(--text-sm, 0.875rem);
+    line-height: 1.6;
+    letter-spacing: 0.04em;
+  }
+
+  .understory-band__cta {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding-bottom: 0.2rem;
+    border-bottom: 1px solid currentColor;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .understory-band__cta:focus-visible {
+    outline: 2px solid var(--band-accent);
+    outline-offset: 4px;
+  }
+
+  .understory-band__list {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--band-ink);
+    border-bottom: 1px solid var(--band-ink);
+    list-style: none;
+  }
+
+  .understory-band__list li + li {
+    border-top: 1px solid var(--band-rule);
+  }
+
+  .understory-band__list a {
+    display: grid;
+    grid-template-columns: 10rem minmax(0, 1fr) auto;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: baseline;
+    padding: 1.35rem 0;
+    text-decoration: none;
+  }
+
+  .understory-band__list a:focus-visible {
+    outline: 2px solid var(--band-accent);
+    outline-offset: 2px;
+  }
+
+  .understory-band__topic,
+  .understory-band__meta {
+    color: var(--band-muted);
+    font-family: var(--font-mono, monospace);
+    font-size: var(--text-xs, 0.75rem);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .understory-band__title {
+    font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+
+  .understory-band__meta {
+    justify-self: end;
+    text-align: right;
+    text-transform: none;
+    letter-spacing: 0.02em;
+  }
+
+  .understory-band__list a:hover .understory-band__title {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  @media (max-width: 900px) {
+    .understory-band__head {
+      grid-template-columns: 1fr;
+    }
+
+    .understory-band__list a {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+
+    .understory-band__meta {
+      justify-self: start;
+      text-align: left;
+    }
+  }
+</style>

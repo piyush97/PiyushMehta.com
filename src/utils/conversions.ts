@@ -17,10 +17,23 @@ export const WINDOW_DAYS = 28;
 const TTL_SECONDS = 60 * 24 * 60 * 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+/** Registry of slugs that ever recorded a view; it bounds the number of keys a read scans. */
+export const POST_VIEW_SLUGS_KEY = 'conv:post_view:slugs';
+/** The registry outlives daily counters so a quiet post still ages out of the totals window. */
+export const POST_VIEW_REGISTRY_TTL_SECONDS = 90 * 24 * 60 * 60;
+
 interface CounterStore {
   incr(key: string): Promise<number>;
   expire(key: string, seconds: number): Promise<unknown>;
   mget(...keys: string[]): Promise<unknown[]>;
+}
+
+export interface PostViewStore {
+  incr(key: string): Promise<number>;
+  expire(key: string, seconds: number): Promise<unknown>;
+  mget(...keys: string[]): Promise<unknown[]>;
+  sadd(key: string, member: string): Promise<unknown>;
+  smembers?(key: string): Promise<unknown[]>;
 }
 
 export function isClientEvent(value: unknown): value is ConversionEvent {
@@ -29,6 +42,10 @@ export function isClientEvent(value: unknown): value is ConversionEvent {
 
 export function dayKey(event: ConversionEvent, date: Date): string {
   return `conv:${event}:${date.toISOString().slice(0, 10)}`;
+}
+
+export function postViewDayKey(slug: string, date: Date): string {
+  return `conv:post_view:${slug}:${date.toISOString().slice(0, 10)}`;
 }
 
 /** Best effort: a counting failure must never fail the action being counted. */
@@ -43,6 +60,23 @@ export async function recordConversion(
     if ((await store.incr(key)) === 1) await store.expire(key, TTL_SECONDS);
   } catch (err) {
     console.warn('[conversions] write failed:', (err as Error)?.name);
+  }
+}
+
+/** Best effort: a view count must never fail the page load being viewed. */
+export async function recordPostView(
+  store: PostViewStore | null,
+  slug: string,
+  now = new Date(),
+): Promise<void> {
+  if (!store) return;
+  try {
+    const key = postViewDayKey(slug, now);
+    if ((await store.incr(key)) === 1) await store.expire(key, TTL_SECONDS);
+    await store.sadd(POST_VIEW_SLUGS_KEY, slug);
+    await store.expire(POST_VIEW_SLUGS_KEY, POST_VIEW_REGISTRY_TTL_SECONDS);
+  } catch (err) {
+    console.warn('[conversions] post view write failed:', (err as Error)?.name);
   }
 }
 
@@ -71,6 +105,38 @@ export async function readConversionTotals(
       previous: sum(slice.slice(WINDOW_DAYS)),
     };
   });
+}
+
+export interface PostViewTotals {
+  slug: string;
+  current: number;
+  previous: number;
+}
+
+/** Per-post totals for the last WINDOW_DAYS (today included) and the window before it. Throws on store failure. */
+export async function readPostViewTotals(
+  store: PostViewStore,
+  now = new Date(),
+): Promise<PostViewTotals[]> {
+  const members = (await store.smembers?.(POST_VIEW_SLUGS_KEY)) ?? [];
+  const slugs = [...new Set(members.filter((m): m is string => typeof m === 'string'))];
+  if (slugs.length === 0) return [];
+  const days = Array.from(
+    { length: WINDOW_DAYS * 2 },
+    (_, i) => new Date(now.getTime() - i * DAY_MS),
+  );
+  const keys = slugs.flatMap((slug) => days.map((d) => postViewDayKey(slug, d)));
+  const values = await store.mget(...keys);
+  return slugs
+    .map((slug, s) => {
+      const slice = values.slice(s * days.length, (s + 1) * days.length).map(toCount);
+      return {
+        slug,
+        current: sum(slice.slice(0, WINDOW_DAYS)),
+        previous: sum(slice.slice(WINDOW_DAYS)),
+      };
+    })
+    .sort((a, b) => b.current - a.current || (a.slug < b.slug ? -1 : a.slug > b.slug ? 1 : 0));
 }
 
 function toCount(value: unknown): number {

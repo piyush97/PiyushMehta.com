@@ -2,19 +2,26 @@ import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 import {
   CONVERSION_EVENTS,
+  POST_VIEW_REGISTRY_TTL_SECONDS,
+  POST_VIEW_SLUGS_KEY,
   checkBasicPassword,
   dayKey,
   isClientEvent,
+  postViewDayKey,
   readConversionTotals,
+  readPostViewTotals,
   recordConversion,
+  recordPostView,
 } from '../src/utils/conversions';
 
 function memoryStore() {
   const data = new Map<string, number>();
   const ttl = new Map<string, number>();
+  const members = new Map<string, Set<string>>();
   return {
     data,
     ttl,
+    members,
     async incr(key: string) {
       const n = (data.get(key) ?? 0) + 1;
       data.set(key, n);
@@ -26,6 +33,15 @@ function memoryStore() {
     },
     async mget(...keys: string[]) {
       return keys.map((k) => data.get(k) ?? null);
+    },
+    async sadd(key: string, member: string) {
+      const set = members.get(key) ?? new Set<string>();
+      set.add(member);
+      members.set(key, set);
+      return 1;
+    },
+    async smembers(key: string) {
+      return [...(members.get(key) ?? [])];
     },
   };
 }
@@ -57,6 +73,29 @@ describe('conversions', () => {
     const failing = { ...memoryStore(), incr: async () => Promise.reject(new Error('down')) };
     await recordConversion(failing, 'contact_sent', NOW);
     await recordConversion(null, 'contact_sent', NOW);
+  });
+
+  it('keys post views by slug and UTC day', () => {
+    assert.equal(postViewDayKey('hello-world', NOW), 'conv:post_view:hello-world:2026-10-28');
+  });
+
+  it('records a post view and registers the slug', async () => {
+    const store = memoryStore();
+    await recordPostView(store, 'hello-world', NOW);
+    assert.equal(store.data.get(postViewDayKey('hello-world', NOW)), 1);
+    assert.equal(store.ttl.get(postViewDayKey('hello-world', NOW)), 60 * 86_400);
+    assert.equal(store.ttl.get(POST_VIEW_SLUGS_KEY), POST_VIEW_REGISTRY_TTL_SECONDS);
+    assert.deepEqual(await store.smembers(POST_VIEW_SLUGS_KEY), ['hello-world']);
+  });
+
+  it('never throws when the post view store fails or is missing', async () => {
+    const failing = { ...memoryStore(), incr: async () => Promise.reject(new Error('down')) };
+    await recordPostView(failing, 'hello-world', NOW);
+    await recordPostView(null, 'hello-world', NOW);
+  });
+
+  it('returns no post totals when no slug has been registered', async () => {
+    assert.deepEqual(await readPostViewTotals(memoryStore(), NOW), []);
   });
 
   it('splits totals into the last 28 days and the 28 before', async () => {

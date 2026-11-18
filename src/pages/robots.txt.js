@@ -13,6 +13,7 @@ Disallow: /*.bak
 Disallow: /*.log
 
 Sitemap: ${sitemapUrl}
+# llms.txt: ${new URL('/llms.txt', sitemapUrl)}
 `,
     { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
   );

@@ -71,3 +71,6 @@ env.d.ts
 # Versioned architecture decisions and system design
 !docs/architecture/*.md
 !docs/adr/*.md
+
+# Feature design documents
+!docs/plans/*.md
