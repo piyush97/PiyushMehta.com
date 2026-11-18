@@ -1,4 +1,5 @@
 [
+  "agent-distraction-dead-todo-tax",
   "agent-sandbox-boundary",
   "agent-sandbox-shared-cache",
   "agentgate-block-agent-prs-that-weaken-tests",
@@ -19,6 +20,7 @@
   "coding-agent-review-budget",
   "context-management-agents",
   "cron-to-event-driven",
+  "cve-2026-119618-mod-http2-race",
   "deepseek-v4-flash-0731",
   "first-90-days-new-software-engineer-job",
   "gpt-6-1-sol",
@@ -42,6 +44,7 @@
   "openssh-musl-asterisk-bypass",
   "proto-buf",
   "python-310-end-of-life-upgrade-guide",
+  "python-pth-startup-hook",
   "rabbit-mq",
   "rag-vs-long-context",
   "roasttube-ai-roast-youtube-history",
