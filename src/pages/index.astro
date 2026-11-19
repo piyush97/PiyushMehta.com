@@ -14,6 +14,7 @@ import speakerPhotoWebp1280 from '../images/responsive/piyush-devfest-1280.webp'
 import speakerPhotoJpg320 from '../images/responsive/piyush-devfest-320.jpg';
 import speakerPhotoJpg640 from '../images/responsive/piyush-devfest-640.jpg';
 import speakerPhotoJpg960 from '../images/responsive/piyush-devfest-960.jpg';
+import MostRead from '../components/MostRead.astro';
 import SubscribeForm from '../components/SubscribeForm.astro';
 import UnderstoryFeature from '../components/UnderstoryFeature.astro';
 import Layout from '../layouts/Layout.astro';
@@ -214,6 +215,10 @@ const toPostHref = (id: string) =>
         </div>
       )}
     </section>
+
+    <div class="most-read-slot">
+      <MostRead server:defer />
+    </div>
 
     <div class="subscribe-band">
       <SubscribeForm />
@@ -703,6 +708,12 @@ const toPostHref = (id: string) =>
   .notebook,
   .contact {
     padding-block: clamp(5rem, 9vw, 8rem);
+    border-top: 1px solid var(--home-rule);
+  }
+
+  /* Padding sits on the island output so an empty island adds no gap. */
+  .most-read-slot :global(.most-read) {
+    padding-block: clamp(3rem, 6vw, 5rem);
     border-top: 1px solid var(--home-rule);
   }
 
