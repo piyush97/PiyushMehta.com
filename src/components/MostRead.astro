@@ -1,0 +1,131 @@
+---
+// Server island: reads the same anonymous post-view totals as /stats at request time,
+// so the prerendered pages that embed it stay static.
+import { getCollection } from 'astro:content';
+import { toBlogPostSlug } from '../utils/blog-recommendations';
+import { WINDOW_DAYS, readPostViewTotals } from '../utils/conversions';
+import { toPublishedPostSlug } from '../utils/published-posts';
+import { redis } from '../utils/redis';
+
+interface Props {
+  limit?: number;
+}
+
+const { limit = 5 } = Astro.props;
+
+let posts: { slug: string; title: string }[] = [];
+if (redis) {
+  try {
+    const totals = await readPostViewTotals(redis);
+    const published = await getCollection('blog', ({ data }) => !data.draft);
+    const bySlug = new Map(
+      published.map((post) => [
+        toPublishedPostSlug(toBlogPostSlug(post.id)),
+        { slug: toBlogPostSlug(post.id), title: post.data.title },
+      ]),
+    );
+    // Stored slugs are raw client strings: normalise, merge variants, drop removed posts.
+    const views = new Map<string, number>();
+    for (const { slug, current } of totals) {
+      const key = toPublishedPostSlug(slug);
+      if (current > 0 && bySlug.has(key)) views.set(key, (views.get(key) ?? 0) + current);
+    }
+    posts = [...views]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([key]) => bySlug.get(key)!);
+    // Cache only successful reads so a store outage is never pinned at the edge.
+    Astro.response.headers.set('Cache-Control', 'public, max-age=600');
+  } catch (err) {
+    console.error('[most-read] post view read failed:', (err as Error)?.name);
+  }
+}
+---
+
+{
+  posts.length > 0 && (
+    <section class="most-read" aria-labelledby="most-read-heading">
+      <p class="most-read__label">Last {WINDOW_DAYS} days</p>
+      <h2 id="most-read-heading">Most read this month</h2>
+      <ol class="most-read__list">
+        {posts.map((post) => (
+          <li>
+            <a href={`/blog/${post.slug}`}>{post.title}</a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
+<style>
+  .most-read__label {
+    margin: 0 0 0.6rem;
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .most-read h2 {
+    margin: 0 0 1.5rem;
+    color: var(--color-text-primary);
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    line-height: 1.1;
+  }
+
+  .most-read__list {
+    margin: 0;
+    padding: 0;
+    border-block: 1px solid var(--color-card-border);
+    counter-reset: most-read;
+    list-style: none;
+  }
+
+  .most-read__list li {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 0.4rem;
+    counter-increment: most-read;
+  }
+
+  .most-read__list li + li {
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .most-read__list li::before {
+    color: var(--color-text-secondary);
+    content: counter(most-read, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+
+  .most-read__list a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    color: var(--color-text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--motion-fast);
+  }
+
+  .most-read__list a:hover {
+    color: var(--color-accent);
+  }
+
+  .most-read__list a:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .most-read__list a {
+      transition: none;
+    }
+  }
+</style>
