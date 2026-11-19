@@ -24,8 +24,14 @@ function absoluteUrl(value, base) {
 // Feed readers don't run scripts or apply page CSS, and relative URLs resolve
 // against the feed, not the post.
 function toFeedHtml(html, base) {
-  return html
-    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '')
+  // Repeat until stable so nested fragments like <scr<script></script>ipt> can't survive.
+  let stripped = html;
+  let previous;
+  do {
+    previous = stripped;
+    stripped = stripped.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '');
+  } while (stripped !== previous);
+  return stripped
     .replace(/<\/?astro-island\b[^>]*>/gi, '')
     .replace(/(\s(?:src|href|poster)=)(["'])(.*?)\2/gi, (_, attr, quote, value) => {
       return `${attr}${quote}${absoluteUrl(value, base)}${quote}`;
