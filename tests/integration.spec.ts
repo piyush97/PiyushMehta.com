@@ -182,6 +182,14 @@ test.describe('Integration Tests', () => {
     expect(has404Content || !page.url().includes('nonexistent-page')).toBeTruthy();
   });
 
+  test('should suggest matching posts on 404', async ({ page }) => {
+    await page.goto('/blog/bloom-filters-old');
+    await expect(page.locator('.suggestions a[href="/blog/bloom-filters"]')).toBeVisible();
+
+    await page.goto('/nonexistent-page');
+    await expect(page.locator('.suggestions')).toBeHidden();
+  });
+
   test('should work with JavaScript disabled', async ({ browser }) => {
     // Create a new context with JavaScript disabled
     const context = await browser.newContext({

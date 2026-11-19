@@ -1,7 +1,13 @@
 ---
 export const prerender = true;
 
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import { toPostSlug } from '../utils/social-card-manifest';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .map(({ id, data }) => ({ slug: toPostSlug(id), title: data.title, tags: data.tags }));
 ---
 
 <Layout
@@ -20,8 +26,52 @@ import Layout from '../layouts/Layout.astro';
       <a href="/blog">Writing</a>
       <a href="/projects">Projects</a>
     </nav>
+    <section class="suggestions" data-posts={JSON.stringify(posts)} hidden>
+      <h2>Posts close to this URL</h2>
+      <ul></ul>
+    </section>
   </section>
 </Layout>
+
+<script>
+  const STOP = new Set(['blog', 'www', 'html', 'htm', 'php', 'index', 'the', 'and', 'for']);
+
+  function suggest() {
+    const root = document.querySelector<HTMLElement>('.suggestions');
+    const list = root?.querySelector('ul');
+    if (!root || !list) return;
+    const posts: { slug: string; title: string; tags: string[] }[] = JSON.parse(
+      root.dataset.posts ?? '[]',
+    );
+    const words = new Set(
+      location.pathname
+        .toLowerCase()
+        .split(/[^a-z0-9]+/)
+        .filter((word) => word.length >= 3 && !STOP.has(word)),
+    );
+    const top = posts
+      .map((post) => {
+        const text = [post.slug, post.title, ...post.tags].join(' ').toLowerCase();
+        return { post, score: [...words].filter((word) => text.includes(word)).length };
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3);
+    list.replaceChildren(
+      ...top.map(({ post }) => {
+        const link = document.createElement('a');
+        link.href = `/blog/${post.slug}`;
+        link.textContent = post.title;
+        const item = document.createElement('li');
+        item.append(link);
+        return item;
+      }),
+    );
+    root.hidden = top.length === 0;
+  }
+
+  document.addEventListener('astro:page-load', suggest);
+</script>
 
 <style>
   .not-found {
@@ -90,5 +140,31 @@ import Layout from '../layouts/Layout.astro';
   nav a:first-child:hover {
     opacity: 0.88;
     color: #fff;
+  }
+
+  .suggestions h2 {
+    margin: 0 0 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .suggestions ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .suggestions :global(a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--color-text-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .suggestions :global(a:hover) {
+    color: var(--color-accent);
   }
 </style>
