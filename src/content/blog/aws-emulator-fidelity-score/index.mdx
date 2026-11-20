@@ -1,0 +1,169 @@
+---
+title: 'AWS Emulator Passes 75% of Its Own Tests. Here Is How to Read the Other 25%'
+description: 'The release file for AWS Emulator v1.0.544 scores 46,026 units: 75.4% pass overall, 56.3% on wire-level workflows, 95.5% on the calls a serverless app actually makes. A ledger of which green tests are evidence.'
+date: 2026-11-20T13:00:00-05:00
+author: 'Piyush Mehta'
+ogTemplate: 'tech'
+ogTheme: 'dark'
+tags:
+  - 'AWS'
+  - 'Testing'
+  - 'Emulation'
+  - 'CI'
+  - 'Agent Infrastructure'
+image:
+  url: '/blog/aws-emulator-fidelity-score/images/cover.svg'
+  width: 1200
+  height: 630
+  alt: 'Four fidelity bars: 75.4 percent across all scored units, 56.3 percent on wire-level workflows, 95.5 percent on a serverless call set, and 26.7 percent for CloudFormation'
+draft: false
+---
+
+import AwsEmulatorLedger from '../../../components/blog/AwsEmulatorLedger.tsx';
+
+On November 11 AWS shipped [AWS Emulator](https://aws.amazon.com/blogs/aws/test-your-applications-against-aws-locally-with-aws-emulator/): a local implementation of its own APIs, free, [CC0 licensed](https://aws.amazon.com/about-aws/whats-new/2026/11/aws-emulator-now-available/), a single Rust binary built from the 438 public API models, listening on `127.0.0.1:9297`. It is [written entirely by autonomous agents](https://www.aboutamazon.com/news/aws/how-autonomous-ai-agents-built-aws-emulator), and the team that runs those agents has not read the code.
+
+That last sentence is the one that decides how you should use it. Matt Wood, AWS's chief AI and technology officer, named the failure mode better than any critic could in [InfoQ's follow-up](https://www.infoq.com/news/2026/11/aws-emulator-local-testing/):
+
+> An agent learns from the environment it experiences. If the emulator accepts behavior that AWS rejects, training can reinforce a mistake.
+
+Swap "agent" for "test suite" and you have the problem for every team about to point CI at port 9297. A wrong emulator does not just fail to catch a bug. It teaches you the bug is not there.
+
+AWS is unusually honest about this, which is why the interesting work is not arguing about the idea. It is reading the number they publish.
+
+## Three numbers, one release file
+
+Every release attaches `scores.json.gz`, one row per fidelity unit, and the docs define exactly what a unit is: a short SDK program that runs a workflow against real AWS first, records the response of every call, and then re-runs it against the emulator. A unit passes only if every call matches on status code, body, and exact error code and message ([fidelity docs](https://docs.aws.amazon.com/emulator/latest/userguide/fidelity.html)). The suite is public and read-only, at [aws/aws-emulator-evaluation-suite](https://github.com/aws/aws-emulator-evaluation-suite).
+
+I downloaded the file for [v1.0.544](https://github.com/aws/aws-emulator/releases/tag/v1.0.544), scored at 2026-11-20 14:24 UTC, and counted. The script is in the appendix, so the numbers are yours to reproduce.
+
+| What you count                                     | Passed | Of     | Rate  |
+| -------------------------------------------------- | ------ | ------ | ----- |
+| All scored units                                   | 34,632 | 45,939 | 75.4% |
+| Wire units (per-call response comparison)          | 6,402  | 11,380 | 56.3% |
+| Behavioral units (SDK outcome, incl. deploy smoke) | 28,230 | 34,646 | 81.7% |
+| Every call inside wire units                       | 65,018 | 76,730 | 84.7% |
+| A 33-operation serverless call set                 | 4,628  | 4,845  | 95.5% |
+
+The same file, split by service, shows why the headline average is not a number anyone can act on:
+
+| Service        | Passed | Of    | Rate  |
+| -------------- | ------ | ----- | ----- |
+| EventBridge    | 656    | 708   | 92.7% |
+| S3             | 1,289  | 1,451 | 88.8% |
+| Cognito        | 785    | 897   | 87.5% |
+| API Gateway    | 1,109  | 1,276 | 86.9% |
+| DynamoDB       | 2,026  | 2,391 | 84.7% |
+| Lambda         | 1,198  | 1,530 | 78.3% |
+| EC2            | 1,419  | 2,179 | 65.1% |
+| RDS            | 438    | 695   | 63.0% |
+| CloudFormation | 1,128  | 4,222 | 26.7% |
+| Service Quotas | 62     | 289   | 21.5% |
+
+Across the 295 services with at least 20 scored units, 21 sit below 50%. The ten largest services account for 36.9% of all scored units, so the aggregate is mostly a statement about DynamoDB, EC2, CloudFormation, Lambda and S3, in that order. If your stack is Cognito, SES and Step Functions, the 75.4% says nothing about you at all.
+
+## A workflow fails more often than its calls do
+
+The gap between 84.7% per call and 56.3% per workflow is not noise. It is path dependence. A unit is a sequence, and one bad step zeroes the whole unit. The mean wire unit has 6.74 steps, so a few percent of per-call divergence compounds fast.
+
+That suggests a model: if calls failed independently with the measured per-call rate `b`, a workflow of `K` calls would pass `b^K` of the time. I tested it against the data, service by service, and the model is consistently wrong in the same direction:
+
+| Service     | Calls per unit | Per-call pass | Independent model | Measured |
+| ----------- | -------------- | ------------- | ----------------- | -------- |
+| DynamoDB    | 10.7           | 94.0%         | 51.7%             | 74.6%    |
+| S3          | 11.1           | 98.6%         | 85.1%             | 92.8%    |
+| API Gateway | 9.8            | 97.4%         | 77.1%             | 87.4%    |
+| Cognito     | 9.1            | 95.3%         | 64.4%             | 82.0%    |
+
+Measured is 7 to 23 points higher than the coin-flip model every time. That is what clustering looks like in aggregate: divergence is not sprinkled evenly across calls. It pools. A unit either runs on implemented behavior and passes, or it walks into one specific gap and fails, and the same gap takes out hundreds of units at once.
+
+Which changes the question you should ask. Not "what is the pass rate" but "am I standing on a gap". A suite with 200 tests can be entirely clear of them or entirely inside one, and the published average cannot tell the two apart.
+
+## The only failure that costs you is the quiet one
+
+Unsupported operations are loud. The emulator returns HTTP 501 with `NotImplemented`, so a test that touches a missing call fails on the first run and you know immediately. Loud failures are cheap.
+
+The expensive case is behavior the emulator implements approximately, because your assertions still go green. The release data localizes several:
+
+**IAM is not enforced the way AWS enforces it.** The launch post says it plainly: a request that AWS denies might succeed in the emulator, and you should not use it to test whether your application is secure. Your authorization test passing locally is not evidence. This is the single largest gap in the tool's usable surface, because "the wrong principal gets an error" is exactly the assertion people write once and trust forever.
+
+**Infrastructure as code is close to unverified.** CloudFormation scores 26.7%, and the call-level detail is worse than the average: `cloudformation:DescribeType`, the call CDK and SAM lean on to resolve resource schemas, matched AWS on 2 of 2,033 steps (0.1%). A template that deploys cleanly against the emulator has told you almost nothing about a real deploy. Kento Ikeda's [independent run](https://dev.to/aws-builders/will-aws-emulator-replace-the-aws-blocks-mocks-what-running-both-revealed-about-a-third-testing-2h9c) put CloudFormation near 20% and concluded the same thing.
+
+**One account, one Region, no cross-boundary behavior.** The emulator acts as a single account with no cross-account or cross-Region semantics, which rules out the tests that catch the most common production incident in multi-account estates: a role trust policy that works in staging and fails in the shared account.
+
+**Throttling, quotas, outages and eventual consistency are not simulated.** InfoQ lists these among the launch limits. So the retry logic, the backoff, the idempotency key, the read-after-write assumption: all of it is untested by a green emulator run, and all of it is where distributed systems actually break.
+
+**State is in memory until you stop the process.** Fine for tests, fatal for anything that assumes durability across restarts.
+
+Against that, some gaps close in the other direction, and these are the ones worth trusting:
+
+- Works, and was measured: `PutItem` 954/974 (97.9%), `GetItem` 1003/1036 (96.8%), S3 `PutObject` 232/232, `ListObjectsV2` 121/121, `DeleteObject` 198/198, `Lambda:Invoke` 45/47.
+- Works, and contradicts the mocks people wrote by hand: S3 lowercases user metadata keys, and a delete followed by a put plus a permanent version delete leaves the key reading as deleted. Both behaviors came back from the emulator exactly as AWS documents them, which is precisely the drift a hand-written mock hides.
+- Works, but slowly: a new DynamoDB table sits in `CREATING` for about three seconds and rejects writes with `ResourceNotFoundException` until it flips, matching real DynamoDB. Your fixture has to poll, and the mock that used to return instantly was lying.
+
+Across the 149 operations with at least 50 measured steps, the median per-call match rate is 98.6%. The hot path is genuinely good. The long tail is where the 0.1% numbers live.
+
+<AwsEmulatorLedger client:visible />
+
+## Compute your own number in five minutes
+
+The published score is a service average over tests someone else chose. The number you want is the same statistic restricted to the calls your code makes, and the release data supports that directly: `scores.json.gz` carries per-step operations, so you can filter without running anything.
+
+The shape of the answer matters more than the exact value. Filter to your operation set and you get a per-call rate; that is an upper bound on how often your code sees AWS-identical behavior, because their suite is weighted toward edge cases and yours is weighted toward your happy path. Use it as a screening gate, not a probability:
+
+1. **List the operations your app actually calls**, from the SDK client usage or a CI trace, not from memory. SDK clients cover more than people think.
+2. **Compute per-operation match rate** from the release file. Anything below about 95% with more than 30 measured steps is a behavior you have not verified.
+3. **Treat every unverified behavior as an untested assertion**, and either replace it with a contract test against real AWS or delete the assertion so it stops giving you false confidence.
+4. **Keep one nightly run against a real account** for the same operation set. That is the only test that can see a silent divergence, and it is cheap if it runs once a day on a scratch account with a budget alarm.
+5. **Pin the version.** A score is a snapshot, and the docs warn that adding tests can lower it while the emulator improves. A comment in CI saying "pinned to v1.0.544 because `UpdateItem` regressed at 87.7%" is worth more than any badge.
+
+The script that produced every table above is short enough to read in one sitting:
+
+```python
+import json, collections, re
+
+scores = json.load(open("scores.json"))            # gunzip of scores.json.gz
+calls = collections.defaultdict(lambda: [0, 0])    # pass, mismatch
+
+for unit in scores["units"]:
+    if unit.get("kind") != "wire":
+        continue
+    service = re.search(r"com\.amazonaws\.([a-z0-9-]+)#", unit["services"][0]).group(1)
+    for step in (unit.get("detail") or {}).get("steps", []):
+        key = f"{service}:{step['operation']}"
+        if step["outcome"] == "pass":
+            calls[key][0] += 1
+        elif step["outcome"] == "mismatch":
+            calls[key][1] += 1
+
+for key in ["dynamodb:PutItem", "dynamodb:Query", "s3:GetObject", "cloudformation:DescribeType"]:
+    passed, failed = calls[key]
+    print(f"{key:32s} {passed:5d}/{passed + failed:<5d} {100 * passed / max(1, passed + failed):5.1f}%")
+```
+
+Only `wire` units carry per-step detail, and they are about a quarter of the suite, which is the same caveat Kento hit when he recomputed the numbers for the operations a specific library calls. Single-digit step counts are not a trend.
+
+## Where it belongs in the test stack
+
+The useful mental model is three layers, not two. Mocks answer at import time and are fast but assert nothing about AWS. The emulator answers at the API boundary and asserts response shape, error wording, and state transitions. A sandbox answers with real AWS and is the only layer that can be wrong in ways you did not anticipate.
+
+| You are asserting                                                    | Right layer |
+| -------------------------------------------------------------------- | ----------- |
+| Your business logic branches on a response shape                     | Mock        |
+| SDK wiring, serializers, pagination, retry loop structure            | Emulator    |
+| Error code and message your code parses                              | Emulator    |
+| A coding agent can create, inspect and clean up resources unattended | Emulator    |
+| IAM or resource policies deny the wrong principal                    | Real AWS    |
+| Throttling, quotas, concurrency limits, eventual consistency         | Real AWS    |
+| CDK or Terraform deploy of your actual stack                         | Real AWS    |
+| Cross-account or cross-Region access                                 | Real AWS    |
+
+The reframe that makes this actionable: the emulator is not a cheaper AWS. It is a well-instrumented mock that happens to speak the real wire protocol, with a published list of where it lies. Teams that use it as a fast inner loop and keep a small, real contract suite outside the loop get the speed without the false confidence. Teams that replace their integration environment with it and delete the sandbox will discover the difference during an incident, from the one behavior nobody wrote an assertion for.
+
+That is the same tradeoff as every other agent-adjacent shortcut: [a runnable approval and retry harness](/blog/testing-ai-agent-actions/) is worth more than a trusted one, and [a sandbox boundary](/blog/agent-sandbox-boundary/) is worth more when you can name what it does not contain. Here the boundary is a 26.7% CloudFormation score and an IAM evaluator that says yes.
+
+## Appendix: what these numbers are and are not
+
+Everything above comes from one file, `scores.json.gz` in release v1.0.544, commit `46754bd`, scored 2026-11-20 14:24 UTC, plus the published docs and Kento Ikeda's independent run. I did not execute the emulator for this post; I recomputed its own reported results, which is a weaker claim than running the tests myself, and I am labelling it that way.
+
+Two limits to keep in view. First, the unit population is not your unit population: AWS's suite deliberately covers edge cases, deployment smoke tests, and services you will never touch, and the mix of `wire` and `behavioral` units differs by service, which is why the per-service and per-call tables disagree. Second, a pass rate is not a correctness proof in either direction. A 99% score still leaves one behavior your test asserts and the emulator gets wrong, and a 26.7% score still contains thousands of behaviors that match exactly. The rate tells you where to look. Only your own operation set tells you what you are standing on.
