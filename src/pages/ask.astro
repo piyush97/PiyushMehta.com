@@ -22,7 +22,7 @@ export const prerender = true;
   </header>
 
   <div class="ask-shell">
-    <AskPiyush client:load siteKey="" />
+    <AskPiyush client:idle={{ timeout: 500 }} siteKey="" />
     <noscript>JavaScript is required for chat. Use the <a href="/contact-me">contact page</a> instead.</noscript>
   </div>
 </Layout>

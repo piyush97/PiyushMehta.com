@@ -127,6 +127,7 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
     verifyError,
     historyError,
   } = useAskPiyush(siteKey);
+  const [hydrated, setHydrated] = useState(false);
   const [input, setInput] = useState('');
   const [picked, setPicked] = useState<string | null>(null);
   const logRef = useRef<HTMLDivElement>(null);
@@ -144,6 +145,7 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
 
   // Fragments never reach server logs. Prefill only; a link cannot spend quota.
   useEffect(() => {
+    setHydrated(true);
     const q = new URLSearchParams(window.location.hash.slice(1)).get('q');
     if (!q) return;
     setInput(q.slice(0, MAX));
@@ -195,7 +197,7 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
               <ul className="ask__prompts">
                 {SUGGESTIONS.map((s) => (
                   <li key={s}>
-                    <button type="button" onClick={() => submit(s)} disabled={busy}>
+                    <button type="button" onClick={() => submit(s)} disabled={!hydrated || busy}>
                       <span>{s}</span>
                       <Arrow />
                     </button>
@@ -321,6 +323,7 @@ export default function AskPiyush({ siteKey }: { siteKey: string }) {
           <textarea
             id="ask-input"
             ref={inputRef}
+            readOnly={!hydrated}
             value={input}
             rows={2}
             maxLength={MAX}

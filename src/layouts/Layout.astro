@@ -4,6 +4,7 @@ import favicon from '../assets/favicon.svg';
 import Footer from '../components/Footer.astro';
 import Navbar from '../components/Navbar.astro';
 import SEO from '../components/SEO.astro';
+import { ENV } from 'varlock/env';
 import type { JsonLdData } from '../types/schema';
 import '../styles/global.css';
 
@@ -45,6 +46,8 @@ const {
   preloadImage,
   preloadImageSrcset,
   preloadImageSizes,} = Astro.props;
+
+const googleSiteVerification = ENV.GOOGLE_SITE_VERIFICATION?.trim();
 ---
 
 <!doctype html>
@@ -70,6 +73,7 @@ const {
       crossorigin="anonymous"
     />
     <meta name="generator" content={Astro.generator} />
+    {googleSiteVerification && <meta name="google-site-verification" content={googleSiteVerification} />}
     <ClientRouter />
     {preloadImage && <link rel="preload" as="image" href={preloadImage} imagesrcset={preloadImageSrcset} imagesizes={preloadImageSizes} type={preloadImage.endsWith('.avif') ? 'image/avif' : undefined} fetchpriority="high" />}
     <SEO

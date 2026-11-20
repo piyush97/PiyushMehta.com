@@ -21,7 +21,7 @@ export default defineConfig({
   },
   timeout: 60000,
   expect: {
-    timeout: 30000,
+    timeout: Number(process.env.PW_EXPECT_TIMEOUT ?? 30000),
   },
   projects: [
     {
