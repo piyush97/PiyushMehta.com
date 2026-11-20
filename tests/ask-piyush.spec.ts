@@ -35,6 +35,41 @@ test.describe('Ask Piyush', () => {
     await stubTurnstile(page);
   });
 
+  test('defers hydration until idle and Markdown until the first answer', async ({ page }) => {
+    await page.addInitScript(() => {
+      const requestIdleCallback = window.requestIdleCallback.bind(window);
+      window.addEventListener('release-idle', () => { window.requestIdleCallback = requestIdleCallback; }, { once: true });
+      window.requestIdleCallback = (callback, options) => {
+        window.addEventListener('release-idle', () => requestIdleCallback(callback, options), { once: true });
+        return 0;
+      };
+    });
+    const scripts = new Set<string>();
+    page.on('request', (request) => scripts.add(new URL(request.url()).pathname));
+    const answerScripts = () => [...scripts].filter((path) => /\/Answer\.[^/]+$/.test(path));
+    await page.route('**/api/chat', (route) => route.fulfill({
+      headers: { 'content-type': 'text/event-stream', 'x-vercel-ai-ui-message-stream': 'v1' },
+      body: answer('Piyush built **FocusTube**.'),
+    }));
+
+    await page.goto('/ask');
+    const island = page.locator('astro-island[component-url*="AskPiyush"]');
+    const prompt = page.getByRole('button', { name: 'Tell me about FocusTube' });
+    await expect(island).toHaveAttribute('client', 'idle');
+    await expect(prompt).toBeDisabled();
+    await expect(page.getByLabel('Your question about Piyush')).not.toBeEditable();
+    const base = page.url();
+    expect(scripts.has(new URL((await island.getAttribute('component-url'))!, base).pathname)).toBe(false);
+    expect(scripts.has(new URL((await island.getAttribute('renderer-url'))!, base).pathname)).toBe(false);
+
+    await page.evaluate(() => window.dispatchEvent(new Event('release-idle')));
+    await expect(prompt).toBeEnabled();
+    expect(answerScripts()).toEqual([]);
+    await prompt.click();
+    await expect(page.getByRole('article', { name: 'Answer' }).locator('strong')).toHaveText('FocusTube');
+    expect(answerScripts()).toHaveLength(1);
+  });
+
   test('streams an answer with source links and sends the session header', async ({ page }) => {
     let header = '';
     let body: { messages: { role: string; parts: { text: string }[] }[] } | undefined;
@@ -235,6 +270,16 @@ test.describe('Ask Piyush', () => {
     expect(results.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')).toEqual([]);
     await page.keyboard.press('Tab');
     await expect(page.locator(':focus')).toBeVisible();
+  });
+});
+
+test.describe('Ask Piyush without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+
+  test('keeps the contact link available', async ({ page }) => {
+    await page.goto('/ask');
+    await expect(page.getByRole('heading', { name: 'Ask Piyush', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'contact page', exact: true })).toHaveAttribute('href', '/contact-me');
   });
 });
 
