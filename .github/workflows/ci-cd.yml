@@ -135,7 +135,6 @@ jobs:
     name: E2E ${{ matrix.project }} (non-blocking)
     runs-on: ubuntu-latest
     # Report-only until existing WebKit failures are triaged; Chromium stays the gate.
-    continue-on-error: true
     timeout-minutes: 15
     needs: build
     strategy:
@@ -171,7 +170,9 @@ jobs:
         run: bunx playwright install --with-deps webkit
 
       - name: Run WebKit tests
-        # Report-only job: no retries, parallel workers, short assertion timeout so known failures fail fast.
+        # Report-only: step-level continue-on-error keeps the check green; failures live in the uploaded report.
+        # No retries, parallel workers, short assertion timeout so known failures fail fast.
+        continue-on-error: true
         run: bunx playwright test tests/*.spec.ts --project="$PW_PROJECT" --retries=0 --workers=4
         env:
           CI: true
