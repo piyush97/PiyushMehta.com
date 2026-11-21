@@ -8,6 +8,11 @@ interface Props {
 
 const { study, index } = Astro.props;
 const caseNumber = String(index + 1).padStart(2, '0');
+const followUp = study.next
+  ? { id: 'next', label: 'Next', items: study.next }
+  : study.knownLimits
+    ? { id: 'limits', label: 'Known limits', items: study.knownLimits }
+    : undefined;
 ---
 
 <article class="case-record" id={`case-${index + 1}`} data-case-record>
@@ -41,6 +46,13 @@ const caseNumber = String(index + 1).padStart(2, '0');
       <p>{study.problem}</p>
     </section>
 
+    {study.architecture && (
+      <section class="case-record__statement" aria-labelledby={`case-${index + 1}-architecture`}>
+        <h3 id={`case-${index + 1}-architecture`}>Architecture</h3>
+        <p>{study.architecture}</p>
+      </section>
+    )}
+
     <div class="case-record__columns">
       <section aria-labelledby={`case-${index + 1}-approach`}>
         <h3 id={`case-${index + 1}-approach`}>Approach</h3>
@@ -56,6 +68,27 @@ const caseNumber = String(index + 1).padStart(2, '0');
         </ul>
       </section>
     </div>
+
+    {(study.tradeoffs || followUp) && (
+      <div class="case-record__columns">
+        {study.tradeoffs && (
+          <section aria-labelledby={`case-${index + 1}-tradeoffs`}>
+            <h3 id={`case-${index + 1}-tradeoffs`}>Tradeoffs</h3>
+            <ul>
+              {study.tradeoffs.map((item) => <li>{item}</li>)}
+            </ul>
+          </section>
+        )}
+        {followUp && (
+          <section aria-labelledby={`case-${index + 1}-${followUp.id}`}>
+            <h3 id={`case-${index + 1}-${followUp.id}`}>{followUp.label}</h3>
+            <ul>
+              {followUp.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </section>
+        )}
+      </div>
+    )}
 
     <footer class="case-record__footer">
       <section aria-labelledby={`case-${index + 1}-stack`}>
