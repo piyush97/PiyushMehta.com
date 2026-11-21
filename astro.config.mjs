@@ -55,6 +55,8 @@ export default defineConfig({
       rehypePlugins: [
         () => (tree) => {
           visit(tree, 'element', (node) => {
+            // Post tables scroll horizontally (overflow-x: auto); tabindex lets keyboard users scroll them.
+            if (node.tagName === 'table') node.properties.tabIndex = 0;
             const href = node.properties?.href;
             if (
               node.tagName === 'a' &&
