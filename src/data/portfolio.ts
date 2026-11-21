@@ -11,8 +11,14 @@ export interface CaseStudy {
   timeframe: string;
   summary: string;
   problem: string;
+  architecture?: string;
   approach: string[];
   outcomes: string[];
+  tradeoffs?: string[];
+  /** Planned work recorded in the project docs. */
+  next?: string[];
+  /** Documented limits, shown when the project docs record no plan. */
+  knownLimits?: string[];
   stack: string[];
   links?: {
     label: string;
@@ -145,6 +151,8 @@ export const caseStudies: CaseStudy[] = [
       'Built a reading layer that turns new engineering blog posts into reviewed explainers with context, mechanism, a diagram, an ELI5, trade-offs, and a source behind every claim.',
     problem:
       'Engineering blog posts announce results but skip the mechanism and trade-offs. Summary bots compress the announcement and invent details; readers still have to open three more articles to understand one.',
+    architecture:
+      'Two Workers share one D1 database. understory-web serves the read-only, server-rendered site, a JSON API, RSS, the sitemap, FTS5 search, and an auth-gated editorial desk. understory-pipeline runs a quarter-hour cron that discovers posts from engineeringblogs.xyz, then queue jobs extract readable blocks with HTMLRewriter into a content-hashed snapshot, ask Workers AI for strict JSON, validate it, and write a revision to D1.',
     approach: [
       'Split discovery, extraction, generation, and validation into leased queue jobs so a failed step stays in D1 and never reaches the public index.',
       'Validated model output with a Zod schema plus reference checks: every citation, source URL, and diagram edge must resolve before a draft enters review.',
@@ -156,11 +164,101 @@ export const caseStudies: CaseStudy[] = [
       'Kept readers off the inference path: every page is server-rendered from approved, immutable revisions.',
       'Published the code under MIT and the explainers under CC BY 4.0.',
     ],
+    tradeoffs: [
+      'Automated checks are not fact-checking. With AUTO_PUBLISH on, a valid new generation publishes without a human; setting it to false sends every draft to manual review.',
+      'Fits the free tier: Workers AI allows 10,000 neurons a day, so production caps the budget at 9,000, reserves about 500 per attempt, and defers jobs to the next UTC day instead of overspending.',
+      'Scores sources for mechanism evidence and near-duplicates before generation, so low-scoring posts never reach the model. Enforcement rests on a reviewed audit of the latest 500 articles, not a full-corpus check.',
+      'Ships read-only in v1: no accounts, comments, votes, public submissions, or arbitrary URL ingestion.',
+    ],
+    next: [
+      'Decide what happens to already published explainers whose sources now score low: noindex, unpublish, and regeneration are each a separate owner decision.',
+      'Define a retention policy for private snapshots. Today the storage audits only report candidates; any deletion needs owner approval, a separately reviewed implementation, and a D1 backup and recovery check.',
+    ],
     stack: ['Cloudflare Workers', 'Workers AI', 'D1', 'Queues', 'Hono', 'TypeScript'],
     links: [
       { label: 'Live site', href: 'https://understory.piyushmehta.com/' },
       { label: 'Technical article', href: '/blog/understory-engineering-blogs-explained' },
       { label: 'GitHub', href: 'https://github.com/piyush97/understory' },
+    ],
+  },
+  {
+    title: 'agentgate',
+    eyebrow: 'GitHub Action, CLI, CI security, open source',
+    role: 'Author and maintainer',
+    timeframe: '2026',
+    summary:
+      'Built a zero-dependency GitHub Action and CLI that fails a pull request when an AI coding agent weakens tests, edits guardrail files, or escalates CI permissions.',
+    problem:
+      'Semgrep and gitleaks catch insecure code. They do not catch a pull request that deletes the failing test, loosens workflow permissions, or silences the scanner, and that change can arrive with CI still green.',
+    architecture:
+      'One Node 24 pipeline with two entry points: a GitHub Action and an agentgate check CLI. git produces the base...head diff, a hunk parser splits it into added and removed lines per file, five pure rules return findings, and an engine applies block, warn, or off per rule to reach a verdict. Reports render as a step summary, JSON, and workflow annotations; exit 0 passes, 1 blocks, 2 is a usage or environment error.',
+    approach: [
+      'Read .agentgate.json from the PR base commit, not the head, so a PR cannot turn a rule off in the same change that violates it.',
+      'Made protectedPaths append-only: a repository can add guarded paths but cannot drop .agentgate.json or .github/**.',
+      'Failed closed. A missing base commit, shallow clone, or bad config exits 2 instead of passing, unknown config keys are errors, and a failed label lookup keeps the block.',
+      'Kept the override human-only: the approval label turns block into warn only when its newest event is labeled, the actor is a user account rather than a bot, and the actor is not the PR author unless they own the repository. A new push blocks again.',
+      'Wrote each rule as a pure function over the parsed diff, with file reads as its only I/O, and shared the rules between the Action and the CLI.',
+    ],
+    outcomes: [
+      'Released v0.1.0 with five rules: test-weakened, guardrail-edited, workflow-escalation, dependency-added, and suppression-added.',
+      'Shipped the Action with a step summary, annotations, a verdict output, and the label override, plus a CLI with Markdown and JSON output.',
+      'Gated the agentgate repository with its own Action, pinned to the v0.1.0 release SHA so a PR cannot swap in its own dist/.',
+      'Published under MIT with no runtime dependencies and a private path for reporting bypasses.',
+    ],
+    tradeoffs: [
+      'Reads diffs, not behavior. Authorization bugs, IDOR, tenant isolation breaks, and business-logic errors pass, and so does a plausible test for wrong behavior, so SAST, secret scanning, and human review stay in place.',
+      'Needs fetch-depth: 0 to read the base commit. Exit 2 makes a shallow clone fail loudly rather than pass silently.',
+      'An approval covers only the commits present when the label was applied, so reviewers re-apply it after every push.',
+      'The gate is only as strong as repository settings: it must be a required check with CODEOWNERS review on .github/**, or a PR can replace the workflow that runs it.',
+    ],
+    next: [
+      'Publish a demo repository with three agent-style PRs (a skipped test, a CODEOWNERS edit, a pull_request_target trigger), each blocked.',
+      'Add rules for go.mod and Cargo.toml dependencies, lockfile-only changes, and monitoring-config deletions once there is real false-positive data.',
+    ],
+    stack: ['TypeScript', 'Node.js 24', 'GitHub Actions', 'node:test'],
+    links: [
+      { label: 'Technical article', href: '/blog/agentgate-block-agent-prs-that-weaken-tests' },
+      { label: 'GitHub', href: 'https://github.com/piyush97/agentgate' },
+    ],
+  },
+  {
+    title: 'OmaSwitch',
+    eyebrow: 'Omarchy plugin, Hyprland, on-device OCR, open source',
+    role: 'Author and maintainer',
+    timeframe: '2026',
+    summary:
+      'Built a keyboard-first Alt+Tab switcher for Omarchy that orders windows by recent use, streams a live preview, and finds a window by text visible inside it.',
+    problem:
+      'Omarchy’s default Alt+Tab cycles windows directly. It does not put the most recently used window first, show what a window contains before switching, or find the terminal that printed a specific error.',
+    architecture:
+      'A Quickshell overlay with two parts. Switcher.qml owns the window list, the double-buffered live preview, the OCR capture queue, and keyboard handling. Model.js holds pure logic for MRU ordering, filtering, OCR layout parsing, and highlight geometry, and test_model.js runs it in CI without a compositor. OCR uses the Tesseract package Omarchy already ships.',
+    approach: [
+      'Used two capture views for preview handoff instead of one stream per window, with a single extra capture only during an OCR search.',
+      'Held plain snapshots in the window list, never compositor-owned objects, so a window closing mid-switch cannot leave a dangling reference.',
+      'Applied the selection after the overlay unmaps, because Hyprland restores focus on unmap and an earlier switch would not stick.',
+      'Started OCR only after three typed characters: title, app, and workspace matches appear first, and plain Alt+Tab cycling never runs OCR.',
+      'Kept OCR on the machine: each capture sits in $XDG_RUNTIME_DIR only while scanned, extracted text stays in memory, and both are discarded when the switcher closes.',
+    ],
+    outcomes: [
+      'Installs with one omarchy plugin add command and needs no daemon, extra package, or elevated privilege.',
+      'Shipped content search with match outlines drawn from Tesseract page layout analysis, plus OCR language selection through OMARCHY_OCR_LANGS.',
+      'Merged fixes and features from four outside contributors, including the double-buffered preview, app icons, and a fix for Alt+Tab intermittently unmapping.',
+      'Published under MIT, with releases tracked in a changelog.',
+    ],
+    tradeoffs: [
+      'Degrades instead of failing: without hyprland-toplevel-export-v1, switching and title search still work and the preview pane stays empty; without Tesseract, title, app, and workspace search still work.',
+      'Content matches arrive after instant title matches because windows are scanned one at a time.',
+      'Installing does not change keybindings, so replacing Omarchy’s Alt+Tab is a one-time manual edit to bindings.lua.',
+    ],
+    knownLimits: [
+      'OCR can miss very small text, low-contrast text, and stylised fonts.',
+      'Windows that cannot be captured match only by title, app, and workspace.',
+      'A known upstream Quickshell crash on Qt 6.11.x affects setups with or without OmaSwitch.',
+    ],
+    stack: ['QML', 'JavaScript', 'Quickshell', 'Hyprland', 'Tesseract OCR'],
+    links: [
+      { label: 'Technical article', href: '/blog/omaswitch-alt-tab-omarchy' },
+      { label: 'GitHub', href: 'https://github.com/piyush97/omaswitch' },
     ],
   },
   {

@@ -23,10 +23,10 @@ test.describe('redesigned public surfaces', () => {
 
     const index = page.locator('[data-work-section="index"]');
     const records = page.locator('[data-case-record]');
-    await expect(index.locator('a')).toHaveCount(10);
-    await expect(records).toHaveCount(10);
+    await expect(index.locator('a')).toHaveCount(12);
+    await expect(records).toHaveCount(12);
     // The Understory band is fetched live and absent when that service is unreachable.
-    await expect(page.locator('main h2:not(.understory-band h2)')).toHaveCount(12);
+    await expect(page.locator('main h2:not(.understory-band h2)')).toHaveCount(14);
 
     const firstRecord = records.first();
     await expect(firstRecord.getByRole('heading', { name: 'Indian Food Recommends' })).toBeVisible();
