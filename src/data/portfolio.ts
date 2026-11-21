@@ -202,7 +202,7 @@ export const caseStudies: CaseStudy[] = [
     outcomes: [
       'Released v0.1.0 with five rules: test-weakened, guardrail-edited, workflow-escalation, dependency-added, and suppression-added.',
       'Shipped the Action with a step summary, annotations, a verdict output, and the label override, plus a CLI with Markdown and JSON output.',
-      'Gated the agentgate repository with its own Action, pinned to the v0.1.0 release SHA so a PR cannot swap in its own dist/.',
+      'Gated the agentgate repository with its own Action, pinned to a release commit SHA so a PR cannot swap in its own dist/.',
       'Published under MIT with no runtime dependencies and a private path for reporting bypasses.',
     ],
     tradeoffs: [
