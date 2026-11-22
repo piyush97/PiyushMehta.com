@@ -57,6 +57,12 @@ test.describe('approved homepage revamp', () => {
       await page.goto('/', { waitUntil: 'networkidle' });
 
       // Then the page stays within the viewport and preserves the intended reading order
+      await expect(
+        page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', {
+          name: 'Piyush Mehta (PM) home',
+        })
+      ).toHaveAttribute('href', '/');
+
       const dimensions = await page.evaluate(() => ({
         clientWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,

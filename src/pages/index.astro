@@ -35,6 +35,11 @@ const caseHref = (title: string) => {
 };
 const toPostHref = (id: string) =>
   `/blog/${id.replace(/\/index$/, '').replace(/\.(md|mdx)$/, '')}`;
+
+const portraitAvifSrcset = `${speakerPhotoAvif320.src} 320w, ${speakerPhotoAvif640.src} 640w, ${speakerPhotoAvif960.src} 960w, ${speakerPhotoAvif1280.src} 1280w`;
+// On phones, account for the 1.2× zoom and the width needed to cover the 15rem frame.
+const portraitSizes =
+  '(max-width: 640px) max(27rem, calc((100vw - 2rem) * 0.8556)), (max-width: 900px) min(760px, calc(100vw - 2rem)), 42vw';
 ---
 
 <Layout
@@ -54,8 +59,8 @@ const toPostHref = (id: string) =>
   ogTemplate="tech"
   ogTheme="dark"
   preloadImage={speakerPhotoAvif1280.src}
-  preloadImageSrcset={`${speakerPhotoAvif320.src} 320w, ${speakerPhotoAvif640.src} 640w, ${speakerPhotoAvif960.src} 960w, ${speakerPhotoAvif1280.src} 1280w`}
-  preloadImageSizes="(max-width: 900px) calc(100vw - 2rem), 42vw"
+  preloadImageSrcset={portraitAvifSrcset}
+  preloadImageSizes={portraitSizes}
 >
   <div class="home" data-home-ledger>
     <section class="ledger" aria-labelledby="home-title">
@@ -83,18 +88,18 @@ const toPostHref = (id: string) =>
           <picture>
             <source
               type="image/avif"
-              srcset={`${speakerPhotoAvif320.src} 320w, ${speakerPhotoAvif640.src} 640w, ${speakerPhotoAvif960.src} 960w, ${speakerPhotoAvif1280.src} 1280w`}
-              sizes="(max-width: 900px) calc(100vw - 2rem), 42vw"
+              srcset={portraitAvifSrcset}
+              sizes={portraitSizes}
             />
             <source
               type="image/webp"
               srcset={`${speakerPhotoWebp320.src} 320w, ${speakerPhotoWebp640.src} 640w, ${speakerPhotoWebp960.src} 960w, ${speakerPhotoWebp1280.src} 1280w`}
-              sizes="(max-width: 900px) calc(100vw - 2rem), 42vw"
+              sizes={portraitSizes}
             />
             <source
               type="image/jpeg"
               srcset={`${speakerPhotoJpg320.src} 320w, ${speakerPhotoJpg640.src} 640w, ${speakerPhotoJpg960.src} 960w, ${speakerPhoto.src} 1280w`}
-              sizes="(max-width: 900px) calc(100vw - 2rem), 42vw"
+              sizes={portraitSizes}
             />
             <img
               src={speakerPhoto.src}
@@ -299,7 +304,6 @@ const toPostHref = (id: string) =>
     --home-rule: var(--color-card-border);
     --home-wine: var(--color-accent);
     --home-motion-enter: 560ms;
-    --home-motion-portrait: 900ms;
     --home-motion-rule: 420ms;
     --home-motion-nudge: 0.22rem;
     color: var(--home-ink);
@@ -396,7 +400,6 @@ const toPostHref = (id: string) =>
     font-weight: 800;
     letter-spacing: -0.055em;
     line-height: 0.87;
-    animation: home-fade-up var(--home-motion-enter) var(--motion-ease-out) 140ms both;
   }
 
   .ledger h1 span {
@@ -543,7 +546,6 @@ const toPostHref = (id: string) =>
       transparent 88%
     );
     mask-image: radial-gradient(ellipse 63% 76% at 55% 54%, #000 42%, transparent 88%);
-    animation: home-portrait-in var(--home-motion-portrait) var(--motion-ease-out) 180ms both;
   }
 
   .ledger__evidence {
@@ -660,17 +662,6 @@ const toPostHref = (id: string) =>
     to {
       opacity: 1;
       transform: translateY(0);
-    }
-  }
-
-  @keyframes home-portrait-in {
-    from {
-      opacity: 0;
-      filter: blur(8px);
-    }
-    to {
-      opacity: 1;
-      filter: blur(0);
     }
   }
 
@@ -1172,10 +1163,8 @@ const toPostHref = (id: string) =>
 
   @media (prefers-reduced-motion: reduce) {
     .ledger__kicker,
-    .ledger h1,
     .ledger__lede,
     .ledger__actions,
-    .ledger__portrait img,
     .ledger__signal,
     .ledger__evidence h2,
     .ledger__evidence-body,
