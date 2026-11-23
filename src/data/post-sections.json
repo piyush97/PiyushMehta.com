@@ -5528,6 +5528,87 @@
     }
    ]
   },
+  "zdr-flag-binds-one-hop": {
+   "title": "Your ZDR Flag Binds One Hop. Two Million Canaries Proved It.",
+   "description": "Dragos seeded two million prompts with unique canary URLs and credentials, then watched them get used. What a hit proves, what it cannot, and how to build a probe that can name the hop that read your prompt.",
+   "digest": "3e4191bb55ab82ad",
+   "sections": [
+    {
+     "level": 0,
+     "heading": null,
+     "text": "Twenty-four days after the request, one of its URLs was posted into a Feishu channel. Three desktops and three phones in Beijing and Shanghai opened it within two minutes. That URL had existed in exactly one place: a single inference request carrying the Zero Data Retention flag. Dragos had disclosed only its first eight characters to the provider, so whoever posted it was reading a stored copy of the full prompt.\n\nThat is one line of evidence from the experiment HD Moore's team published on 19 November. Between July and November they sent about two million prompts through AI routers and hosting providers, each seeded with credentials and URLs that had never existed anywhere else, then watched what happened after inference. The results, corroborated by Ars Technica and by the providers' own incident reports, describe three compromised hosts, prompt theft by resellers, and privacy flags that were routinely ignored one hop downstream.\n\nThe engineering lesson is narrower than \"the AI supply chain is insecure,\" and more useful: a retention flag is a statement about the hop that signed it. Everything past that hop is a different company with a different policy, and usually a different name than the one on your invoice.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "The experiment is one design decision",
+     "text": "The method is worth reading as a design, because the design is what made the conclusions possible. Every secret was usable, not decorative. Each prompt carried an AWS key pair tied to an empty account with full logging, a hostname, a URL, a git remote, and in some cases an SSH password. Every one of those assets pointed at infrastructure Dragos operated. Each secret was seeded into exactly one prompt sent to one provider.\n\nThat last constraint is the whole experiment. If the same token appears in a thousand prompts, a hit tells you a thousand prompts are exposed and nothing about which one. Uniqueness is what turns a tripwire into an identifier, and the writeup says each hit could be tied back to the exact prompt, model, router, and privacy setting that carried it.\n\nThe shape of the probe, reconstructed from the writeup rather than published as a schema:\n\nA canary has to be _usable_ to generate signal. A random string in the prompt body proves nothing, because nobody can act on it. A URL that a scraper can fetch, or a key that an intruder can test, produces an event with a timestamp, a source network, and a client fingerprint.",
+     "code": [
+      "{\n  \"per_request\": \"1 fresh seed, never reused\",\n  \"surfaces\": [\"https url\", \"dns name\", \"git remote\", \"ssh password\", \"aws key pair\"],\n  \"listeners\": [\"http\", \"dns\", \"git\", \"ssh\", \"postgres\", \"smtp\"],\n  \"recorded_on_hit\": [\"prompt id\", \"model id\", \"router\", \"privacy flag\", \"tcp/tls metadata\"]\n}"
+     ]
+    },
+    {
+     "level": 2,
+     "heading": "What a firing proves, and what it does not",
+     "text": "This is where most writeups, including vendor advisories, overreach. A canary firing proves exactly one thing: something outside your process read a value that only existed in that request. Moore states the negative case himself, in the strongest available form. His team's tests \"sampled requests and detected credential misuse\" and \"did not provide visibility into every request or every possible data-access event,\" which is why Phala kept a wider precautionary window than the two days its canaries actually confirmed.\n\nSo the inference table looks like this:\n\n| Observation | Supported conclusion | Not supported |\n| ------------------------------------ | ---------------------------------------------------------------------- | ------------------------------------------------------- |\n| Credential tested from a new network | The request was read after it left you, and the reader could act on it | Which hop read it, or that it was stored on purpose |\n| URL fetched days later | Content was retained somewhere past inference | That the provider named in your config did the fetching |\n| Nothing fired | No evidence of misuse in this sample | Privacy, or the absence of a leak |\n\nThe third row is the one that gets teams in trouble. Two million prompts is a sample, and a clean canary is a clean sample, not a clean chain.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "What the two million prompts found",
+     "text": "",
+     "code": []
+    },
+    {
+     "level": 3,
+     "heading": "Attackers were already inside three hosting providers",
+     "text": "The largest breach involved a couple hundred AWS keys, all sent in late October, all inside a few short windows. Every request sent during those windows was stolen, including requests the provider had rejected before a model ever ran. That detail localizes the attacker: they were copying traffic at the provider's front door, not in the inference stack behind it.\n\nThe keys were tested within hours in some cases, then used to list S3 buckets, read Secrets Manager and Parameter Store, create Bedrock API keys, and add IAM users. In total, the bait keys drew tens of thousands of AWS API calls, and one key was still in use three weeks after seeding. One adversary appears to have compromised two providers simultaneously, reusing secrets from both from a single rented server, and switched tooling from a script impersonating Chrome, to Boto3 inside OrbStack, to the AWS CLI on Kali. On 1 November the same operator added ARTEX, an LLM-driven pentest framework, whose artex-agent and artex-judge-r121 user agents the writeup asks defenders to add to detections.\n\nNone of the three providers detected the intrusion. All learned about it from a stranger's email.",
+     "code": []
+    },
+    {
+     "level": 3,
+     "heading": "A reseller only had to turn on logging",
+     "text": "The second finding required no exploit at all. Marketplace sellers listed a popular model at the lowest price, enabled request logging, and waited. What makes this one evidential rather than anecdotal is the control: prompts for the same model sent through a _different_ seller were never touched. The leak followed the seller, not the marketplace.\n\nIn one case, two prompts through one seller produced a visitor on home broadband a day and a half later, opening both secret URLs in a desktop browser and then guessing usernames at the login page. In another, someone on a Mac in France took passwords from two prompts and typed root SSH attempts by hand. One key that later showed up in that campaign had gone to a completely different router, which turned out to be quietly forwarding traffic to the marketplace.",
+     "code": []
+    },
+    {
+     "level": 3,
+     "heading": "The flag was ignored downstream",
+     "text": "Between July and October, one Chinese lab's systems fetched secret URLs from more than half the prompts sent to its models, including roughly two thirds of the requests marked \"no data collection\" or ZDR. The fetches arrived two or three days after each request. Several U.S. hosting providers resell that lab's models, and prompts sent to those providers triggered the identical scraper, which means the prompts were flowing back to the lab regardless of which country the customer bought from.\n\nOn the U.S. side, one provider crawled a secret URL more than two months after a single call to its search endpoint. Another returns for URLs days after every request, whichever router was used to reach it.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "traceroute, for inference",
+     "text": "Canaries tell you a prompt leaked. They do not tell you where, because a router typically reports one upstream provider and that provider is often another router. So the team built route tracing out of two cheap observation channels.\n\nFirst, an image URL in the request pointing back at their own server: every system that fetches it hands over an IP, an HTTP client string, and a timestamp. Second, slightly malformed requests, because each router tends to wrap the error from the hop behind it in its own envelope, so one response can carry three or four nested envelopes. Matching each layer against a signature database produces a hop list with software and often the operating company.\n\nAbout two thousand routes were traced. Several hundred included a system they could not identify. A handful sent the image to a company that was not on the advertised path at all. One marketplace seller adds roughly a thousand hidden tokens to every prompt, and one router appeared in a trace without being disclosed by the marketplace that fronted it.\n\nThat is the part you can build today. An image URL plus a signature for the error shapes you already see in production is a few hundred lines, and it answers a question no vendor dashboard will: who actually ran this request.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "The flag binds the hop that signed it",
+     "text": "Each hop decrypts the prompt. Ars Technica puts it plainly: prompts are encrypted in transit and decrypted at every hop, because the router has to read the request to route it and the provider has to read it to serve it. ZDR is an instruction to the party receiving your request. It has no mechanism to bind a party that receives the request from _them_.\n\nOpenRouter's chief executive said the quiet part in an email to a reporter: \"Provider data handling commitments have relied mostly on self-attestation, and that isn't sufficient.\" The resulting actions, in OpenRouter's 22 November post, were to off-board three providers, strip 125 endpoints of ZDR eligibility, and notify affected customers. The company also stated the findings did not show any breach or unauthorized access of OpenRouter itself.\n\nThe same week produced four provider accounts of the same failure from four different angles:\n\n| Provider | Window | Mechanism | Remediation |\n| ------------------------------------------------------------------------------------------------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |\n| Novita | 28 May to 11 Nov | \"Routing configuration issue\" forwarded MiniMax requests to MiniMax's own API | Models suspended, MiniMax follow-up |\n| Atlas Cloud | Q3 to early Q4 | Requests reached MiniMax's official API; access attributed upstream, not on Atlas infrastructure | Stopped routing there, pulled its models from OpenRouter to retest |\n| Phala | 21 Oct to 8 Nov | Inference VM taken over; request data visible in flight | Contained 8 Nov, KMS root key rotated 6 Nov |\n| Together | 24 Jun, 4/8/14 Jul | Prompt samples in a private Hugging Face repo, credential committed by an AI coding agent to a public repo | Scoped credentials, PR secret scanning, ZDR default for new accounts |\n\nThe upstream explanation for the reseller cases, relayed second-hand because MiniMax has not published its own account, is that content moderation was enabled on its endpoints before 22 October and that Zero Data Retention has since been turned on. OpenRouter's customer email put the gap between request and access at 40 to 130 hours, which matches the timing the canaries recorded.\n\nTogether's row deserves a second look. The samples were collected for software testing and stored privately. The credential that exposed them was committed to a public GitHub repository by an AI coding agent during development, then reverted after automated scanning caught it. The party that downloaded the samples searched them for credentials and tested whether those credentials were valid. Five of the ones tested were Dragos canaries. The probe designed to find prompt leakage was compromised by the tooling that prompt leakage now enables.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "Design the probe you can defend",
+     "text": "There is no setting that makes a third-party inference chain zero-retention. There is a probe design that tells you what you actually bought, and the design choice is mostly about which questions you want to be able to answer.\n\n \n\nThe checklist that follows from it:\n\n1. One secret per request, keyed to the route you recorded at send time. Model id, provider you pinned, caller identity, privacy flag. Without that join, a hit is an anecdote.\n2. Make the canary actionable. A URL that gets fetched and a credential that can be tested beat any string that can only be read.\n3. Run your own listener. The point of control is the receiving side. If you cannot log the hit with a timestamp and a source network, you have a rumor.\n4. Treat any firing as an incident, not a finding. Revoke first. The keys in this study were live for weeks after the first use.\n5. Keep a control route. Prompts for the same model through a provider you trust, with their own canaries. The seller attribution in this study came entirely from that comparison.\n6. Report the sample size with the negative result. \"No canary fired in 500 probes over 30 days\" is a finding. \"We use ZDR\" is not.\n\nTwo more signals cost nothing if you already run cloud infrastructure: alert on unknown principals calling bedrock:InvokeModel, and on user agents you did not ship. Both Kali and ARTEX identified themselves in CloudTrail, which is the rare case where the attacker announces the intrusion.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "Buying the chain",
+     "text": "Five options, ordered by what they actually control:\n\n| Option | What you control | Residual risk |\n| ------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------- |\n| Self-host the weights | Everything after the load | Your own patches, your own on-call |\n| Direct contract with a first-tier provider | One policy, one counterparty, one place to audit | Their breach, their data-sharing agreements |\n| Router with an explicit provider allowlist | Which hops are eligible | Undisclosed forwarding between your allowlisted provider and its upstream |\n| Router with the default pool | Price | Every hop the pool contains, plus any hop added after you configured it |\n| Reseller marketplace | Nothing | Prompt logging as a business model |\n\nThe middle rows are where most teams sit, and both failure modes are visible in this dataset: a router forwarding to a marketplace it did not disclose, and a provider forwarding to the model developer's API while calling it a routing configuration issue.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "What this evidence does not prove",
+     "text": "Dragos's findings are self-reported and not independently replicated. The writeup does not name the compromised providers. The sampling cannot bound exposure, which Phala's own report acknowledges. None of it establishes that frontier labs behave this way; the proof of concept ran through routers, resellers, and budget hosting, and the largest vendors were not the subject of the test.\n\nWhat it does establish is structural. Every hop that decrypts your prompt is a party that can retain it, and a flag you set at the first hop cannot reach the third. If the prompt contains something you would not hand to a stranger, design the probe before you need the answer. The sandbox boundary decides what your agent can read; this layer decides who reads what it writes. Both end up in the same incident report.\n\nThe Feishu link was eight characters long in one direction and a full URL in the other. That asymmetry is the whole argument for probing: the copy on the other side is not the copy you wrote.",
+     "code": []
+    }
+   ]
+  },
   "zero-downtime-database-migration-at-scale": {
    "title": "Zero-Downtime Database Migration: Scaling from 10M to 100M Users",
    "description": "A comprehensive case study of migrating a 50TB PostgreSQL database to support 10x user growth with zero downtime, improved performance, and 40% cost reduction.",
