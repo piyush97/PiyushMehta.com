@@ -410,10 +410,7 @@ export const caseStudies: CaseStudy[] = [
       'A visible signal of infrastructure thinking beyond application code.',
     ],
     stack: ['Proxmox', 'LXC', 'Terraform', 'GitOps', 'Shell', 'Monitoring'],
-    links: [
-      { label: 'Homelab docs', href: 'https://piyush97.github.io/homelab-docs/' },
-      { label: 'Homelab repo', href: 'https://github.com/piyush97/Homelab' },
-    ],
+    links: [{ label: 'homelab-gitops repo', href: 'https://github.com/piyush97/homelab-gitops' }],
   },
   {
     title: 'Interview Prep Portal',
