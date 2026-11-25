@@ -1,6 +1,75 @@
 {
  "version": 1,
  "posts": {
+  "agent-bill-is-steps-times-context": {
+   "title": "Steps × Context: Where 64.5% of a Coding-Agent Bill Goes",
+   "description": "27,280 agent trials, 83B tokens, and one regression that matters: steps per pass predicted cost per pass, while prompt size and cache hit rate predicted nothing. Plus the arithmetic that turns a 64.5% failure share into a 2.5× failure tax.",
+   "digest": "a127221056dfe8d8",
+   "sections": [
+    {
+     "level": 0,
+     "heading": null,
+     "text": "A coding agent does not get cheaper because you trimmed its system prompt. It gets cheaper when it stops taking steps, and the largest single line in its bill is the set of trajectories that end without passing anything.\n\nOn 17 November, Runta published FrontierHarness Eval v1.1: 22 harness configurations times 5 open-weight models times 62 terminal tasks times 4 attempts, 27,280 trials and 83 billion tokens, with Harbor verifiers scoring every run. Two numbers from that dataset are worth the read. 64.5% of list-price spend went to trials that did not pass. And of four plausible cost factors, the only one that tracked cost per pass was steps (+0.51 rank correlation, p = 0.015); start tokens, tool count and cache hit rate landed between −0.03 and +0.02 at p ≥ 0.88.\n\nThe second number is the useful one, because it is not a fact about their harness list. It is a fact about how these APIs bill.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "The leaderboard counts passes, your invoice counts attempts",
+     "text": "Cost per task and cost per pass are different metrics, and only one of them survives a pass-rate difference. Cost per pass is simply cost per task divided by pass rate:\n\nThe published table lets you check that identity directly. OpenCode v2 reports $0.978 per pass at a 57.3% pass rate, so its cost per task should be about $0.56, and the post reports $0.561 for the lowest cost per task. It checks.\n\nThat division is where most comparisons go wrong. Take a harness that costs $0.58 per task. At a 55% pass rate it costs $1.055 per pass; at 62% it costs $0.936. Same token bill, 13% different unit price, purely from seven points of pass rate. Across the 22 rows, cost per pass spans 1.74 times ($0.937 for Codex CLI to $1.63 for Antigravity CLI) while cost per task spans 1.63 times ($0.560 to $0.913, derived with the same identity). The spread you are shopping on is mostly the inverse of the pass rate, not the price of a run.\n\nThere is a second trap in the same table. Each pass rate is measured on 248 attempts, which puts a 95% interval of about ±10 points on it, so a three or four point gap between harnesses is a coin flip dressed as a ranking.",
+     "code": [
+      "cost_per_pass = cost_per_task / pass_rate"
+     ]
+    },
+    {
+     "level": 2,
+     "heading": "One trial, request by request",
+     "text": "The cost model is dull and that is the point: an agent step is one API request carrying the whole conversation so far. The trajectory in the post's own example (Pi on GLM-5.3, task merge-diff-arc-agi-task) shows the shape:\n\nEach step pays full price for roughly 500 new tokens and the cached rate for about 15,900. That is a well-behaved harness, and it still bills 16K tokens of input on every one of its steps. Trials in the benchmark used 2.0 to 4.8 million input tokens each, by harness, while the largest first request of any harness was 21,365 tokens. The opening prompt is under 1% of the bill.\n\nAcross all trials, cached input was 42% of spend, output 33%, and uncached input 25%. Cached input is cheap but not free: the post prices it at 2% of normal input for DeepSeek and 20% for GLM Flash. So a cache hit rate is a discount on the multiplier. It never reduces the multiplier.",
+     "code": [
+      "request  prompt tokens  cached tokens\n   8        15,954         15,616\n   9        16,351         15,936\n  10        16,999         16,320"
+     ]
+    },
+    {
+     "level": 2,
+     "heading": "The knob everyone reaches for",
+     "text": "Prompt trimming and tool-schema deferral are real wins, and they show up in the same table as a rounding error. Cline CLI has the worst cache hit rate of the 22 (86.4%) and sits 12th on cost per pass. Antigravity CLI has the best (95.6%) and the highest cost per pass ($1.63). mini-SWE-agent has the smallest opening request in the benchmark, 882 tokens, and lands 17th of 22 on cost per pass at $1.29, because it takes 38 steps per pass.\n\nCodex CLI is the counter-example worth copying. It compresses context instead of carrying it:\n\nThat is a summarization trigger at 90% of the window, and Codex CLI ends up cheapest per pass overall ($0.937) with a 61.1% pass rate. The leverage is in the number of times you send the context, not in its first size.",
+     "code": [
+      ".map(|context_window| (context_window * 9) / 10);"
+     ]
+    },
+    {
+     "level": 2,
+     "heading": "64.5% is not just one minus the pass rate",
+     "text": "The obvious objection to \"most of the money goes to failures\" is that it is arithmetic: with pass rates around 58%, failures would own 42% of spend if a failed run cost the same as a passing one.\n\nThe measured share is 64.5%, so they do not cost the same. Solving for the multiple:\n\nAt the mean pass rate of the 22 published configurations (57.7%), a non-passing trial costs about 2.5 times a passing one. That multiple is my arithmetic, not a number in the post; what the post publishes is the 64.5% share and the per-harness pass rates, and this is the ratio consistent with both. The split inside it is 52.7% to plain failures and 11.8% to timeouts, and timeouts are the part that should be expected: the per-task limits run from 15 minutes to 8 hours, and a timeout is by definition a trajectory that used its whole budget.\n\nSo the failure tax is roughly 1.5 times what the pass rate alone predicts. Retrying a failed task does not cost what the first attempt cost; it costs more, because the attempt that failed was the long one.",
+     "code": [
+      "share = (1 - p) * r / (p + (1 - p) * r)\n0.645 = 0.423 * r / (0.577 + 0.423 * r)\nr     = 2.48"
+     ]
+    },
+    {
+     "level": 2,
+     "heading": "Why the long ones are the failures",
+     "text": "Harnesses do not stop failing runs because nothing in the trajectory knows it failed. From the post: among the five best-value harnesses, 68% (Pi) to 82% (Codex CLI) of failed trials ended with a confident final answer rather than at the time limit. A small share said the work was incomplete.\n\nThe verifier that disagrees with them runs after the trial ends, in Harbor, outside the loop. The audit that scored the runs also flagged 216 trials for reward hacking (163 of them online lookups) and zeroed them, which is a separate way to buy nothing.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "What to change on Monday",
+     "text": "1. Meter steps per attempt, not dollars per task. Plot the median and p95 step count beside pass rate. A harness whose p95 is twice its median is paying the failure tax and calling it variance.\n2. Call the verifier mid-run. A checkpoint at half of the step budget that runs the same test the grader will run turns the 2.5× failure multiple into roughly half of itself. At the fleet's parameters, stopping failing runs at 50% of their length cuts total spend to 68% of baseline at the same pass rate. The demo below recomputes that for your own pass rate.\n3. Make \"not finished, here is what blocks me\" a first-class output. Three in four failing runs already produce a final answer; the cheapest change is making one of those answers honest, because an honest one triggers the abort that the confident one does not.\n4. Do not buy a three point pass-rate lead. With ±10 point intervals per cell you need a private dataset of your own tasks, not a public leaderboard, to tell 58% from 62%.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "What this data does not say",
+     "text": "The five models are open-weight models served by one provider at list prices, so a negotiated discount or a different model changes the ranking. The 62 tasks come from Terminal-Bench 4.1 and 2.1 (17 and 45 of them, as counted in the Hacker News thread), chosen for domain spread across ML, science, systems and security rather than sampled at random, and the authors were pressed on that selection there. Terminal-Bench tasks are verifier-scored single tasks, not week-long project work; the post says a closed-model and long-horizon follow-up is planned.\n\nThe model-by-harness interaction is also weaker than the headline suggests. An independent analysis of 926,588 agent runs found the interaction real but smaller than the benchmark-by-harness and model-by-benchmark effects. Model choice explains 92.8% of cost variance in this dataset, and the harness 2.3%. The actionable part is narrower than \"switch harnesses when you switch models\": a harness that costs 1.8 to 5.0 times another on the same model should be able to explain which side of the step count the difference lives on.\n\nIf you are budgeting the review side of the queue instead, Coding Agents Changed the Queue covers reviewer capacity, and The Dead TODO Tax covers the tokens that stale context costs in the other direction. For the cache economics underneath all of this, Restore or Recompute has the bytes-per-token numbers.\n\nThe one-line version: your agent's bill is steps times context, the cache discounts the context, and the runs that fail are the longest ones. Count steps.",
+     "code": []
+    },
+    {
+     "level": 2,
+     "heading": "Sources",
+     "text": "Runta, Introducing FrontierHarness Eval v1.1, 17 November 2026. All published figures above come from this post.\nfrontier-harness-eval/eval, the results table, methodology and reproduction commands.\nHacker News discussion, including the task-selection questions and the founder's reply.\nmicjm, On model x harness interactions, 17 November 2026.",
+     "code": []
+    }
+   ]
+  },
   "agent-distraction-dead-todo-tax": {
    "title": "The Dead TODO Tax: What Google Measured, and What Its Instrument Misses",
    "description": "Google found stale TODO comments cost agents 77% more tokens in affected sessions. Fleet-wide that is 0.5%. A 14-repo census: just 2.7% name a ticket.",

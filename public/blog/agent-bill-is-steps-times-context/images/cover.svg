@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="A spend bar split into 35 percent passing runs and 65 percent non-passing runs, next to a three-step agent trajectory where the prompt grows and each step re-sends it">
+  <rect width="1200" height="630" fill="#171a2f"/>
+  <g stroke="#343a5f" stroke-opacity="0.22"><path d="M0 90H1200M0 180H1200M0 270H1200M0 360H1200M0 450H1200M0 540H1200"/></g>
+  <g font-family="Muli, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <text x="88" y="106" fill="#f6f7ff" font-size="46" font-weight="800">Steps × context</text>
+    <text x="88" y="160" fill="#8f96ba" font-size="21" font-weight="600">27,280 agent trials · 83B tokens · 22 harnesses × 5 models</text>
+
+    <!-- spend bar -->
+    <text x="88" y="238" fill="#c7cdec" font-size="17" font-weight="700">WHERE THE BILL WENT</text>
+    <g>
+      <rect x="88" y="256" width="360" height="56" rx="6" fill="#1f3a52" stroke="#38bdf8"/>
+      <text x="104" y="290" fill="#7dd3fc" font-size="22" font-weight="800">35.5%</text>
+      <text x="200" y="290" fill="#9fb3c8" font-size="15" font-weight="700">passing runs</text>
+    </g>
+    <g>
+      <rect x="456" y="256" width="656" height="56" rx="6" fill="#3a2f14" stroke="#d29922"/>
+      <text x="472" y="290" fill="#ffcc68" font-size="22" font-weight="800">64.5%</text>
+      <text x="568" y="290" fill="#cbb98a" font-size="15" font-weight="700">runs that did not pass (52.7% failures + 11.8% timeouts)</text>
+    </g>
+
+    <!-- step ledger -->
+    <text x="88" y="372" fill="#c7cdec" font-size="17" font-weight="700">ONE TRAJECTORY, STEP BY STEP</text>
+    <g font-size="16" font-weight="700">
+      <rect x="88" y="392" width="300" height="94" rx="8" fill="#23274a" stroke="#3d4470"/>
+      <text x="106" y="420" fill="#8f96ba" font-size="13">STEP 8</text>
+      <text x="106" y="446" fill="#f6f7ff" font-size="20">15,954 in</text>
+      <text x="106" y="470" fill="#7ee2a8" font-size="14">15,616 cached</text>
+
+      <path d="M400 439h36" stroke="#5d668f" stroke-width="3"/>
+      <path d="M432 433l10 6-10 6z" fill="#5d668f"/>
+
+      <rect x="448" y="392" width="300" height="94" rx="8" fill="#23274a" stroke="#3d4470"/>
+      <text x="466" y="420" fill="#8f96ba" font-size="13">STEP 9</text>
+      <text x="466" y="446" fill="#f6f7ff" font-size="20">16,351 in</text>
+      <text x="466" y="470" fill="#7ee2a8" font-size="14">15,936 cached</text>
+
+      <path d="M760 439h36" stroke="#5d668f" stroke-width="3"/>
+      <path d="M792 433l10 6-10 6z" fill="#5d668f"/>
+
+      <rect x="808" y="392" width="304" height="94" rx="8" fill="#23274a" stroke="#3d4470"/>
+      <text x="826" y="420" fill="#8f96ba" font-size="13">STEP 10</text>
+      <text x="826" y="446" fill="#f6f7ff" font-size="20">16,999 in</text>
+      <text x="826" y="470" fill="#7ee2a8" font-size="14">16,320 cached</text>
+    </g>
+    <text x="88" y="514" fill="#ffcc68" font-size="16" font-weight="700">≈500 new tokens billed per step. The context is re-sent every time.</text>
+
+    <line x1="88" y1="546" x2="1112" y2="546" stroke="#343a5f"/>
+    <text x="88" y="578" fill="#8f96ba" font-size="19">Steps predicted cost per pass (+0.51). Prompt size, tool count and cache hit rate did not.</text>
+    <text x="88" y="606" fill="#6f78a0" font-size="16">FrontierHarness Eval v1.1 · Runta × Baseten · November 2026</text>
+  </g>
+</svg>
