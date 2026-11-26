@@ -1,0 +1,30 @@
+{
+  "schema": "rust-anything/bridge@1",
+  "root": "../..",
+  "unit": "scripts/chat-index/strip-mdx.ts",
+  "language": "ts",
+  "kind": "napi",
+  "crate_name": "strip-mdx-rs",
+  "exports": [
+    {
+      "name": "stripMdx",
+      "file": "scripts/chat-index/strip-mdx.ts",
+      "line": 1,
+      "params": [
+        {
+          "name": "s",
+          "ts_type": "string",
+          "optional": false,
+          "rest": false
+        }
+      ],
+      "returns": "string",
+      "is_async": false,
+      "is_generator": false,
+      "type_params": [],
+      "uses_instanceof": false
+    }
+  ],
+  "classes": [],
+  "js_only": []
+}

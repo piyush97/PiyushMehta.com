@@ -1,0 +1,19 @@
+{
+  "unit": "scripts/chat-index/strip-mdx.ts",
+  "files": 1,
+  "fingerprint": "61384a7d5c55326d",
+  "cases": 297,
+  "cases_hash": "32288d4509cd38ba",
+  "coverage": {
+    "lines": 14,
+    "reached": 14,
+    "files": [
+      {
+        "file": "scripts/chat-index/strip-mdx.ts",
+        "lines": 14,
+        "reached": 14,
+        "missed": ""
+      }
+    ]
+  }
+}
