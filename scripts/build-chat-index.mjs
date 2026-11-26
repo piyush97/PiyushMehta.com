@@ -8,25 +8,12 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { slug as githubSlug } from 'github-slugger';
+import { stripMdx } from './chat-index/strip-mdx.ts';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const BLOG = join(ROOT, 'src', 'content', 'blog');
 const OUT = join(ROOT, 'src', 'data', 'chat-index.json');
 const CHUNK_WORDS = 220;
-
-const stripMdx = (s) =>
-  s
-    .replace(/^import .*$/gm, '')
-    .replace(/^export .*$/gm, '')
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-    .replace(/^#{1,6}\s+/gm, '')
-    .replace(/^>\s?/gm, '')
-    .replace(/[*`]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
 
 function frontmatter(source) {
   const m = source.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
