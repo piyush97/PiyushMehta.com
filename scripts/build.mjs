@@ -36,13 +36,19 @@ step('Type generation', 'bunx varlock codegen');
 // 2. Generate the published post manifest used by runtime APIs.
 step('Published post manifest', 'node scripts/generate-post-manifest.mjs');
 
-// 2b. Build the Ask Piyush retrieval index from published content.
-step('Chat index', 'node scripts/build-chat-index.mjs');
+// 2b/2c. Build the Ask Piyush retrieval index and gate the section-aware note corpus. When
+//     RUST_CONTENT_INDEX_BIN points at the prebuilt `content-index` binary, a single optional pass
+//     enumerates the posts once and produces both artifacts; otherwise the legacy Node paths run.
+if (process.env.RUST_CONTENT_INDEX_BIN) {
+  step('Content index (Rust)', 'node scripts/build-content-index.mjs --check-sections');
+} else {
+  step('Chat index', 'node scripts/build-chat-index.mjs');
 
-// 2c. Gate the section-aware note corpus for post-scoped Ask (ADR-0004): fail unless the committed
-//     src/data/post-sections.json is byte-identical to what the published MDX produces. Regenerate
-//     with `bun run build:post-sections` (dev and start do it automatically).
-step('Post sections', 'node scripts/build-post-sections.mjs --check');
+  // Gate the section-aware note corpus for post-scoped Ask (ADR-0004): fail unless the committed
+  //     src/data/post-sections.json is byte-identical to what the published MDX produces. Regenerate
+  //     with `bun run build:post-sections` (dev and start do it automatically).
+  step('Post sections', 'node scripts/build-post-sections.mjs --check');
+}
 
 // 3. Verify blog images are migrated (read-only; a build never rewrites MDX sources).
 step('Image migration', 'node scripts/migrate-images-to-public.mjs --verify');
