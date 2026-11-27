@@ -1,8 +1,8 @@
 #![forbid(unsafe_code)]
 
-const LINE_END: [char; 4] = ['\n', '\r', '\u{2028}', '\u{2029}'];
+pub(crate) const LINE_END: [char; 4] = ['\n', '\r', '\u{2028}', '\u{2029}'];
 
-fn js_space(c: char) -> bool {
+pub(crate) fn js_space(c: char) -> bool {
     matches!(
         c,
         '\t'..='\r' | ' ' | '\u{a0}' | '\u{1680}' | '\u{2000}'..='\u{200a}'
@@ -10,7 +10,7 @@ fn js_space(c: char) -> bool {
     )
 }
 
-fn strip_line_prefixes(text: &str, prefix_len: impl Fn(&str) -> usize) -> String {
+pub(crate) fn strip_line_prefixes(text: &str, prefix_len: impl Fn(&str) -> usize) -> String {
     let mut out = String::with_capacity(text.len());
     let mut cursor = 0;
     let starts =
@@ -26,7 +26,7 @@ fn strip_line_prefixes(text: &str, prefix_len: impl Fn(&str) -> usize) -> String
     out
 }
 
-fn replace_sections(mut text: &str, open: &str, close: &str, empty: &str) -> String {
+pub(crate) fn replace_sections(mut text: &str, open: &str, close: &str, empty: &str) -> String {
     let mut out = String::with_capacity(text.len());
     while let Some((before, body)) = text.split_once(open)
         && let Some((inside, rest)) = body.split_once(close)
@@ -39,7 +39,7 @@ fn replace_sections(mut text: &str, open: &str, close: &str, empty: &str) -> Str
     out
 }
 
-fn replace_links(mut text: &str, open: &str, image: bool) -> String {
+pub(crate) fn replace_links(mut text: &str, open: &str, image: bool) -> String {
     let mut out = String::with_capacity(text.len());
     while let Some((before, body)) = text.split_once(open) {
         let Some((label, after)) = body.split_once(']') else {

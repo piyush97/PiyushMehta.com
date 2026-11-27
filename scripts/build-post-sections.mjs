@@ -108,28 +108,25 @@ function parseSections(body) {
   return sections;
 }
 
-const posts = {};
-for (const entry of readdirSync(BLOG, { withFileTypes: true }).sort((a, b) =>
-  a.name.localeCompare(b.name),
-)) {
-  if (!entry.isDirectory()) continue;
-  const file = ['index.mdx', 'index.md'].map((f) => join(BLOG, entry.name, f)).find(existsSync);
-  if (!file) continue;
-  const { title, description, draft, body } = frontmatter(readFileSync(file, 'utf8'));
-  if (draft) continue;
-  const sections = parseSections(body);
-  const digest = createHash('sha256')
-    .update(JSON.stringify({ title, sections }))
-    .digest('hex')
-    .slice(0, 16);
-  posts[githubSlug(entry.name)] = { title, description, digest, sections };
+/** Build the final artifact bytes from `{ name, title, description, sections }` entries. */
+export function renderPostSections(entries) {
+  const posts = {};
+  for (const entry of [...entries].sort((a, b) => a.name.localeCompare(b.name))) {
+    const { name, title, description, sections } = entry;
+    const digest = createHash('sha256')
+      .update(JSON.stringify({ title, sections }))
+      .digest('hex')
+      .slice(0, 16);
+    posts[githubSlug(name)] = { title, description, digest, sections };
+  }
+  const sorted = Object.fromEntries(Object.entries(posts).sort(([a], [b]) => a.localeCompare(b)));
+  return {
+    output: JSON.stringify({ version: 1, posts: sorted }, null, 1) + '\n',
+    count: Object.keys(sorted).length,
+  };
 }
 
-const sorted = Object.fromEntries(Object.entries(posts).sort(([a], [b]) => a.localeCompare(b)));
-const output = JSON.stringify({ version: 1, posts: sorted }, null, 1) + '\n';
-const count = Object.keys(sorted).length;
-
-if (process.argv.includes('--check')) {
+export function checkPostSections(output, count) {
   const current = existsSync(OUT) ? readFileSync(OUT, 'utf8') : null;
   if (current !== output) {
     console.error(
@@ -138,7 +135,26 @@ if (process.argv.includes('--check')) {
     process.exit(1);
   }
   console.log(`✅ Post sections are current (${count} notes)`);
-} else {
+}
+
+export function writePostSections(output, count) {
   writeFileSync(OUT, output);
   console.log(`✅ Wrote post sections (${count} notes)`);
+}
+
+if (import.meta.main) {
+  const entries = [];
+  for (const entry of readdirSync(BLOG, { withFileTypes: true }).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  )) {
+    if (!entry.isDirectory()) continue;
+    const file = ['index.mdx', 'index.md'].map((f) => join(BLOG, entry.name, f)).find(existsSync);
+    if (!file) continue;
+    const { title, description, draft, body } = frontmatter(readFileSync(file, 'utf8'));
+    if (draft) continue;
+    entries.push({ name: entry.name, title, description, sections: parseSections(body) });
+  }
+  const { output, count } = renderPostSections(entries);
+  if (process.argv.includes('--check')) checkPostSections(output, count);
+  else writePostSections(output, count);
 }

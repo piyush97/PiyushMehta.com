@@ -34,68 +34,77 @@ function chunk(text) {
   return out;
 }
 
-const docs = [];
+export async function writeChatIndex(postEntries) {
+  const docs = [];
+  for (const { name, title, chunks } of postEntries) {
+    const url = `/blog/${githubSlug(name)}`;
+    chunks.forEach((text, i) =>
+      docs.push({ id: `post:${name}:${i}`, title, url, text: `${title}. ${text}` }),
+    );
+  }
 
-for (const entry of readdirSync(BLOG, { withFileTypes: true })) {
-  if (!entry.isDirectory()) continue;
-  const file = ['index.mdx', 'index.md'].map((f) => join(BLOG, entry.name, f)).find(existsSync);
-  if (!file) continue;
-  const { title, draft, body } = frontmatter(readFileSync(file, 'utf8'));
-  if (draft) continue;
-  const url = `/blog/${githubSlug(entry.name)}`;
-  chunk(stripMdx(body)).forEach((text, i) =>
-    docs.push({ id: `post:${entry.name}:${i}`, title, url, text: `${title}. ${text}` }),
+  const facts = readFileSync(join(ROOT, 'src', 'content', 'chat', 'facts.md'), 'utf8');
+  chunk(stripMdx(facts)).forEach((text, i) =>
+    docs.push({ id: `facts:${i}`, title: 'About Piyush Mehta', url: '/about', text }),
   );
-}
 
-const facts = readFileSync(join(ROOT, 'src', 'content', 'chat', 'facts.md'), 'utf8');
-chunk(stripMdx(facts)).forEach((text, i) =>
-  docs.push({ id: `facts:${i}`, title: 'About Piyush Mehta', url: '/about', text }),
-);
-
-const p = await import('../src/data/portfolio.ts');
-const json = (v) => stripMdx(JSON.stringify(v).replace(/[{}[\]"]/g, ' '));
-for (const c of p.caseStudies ?? []) {
-  chunk(json(c)).forEach((text, i) =>
+  const p = await import('../src/data/portfolio.ts');
+  const json = (v) => stripMdx(JSON.stringify(v).replace(/[{}[\]"]/g, ' '));
+  for (const c of p.caseStudies ?? []) {
+    chunk(json(c)).forEach((text, i) =>
+      docs.push({
+        id: `case:${c.title}:${i}`,
+        title: `Case study: ${c.title}`,
+        url: '/projects',
+        text,
+      }),
+    );
+  }
+  for (const r of p.resumeRoles ?? []) {
     docs.push({
-      id: `case:${c.title}:${i}`,
-      title: `Case study: ${c.title}`,
-      url: '/projects',
-      text,
-    }),
-  );
-}
-for (const r of p.resumeRoles ?? []) {
+      id: `role:${r.company}`,
+      title: `Role: ${r.title}, ${r.company}`,
+      url: '/resume',
+      text: json(r),
+    });
+  }
   docs.push({
-    id: `role:${r.company}`,
-    title: `Role: ${r.title}, ${r.company}`,
+    id: 'resume:skills',
+    title: 'Skills',
     url: '/resume',
-    text: json(r),
+    text: json({
+      skills: p.resumeSkillGroups,
+      education: p.resumeEducation,
+      achievements: p.resumeAchievements,
+      facts: p.resumeQuickFacts,
+    }),
   });
-}
-docs.push({
-  id: 'resume:skills',
-  title: 'Skills',
-  url: '/resume',
-  text: json({
-    skills: p.resumeSkillGroups,
-    education: p.resumeEducation,
-    achievements: p.resumeAchievements,
-    facts: p.resumeQuickFacts,
-  }),
-});
-docs.push({
-  id: 'services',
-  title: 'Services',
-  url: '/services',
-  text: json(p.serviceEngagements ?? []),
-});
-docs.push({
-  id: 'contact',
-  title: 'Contact',
-  url: '/contact-me',
-  text: json({ channels: p.contactChannels, topics: p.contactTopics }),
-});
+  docs.push({
+    id: 'services',
+    title: 'Services',
+    url: '/services',
+    text: json(p.serviceEngagements ?? []),
+  });
+  docs.push({
+    id: 'contact',
+    title: 'Contact',
+    url: '/contact-me',
+    text: json({ channels: p.contactChannels, topics: p.contactTopics }),
+  });
 
-writeFileSync(OUT, JSON.stringify({ version: 1, docs }, null, 2) + '\n');
-console.log(`✅ Wrote chat index (${docs.length} chunks)`);
+  writeFileSync(OUT, JSON.stringify({ version: 1, docs }, null, 2) + '\n');
+  console.log(`✅ Wrote chat index (${docs.length} chunks)`);
+}
+
+if (import.meta.main) {
+  const postEntries = [];
+  for (const entry of readdirSync(BLOG, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const file = ['index.mdx', 'index.md'].map((f) => join(BLOG, entry.name, f)).find(existsSync);
+    if (!file) continue;
+    const { title, draft, body } = frontmatter(readFileSync(file, 'utf8'));
+    if (draft) continue;
+    postEntries.push({ name: entry.name, title, chunks: chunk(stripMdx(body)) });
+  }
+  await writeChatIndex(postEntries);
+}
